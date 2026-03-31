@@ -1,0 +1,36 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Start Next.js dev server
+    cmd: pnpm dev
+
+  build:
+    desc: Production build
+    cmd: pnpm build
+
+  types:
+    desc: Regenerate Payload TypeScript types
+    cmd: pnpm payload generate:types
+
+  importmap:
+    desc: Regenerate Payload import map (run after adding collections or fields)
+    cmd: pnpm payload generate:importmap
+
+  generate:
+    desc: Regenerate types + import map
+    cmds:
+      - task: types
+      - task: importmap
+
+  seed:
+    desc: Seed teams into the database
+    cmd: pnpm tsx --env-file=.env src/seed.ts
+
+  seed-posts:
+    desc: Seed nieuws posts into the database
+    cmd: pnpm tsx --env-file=.env.local src/seed-posts.ts
+
+  sync-teamcodes:
+    desc: Sync teamcodes from Sportlink API into the database
+    cmd: pnpm tsx --env-file=.env.local src/sync-teamcodes.ts
