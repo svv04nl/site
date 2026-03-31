@@ -20,11 +20,7 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config })
-  const { docs } = await payload.find({ collection: 'teams', limit: 200 })
-  return docs.map((team) => ({ slug: team.slug }))
-}
+export const dynamic = 'force-dynamic'
 
 export default async function TeamPage({ params }: Props) {
   const { slug } = await params
