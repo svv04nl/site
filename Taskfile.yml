@@ -23,6 +23,14 @@ tasks:
       - task: types
       - task: importmap
 
+  migrate:
+    desc: Run pending database migrations
+    cmd: pnpm migrate
+
+  migrate:create:
+    desc: Create a new migration from schema changes
+    cmd: pnpm payload migrate:create
+
   seed:
     desc: Seed teams into the database
     cmd: pnpm tsx --env-file=.env src/seed.ts
