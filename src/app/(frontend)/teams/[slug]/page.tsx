@@ -44,7 +44,7 @@ export default async function TeamPage({ params }: Props) {
     teamcode
       ? fetchClubData<RawProgrammaResponse>('programma', teamcode, {
           aantaldagen: '365',
-          aantalregels: '1',
+          aantalregels: '10',
         }).catch(() => null)
       : null,
     teamcode
@@ -53,15 +53,15 @@ export default async function TeamPage({ params }: Props) {
           toonlidfoto: 'NEE',
         }).catch(() => null)
       : null,
-    teamcode
-      ? fetchClubData<RawTeamsResponse>('teams').catch(() => null)
-      : null,
+    teamcode ? fetchClubData<RawTeamsResponse>('teams').catch(() => null) : null,
     teamcode
       ? fetchClubData<RawTeamSponsorsResponse>('team-sponsors', teamcode, {
           lokaleteamcode: 'NULL',
         }).catch(() => null)
       : null,
   ])
+
+  console.log(teamcode, rawSchedule, rawRoster, rawTeams, rawSponsors)
 
   const matchData = rawSchedule ? transformNextMatch(rawSchedule, teamcode!) : null
   const rosterData = rawRoster ? transformTeamRoster(rawRoster) : null
@@ -80,7 +80,6 @@ export default async function TeamPage({ params }: Props) {
 
   return (
     <main className="team-page">
-
       {/* Breadcrumb */}
       <nav className="team-breadcrumb" aria-label="Kruimelpad">
         <div className="team-page-inner">
@@ -95,7 +94,6 @@ export default async function TeamPage({ params }: Props) {
       {/* Two-column layout */}
       <div className="team-page-inner">
         <div className="team-layout">
-
           {/* Main — photo + roster */}
           <div className="team-main">
             <div className="team-photo">
@@ -116,7 +114,7 @@ export default async function TeamPage({ params }: Props) {
               <h2 className="team-sponsor-title">Sponsor</h2>
               {rawSponsors && rawSponsors.length > 0 ? (
                 <div className="team-sponsor-logos">
-                  {rawSponsors.map((sponsor) => (
+                  {rawSponsors.map((sponsor) =>
                     sponsor.website ? (
                       <a
                         key={sponsor.naam}
@@ -139,17 +137,15 @@ export default async function TeamPage({ params }: Props) {
                         alt={sponsor.naam}
                         className="team-sponsor-logo-img"
                       />
-                    )
-                  ))}
+                    ),
+                  )}
                 </div>
               ) : (
                 <p className="team-sponsor-empty">Dit team heeft nog geen sponsor.</p>
               )}
             </div>
           </aside>
-
         </div>
-
       </div>
 
       {/* League section */}
@@ -165,7 +161,6 @@ export default async function TeamPage({ params }: Props) {
           </Suspense>
         </div>
       </div>
-
     </main>
   )
 }

@@ -25,6 +25,7 @@ export type RawWedstrijd = {
   plaats: string
   status: string
   meer: string
+  eigenteam?: 'true' | 'false'
 }
 
 export type RawProgrammaResponse = RawWedstrijd[]

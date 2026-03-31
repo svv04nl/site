@@ -61,7 +61,7 @@ export function transformNextMatch(
   raw: RawProgrammaResponse,
   teamcode: number,
 ): MatchData | null {
-  const match = raw[0]
+  const match = raw.find((m) => m.eigenteam === 'true') ?? raw[0]
   if (!match) return null
 
   const isHome = match.thuisteamid === teamcode
