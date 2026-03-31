@@ -3,11 +3,12 @@ import { nl } from 'date-fns/locale'
 import type {
   RawProgrammaResponse,
   RawPoulestandResponse,
+  RawPeriodestandResponse,
   RawTeamIndelingResponse,
   RawPouleIndelingResponse,
   RawPouleUitslagenResponse,
+  StandingRow,
 } from './types'
-import type { StandingRow } from '@/components/TeamLeagueTabs'
 import type { MatchData } from '@/components/NextMatch'
 
 // ─── Date utilities ───────────────────────────────────────────────────────────
@@ -21,7 +22,7 @@ function parseDateStr(s: string): Date | null {
     return isValid(d) ? d : null
   }
 
-  const dateOnly = s.split(' ')[0]  // trim time suffix: "2026-04-11 00:00:00.00" → "2026-04-11"
+  const dateOnly = s.split(' ')[0] // trim time suffix: "2026-04-11 00:00:00.00" → "2026-04-11"
 
   // "YYYY-MM-DD"
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) {
@@ -42,45 +43,35 @@ function getMondayKey(date: Date): string {
   return format(startOfISOWeek(date), 'yyyy-MM-dd')
 }
 
-
-function formatWeekRange(mondayKey: string): string {
-  const monday = parse(mondayKey, 'yyyy-MM-dd', new Date())
-  if (!isValid(monday)) return mondayKey
-  const sunday = addDays(monday, 6)
-  const week = getISOWeek(monday)
-  return `Week ${week} · ${format(monday, 'd MMMM', { locale: nl })} – ${format(sunday, 'd MMMM', { locale: nl })}`
-}
-
 function formatDisplayDate(d: Date): string {
   return format(d, 'EEE d MMMM', { locale: nl })
 }
 
 // ─── Next match ───────────────────────────────────────────────────────────────
 
-export function transformNextMatch(
-  raw: RawProgrammaResponse,
-  teamcode: number,
-): MatchData | null {
+export function transformNextMatch(raw: RawProgrammaResponse, teamcode: number): MatchData | null {
   const match = raw.find((m) => m.eigenteam === 'true') ?? raw[0]
   if (!match) return null
 
   const isHome = match.thuisteamid === teamcode
 
   const matchDate = parseDateStr(match.wedstrijddatum) ?? parseDateStr(match.datum)
-  const displayDate = matchDate ? format(matchDate, 'EEE d MMMM', { locale: nl }) : (match.datum ?? '')
+  const displayDate = matchDate
+    ? format(matchDate, 'EEE d MMMM', { locale: nl })
+    : (match.datum ?? '')
 
   return {
     date: displayDate,
-    time: match.aanvangstijd,   // "10:30"
+    time: match.aanvangstijd, // "10:30"
     homeTeam: {
       name: match.thuisteam,
-      logoUrl: match.thuisteamlogo || undefined,
+      clubRelatiecode: match.thuisteamclubrelatiecode || undefined,
       isOwn: isHome,
       location: 'Thuis',
     },
     awayTeam: {
       name: match.uitteam,
-      logoUrl: match.uitteamlogo || undefined,
+      clubRelatiecode: match.uitteamclubrelatiecode || undefined,
       isOwn: !isHome,
       location: 'Uit',
     },
@@ -105,19 +96,19 @@ export function transformTeamRoster(raw: RawTeamIndelingResponse): TeamRosterDat
   const players: TeamMember[] = []
   const staffMap = new Map<string, TeamMember[]>()
 
-  for (const lid of raw) {
-    if (lid.relatiecode === null) {
+  for (const member of raw) {
+    if (member.relatiecode === null) {
       hiddenCount++
       continue
     }
 
-    const name = formatName(lid)
-    const entry: TeamMember = { name, role: lid.functie || undefined }
+    const name = formatName(member)
+    const entry: TeamMember = { name, role: member.functie || undefined }
 
-    if (lid.rol === 'Teamspeler') {
+    if (member.rol === 'Teamspeler') {
       players.push(entry)
     } else {
-      const key = lid.functie || lid.rol
+      const key = member.functie || member.rol
       if (!staffMap.has(key)) staffMap.set(key, [])
       staffMap.get(key)!.push(entry)
     }
@@ -146,18 +137,18 @@ function formatName(lid: {
 
 export type ScheduleMatch = {
   matchCode: number
-  date: string           // e.g. "za 5 april" for display
+  date: string // e.g. "za 5 april" for display
   time: string
   homeTeam: string
-  homeTeamLogo?: string
+  homeTeamRelatiecode?: string
   awayTeam: string
-  awayTeamLogo?: string
+  awayTeamRelatiecode?: string
   venue: string
   status: string
   isOwnHome: boolean
   isOwnAway: boolean
   isOwn: boolean
-  weekKey: string        // "YYYY-MM-DD" Monday of the week
+  weekKey: string // "YYYY-MM-DD" Monday of the week
 }
 
 export type ScheduleWeekGroup = {
@@ -169,25 +160,35 @@ export type ScheduleWeekGroup = {
 export function transformSchedule(
   raw: RawProgrammaResponse,
   clubRelatiecode: string,
+  teamcode?: number,
 ): ScheduleMatch[] {
   return raw.map((w) => {
-    const isOwnHome = w.thuisteamclubrelatiecode === clubRelatiecode
-    const isOwnAway = w.uitteamclubrelatiecode === clubRelatiecode
-    const isOwn = isOwnHome || isOwnAway
+    const isOwnHome =
+      w.thuisteamclubrelatiecode !== undefined
+        ? w.thuisteamclubrelatiecode === clubRelatiecode
+        : teamcode !== undefined && w.thuisteamid === teamcode
+    const isOwnAway =
+      w.uitteamclubrelatiecode !== undefined
+        ? w.uitteamclubrelatiecode === clubRelatiecode
+        : teamcode !== undefined && w.uitteamid === teamcode
+    const isOwn = w.eigenteam !== undefined ? w.eigenteam === 'true' : isOwnHome || isOwnAway
 
     // poule-programma uses `datum` as the date field; programma uses `wedstrijddatum`
     const date = parseDateStr(w.wedstrijddatum) ?? parseDateStr(w.datum)
     const weekKey = date ? getMondayKey(date) : 'unknown'
-    const displayDate = date ? formatDisplayDate(date) : (w.datum || '')
+    const displayDate = date ? formatDisplayDate(date) : w.datum || ''
+
+    const homeRelatiecode = w.thuisteamclubrelatiecode || undefined
+    const awayRelatiecode = w.uitteamclubrelatiecode || undefined
 
     return {
       matchCode: w.wedstrijdcode,
       date: displayDate,
       time: w.aanvangstijd,
       homeTeam: w.thuisteam,
-      homeTeamLogo: w.thuisteamlogo || undefined,
+      homeTeamRelatiecode: homeRelatiecode,
       awayTeam: w.uitteam,
-      awayTeamLogo: w.uitteamlogo || undefined,
+      awayTeamRelatiecode: awayRelatiecode,
       venue: w.accommodatie,
       status: w.status || 'Te spelen',
       isOwnHome,
@@ -212,32 +213,75 @@ export function groupScheduleByWeek(matches: ScheduleMatch[]): ScheduleWeekGroup
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([weekKey, wMatches]) => ({
       weekKey,
-      label: weekKey === thisWeek
-        ? 'Deze week'
-        : weekKey === nextWeek
-          ? 'Volgende week'
-          : `Week ${getISOWeek(parse(weekKey, 'yyyy-MM-dd', new Date()))}`,
+      label:
+        weekKey === thisWeek
+          ? 'Deze week'
+          : weekKey === nextWeek
+            ? 'Volgende week'
+            : `Week ${getISOWeek(parse(weekKey, 'yyyy-MM-dd', new Date()))}`,
       matches: wMatches,
     }))
 }
 
 // ─── Standings (poulestand) ───────────────────────────────────────────────────
 
-export function transformStandings(raw: RawPoulestandResponse): StandingRow[] {
-  return raw.map((row) => ({
-    position: row.positie,
-    teamName: row.teamnaam,
-    logoUrl: row.clublogo || undefined,
-    isOwn: row.eigenteam === 'true',
-    played: row.gespeeldewedstrijden,
-    won: row.gewonnen,
-    drawn: row.gelijk,
-    lost: row.verloren,
-    goalsFor: row.doelpuntenvoor,
-    goalsAgainst: row.doelpuntentegen,
-    goalDiff: row.doelsaldo,
-    points: row.punten,
-  }))
+export function transformStandings(
+  raw: RawPoulestandResponse,
+  ownRelatiecode?: string,
+): StandingRow[] {
+  return raw.map((row) => {
+    const isOwn =
+      row.eigenteam === 'true' || (!!ownRelatiecode && row.clubrelatiecode === ownRelatiecode)
+
+    const note =
+      row.aantekening || (row.verliespunten > 0 ? `${row.verliespunten} verliespunten` : undefined)
+
+    return {
+      position: row.positie,
+      teamName: row.teamnaam,
+      clubRelatiecode: row.clubrelatiecode || undefined,
+      isOwn,
+      played: row.gespeeldewedstrijden,
+      won: row.gewonnen,
+      drawn: row.gelijk,
+      lost: row.verloren,
+      goalsFor: row.doelpuntenvoor,
+      goalsAgainst: row.doelpuntentegen,
+      goalDiff: row.doelsaldo,
+      points: row.punten,
+      note,
+    }
+  })
+}
+
+export function transformPeriodeStandings(
+  raw: RawPeriodestandResponse,
+  ownRelatiecode?: string,
+): StandingRow[] {
+  return raw.map((row) => {
+    const isOwn =
+      row.eigenteam === 'true' || (!!ownRelatiecode && row.clubcode === ownRelatiecode)
+
+    const note =
+      row.aantekening ||
+      (row.verliespunten > 0 ? `${row.verliespunten} verliespunten` : undefined)
+
+    return {
+      position: row.positie,
+      teamName: row.teamnaam,
+      clubRelatiecode: row.clubcode || undefined,
+      isOwn,
+      played: row.aantalwedstrijden,
+      won: row.gewonnen,
+      drawn: row.gelijkspel,
+      lost: row.verloren,
+      goalsFor: row.doelpuntenvoor,
+      goalsAgainst: row.tegendoelpunten,
+      goalDiff: row.doelsaldo,
+      points: row.totaalpunten,
+      note,
+    }
+  })
 }
 
 // ─── Lineup (poule-indeling) ──────────────────────────────────────────────────
@@ -266,7 +310,9 @@ export type ResultMatch = {
   matchCode: number
   date: string
   homeTeam: string
+  homeTeamRelatiecode?: string
   awayTeam: string
+  awayTeamRelatiecode?: string
   score: string
   status: string
   isOwnHome: boolean
@@ -286,13 +332,18 @@ export function transformResults(
 
     const date = parseDateStr(w.datum) ?? parseDateStr(w.wedstrijddatum)
     const weekKey = date ? getMondayKey(date) : 'unknown'
-    const displayDate = date ? formatDisplayDate(date) : (w.datumopgemaakt || '')
+    const displayDate = date ? formatDisplayDate(date) : w.datumopgemaakt || ''
+
+    const homeRelatiecode = w.thuisteamclubrelatiecode || undefined
+    const awayRelatiecode = w.uitteamclubrelatiecode || undefined
 
     return {
       matchCode: w.wedstrijdcode,
       date: displayDate,
       homeTeam: w.thuisteam,
+      homeTeamRelatiecode: homeRelatiecode,
       awayTeam: w.uitteam,
+      awayTeamRelatiecode: awayRelatiecode,
       score: w.uitslag,
       status: w.status,
       isOwnHome,

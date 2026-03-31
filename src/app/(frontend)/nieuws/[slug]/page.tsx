@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
   })
   const post = docs[0]
   if (!post) return {}
-  return { title: `${post.title} — SVV'04 Schoonebeek` }
+  return { title: `SVV'04 - ${docs[0].title}` }
 }
 
 export default async function PostPage({ params }: Props) {

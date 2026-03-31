@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { fetchClubData } from '@/lib/clubdata/fetch'
 import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
 
-export const metadata = { title: "Agenda — SVV'04 Schoonebeek" }
+export const metadata = { title: "SVV'04 - Agenda" }
 
 export default async function AgendaPage() {
   const activiteiten = await fetchClubData<RawActiviteitenResponse>(

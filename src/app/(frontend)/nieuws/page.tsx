@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import type { Media } from '@/payload-types'
 
-export const metadata = { title: "Nieuws — SVV'04 Schoonebeek" }
+export const metadata = { title: "SVV'04 - Nieuws" }
 
 const PAGE_SIZE = 12
 

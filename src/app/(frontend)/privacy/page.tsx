@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import ReactMarkdown from 'react-markdown'
 
-export const metadata = { title: "Privacyverklaring — SVV'04 Schoonebeek" }
+export const metadata = { title: "SVV'04 - Privacyverklaring" }
 
 export default function PrivacyPage() {
   const content = readFileSync(join(process.cwd(), 'src/content/privacy.md'), 'utf-8')

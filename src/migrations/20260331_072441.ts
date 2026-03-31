@@ -4,8 +4,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."enum_posts_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_teams_type" AS ENUM('senior', 'youth', 'other');
-  CREATE TYPE "public"."enum_teams_category" AS ENUM('mannen-zaterdag', 'mannen-zondag', 'mannen-futsal', 'vrouwen-18', 'mannen-35', 'mannen-45', 'jo21', 'jo19', 'jo17', 'jo15', 'jo13', 'jo12', 'jo11', 'jo10', 'jo9', 'jo8', 'jo7');
+  CREATE TYPE "public"."enum_teams_category" AS ENUM('Mannen zaterdag', 'Mannen zondag', 'Futsal', 'Vrouwen 18+', 'Mannen 35+', 'Mannen 45+', 'Jeugd onder 21', 'Jeugd onder 19', 'Jeugd onder 17', 'Jeugd onder 15', 'Jeugd onder 13', 'Jeugd onder 12', 'Jeugd onder 11', 'Jeugd onder 10', 'Jeugd onder 9', 'Jeugd onder 8', 'Jeugd onder 7');
   CREATE TYPE "public"."enum_sponsors_tier" AS ENUM('main', 'regular');
+  CREATE TYPE "public"."enum_pages_section" AS ENUM('vereniging', 'commissies', 'meedoen');
   CREATE TABLE "users_sessions" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
@@ -84,6 +85,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "pages" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"title" varchar NOT NULL,
+  	"section" "enum_pages_section" DEFAULT 'vereniging' NOT NULL,
   	"slug" varchar NOT NULL,
   	"content" jsonb,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
@@ -217,5 +219,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_posts_status";
   DROP TYPE "public"."enum_teams_type";
   DROP TYPE "public"."enum_teams_category";
-  DROP TYPE "public"."enum_sponsors_tier";`)
+  DROP TYPE "public"."enum_sponsors_tier";
+  DROP TYPE "public"."enum_pages_section";`)
 }

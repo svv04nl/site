@@ -10,8 +10,8 @@
   --color-light:   #f2f2f2;
   --color-accent:  #ff2020;
 
-  --font-heading: 'Rajdhani', 'Impact', 'Arial Narrow', sans-serif;
-  --font-body:    'Outfit', 'Helvetica Neue', 'Arial', sans-serif;
+  --font-heading: var(--font-rajdhani), 'Impact', 'Arial Narrow', sans-serif;
+  --font-body:    var(--font-outfit), 'Helvetica Neue', 'Arial', sans-serif;
 
   --grid-base:             1440px;
   --container-padding:     2rem;
@@ -205,6 +205,11 @@ p { margin: 0; }
   gap: 4rem;
 }
 
+.sub-menu-overview a {
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+}
+
 .sub-menu-list {
   flex: 0 0 auto;
   list-style: none;
@@ -350,7 +355,7 @@ p { margin: 0; }
   margin-left: auto;
   margin-right: auto;
   max-width: var(--grid-base);
-  min-height: 36vh;
+  min-height: 42vh;
   padding-bottom: 2.5rem;
   padding-left: var(--container-padding);
   padding-right: var(--container-padding);
@@ -368,6 +373,21 @@ p { margin: 0; }
 
 .site-hero-content {
   max-width: 760px;
+}
+
+.site-hero-tagline {
+  color: rgba(255 255 255 / 0.75);
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 300;
+  line-height: 1.5;
+  margin-top: 1.25rem;
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    font-size: 0.9375rem;
+
+    .site-hero-tagline-br { display: none; }
+  }
 }
 
 .site-hero-eyebrow {
@@ -1224,6 +1244,121 @@ p { margin: 0; }
   margin-top: 1.5rem;
 }
 
+// ─── Teams overview (senioren / jeugd) ───────────────────────────────────────
+
+.teams-overview-page {
+  padding-bottom: 4rem;
+}
+
+.teams-category-group {
+  margin-bottom: 3rem;
+}
+
+.teams-category-heading {
+  border-bottom: 2px solid #e5e5e5;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.625rem;
+  text-transform: uppercase;
+
+  &::before {
+    background-color: var(--color-primary);
+    content: '';
+    display: inline-block;
+    height: 1em;
+    margin-right: 0.625rem;
+    vertical-align: middle;
+    width: 4px;
+  }
+}
+
+.teams-grid {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: repeat(4, 1fr);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-card {
+  background: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0 0 0 / 0.07);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0 0 0 / 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.team-card-img-wrap {
+  aspect-ratio: 4 / 3;
+  background-color: #d0d0d0;
+  overflow: hidden;
+}
+
+.team-card-img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s ease;
+  width: 100%;
+
+  .team-card:hover & {
+    transform: scale(1.04);
+  }
+}
+
+.team-card-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0.875rem 1rem 1rem;
+}
+
+.team-card-category {
+  color: var(--color-primary);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.team-card-name {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  transition: color 0.2s ease;
+
+  .team-card:hover & {
+    color: var(--color-primary);
+  }
+}
+
 // ─── Static pages (privacy, cookies) ─────────────────────────────────────────
 
 .static-page {
@@ -1275,6 +1410,30 @@ p { margin: 0; }
     text-decoration: underline;
     &:hover { text-decoration: none; }
   }
+}
+
+.static-page-cta {
+  margin: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.cta-button {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff !important;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 1.75rem;
+  min-width: 280px;
+  text-align: center;
+  border-radius: 4px;
+  text-decoration: none !important;
+  transition: background 0.15s;
+
+  &:hover { background: color-mix(in srgb, var(--color-primary) 80%, black); }
 }
 
 // ─── Contact page ─────────────────────────────────────────────────────────────
@@ -1761,6 +1920,10 @@ p { margin: 0; }
   }
 }
 
+.site-footer-col {
+  min-width: 0;
+}
+
 .site-footer-col-title {
   color: var(--color-white);
   font-family: var(--font-heading);
@@ -1773,8 +1936,24 @@ p { margin: 0; }
 }
 
 .site-footer-nav-double {
-  display: flex;
+  display: grid;
   gap: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+.site-footer-nav-subheading {
+  color: var(--color-white);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+
+  a {
+    color: inherit;
+
+    &:hover { color: var(--color-primary); }
+  }
 }
 
 .site-footer-nav {
@@ -2124,6 +2303,24 @@ p { margin: 0; }
 
 .team-page { padding-bottom: 0; }
 
+.team-page-inner--title {
+  padding-bottom: 0.25rem;
+
+  .programma-title {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.team-page-category {
+  color: #888;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin: 0.1rem 0 0;
+  text-transform: uppercase;
+}
+
 .team-breadcrumb {
   background: #f5f5f5;
   border-bottom: 1px solid #e8e8e8;
@@ -2469,7 +2666,7 @@ p { margin: 0; }
 
 // League section
 .team-league-wrap {
-  padding: 2rem 0 3rem;
+  padding: 0 0 3rem;
 }
 
 .league-section {
@@ -2562,6 +2759,10 @@ p { margin: 0; }
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
+
+  &--sm {
+    font-size: 1.25rem;
+  }
 }
 
 .league-standings-subtitle {
@@ -2716,7 +2917,7 @@ p { margin: 0; }
   width: 100%;
 
   // Fixed column widths so all week tables align with each other
-  col.col-date   { width: 120px; }
+  col.col-date   { width: 150px; }
   col.col-time   { width: 70px; }
   col.col-home   { width: 28%; }
   col.col-away   { width: 28%; }
@@ -2804,7 +3005,7 @@ p { margin: 0; }
   table-layout: fixed;
   width: 100%;
 
-  col.col-date   { width: 120px; }
+  col.col-date   { width: 150px; }
   col.col-home   { width: auto; }
   col.col-away   { width: auto; }
   col.col-score  { width: 90px; }

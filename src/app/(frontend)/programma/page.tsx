@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import ProgrammaClient from '@/components/ProgrammaClient'
+import ClubSchedule from '@/components/ClubSchedule'
 
 export default function ProgrammaPage() {
   return (
@@ -16,7 +16,7 @@ export default function ProgrammaPage() {
 
       <div className="team-page-inner">
         <h1 className="programma-title">Programma</h1>
-        <ProgrammaClient />
+        <ClubSchedule />
       </div>
 
     </main>

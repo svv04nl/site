@@ -1,20 +1,21 @@
 import React from 'react'
 import Link from 'next/link'
+import ClubLogo from '@/components/ClubLogo'
 
 export type MatchData = {
-  date: string        // e.g. "ZA 5 APR"
-  time: string        // e.g. "14:30"
+  date: string // e.g. "ZA 5 APR"
+  time: string // e.g. "14:30"
   homeTeam: {
     name: string
     shortName?: string
-    logoUrl?: string
+    clubRelatiecode?: string
     isOwn?: boolean
     location: 'Thuis' | 'Uit'
   }
   awayTeam: {
     name: string
     shortName?: string
-    logoUrl?: string
+    clubRelatiecode?: string
     isOwn?: boolean
     location: 'Thuis' | 'Uit'
   }
@@ -26,17 +27,6 @@ type Props = {
   showTitle?: boolean
 }
 
-function ClubLogo({ name, logoUrl }: { name: string; logoUrl?: string }) {
-  if (logoUrl) {
-    return <img src={logoUrl} alt={name} className="next-match-logo" />
-  }
-  return (
-    <div className="next-match-logo next-match-logo--placeholder">
-      <img src="/logo.png" alt={name} />
-    </div>
-  )
-}
-
 export default function NextMatch({ match, teamName, showTitle = true }: Props) {
   return (
     <div className="next-match-card">
@@ -44,7 +34,11 @@ export default function NextMatch({ match, teamName, showTitle = true }: Props) 
       {match ? (
         <div className="next-match-body">
           <div className="next-match-club">
-            <ClubLogo name={match.homeTeam.name} logoUrl={match.homeTeam.logoUrl} />
+            <ClubLogo
+              clubcode={match.homeTeam.clubRelatiecode}
+              name={match.homeTeam.name}
+              className="next-match-logo"
+            />
             <span className="next-match-club-name">{match.homeTeam.name}</span>
           </div>
 
@@ -54,15 +48,17 @@ export default function NextMatch({ match, teamName, showTitle = true }: Props) 
           </div>
 
           <div className="next-match-club">
-            <ClubLogo name={match.awayTeam.name} logoUrl={match.awayTeam.logoUrl} />
+            <ClubLogo
+              clubcode={match.awayTeam.clubRelatiecode}
+              name={match.awayTeam.name}
+              className="next-match-logo"
+            />
             <span className="next-match-club-name">{match.awayTeam.name}</span>
           </div>
         </div>
       ) : (
         <p className="next-match-empty">
-          {teamName
-            ? `Nog geen wedstrijd gepland voor ${teamName}.`
-            : 'Wedstrijdgegevens volgen.'}
+          {teamName ? `Nog geen wedstrijd gepland voor ${teamName}.` : 'Wedstrijdgegevens volgen.'}
         </p>
       )}
     </div>

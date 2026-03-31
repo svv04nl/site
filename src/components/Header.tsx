@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useScroll } from '@reactuses/core'
 
 const NavArrow = () => (
   <svg className="nav-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
@@ -24,46 +25,36 @@ type Team = {
   category?: string | null
 }
 
+type ActionPage = {
+  id: string | number
+  title: string
+  slug: string
+  section: string
+}
+
 type Props = {
   seniorTeams: Team[]
   youthTeams: Team[]
+  actiePages: ActionPage[]
 }
 
-
-export default function Header({ seniorTeams, youthTeams }: Props) {
-  const headerRef = useRef<HTMLElement>(null)
-  const logoImgRef = useRef<HTMLImageElement>(null)
+export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
   const pathname = usePathname()
   const isHome = pathname === '/'
+
+  const [, scrollY] = useScroll(
+    typeof window !== 'undefined' ? window : null,
+    { throttle: 50 },
+  )
+  const isScrolled = !isHome || scrollY > 40
 
   // Close mobile menu on navigation
   useEffect(() => {
     setMobileOpen(false)
     setOpenSubmenu(null)
   }, [pathname])
-
-  useEffect(() => {
-    const header = headerRef.current
-    const logoImg = logoImgRef.current
-    if (!header || !logoImg) return
-
-    if (!isHome) return
-
-    // Homepage: shrink on scroll
-    logoImg.style.transition = 'none'
-    header.classList.toggle('is-scrolled', window.scrollY > 40)
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        logoImg.style.transition = ''
-      }),
-    )
-
-    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 40)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [isHome])
 
   const toggleSubmenu = (name: string) =>
     setOpenSubmenu((prev) => (prev === name ? null : name))
@@ -86,27 +77,30 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
   }
 
   return (
-    <header className={`site-header${!isHome ? ' is-scrolled' : ''}`} ref={headerRef}>
+    <header className={`site-header${isScrolled ? ' is-scrolled' : ''}`}>
 
       {/* Topbar */}
       <div className="site-header-topbar">
         <div className="site-header-topbar-inner">
           <Link className="site-header-topbar-logo" href="/" aria-label="SVV'04 Schoonebeek - home">
             <img
-              ref={logoImgRef}
               src="/logo.png"
               alt="SVV'04 Schoonebeek"
               className="site-header-topbar-logo-img"
             />
           </Link>
           <div className="site-header-topbar-right">
-            <nav aria-label="Actie links">
-              <ul className="site-header-topbar-list">
-                <li><Link href="#">Lid worden</Link></li>
-                <li><Link href="#">Sponsor worden</Link></li>
-                <li><Link href="#">Vrijwilliger worden</Link></li>
-              </ul>
-            </nav>
+            {actiePages.length > 0 && (
+              <nav aria-label="Actie links">
+                <ul className="site-header-topbar-list">
+                  {actiePages.map((page) => (
+                    <li key={page.id}>
+                      <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
             <div className="site-header-topbar-social">
               <a href="https://www.facebook.com/svv04" className="site-header-topbar-social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -159,7 +153,6 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
               <li><Link href="/nieuws">Nieuws</Link></li>
               <li><Link href="/agenda">Agenda</Link></li>
               <li><Link href="/programma">Programma</Link></li>
-
               {([
                 {
                   label: 'Senioren',
@@ -194,20 +187,20 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
                   content: (
                     <div className="sub-menu-grid">
                       <ul className="sub-menu-list">
-                        <li><a href="#">Algemeen</a></li>
-                        <li><a href="#">Bestuur</a></li>
-                        <li><a href="#">Historie</a></li>
-                        <li><a href="#">Sportpark</a></li>
+                        <li><Link href="/vereniging/algemeen">Algemeen</Link></li>
+                        <li><Link href="/vereniging/bestuur">Bestuur</Link></li>
+                        <li><Link href="/vereniging/historie">Historie</Link></li>
+                        <li><Link href="/vereniging/sportpark">Sportpark</Link></li>
                       </ul>
                       <ul className="sub-menu-list">
-                        <li><a href="#">Clubblad</a></li>
-                        <li><a href="#">Lidmaatschap</a></li>
-                        <li><a href="#">Clubkleding</a></li>
+                        <li><Link href="/vereniging/clubblad">Clubblad</Link></li>
+                        <li><Link href="/vereniging/lidmaatschap">Lidmaatschap</Link></li>
+                        <li><Link href="/vereniging/clubkleding">Clubkleding</Link></li>
                       </ul>
                       <ul className="sub-menu-list">
-                        <li><a href="#">Vrijwilligers</a></li>
-                        <li><a href="#">Jeugdafdeling</a></li>
-                        <li><a href="#">Sponsoren</a></li>
+                        <li><Link href="/vereniging/vrijwilligers">Vrijwilligers</Link></li>
+                        <li><Link href="/vereniging/jeugdafdeling">Jeugdafdeling</Link></li>
+                        <li><Link href="/vereniging/sponsoren">Sponsoren</Link></li>
                       </ul>
                     </div>
                   ),
@@ -217,19 +210,19 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
                   content: (
                     <div className="sub-menu-grid">
                       <ul className="sub-menu-list">
-                        <li><a href="#">Activiteitencommissie</a></li>
-                        <li><a href="#">Kantinecommissie</a></li>
-                        <li><a href="#">Toernooicommissie</a></li>
+                        <li><Link href="/commissies/activiteitencommissie">Activiteitencommissie</Link></li>
+                        <li><Link href="/commissies/kantinecommissie">Kantinecommissie</Link></li>
+                        <li><Link href="/commissies/toernooicommissie">Toernooicommissie</Link></li>
                       </ul>
                       <ul className="sub-menu-list">
-                        <li><a href="#">Commerciële commissie</a></li>
-                        <li><a href="#">Scheidsrechterscommissie</a></li>
-                        <li><a href="#">Vertrouwenspersoon</a></li>
+                        <li><Link href="/commissies/commerciele-commissie">Commerciële commissie</Link></li>
+                        <li><Link href="/commissies/scheidsrechterscommissie">Scheidsrechterscommissie</Link></li>
+                        <li><Link href="/commissies/vertrouwenspersoon">Vertrouwenspersoon</Link></li>
                       </ul>
                       <ul className="sub-menu-list">
-                        <li><a href="#">Technische Commissie</a></li>
-                        <li><a href="#">Communicatie commissie</a></li>
-                        <li><a href="#">Kleding &amp; materiaal</a></li>
+                        <li><Link href="/commissies/technische-commissie">Technische Commissie</Link></li>
+                        <li><Link href="/commissies/communicatie-commissie">Communicatie commissie</Link></li>
+                        <li><Link href="/commissies/kleding-en-materiaal">Kleding &amp; materiaal</Link></li>
                       </ul>
                     </div>
                   ),
@@ -258,7 +251,6 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
             <li><Link href="/nieuws">Nieuws</Link></li>
             <li><Link href="/agenda">Agenda</Link></li>
             <li><Link href="/programma">Programma</Link></li>
-
             {([
               {
                 label: 'Senioren',
@@ -270,11 +262,32 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
               },
               {
                 label: 'Vereniging',
-                items: ['Algemeen', 'Bestuur', 'Historie', 'Sportpark', 'Clubblad', 'Lidmaatschap', 'Vrijwilligers'].map((s) => ({ label: s, href: '#' })),
+                items: [
+                  { label: 'Algemeen', href: '/vereniging/algemeen' },
+                  { label: 'Bestuur', href: '/vereniging/bestuur' },
+                  { label: 'Historie', href: '/vereniging/historie' },
+                  { label: 'Sportpark', href: '/vereniging/sportpark' },
+                  { label: 'Clubblad', href: '/vereniging/clubblad' },
+                  { label: 'Lidmaatschap', href: '/vereniging/lidmaatschap' },
+                  { label: 'Clubkleding', href: '/vereniging/clubkleding' },
+                  { label: 'Vrijwilligers', href: '/vereniging/vrijwilligers' },
+                  { label: 'Jeugdafdeling', href: '/vereniging/jeugdafdeling' },
+                  { label: 'Sponsoren', href: '/vereniging/sponsoren' },
+                ],
               },
               {
                 label: 'Commissies',
-                items: ['Activiteitencommissie', 'Kantinecommissie', 'Commerciële commissie', 'Technische Commissie', 'Toernooicommissie', 'Vertrouwenspersoon'].map((s) => ({ label: s, href: '#' })),
+                items: [
+                  { label: 'Activiteitencommissie', href: '/commissies/activiteitencommissie' },
+                  { label: 'Kantinecommissie', href: '/commissies/kantinecommissie' },
+                  { label: 'Toernooicommissie', href: '/commissies/toernooicommissie' },
+                  { label: 'Commerciële commissie', href: '/commissies/commerciele-commissie' },
+                  { label: 'Scheidsrechterscommissie', href: '/commissies/scheidsrechterscommissie' },
+                  { label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' },
+                  { label: 'Technische Commissie', href: '/commissies/technische-commissie' },
+                  { label: 'Communicatie commissie', href: '/commissies/communicatie-commissie' },
+                  { label: 'Kleding & materiaal', href: '/commissies/kleding-en-materiaal' },
+                ],
               },
             ] as const).map(({ label, items }) => (
               <li key={label} className={`mobile-nav-has-children${openSubmenu === label ? ' is-open' : ''}`}>
@@ -294,10 +307,14 @@ export default function Header({ seniorTeams, youthTeams }: Props) {
             ))}
 
             <li><Link href="/contact">Contact</Link></li>
-            <li className="mobile-nav-divider" />
-            <li><Link href="#">Lid worden</Link></li>
-            <li><Link href="#">Sponsor worden</Link></li>
-            <li><Link href="#">Vrijwilliger worden</Link></li>
+            {actiePages.length > 0 && (
+              <>
+                <li className="mobile-nav-divider" />
+                {actiePages.map((page) => (
+                  <li key={page.id}><Link href={`/${page.section}/${page.slug}`}>{page.title}</Link></li>
+                ))}
+              </>
+            )}
             <li><a href="https://clubs.deventrade.com/nl/svv-04/clubcollectie" className="mobile-nav-cta" target="_blank" rel="noopener noreferrer">Webshop</a></li>
           </ul>
         </div>

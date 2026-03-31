@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
 
-export const metadata = { title: "Contact — SVV'04 Schoonebeek" }
+export const metadata = { title: "SVV'04 - Contact" }
 
 const CONTACT_SECTIONS = [
   {

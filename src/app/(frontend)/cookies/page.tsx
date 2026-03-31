@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import ReactMarkdown from 'react-markdown'
 
-export const metadata = { title: "Cookiebeleid — SVV'04 Schoonebeek" }
+export const metadata = { title: "SVV'04 - Cookiebeleid" }
 
 export default function CookiesPage() {
   const content = readFileSync(join(process.cwd(), 'src/content/cookies.md'), 'utf-8')

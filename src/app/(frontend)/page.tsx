@@ -53,6 +53,7 @@ export default async function HomePage() {
             <div className="site-hero-content">
               <p className="site-hero-eyebrow">Schoonebeekse Voetbal Vereniging</p>
               <h1 className="site-hero-title">Welkom bij <em>SVV&rsquo;04</em></h1>
+              <p className="site-hero-tagline">Een sterke gezellige voetbalvereniging uit Schoonebeek,<br className="site-hero-tagline-br" /> met een prachtige accommodatie.</p>
             </div>
           </div>
         </section>
@@ -151,7 +152,7 @@ export default async function HomePage() {
             </div>
 
             <div className="cta-grid">
-              <Link className="cta-tile" href="#" style={{ backgroundImage: 'url(/hero-sportpark.jpg)' }}>
+              <Link className="cta-tile" href="/meedoen/lid-worden" style={{ backgroundImage: 'url(/hero-sportpark.jpg)' }}>
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Lid worden</h3>
@@ -159,7 +160,7 @@ export default async function HomePage() {
                   <span className="cta-tile-link">Lid worden &rarr;</span>
                 </div>
               </Link>
-              <Link className="cta-tile" href="#" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: '60% center' }}>
+              <Link className="cta-tile" href="/meedoen/sponsor-worden" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: '60% center' }}>
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Sponsor worden</h3>
@@ -167,7 +168,7 @@ export default async function HomePage() {
                   <span className="cta-tile-link">Sponsoren &rarr;</span>
                 </div>
               </Link>
-              <Link className="cta-tile" href="#" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: 'center 70%' }}>
+              <Link className="cta-tile" href="/meedoen/vrijwilliger-worden" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: 'center 70%' }}>
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Vrijwilliger worden</h3>
@@ -175,7 +176,7 @@ export default async function HomePage() {
                   <span className="cta-tile-link">Word vrijwilliger &rarr;</span>
                 </div>
               </Link>
-              <Link className="cta-tile" href="#" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: '80% 40%' }}>
+              <Link className="cta-tile" href="/vereniging/voetbal-nl-app" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: '80% 40%' }}>
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Voetbal.nl App</h3>

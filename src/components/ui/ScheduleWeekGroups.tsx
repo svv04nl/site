@@ -1,6 +1,7 @@
 import React from 'react'
 import type { ScheduleWeekGroup } from '@/lib/clubdata/transform'
-import MatchCard from '@/components/MatchCard'
+import MatchCard from '@/components/ui/MatchCard'
+import ClubLogo from '@/components/ClubLogo'
 
 const ShieldIcon = () => (
   <svg
@@ -20,7 +21,6 @@ const ShieldIcon = () => (
 
 type Props = {
   weekGroups: ScheduleWeekGroup[]
-  logoMap?: Map<string, string | undefined>
   subtitle?: string
   isLoading?: boolean
   emptyMessage?: string
@@ -28,7 +28,6 @@ type Props = {
 
 export default function ScheduleWeekGroups({
   weekGroups,
-  logoMap,
   subtitle,
   isLoading = false,
   emptyMessage = 'Geen wedstrijden gevonden.',
@@ -86,38 +85,48 @@ export default function ScheduleWeekGroups({
               <tbody>
                 {group.matches.map((m) => (
                   <tr key={m.matchCode} className={m.isOwn ? 'league-schedule-own-row' : ''}>
-                    <td className="league-schedule-date" data-label="Datum">{m.date}</td>
-                    <td className="league-schedule-time" data-label="Tijd">{m.time}</td>
+                    <td className="league-schedule-date" data-label="Datum">
+                      {m.date}
+                    </td>
+                    <td className="league-schedule-time" data-label="Tijd">
+                      {m.time}
+                    </td>
                     <td data-label="Thuis">
                       <span className="league-schedule-team-cell">
-                        {(m.homeTeamLogo ?? logoMap?.get(m.homeTeam)) && (
-                          <img
-                            src={m.homeTeamLogo ?? logoMap?.get(m.homeTeam)}
-                            alt=""
-                            className="league-schedule-logo"
-                          />
-                        )}
-                        <span className={m.isOwnHome ? 'league-schedule-own-name' : ''}>
+                        <ClubLogo
+                          clubcode={m.homeTeamRelatiecode}
+                          name={m.homeTeam}
+                          className="league-schedule-logo"
+                        />
+                        <span
+                          className={m.isOwnHome ? 'league-schedule-own-name' : ''}
+                          style={m.isOwnHome ? { color: '#c8102e', fontWeight: 600 } : undefined}
+                        >
                           {m.homeTeam}
                         </span>
                       </span>
                     </td>
                     <td data-label="Uit">
                       <span className="league-schedule-team-cell">
-                        {(m.awayTeamLogo ?? logoMap?.get(m.awayTeam)) && (
-                          <img
-                            src={m.awayTeamLogo ?? logoMap?.get(m.awayTeam)}
-                            alt=""
-                            className="league-schedule-logo"
-                          />
-                        )}
-                        <span className={m.isOwnAway ? 'league-schedule-own-name' : ''}>
+                        <ClubLogo
+                          clubcode={m.awayTeamRelatiecode}
+                          name={m.awayTeam}
+                          className="league-schedule-logo"
+                        />
+                        <span
+                          className={m.isOwnAway ? 'league-schedule-own-name' : ''}
+                          style={m.isOwnAway ? { color: '#c8102e', fontWeight: 600 } : undefined}
+                        >
                           {m.awayTeam}
                         </span>
                       </span>
                     </td>
-                    <td className="league-schedule-location" data-label="Locatie">{m.venue}</td>
-                    <td className="league-schedule-status" data-label="Status">{m.status}</td>
+                    <td className="league-schedule-location" data-label="Locatie">
+                      {m.venue}
+                    </td>
+                    <td className="league-schedule-status" data-label="Status">
+                      {m.status}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -132,8 +141,8 @@ export default function ScheduleWeekGroups({
                 date={m.date}
                 homeTeam={m.homeTeam}
                 awayTeam={m.awayTeam}
-                homeTeamLogo={m.homeTeamLogo ?? logoMap?.get(m.homeTeam)}
-                awayTeamLogo={m.awayTeamLogo ?? logoMap?.get(m.awayTeam)}
+                homeTeamRelatiecode={m.homeTeamRelatiecode}
+                awayTeamRelatiecode={m.awayTeamRelatiecode}
                 isOwnHome={m.isOwnHome}
                 isOwnAway={m.isOwnAway}
                 isOwn={m.isOwn}

@@ -1,11 +1,12 @@
 import React from 'react'
+import ClubLogo from '@/components/ClubLogo'
 
 type Props = {
   date: string
   homeTeam: string
   awayTeam: string
-  homeTeamLogo?: string
-  awayTeamLogo?: string
+  homeTeamRelatiecode?: string
+  awayTeamRelatiecode?: string
   isOwnHome?: boolean
   isOwnAway?: boolean
   isOwn?: boolean
@@ -15,23 +16,12 @@ type Props = {
   status?: string
 }
 
-function TeamLogo({ name, logoUrl }: { name: string; logoUrl?: string }) {
-  if (logoUrl) {
-    return <img src={logoUrl} alt={name} className="next-match-logo" />
-  }
-  return (
-    <div className="next-match-logo next-match-logo--placeholder">
-      <img src="/logo.png" alt={name} />
-    </div>
-  )
-}
-
 export default function MatchCard({
   date,
   homeTeam,
   awayTeam,
-  homeTeamLogo,
-  awayTeamLogo,
+  homeTeamRelatiecode,
+  awayTeamRelatiecode,
   isOwnHome,
   isOwnAway,
   isOwn,
@@ -46,7 +36,11 @@ export default function MatchCard({
     <div className={`next-match-card${isOwn ? ' next-match-card--own' : ''}`}>
       <div className="next-match-body">
         <div className="next-match-club">
-          <TeamLogo name={homeTeam} logoUrl={homeTeamLogo} />
+          <ClubLogo
+            clubcode={homeTeamRelatiecode}
+            name={homeTeam}
+            className="next-match-logo"
+          />
           <span className={`next-match-club-name${isOwnHome ? ' next-match-club-name--own' : ''}`}>
             {homeTeam}
           </span>
@@ -55,9 +49,7 @@ export default function MatchCard({
         <div className="next-match-info">
           <time className="next-match-date">{date}</time>
           {centerLabel && (
-            <div className={score ? 'next-match-score' : 'next-match-time'}>
-              {centerLabel}
-            </div>
+            <div className={score ? 'next-match-score' : 'next-match-time'}>{centerLabel}</div>
           )}
           {(venue || status) && (
             <div className="next-match-meta">
@@ -68,7 +60,11 @@ export default function MatchCard({
         </div>
 
         <div className="next-match-club">
-          <TeamLogo name={awayTeam} logoUrl={awayTeamLogo} />
+          <ClubLogo
+            clubcode={awayTeamRelatiecode}
+            name={awayTeam}
+            className="next-match-logo"
+          />
           <span className={`next-match-club-name${isOwnAway ? ' next-match-club-name--own' : ''}`}>
             {awayTeam}
           </span>

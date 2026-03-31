@@ -131,6 +131,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  role: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -214,23 +215,23 @@ export interface Team {
   type: 'senior' | 'youth' | 'other';
   category?:
     | (
-        | 'mannen-zaterdag'
-        | 'mannen-zondag'
-        | 'mannen-futsal'
-        | 'vrouwen-18'
-        | 'mannen-35'
-        | 'mannen-45'
-        | 'jo21'
-        | 'jo19'
-        | 'jo17'
-        | 'jo15'
-        | 'jo13'
-        | 'jo12'
-        | 'jo11'
-        | 'jo10'
-        | 'jo9'
-        | 'jo8'
-        | 'jo7'
+        | 'Mannen zaterdag'
+        | 'Mannen zondag'
+        | 'Futsal'
+        | 'Vrouwen 18+'
+        | 'Mannen 35+'
+        | 'Mannen 45+'
+        | 'Jeugd onder 21'
+        | 'Jeugd onder 19'
+        | 'Jeugd onder 17'
+        | 'Jeugd onder 15'
+        | 'Jeugd onder 13'
+        | 'Jeugd onder 12'
+        | 'Jeugd onder 11'
+        | 'Jeugd onder 10'
+        | 'Jeugd onder 9'
+        | 'Jeugd onder 8'
+        | 'Jeugd onder 7'
       )
     | null;
   /**
@@ -283,8 +284,9 @@ export interface Sponsor {
 export interface Page {
   id: number;
   title: string;
+  section: 'vereniging' | 'commissies' | 'meedoen';
   /**
-   * URL path, e.g. "technische-commissie"
+   * URL slug, e.g. "technische-commissie" → /commissies/technische-commissie
    */
   slug: string;
   content?: {
@@ -302,6 +304,14 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Optionele knop onder de pagina-inhoud
+   */
+  ctaBlock?: {
+    enabled?: boolean | null;
+    buttonLabel?: string | null;
+    buttonUrl?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -400,6 +410,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -485,8 +496,16 @@ export interface SponsorsSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  section?: T;
   slug?: T;
   content?: T;
+  ctaBlock?:
+    | T
+    | {
+        enabled?: T;
+        buttonLabel?: T;
+        buttonUrl?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
