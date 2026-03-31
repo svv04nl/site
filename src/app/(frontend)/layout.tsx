@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import Header from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
