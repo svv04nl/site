@@ -9,7 +9,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-const BLOB_BASE = 'https://cwvhguuuf0nqhoqwv.public.blob.vercel-storage.com'
+const BLOB_BASE = 'https://cwvhguuf0nqhoqwv.public.blob.vercel-storage.com'
 const API_PREFIX = '/api/media/file/'
 
 function toBlobUrl(relativeUrl: string): string {
