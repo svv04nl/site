@@ -19,6 +19,7 @@
     "migrate": "cross-env NODE_ENV=production NODE_OPTIONS=\"--no-deprecation\" payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "seed": "node --no-deprecation --env-file=.env --import=tsx/esm src/seed.ts",
+    "fix:media-urls": "node --no-deprecation --env-file=.env.production --import=tsx/esm src/scripts/fix-media-urls.ts",
     "seed:pages": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/scripts/seed-pages.ts",
     "seed:posts": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/seed-posts.ts",
     "sync:teamcodes": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/sync-teamcodes.ts",
