@@ -1,67 +1,87 @@
-# Payload Blank Template
+# SVV'04 Schoonebeek — Website
 
-This template comes configured with the bare minimum to get started on anything you need.
+Website voor voetbalvereniging SVV'04 uit Schoonebeek. Gebouwd met Next.js, Payload CMS en gehost op Vercel.
 
-## Quick start
+## Tech stack
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- **Next.js 16** (App Router) — frontend en server-side rendering
+- **Payload CMS 3** — content management (teams, nieuws, pagina's, media, sponsors)
+- **PostgreSQL** via [Neon](https://neon.tech) — database
+- **Vercel Blob** — media-opslag
+- **Resend** — e-mail
+- **Vercel** — hosting en CI/CD
 
-## Quick Start - local setup
+## Lokale ontwikkeling
 
-To spin up this template locally, follow these steps:
+### Vereisten
 
-### Clone
+- Node.js ≥ 20
+- pnpm ≥ 9
+- Toegang tot Vercel project (voor env vars)
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+### Setup
 
-### Development
+```bash
+# 1. Clone de repo
+git clone <repo-url>
+cd site
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+# 2. Haal lokale env vars op via Vercel CLI
+vercel env pull .env.local
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+# 3. Installeer dependencies
+pnpm install
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+# 4. Start de dev server
+pnpm dev
+```
 
-#### Docker (Optional)
+Open `http://localhost:3000` voor de frontend en `http://localhost:3000/admin` voor het CMS.
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+De dev-omgeving gebruikt de **Neon `dev` branch** — gescheiden van productie. Schema-wijzigingen worden automatisch doorgevoerd (dev push, geen migraties nodig).
 
-To do so, follow these steps:
+## Scripts
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+| Script | Beschrijving |
+|--------|-------------|
+| `pnpm dev` | Start dev server |
+| `pnpm build` | Productie build |
+| `pnpm generate` | Genereer TypeScript types + import map |
+| `pnpm seed:pages` | Seed standaardpagina's |
+| `pnpm fix:media-urls` | Herstel legacy media-URLs naar directe blob-URLs |
+| `pnpm regenerate:media-sizes` | Genereer alle afbeeldingsformaten opnieuw voor teamfoto's |
+| `pnpm db:dev:reset` | Reset de Neon dev-branch naar productie |
+| `pnpm db:dev:no-expiry` | Zet de Neon dev-branch op geen vervaldatum |
 
-## How it works
+## Databases
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+| Omgeving | Neon branch | Verbinding |
+|----------|-------------|-----------|
+| Lokaal / dev | `dev` | `.env.local` → `DATABASE_URL` |
+| Productie | `production` | Vercel env → `DATABASE_URL` |
 
-### Collections
+## Projectstructuur
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+```
+src/
+├── app/
+│   ├── (frontend)/          # Publieke frontend routes
+│   └── (payload)/           # Payload admin routes
+├── collections/             # CMS-collectie configuraties
+├── globals/                 # CMS-globals
+├── components/              # React componenten
+├── hooks/                   # Payload hook functies
+├── access/                  # Toegangscontrole functies
+├── scripts/                 # Beheerscripts (migraties, seeds)
+└── payload.config.ts        # Hoofd Payload-configuratie
+```
 
-- #### Users (Authentication)
+## Deployment
 
-  Users are auth-enabled collections that have access to the admin panel.
+Elke push naar `main` triggert automatisch een Vercel-deployment. De build-command is:
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+```
+NODE_ENV=production pnpm build && DATABASE_URL=$DATABASE_URL_UNPOOLED pnpm migrate
+```
 
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Migraties draaien tegen de **unpooled** Neon-verbinding (vereist voor DDL-statements).
