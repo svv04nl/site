@@ -34,6 +34,26 @@ export const Media: CollectionConfig = {
           options: { quality: 82 },
         },
       },
+      {
+        // Team listing cards (senioren/jeugd overview pages)
+        name: 'teamCard',
+        width: 600,
+        height: undefined,
+        formatOptions: {
+          format: 'webp',
+          options: { quality: 80 },
+        },
+      },
+      {
+        // Team detail page photo (main column)
+        name: 'teamPhoto',
+        width: 900,
+        height: undefined,
+        formatOptions: {
+          format: 'webp',
+          options: { quality: 85 },
+        },
+      },
     ],
     adminThumbnail: 'featuredPost',
     focalPoint: true,

@@ -2370,7 +2370,7 @@ p { margin: 0; }
   overflow: hidden;
   background: #e8e8e8;
 
-  img {
+  .team-photo-img {
     width: 100%;
     height: auto;
     display: block;
@@ -2378,6 +2378,24 @@ p { margin: 0; }
     max-height: 520px;
     object-fit: cover;
     object-position: center top;
+  }
+
+  @media (min-width: $breakpoint-nav) {
+    position: relative;
+    cursor: pointer;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      transition: background 0.2s;
+      border-radius: 8px;
+    }
+
+    &:hover::after {
+      background: rgba(0, 0, 0, 0.12);
+    }
   }
 }
 

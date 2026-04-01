@@ -31,7 +31,7 @@ export default async function JeugdPage() {
           <div className="teams-grid">
             {teams.map((team) => {
               const photo = team.photo as Media | null | undefined
-              const photoUrl = photo?.url ?? null
+              const photoUrl = photo?.sizes?.teamCard?.url ?? photo?.url ?? null
               return (
                 <Link key={team.id} href={`/teams/${team.slug}`} className="team-card">
                   <div className="team-card-img-wrap">

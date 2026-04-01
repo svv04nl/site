@@ -9,6 +9,7 @@ import { TeamProvider } from '@/components/team/TeamContext'
 import TeamRosterSection from '@/components/team/TeamRosterSection'
 import TeamSponsorSection from '@/components/team/TeamSponsorSection'
 import TeamTabNav from '@/components/team/TeamTabNav'
+import TeamPhotoWithLightbox from '@/components/team/TeamPhotoWithLightbox'
 import type { Media } from '@/payload-types'
 import NextMatchServer from '@/components/NextMatchServer'
 import ScrollToTop from '@/components/team/ScrollToTop'
@@ -35,7 +36,8 @@ export default async function TeamLayout({ params, children }: Props) {
   if (!team) notFound()
 
   const photo = team.photo as Media | null | undefined
-  const photoUrl = photo?.url ?? null
+  const photoUrl = photo?.sizes?.teamPhoto?.url ?? photo?.url ?? null
+  const photoLargeUrl = photo?.url ?? null
   const teamcode = team.teamcode ?? null
 
   const categoryLabel = team.category ?? null
@@ -64,12 +66,21 @@ export default async function TeamLayout({ params, children }: Props) {
           <div className="team-layout">
             <div className="team-main">
               <div className="team-photo">
-                <img
-                  src={photoUrl ?? '/team-placeholder.png'}
-                  alt={team.name}
-                  width={1200}
-                  height={800}
-                />
+                {photoUrl ? (
+                  <TeamPhotoWithLightbox
+                    src={photoUrl}
+                    largeSrc={photoLargeUrl ?? photoUrl}
+                    alt={team.name}
+                  />
+                ) : (
+                  <img
+                    src="/team-placeholder.png"
+                    alt={team.name}
+                    width={900}
+                    height={600}
+                    className="team-photo-img"
+                  />
+                )}
               </div>
               <TeamRosterSection />
             </div>
