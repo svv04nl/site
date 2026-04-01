@@ -170,6 +170,24 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    newsCard?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    featuredPost?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -182,6 +200,7 @@ export interface Post {
   featuredImage?: (number | null) | Media;
   publishedAt?: string | null;
   status?: ('draft' | 'published') | null;
+  category?: ('nieuws' | 'overig') | null;
   content?: {
     root: {
       type: string;
@@ -304,14 +323,6 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
-  /**
-   * Optionele knop onder de pagina-inhoud
-   */
-  ctaBlock?: {
-    enabled?: boolean | null;
-    buttonLabel?: string | null;
-    buttonUrl?: string | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -446,6 +457,30 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        newsCard?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        featuredPost?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -457,6 +492,7 @@ export interface PostsSelect<T extends boolean = true> {
   featuredImage?: T;
   publishedAt?: T;
   status?: T;
+  category?: T;
   content?: T;
   excerpt?: T;
   updatedAt?: T;
@@ -499,13 +535,6 @@ export interface PagesSelect<T extends boolean = true> {
   section?: T;
   slug?: T;
   content?: T;
-  ctaBlock?:
-    | T
-    | {
-        enabled?: T;
-        buttonLabel?: T;
-        buttonUrl?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }

@@ -21,7 +21,12 @@ export default async function HomePage() {
     }),
     payload.find({
       collection: 'posts',
-      where: { status: { equals: 'published' } },
+      where: {
+        and: [
+          { status: { equals: 'published' } },
+          { category: { equals: 'nieuws' } },
+        ],
+      },
       sort: '-publishedAt',
       limit: 3,
       depth: 1,
@@ -85,12 +90,14 @@ export default async function HomePage() {
             <div className="news-grid">
               {latestPosts.map((post) => {
                 const image = post.featuredImage as Media | null | undefined
-                const imageUrl = image?.url ?? null
+                const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
                 return (
                   <article key={post.id} className="news-card">
-                    <div className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--accent'}`}>
-                      {imageUrl && (
+                    <div className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}>
+                      {imageUrl ? (
                         <img src={imageUrl} alt={image?.alt ?? post.title} className="news-card-img" />
+                      ) : (
+                        <img src="/logo.png" alt="" className="news-card-img-placeholder" aria-hidden="true" />
                       )}
                     </div>
                     <div className="news-card-body">

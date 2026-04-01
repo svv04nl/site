@@ -36,7 +36,6 @@ export default async function MeedoenPage({ params }: Props) {
       section="meedoen"
       sectionLabel="Meedoen"
       content={page.content}
-      ctaBlock={page.ctaBlock}
     />
   )
 }

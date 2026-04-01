@@ -66,6 +66,18 @@ export const Posts: CollectionConfig = {
       },
     },
     {
+      name: 'category',
+      type: 'select',
+      options: [
+        { label: 'Nieuws', value: 'nieuws' },
+        { label: 'Overig', value: 'overig' },
+      ],
+      defaultValue: 'nieuws',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'content',
       type: 'richText',
     },

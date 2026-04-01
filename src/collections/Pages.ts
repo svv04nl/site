@@ -47,37 +47,5 @@ export const Pages: CollectionConfig = {
       name: 'content',
       type: 'richText',
     },
-    {
-      name: 'ctaBlock',
-      type: 'group',
-      label: 'Call to Action',
-      admin: {
-        description: 'Optionele knop onder de pagina-inhoud',
-      },
-      fields: [
-        {
-          name: 'enabled',
-          type: 'checkbox',
-          label: 'Toon CTA-knop',
-          defaultValue: false,
-        },
-        {
-          name: 'buttonLabel',
-          type: 'text',
-          label: 'Knoptekst',
-          admin: {
-            condition: (_, siblingData) => siblingData?.enabled,
-          },
-        },
-        {
-          name: 'buttonUrl',
-          type: 'text',
-          label: 'URL',
-          admin: {
-            condition: (_, siblingData) => siblingData?.enabled,
-          },
-        },
-      ],
-    },
   ],
 }

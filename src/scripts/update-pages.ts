@@ -48,11 +48,6 @@ async function main() {
       collection: 'pages',
       id: lidWorden[0].id,
       data: {
-        ctaBlock: {
-          enabled: true,
-          buttonLabel: 'Inschrijven',
-          buttonUrl: 'https://www.knvb.nl/ontdek-voetbal/inschrijven/GKWH14N',
-        },
         content: richText([
           p("Wil je deel uitmaken van een gepassioneerde sportgemeenschap en je voetbaltalent verder ontwikkelen? Sluit je aan bij SVV'04, waar teamgeest en sportiviteit hoog in het vaandel staan. Samen bouwen we aan een sterke en gezellige voetbalclub."),
           h2('Digitaal aanmelden'),
