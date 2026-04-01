@@ -7,6 +7,7 @@ import Footer from '@/components/FooterServer'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.scss'
 
 const rajdhani = Rajdhani({
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </BreadcrumbProvider>
         <Footer />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
