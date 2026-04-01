@@ -2391,6 +2391,7 @@ p { margin: 0; }
       background: rgba(0, 0, 0, 0);
       transition: background 0.2s;
       border-radius: 8px;
+      pointer-events: none;
     }
 
     &:hover::after {
