@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import React from 'react'
 import Link from 'next/link'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { Media } from '@/payload-types'
 
 export const metadata = { title: "SVV'04 - Nieuws" }
@@ -20,7 +21,12 @@ export default async function NewsPage({ searchParams }: Props) {
 
   const { docs: posts, totalDocs } = await payload.find({
     collection: 'posts',
-    where: { status: { equals: 'published' } },
+    where: {
+      and: [
+        { status: { equals: 'published' } },
+        { category: { equals: 'nieuws' } },
+      ],
+    },
     sort: '-publishedAt',
     limit: PAGE_SIZE,
     page: currentPage,
@@ -32,13 +38,7 @@ export default async function NewsPage({ searchParams }: Props) {
   return (
     <main className="nieuws-page">
 
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>Nieuws</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Nieuws' }]} />
 
       <div className="team-page-inner">
         <h1 className="programma-title">Nieuws</h1>
@@ -49,12 +49,14 @@ export default async function NewsPage({ searchParams }: Props) {
           <div className="news-grid">
             {posts.map((post) => {
               const image = post.featuredImage as Media | null | undefined
-              const imageUrl = image?.url ?? null
+              const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
               return (
                 <article key={post.id} className="news-card">
-                  <div className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--accent'}`}>
-                    {imageUrl && (
+                  <div className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}>
+                    {imageUrl ? (
                       <img src={imageUrl} alt={image?.alt ?? post.title} className="news-card-img" />
+                    ) : (
+                      <img src="/logo.png" alt="" className="news-card-img-placeholder" aria-hidden="true" />
                     )}
                   </div>
                   <div className="news-card-body">

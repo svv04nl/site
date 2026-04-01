@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import React from 'react'
 import Link from 'next/link'
 import { fetchClubData } from '@/lib/clubdata/fetch'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
 
 export const metadata = { title: "SVV'04 - Agenda" }
@@ -30,13 +31,7 @@ export default async function AgendaPage() {
   return (
     <main className="agenda-page">
 
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>Agenda</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Agenda' }]} />
 
       <div className="agenda-inner">
         <h1 className="programma-title">Agenda</h1>

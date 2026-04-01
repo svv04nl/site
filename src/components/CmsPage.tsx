@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { RichText } from '@payloadcms/richtext-lexical/react'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import CtaBlockComponent from '@/blocks/CtaBlock/Component'
 import type { Page } from '@/payload-types'
@@ -22,34 +23,18 @@ type Props = {
   section: 'vereniging' | 'commissies' | 'meedoen'
   sectionLabel: string
   content: Page['content']
-  ctaBlock?: Page['ctaBlock']
 }
 
-export default function CmsPage({ title, section, sectionLabel, content, ctaBlock }: Props) {
+export default function CmsPage({ title, section, sectionLabel, content }: Props) {
   return (
     <main className="static-page">
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>{sectionLabel}</span>
-          <span aria-hidden="true">›</span>
-          <span>{title}</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: sectionLabel }, { label: title }]} />
 
       <div className="static-page-inner">
         <h1 className="programma-title">{title}</h1>
         {content && (
           <div className="static-page-body">
             <RichText data={content} converters={jsxConverters} />
-          </div>
-        )}
-        {ctaBlock?.enabled && ctaBlock.buttonLabel && ctaBlock.buttonUrl && (
-          <div className="static-page-cta">
-            <a href={ctaBlock.buttonUrl} className="cta-button" target="_blank" rel="noopener noreferrer">
-              {ctaBlock.buttonLabel}
-            </a>
           </div>
         )}
       </div>

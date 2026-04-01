@@ -15,7 +15,7 @@
 
   --grid-base:             1440px;
   --container-padding:     2rem;
-  --logo-height:           10.5rem;
+  --logo-height:           8rem;
   --topbar-height:         3.5rem;
   --mainbar-height:        3.25rem;
 }
@@ -78,7 +78,7 @@ p { margin: 0; }
   align-self: flex-start;
   display: block;
   flex-shrink: 0;
-  margin-top: 1.25rem;
+  margin-top: 0.75rem;
   position: relative;
   transition: opacity 0.2s ease;
   z-index: 20;
@@ -89,12 +89,7 @@ p { margin: 0; }
 .site-header-topbar-logo-img {
   display: block;
   height: var(--logo-height);
-  transition: height 0.3s ease;
   width: auto;
-}
-
-.is-scrolled .site-header-topbar-logo-img {
-  height: 4.5rem;
 }
 
 .site-header-topbar-right {
@@ -315,12 +310,12 @@ p { margin: 0; }
 
 .site-hero {
   background-color: var(--color-dark);
-  min-height: 40vh;
+  min-height: 32vh;
   overflow: hidden;
   position: relative;
 
   @media screen and (max-width: $breakpoint-tablet) {
-    min-height: 32vh;
+    min-height: 25.6vh;
   }
 }
 
@@ -1080,13 +1075,16 @@ p { margin: 0; }
   position: relative;
 
 
-  &--accent {
+  &--placeholder {
+    align-items: center;
     background-image: url('/hero-sportpark.jpg');
     background-position: center;
     background-size: cover;
+    display: flex;
+    justify-content: center;
 
     &::after {
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.35);
       content: '';
       inset: 0;
       position: absolute;
@@ -1104,6 +1102,14 @@ p { margin: 0; }
   .news-card:hover & {
     transform: scale(1.04);
   }
+}
+
+.news-card-img-placeholder {
+  height: 55%;
+  object-fit: contain;
+  position: relative;
+  width: 55%;
+  z-index: 1;
 }
 
 .news-card-date {
@@ -2327,11 +2333,15 @@ p { margin: 0; }
   padding: 0.75rem 0;
   font-size: 0.8rem;
   color: #888;
-
   .team-page-inner {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding-left: calc(var(--logo-height) * 1685 / 2038 + var(--container-padding) + 1.5rem);
+
+    @media screen and (max-width: $breakpoint-nav) {
+      padding-left: var(--container-padding);
+    }
   }
 
   a { color: #888; text-decoration: none; &:hover { color: var(--color-primary); } }

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import ReactMarkdown from 'react-markdown'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 
 export const metadata = { title: "SVV'04 - Cookiebeleid" }
 
@@ -11,13 +12,7 @@ export default function CookiesPage() {
 
   return (
     <main className="static-page">
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>Cookiebeleid</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Cookiebeleid' }]} />
 
       <div className="static-page-inner">
         <h1 className="programma-title">Cookiebeleid</h1>

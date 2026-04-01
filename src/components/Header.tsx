@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useScroll } from '@reactuses/core'
+import { BreadcrumbBar } from './BreadcrumbContext'
 
 const NavArrow = () => (
   <svg className="nav-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
@@ -42,13 +42,6 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
   const pathname = usePathname()
-  const isHome = pathname === '/'
-
-  const [, scrollY] = useScroll(
-    typeof window !== 'undefined' ? window : null,
-    { throttle: 50 },
-  )
-  const isScrolled = !isHome || scrollY > 40
 
   // Close mobile menu on navigation
   useEffect(() => {
@@ -77,7 +70,7 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
   }
 
   return (
-    <header className={`site-header${isScrolled ? ' is-scrolled' : ''}`}>
+    <header className="site-header">
 
       {/* Topbar */}
       <div className="site-header-topbar">
@@ -251,15 +244,9 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
             <li><Link href="/nieuws">Nieuws</Link></li>
             <li><Link href="/agenda">Agenda</Link></li>
             <li><Link href="/programma">Programma</Link></li>
+            <li><Link href="/senioren">Senioren</Link></li>
+            <li><Link href="/jeugd">Jeugd</Link></li>
             {([
-              {
-                label: 'Senioren',
-                items: seniorTeams.map((t) => ({ label: t.name, href: `/teams/${t.slug}` })),
-              },
-              {
-                label: 'Jeugd',
-                items: youthTeams.map((t) => ({ label: t.name, href: `/teams/${t.slug}` })),
-              },
               {
                 label: 'Vereniging',
                 items: [
@@ -319,6 +306,7 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
           </ul>
         </div>
       </nav>
+      <BreadcrumbBar />
     </header>
   )
 }

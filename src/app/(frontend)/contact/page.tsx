@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 
 export const metadata = { title: "SVV'04 - Contact" }
 
@@ -90,13 +91,7 @@ export default function ContactPage() {
   return (
     <main className="contact-page">
 
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>Contact</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
 
       <div className="team-page-inner contact-inner">
 

@@ -3,6 +3,7 @@ import config from '@/payload.config'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { Media } from '@/payload-types'
 
@@ -50,15 +51,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <main className="news-detail">
 
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <Link href="/nieuws">Nieuws</Link>
-          <span aria-hidden="true">›</span>
-          <span>{post.title}</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Nieuws', href: '/nieuws' }, { label: post.title }]} />
 
       <div className="news-detail-hero">
         <img

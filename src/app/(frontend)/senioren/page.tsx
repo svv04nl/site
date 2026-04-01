@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import React from 'react'
 import Link from 'next/link'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { Media } from '@/payload-types'
 
 export const metadata = { title: "SVV'04 - Senioren" }
@@ -19,13 +20,7 @@ export default async function SeniorenPage() {
 
   return (
     <main className="teams-overview-page">
-      <nav className="team-breadcrumb" aria-label="Kruimelpad">
-        <div className="team-page-inner">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>Senioren</span>
-        </div>
-      </nav>
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Senioren' }]} />
 
       <div className="team-page-inner">
         <h1 className="programma-title">Senioren</h1>

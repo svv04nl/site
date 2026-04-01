@@ -5,6 +5,7 @@ import { Rajdhani, Outfit } from 'next/font/google'
 import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
+import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
 import './globals.scss'
 
 const rajdhani = Rajdhani({
@@ -42,8 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="nl" className={`${rajdhani.variable} ${outfit.variable}`}>
       <body>
-        <Header />
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <BreadcrumbProvider>
+          <Header />
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </BreadcrumbProvider>
         <Footer />
       </body>
     </html>

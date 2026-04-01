@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -44,20 +45,13 @@ export default async function TeamLayout({ params, children }: Props) {
     <TeamProvider teamcode={teamcode} slug={slug}>
       <ScrollToTop />
       <main className="team-page">
-        {/* Breadcrumb */}
-        <nav className="team-breadcrumb" aria-label="Kruimelpad">
-          <div className="team-page-inner">
-            <Link href="/">Home</Link>
-            <span aria-hidden="true">›</span>
-            {sectionHref ? (
-              <Link href={sectionHref}>{team.type === 'youth' ? 'Jeugd' : 'Senioren'}</Link>
-            ) : (
-              <Link href="/teams">Teams</Link>
-            )}
-            <span aria-hidden="true">›</span>
-            <span>{team.name}</span>
-          </div>
-        </nav>
+        <SetBreadcrumb crumbs={[
+          { label: 'Home', href: '/' },
+          sectionHref
+            ? { label: team.type === 'youth' ? 'Jeugd' : 'Senioren', href: sectionHref }
+            : { label: 'Teams', href: '/teams' },
+          { label: team.name },
+        ]} />
 
         {/* Two-column layout */}
         <div className="team-page-inner team-page-inner--title">
