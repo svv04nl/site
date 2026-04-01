@@ -58,7 +58,7 @@ export const Media: CollectionConfig = {
     adminThumbnail: 'featuredPost',
     focalPoint: true,
     resizeOptions: {
-      width: 1920,
+      width: 3840,
       withoutEnlargement: true,
     },
     formatOptions: {
