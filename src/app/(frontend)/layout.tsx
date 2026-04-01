@@ -6,6 +6,7 @@ import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.scss'
 
 const rajdhani = Rajdhani({
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </BreadcrumbProvider>
         <Footer />
+        <Analytics />
       </body>
     </html>
   )
