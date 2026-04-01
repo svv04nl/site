@@ -11,6 +11,16 @@ This project uses [Payload CMS](https://payloadcms.com/) with Next.js and TypeSc
 5. **Access Control**: Understand Local API bypasses access control by default
 6. **Access Control**: Ensure roles exist when modifying collection or globals with access controls
 
+### Migration Workflow
+
+Development uses **dev push** (automatic schema sync, no migration files needed). Only create migrations when deploying to production:
+
+1. Before committing schema changes, run: `pnpm payload migrate:create --name <description>`
+2. Commit the generated migration file alongside the collection changes
+3. Production runs `pnpm migrate` (= `payload migrate` with `NODE_ENV=production`) which applies only unapplied migrations
+
+**Never** run `migrate:create` during normal local development — only when preparing a production deployment.
+
 ### Code Validation
 
 - To validate TypeScript correctness after modifying code run `tsc --noEmit`
