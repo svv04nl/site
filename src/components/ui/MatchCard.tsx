@@ -33,14 +33,10 @@ export default function MatchCard({
   const centerLabel = score ?? time ?? ''
 
   return (
-    <div className={`next-match-card${isOwn ? ' next-match-card--own' : ''}`}>
+    <div className={`card-match card${isOwn ? ' card-match--own' : ''}`}>
       <div className="next-match-body">
         <div className="next-match-club">
-          <ClubLogo
-            clubcode={homeTeamRelatiecode}
-            name={homeTeam}
-            className="next-match-logo"
-          />
+          <ClubLogo clubcode={homeTeamRelatiecode} name={homeTeam} className="next-match-logo" />
           <span className={`next-match-club-name${isOwnHome ? ' next-match-club-name--own' : ''}`}>
             {homeTeam}
           </span>
@@ -60,11 +56,7 @@ export default function MatchCard({
         </div>
 
         <div className="next-match-club">
-          <ClubLogo
-            clubcode={awayTeamRelatiecode}
-            name={awayTeam}
-            className="next-match-logo"
-          />
+          <ClubLogo clubcode={awayTeamRelatiecode} name={awayTeam} className="next-match-logo" />
           <span className={`next-match-club-name${isOwnAway ? ' next-match-club-name--own' : ''}`}>
             {awayTeam}
           </span>

@@ -11,7 +11,9 @@ export default function HeroMatchBlock({ teamcode, teamName }: Props) {
   return (
     <div className="site-hero-match-block">
       <NextMatchServer teamcode={teamcode} teamName={teamName} showTitle={true} />
-      <Link className="site-hero-matches-link" href="/programma">Alle wedstrijden &rarr;</Link>
+      <Link className="site-hero-matches-link" href="/programma">
+        Alle wedstrijden &rarr;
+      </Link>
     </div>
   )
 }

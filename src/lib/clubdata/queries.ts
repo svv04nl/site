@@ -185,11 +185,11 @@ export const pouleScheduleQuery = (poulecode: number, teamcode: number) => ({
   staleTime: STALE_TIME,
 })
 
-export const nextMatchQuery = (teamcode: number | null) => ({
-  queryKey: ['next-match', teamcode] as const,
+export const nextMatchQuery = (teamcode: number | null, maxDays = 365) => ({
+  queryKey: ['next-match', teamcode, maxDays] as const,
   queryFn: async () => {
     const raw = await fetchClubData<RawProgrammaResponse>('programma', teamcode, {
-      aantaldagen: '365',
+      aantaldagen: String(maxDays),
       aantalregels: '1',
     })
     return transformNextMatch(raw, Number(teamcode))

@@ -33,7 +33,7 @@ export default async function SeniorenPage() {
               const photo = team.photo as Media | null | undefined
               const photoUrl = photo?.sizes?.teamCard?.url ?? photo?.url ?? null
               return (
-                <Link key={team.id} href={`/teams/${team.slug}`} className="team-card">
+                <Link key={team.id} href={`/teams/${team.slug}`} className="card-team card">
                   <div className="team-card-img-wrap">
                     <img
                       src={photoUrl ?? '/team-placeholder.png'}

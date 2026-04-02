@@ -29,7 +29,7 @@ type Props = {
 
 export default function NextMatch({ match, teamName, showTitle = true }: Props) {
   return (
-    <div className="next-match-card">
+    <div className="card-match card">
       {showTitle && <h2 className="next-match-title">Volgende wedstrijd</h2>}
       {match ? (
         <div className="next-match-body">

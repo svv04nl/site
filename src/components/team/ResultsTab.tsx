@@ -197,7 +197,7 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
                 </div>
 
                 {/* Mobile: cards */}
-                <div className="next-match-cards-list">
+                <div className="card-match-list">
                   {group.matches.map((m) => (
                     <MatchCard
                       key={m.matchCode}

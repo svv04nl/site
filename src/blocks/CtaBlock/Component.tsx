@@ -10,12 +10,7 @@ export default function CtaBlockComponent({ buttonLabel, buttonUrl }: Props) {
 
   return (
     <div className="static-page-cta">
-      <a
-        href={buttonUrl}
-        className="cta-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href={buttonUrl} className="cta-button" target="_blank" rel="noopener noreferrer">
         {buttonLabel}
       </a>
     </div>

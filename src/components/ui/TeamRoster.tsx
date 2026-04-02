@@ -9,7 +9,7 @@ export default function TeamRoster({ data }: Props) {
   const { players, staff, hiddenCount } = data
 
   return (
-    <div className="team-roster">
+    <div className="card-roster card">
       {players.length > 0 && (
         <section className="team-roster-group">
           <h3 className="team-roster-role">Spelers</h3>
@@ -18,9 +18,7 @@ export default function TeamRoster({ data }: Props) {
               <li key={member.name}>{member.name}</li>
             ))}
             {hiddenCount > 0 && (
-              <li className="team-roster-hidden">
-                Afgeschermd ({hiddenCount}x)
-              </li>
+              <li className="team-roster-hidden">Afgeschermd ({hiddenCount}x)</li>
             )}
           </ul>
         </section>

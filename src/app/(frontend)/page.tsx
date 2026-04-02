@@ -22,10 +22,7 @@ export default async function HomePage() {
     payload.find({
       collection: 'posts',
       where: {
-        and: [
-          { status: { equals: 'published' } },
-          { category: { equals: 'nieuws' } },
-        ],
+        and: [{ status: { equals: 'published' } }, { category: { equals: 'nieuws' } }],
       },
       sort: '-publishedAt',
       limit: 3,
@@ -37,14 +34,13 @@ export default async function HomePage() {
   ])
 
   // Preserve the intended display order
-  const teams = FEATURED_TEAM_SLUGS
-    .map((slug) => featuredTeams.find((t) => t.slug === slug))
-    .filter((t): t is NonNullable<typeof t> => !!t && !!t.teamcode)
+  const teams = FEATURED_TEAM_SLUGS.map((slug) =>
+    featuredTeams.find((t) => t.slug === slug),
+  ).filter((t): t is NonNullable<typeof t> => !!t && !!t.teamcode)
 
   return (
     <>
       <main>
-
         {/* Hero */}
         <section className="site-hero">
           <div
@@ -57,8 +53,13 @@ export default async function HomePage() {
           <div className="site-hero-inner">
             <div className="site-hero-content">
               <p className="site-hero-eyebrow">Schoonebeekse Voetbal Vereniging</p>
-              <h1 className="site-hero-title">Welkom bij <em>SVV&rsquo;04</em></h1>
-              <p className="site-hero-tagline">Een sterke gezellige voetbalvereniging uit Schoonebeek,<br className="site-hero-tagline-br" /> met een prachtige accommodatie.</p>
+              <h1 className="site-hero-title">
+                Welkom bij <em>SVV&rsquo;04</em>
+              </h1>
+              <p className="site-hero-tagline">
+                Een sterke gezellige voetbalvereniging uit Schoonebeek,
+                <br className="site-hero-tagline-br" /> met een prachtige accommodatie.
+              </p>
             </div>
           </div>
         </section>
@@ -69,11 +70,19 @@ export default async function HomePage() {
             <h2 className="matches-title">Wedstrijden</h2>
             <div className="matches-grid">
               {teams.map((team) => (
-                <NextMatchServer key={team.slug} teamcode={team.teamcode!} teamName={team.name} showTitle={false} />
+                <NextMatchServer
+                  key={team.slug}
+                  teamcode={team.teamcode!}
+                  teamName={team.name}
+                  showTitle={false}
+                  maxDays={7}
+                />
               ))}
             </div>
             <div className="matches-footer">
-              <Link className="home-section-link" href="/programma">Volledig programma &rarr;</Link>
+              <Link className="home-section-link" href="/programma">
+                Volledig programma &rarr;
+              </Link>
             </div>
           </div>
         </section>
@@ -84,7 +93,9 @@ export default async function HomePage() {
             <div className="home-section-header">
               <h2 className="home-section-title">
                 Het Laatste nieuws{' '}
-                <Link className="home-section-inline-link" href="/nieuws">Bekijk alle nieuws &rarr;</Link>
+                <Link className="home-section-inline-link" href="/nieuws">
+                  Bekijk alle nieuws &rarr;
+                </Link>
               </h2>
             </div>
             <div className="news-grid">
@@ -92,12 +103,23 @@ export default async function HomePage() {
                 const image = post.featuredImage as Media | null | undefined
                 const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
                 return (
-                  <article key={post.id} className="news-card">
-                    <div className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}>
+                  <Link key={post.id} href={`/nieuws/${post.slug}`} className="card-news card">
+                    <div
+                      className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}
+                    >
                       {imageUrl ? (
-                        <img src={imageUrl} alt={image?.alt ?? post.title} className="news-card-img" />
+                        <img
+                          src={imageUrl}
+                          alt={image?.alt ?? post.title}
+                          className="news-card-img"
+                        />
                       ) : (
-                        <img src="/logo.png" alt="" className="news-card-img-placeholder" aria-hidden="true" />
+                        <img
+                          src="/logo.png"
+                          alt=""
+                          className="news-card-img-placeholder"
+                          aria-hidden="true"
+                        />
                       )}
                     </div>
                     <div className="news-card-body">
@@ -110,11 +132,9 @@ export default async function HomePage() {
                             })
                           : ''}
                       </time>
-                      <h3 className="news-card-title">
-                        <Link href={`/nieuws/${post.slug}`}>{post.title}</Link>
-                      </h3>
+                      <h3 className="news-card-title">{post.title}</h3>
                     </div>
-                  </article>
+                  </Link>
                 )
               })}
             </div>
@@ -124,11 +144,24 @@ export default async function HomePage() {
         {/* Agenda + CTA tiles */}
         <section className="home-calendar-section">
           <div className="home-section-inner home-calendar-inner">
-
             <div className="calendar-panel">
               <h2 className="calendar-title">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /><circle cx="12" cy="15" r="1" fill="currentColor" />
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                  <circle cx="12" cy="15" r="1" fill="currentColor" />
                 </svg>
                 Agenda
               </h2>
@@ -148,74 +181,138 @@ export default async function HomePage() {
                       <time className="calendar-date">{formatted}</time>
                       <span className="calendar-event">
                         {item.url ? (
-                          <a href={item.url} target="_blank" rel="noopener noreferrer">{item.activiteit}</a>
-                        ) : item.activiteit}
+                          <a href={item.url} target="_blank" rel="noopener noreferrer">
+                            {item.activiteit}
+                          </a>
+                        ) : (
+                          item.activiteit
+                        )}
                       </span>
                     </li>
                   )
                 })}
               </ol>
-              <Link className="calendar-more" href="/agenda">Volledige agenda bekijken &rarr;</Link>
+              <Link className="calendar-more" href="/agenda">
+                Volledige agenda bekijken &rarr;
+              </Link>
             </div>
 
             <div className="cta-grid">
-              <Link className="cta-tile" href="/meedoen/lid-worden" style={{ backgroundImage: 'url(/hero-sportpark.jpg)' }}>
+              <Link
+                className="cta-tile"
+                href="/meedoen/lid-worden"
+                style={{ backgroundImage: 'url(/hero-sportpark.jpg)' }}
+              >
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Lid worden</h3>
-                  <p className="cta-tile-desc">Wil jij voetballen bij SVV&rsquo;04? Word hier lid van onze club.</p>
+                  <p className="cta-tile-desc">
+                    Wil jij voetballen bij SVV&rsquo;04? Word hier lid van onze club.
+                  </p>
                   <span className="cta-tile-link">Lid worden &rarr;</span>
                 </div>
               </Link>
-              <Link className="cta-tile" href="/meedoen/sponsor-worden" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: '60% center' }}>
+              <Link
+                className="cta-tile"
+                href="/meedoen/sponsor-worden"
+                style={{
+                  backgroundImage: 'url(/hero-sportpark.jpg)',
+                  backgroundPosition: '60% center',
+                }}
+              >
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Sponsor worden</h3>
-                  <p className="cta-tile-desc">Draag jij SVV&rsquo;04 een warm hart toe? Word sponsor van onze club.</p>
+                  <p className="cta-tile-desc">
+                    Draag jij SVV&rsquo;04 een warm hart toe? Word sponsor van onze club.
+                  </p>
                   <span className="cta-tile-link">Sponsoren &rarr;</span>
                 </div>
               </Link>
-              <Link className="cta-tile" href="/meedoen/vrijwilliger-worden" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: 'center 70%' }}>
+              <Link
+                className="cta-tile"
+                href="/meedoen/vrijwilliger-worden"
+                style={{
+                  backgroundImage: 'url(/hero-sportpark.jpg)',
+                  backgroundPosition: 'center 70%',
+                }}
+              >
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Vrijwilliger worden</h3>
-                  <p className="cta-tile-desc">We zijn altijd op zoek naar mensen die een steentje willen bijdragen.</p>
+                  <p className="cta-tile-desc">
+                    We zijn altijd op zoek naar mensen die een steentje willen bijdragen.
+                  </p>
                   <span className="cta-tile-link">Word vrijwilliger &rarr;</span>
                 </div>
               </Link>
-              <Link className="cta-tile" href="/vereniging/voetbal-nl-app" style={{ backgroundImage: 'url(/hero-sportpark.jpg)', backgroundPosition: '80% 40%' }}>
+              <Link
+                className="cta-tile"
+                href="/vereniging/voetbal-nl-app"
+                style={{
+                  backgroundImage: 'url(/hero-sportpark.jpg)',
+                  backgroundPosition: '80% 40%',
+                }}
+              >
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
                   <h3 className="cta-tile-title">Voetbal.nl App</h3>
-                  <p className="cta-tile-desc">Volg wedstrijden en standen via de officiële voetbal.nl app.</p>
+                  <p className="cta-tile-desc">
+                    Volg wedstrijden en standen via de officiële voetbal.nl app.
+                  </p>
                   <span className="cta-tile-link">Downloaden &rarr;</span>
                 </div>
               </Link>
             </div>
-
           </div>
         </section>
-
       </main>
 
       {/* Sponsor strip */}
       <div className="sponsors-ticker">
         <div className="sponsors-ticker-track">
           <div className="sponsors-ticker-inner">
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/logo-anura.png" alt="Anura" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/Logo-Mind-Motion.png" alt="Lifestylecenter Mind &amp; Motion" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/Logo_Klaverblad_FC_Hor.png" alt="Klaverblad Verzekeringen" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/problicity_header-logo_geel.png" alt="Problicity" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/riant-logo-removebg-preview.png" alt="Riant Makelaars" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/logo-scholma-removebg-preview.png" alt="Scholma Print &amp; Media" /></a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/logo-anura.png" alt="Anura" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/Logo-Mind-Motion.png" alt="Lifestylecenter Mind &amp; Motion" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/Logo_Klaverblad_FC_Hor.png" alt="Klaverblad Verzekeringen" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/problicity_header-logo_geel.png" alt="Problicity" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/riant-logo-removebg-preview.png" alt="Riant Makelaars" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img
+                src="/sponsors/logo-scholma-removebg-preview.png"
+                alt="Scholma Print &amp; Media"
+              />
+            </a>
           </div>
           <div className="sponsors-ticker-inner" aria-hidden="true">
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/logo-anura.png" alt="" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/Logo-Mind-Motion.png" alt="" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/Logo_Klaverblad_FC_Hor.png" alt="" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/problicity_header-logo_geel.png" alt="" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/riant-logo-removebg-preview.png" alt="" /></a>
-            <a href="#" className="sponsors-ticker-logo"><img src="/sponsors/logo-scholma-removebg-preview.png" alt="" /></a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/logo-anura.png" alt="" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/Logo-Mind-Motion.png" alt="" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/Logo_Klaverblad_FC_Hor.png" alt="" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/problicity_header-logo_geel.png" alt="" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/riant-logo-removebg-preview.png" alt="" />
+            </a>
+            <a href="#" className="sponsors-ticker-logo">
+              <img src="/sponsors/logo-scholma-removebg-preview.png" alt="" />
+            </a>
           </div>
         </div>
       </div>

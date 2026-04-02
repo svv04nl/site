@@ -22,10 +22,7 @@ export default async function NewsPage({ searchParams }: Props) {
   const { docs: posts, totalDocs } = await payload.find({
     collection: 'posts',
     where: {
-      and: [
-        { status: { equals: 'published' } },
-        { category: { equals: 'nieuws' } },
-      ],
+      and: [{ status: { equals: 'published' } }, { category: { equals: 'nieuws' } }],
     },
     sort: '-publishedAt',
     limit: PAGE_SIZE,
@@ -37,7 +34,6 @@ export default async function NewsPage({ searchParams }: Props) {
 
   return (
     <main className="nieuws-page">
-
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Nieuws' }]} />
 
       <div className="team-page-inner">
@@ -51,12 +47,23 @@ export default async function NewsPage({ searchParams }: Props) {
               const image = post.featuredImage as Media | null | undefined
               const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
               return (
-                <article key={post.id} className="news-card">
-                  <div className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}>
+                <Link key={post.id} href={`/nieuws/${post.slug}`} className="card-news card">
+                  <div
+                    className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}
+                  >
                     {imageUrl ? (
-                      <img src={imageUrl} alt={image?.alt ?? post.title} className="news-card-img" />
+                      <img
+                        src={imageUrl}
+                        alt={image?.alt ?? post.title}
+                        className="news-card-img"
+                      />
                     ) : (
-                      <img src="/logo.png" alt="" className="news-card-img-placeholder" aria-hidden="true" />
+                      <img
+                        src="/logo.png"
+                        alt=""
+                        className="news-card-img-placeholder"
+                        aria-hidden="true"
+                      />
                     )}
                   </div>
                   <div className="news-card-body">
@@ -69,14 +76,10 @@ export default async function NewsPage({ searchParams }: Props) {
                           })
                         : ''}
                     </time>
-                    <h3 className="news-card-title">
-                      <Link href={`/nieuws/${post.slug}`}>{post.title}</Link>
-                    </h3>
-                    {post.excerpt && (
-                      <p className="news-card-excerpt">{post.excerpt}</p>
-                    )}
+                    <h3 className="news-card-title">{post.title}</h3>
+                    {post.excerpt && <p className="news-card-excerpt">{post.excerpt}</p>}
                   </div>
-                </article>
+                </Link>
               )
             })}
           </div>
@@ -107,4 +110,3 @@ export default async function NewsPage({ searchParams }: Props) {
     </main>
   )
 }
-

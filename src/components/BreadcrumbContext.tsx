@@ -23,7 +23,7 @@ export function SetBreadcrumb({ crumbs }: { crumbs: Crumb[] }) {
   useEffect(() => {
     setCrumbs(crumbs)
     return () => setCrumbs([])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return null
 }
@@ -37,10 +37,7 @@ export function BreadcrumbBar() {
         {crumbs.map((crumb, i) => (
           <React.Fragment key={i}>
             {i > 0 && <span aria-hidden="true">›</span>}
-            {crumb.href
-              ? <Link href={crumb.href}>{crumb.label}</Link>
-              : <span>{crumb.label}</span>
-            }
+            {crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span>{crumb.label}</span>}
           </React.Fragment>
         ))}
       </div>

@@ -26,8 +26,19 @@ export default function ContactForm() {
   if (status === 'sent') {
     return (
       <div className="contact-form-success">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" />
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="m9 12 2 2 4-4" />
         </svg>
         <p>Bedankt! Je bericht is verzonden. We nemen zo snel mogelijk contact met je op.</p>
       </div>
@@ -48,7 +59,9 @@ export default function ContactForm() {
         <label htmlFor="cf-afdeling">Afdeling</label>
         <div className="contact-form-select-wrap">
           <select id="cf-afdeling" name="afdeling">
-            {AFDELINGEN.map((a) => <option key={a}>{a}</option>)}
+            {AFDELINGEN.map((a) => (
+              <option key={a}>{a}</option>
+            ))}
           </select>
         </div>
       </div>

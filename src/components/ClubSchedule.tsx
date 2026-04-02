@@ -9,7 +9,7 @@ import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 type Filter = 'thuis' | 'uit' | 'alles'
 
 export default function ClubSchedule() {
-  const [filter, setFilter] = useState<Filter>('thuis')
+  const [filter, setFilter] = useState<Filter>('alles')
 
   const { data: matches, isLoading, isError } = useQuery(clubScheduleQuery(filter))
 
@@ -43,7 +43,11 @@ export default function ClubSchedule() {
         </div>
       </div>
 
-      {isError && <p className="league-error">Programma kon niet worden geladen. Probeer het later opnieuw.</p>}
+      {isError && (
+        <p className="league-error">
+          Programma kon niet worden geladen. Probeer het later opnieuw.
+        </p>
+      )}
 
       {!isError && (
         <ScheduleWeekGroups

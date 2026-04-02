@@ -31,11 +31,6 @@ export default async function MeedoenPage({ params }: Props) {
   const page = docs[0]
 
   return (
-    <CmsPage
-      title={page.title}
-      section="meedoen"
-      sectionLabel="Meedoen"
-      content={page.content}
-    />
+    <CmsPage title={page.title} section="meedoen" sectionLabel="Meedoen" content={page.content} />
   )
 }

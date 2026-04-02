@@ -118,15 +118,15 @@ export type RawPeriodestandRow = {
   positie: number
   teamcode: number
   poulecode: number
-  clubcode: string          // equivalent of clubrelatiecode in poulestand
+  clubcode: string // equivalent of clubrelatiecode in poulestand
   clubnaam: string
   teamnaam: string
   aantalwedstrijden: number // gespeeldewedstrijden in poulestand
-  totaalpunten: number      // punten in poulestand
+  totaalpunten: number // punten in poulestand
   doelpuntenvoor: number
-  tegendoelpunten: number   // doelpuntentegen in poulestand
+  tegendoelpunten: number // doelpuntentegen in poulestand
   gewonnen: number
-  gelijkspel: number        // gelijk in poulestand
+  gelijkspel: number // gelijk in poulestand
   verloren: number
   doelsaldo: number
   verliespunten: number

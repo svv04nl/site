@@ -10,10 +10,7 @@ const jsxConverters: JSXConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
   blocks: {
     ctaBlock: ({ node }: { node: any }) => (
-      <CtaBlockComponent
-        buttonLabel={node.fields.buttonLabel}
-        buttonUrl={node.fields.buttonUrl}
-      />
+      <CtaBlockComponent buttonLabel={node.fields.buttonLabel} buttonUrl={node.fields.buttonUrl} />
     ),
   },
 })
@@ -28,7 +25,9 @@ type Props = {
 export default function CmsPage({ title, section, sectionLabel, content }: Props) {
   return (
     <main className="static-page">
-      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: sectionLabel }, { label: title }]} />
+      <SetBreadcrumb
+        crumbs={[{ label: 'Home', href: '/' }, { label: sectionLabel }, { label: title }]}
+      />
 
       <div className="static-page-inner">
         <h1 className="programma-title">{title}</h1>

@@ -9,10 +9,11 @@ type Props = {
   teamcode: number | string | null
   teamName?: string
   showTitle?: boolean
+  maxDays?: number
 }
 
-export default function NextMatchServer({ teamcode, teamName, showTitle = true }: Props) {
-  const { data: match } = useQuery(nextMatchQuery(teamcode ? Number(teamcode) : null))
+export default function NextMatchServer({ teamcode, teamName, showTitle = true, maxDays }: Props) {
+  const { data: match } = useQuery(nextMatchQuery(teamcode ? Number(teamcode) : null, maxDays))
 
   if (!match) return null
 

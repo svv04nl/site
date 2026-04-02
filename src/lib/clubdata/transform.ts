@@ -259,12 +259,10 @@ export function transformPeriodeStandings(
   ownRelatiecode?: string,
 ): StandingRow[] {
   return raw.map((row) => {
-    const isOwn =
-      row.eigenteam === 'true' || (!!ownRelatiecode && row.clubcode === ownRelatiecode)
+    const isOwn = row.eigenteam === 'true' || (!!ownRelatiecode && row.clubcode === ownRelatiecode)
 
     const note =
-      row.aantekening ||
-      (row.verliespunten > 0 ? `${row.verliespunten} verliespunten` : undefined)
+      row.aantekening || (row.verliespunten > 0 ? `${row.verliespunten} verliespunten` : undefined)
 
     return {
       position: row.positie,

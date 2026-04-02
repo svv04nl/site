@@ -30,7 +30,6 @@ export default async function AgendaPage() {
 
   return (
     <main className="agenda-page">
-
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Agenda' }]} />
 
       <div className="agenda-inner">
@@ -48,7 +47,9 @@ export default async function AgendaPage() {
                   const dateToRaw = item.datumtm ? new Date(item.datumtm) : null
                   // Only show end date when it's strictly after the start date (different calendar day)
                   const dateTo =
-                    dateToRaw && dateToRaw.toDateString() !== date.toDateString() && dateToRaw > date
+                    dateToRaw &&
+                    dateToRaw.toDateString() !== date.toDateString() &&
+                    dateToRaw > date
                       ? dateToRaw
                       : null
 
@@ -69,9 +70,7 @@ export default async function AgendaPage() {
                     <li key={i} className="calendar-item agenda-item">
                       <div className="agenda-item-date">
                         <time className="calendar-date agenda-date-from">{formattedFrom}</time>
-                        {formattedTo && (
-                          <time className="agenda-date-to">t/m {formattedTo}</time>
-                        )}
+                        {formattedTo && <time className="agenda-date-to">t/m {formattedTo}</time>}
                       </div>
                       <div className="agenda-item-content">
                         <span className="calendar-event">
@@ -79,11 +78,11 @@ export default async function AgendaPage() {
                             <a href={item.url} target="_blank" rel="noopener noreferrer">
                               {item.activiteit}
                             </a>
-                          ) : item.activiteit}
+                          ) : (
+                            item.activiteit
+                          )}
                         </span>
-                        {item.plaats && (
-                          <span className="agenda-item-place">{item.plaats}</span>
-                        )}
+                        {item.plaats && <span className="agenda-item-place">{item.plaats}</span>}
                         {item.opmerkingen && (
                           <span className="agenda-item-notes">{item.opmerkingen}</span>
                         )}

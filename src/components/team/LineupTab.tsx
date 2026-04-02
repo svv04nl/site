@@ -70,10 +70,7 @@ export default function LineupTab({ poules, initialIndex = 0 }: Props) {
                   <td className="league-table-pos" data-label="#">
                     {e.speelnummer}
                   </td>
-                  <td
-                    className={cx('league-table-name', { 'is-own': e.isOwn })}
-                    data-label="Team"
-                  >
+                  <td className={cx('league-table-name', { 'is-own': e.isOwn })} data-label="Team">
                     {e.teamName}
                   </td>
                   <td data-label="Speeldag">{e.speeldag}</td>

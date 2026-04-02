@@ -9,7 +9,7 @@ export default function TeamSponsorSection() {
   const { data: sponsors } = useQuery(teamSponsorsQuery(teamcode))
 
   return (
-    <div className="team-sponsor-card">
+    <div className="card-sponsor card">
       <h2 className="team-sponsor-title">Sponsor</h2>
       {sponsors && sponsors.length > 0 ? (
         <div className="team-sponsor-logos">

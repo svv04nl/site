@@ -47,20 +47,20 @@ export default async function TeamLayout({ params, children }: Props) {
     <TeamProvider teamcode={teamcode} slug={slug}>
       <ScrollToTop />
       <main className="team-page">
-        <SetBreadcrumb crumbs={[
-          { label: 'Home', href: '/' },
-          sectionHref
-            ? { label: team.type === 'youth' ? 'Jeugd' : 'Senioren', href: sectionHref }
-            : { label: 'Teams', href: '/teams' },
-          { label: team.name },
-        ]} />
+        <SetBreadcrumb
+          crumbs={[
+            { label: 'Home', href: '/' },
+            sectionHref
+              ? { label: team.type === 'youth' ? 'Jeugd' : 'Senioren', href: sectionHref }
+              : { label: 'Teams', href: '/teams' },
+            { label: team.name },
+          ]}
+        />
 
         {/* Two-column layout */}
         <div className="team-page-inner team-page-inner--title">
           <h1 className="programma-title">{team.name}</h1>
-          {categoryLabel && (
-            <p className="team-page-category">{categoryLabel}</p>
-          )}
+          {categoryLabel && <p className="team-page-category">{categoryLabel}</p>}
         </div>
         <div className="team-page-inner">
           <div className="team-layout">

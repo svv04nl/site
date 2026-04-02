@@ -50,8 +50,13 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <main className="news-detail">
-
-      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Nieuws', href: '/nieuws' }, { label: post.title }]} />
+      <SetBreadcrumb
+        crumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Nieuws', href: '/nieuws' },
+          { label: post.title },
+        ]}
+      />
 
       <div className="news-detail-hero">
         <img
@@ -62,9 +67,7 @@ export default async function PostPage({ params }: Props) {
       </div>
 
       <div className="news-detail-inner">
-        {formattedDate && (
-          <time className="news-detail-date">{formattedDate}</time>
-        )}
+        {formattedDate && <time className="news-detail-date">{formattedDate}</time>}
 
         <h1 className="news-detail-title">{post.title}</h1>
 
@@ -80,7 +83,6 @@ export default async function PostPage({ params }: Props) {
           </Link>
         </div>
       </div>
-
     </main>
   )
 }
