@@ -63,6 +63,7 @@ export function transformNextMatch(raw: RawProgrammaResponse, teamcode: number):
   return {
     date: displayDate,
     time: match.aanvangstijd, // "10:30"
+    matchCode: match.wedstrijdcode,
     homeTeam: {
       name: match.thuisteam,
       clubRelatiecode: match.thuisteamclubrelatiecode || undefined,
@@ -190,7 +191,7 @@ export function transformSchedule(
       awayTeam: w.uitteam,
       awayTeamRelatiecode: awayRelatiecode,
       venue: w.accommodatie,
-      status: w.status || 'Te spelen',
+      status: w.status,
       isOwnHome,
       isOwnAway,
       isOwn,

@@ -137,13 +137,13 @@ function BankIcon() {
 
 export default function ContactPage() {
   return (
-    <main className="contact-page">
+    <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
 
-      <div className="team-page-inner contact-inner">
+      <div className="page-inner contact-inner">
         <div className="contact-header">
           <div>
-            <h1 className="programma-title">Contact</h1>
+            <h1 className="page-title">Contact</h1>
             <p className="contact-intro">
               Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je
               snel te helpen.
@@ -153,7 +153,7 @@ export default function ContactPage() {
 
         <div className="contact-layout">
           {/* Left: contact info */}
-          <aside className="card-contact-info card">
+          <div className="card-contact-info card">
             {CONTACT_SECTIONS.map((section) => (
               <div key={section.title} className="contact-section">
                 <h2 className="contact-section-title">{section.title}</h2>
@@ -210,7 +210,7 @@ export default function ContactPage() {
                 ))}
               </div>
             ))}
-          </aside>
+          </div>
 
           {/* Right: contact form */}
           <div className="card-contact-form card">

@@ -1,4 +1,8 @@
+'use client'
+
 import React from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { ScheduleWeekGroup } from '@/lib/clubdata/transform'
 import MatchCard from '@/components/ui/MatchCard'
 import ClubLogo from '@/components/ClubLogo'
@@ -24,6 +28,7 @@ type Props = {
   subtitle?: string
   isLoading?: boolean
   emptyMessage?: string
+  tableOnDesktop?: boolean
 }
 
 export default function ScheduleWeekGroups({
@@ -31,7 +36,10 @@ export default function ScheduleWeekGroups({
   subtitle,
   isLoading = false,
   emptyMessage = 'Geen wedstrijden gevonden.',
+  tableOnDesktop = false,
 }: Props) {
+  const router = useRouter()
+
   if (isLoading && weekGroups.length === 0) {
     return (
       <div className="schedule-loading" aria-label="Laden…">
@@ -45,95 +53,107 @@ export default function ScheduleWeekGroups({
   }
 
   return (
-    <div style={{ opacity: isLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
+    <div
+      style={{ opacity: isLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}
+      className={tableOnDesktop ? 'schedule--table-on-desktop' : undefined}
+    >
       {weekGroups.map((group) => (
         <div key={group.weekKey} className="league-week-group">
           <h2 className="league-week-title">{group.label}</h2>
           {subtitle && <p className="league-standings-subtitle">{subtitle}</p>}
 
-          {/* Desktop: table */}
-          <div className="league-week-table-wrap">
-            <table className="league-schedule-table">
-              <colgroup>
-                <col className="col-date" />
-                <col className="col-time" />
-                <col className="col-home" />
-                <col className="col-away" />
-                <col className="col-venue" />
-                <col className="col-status" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>Datum</th>
-                  <th>Tijd</th>
-                  <th>
-                    <span className="league-schedule-th-team">
-                      <ShieldIcon />
-                      Thuisteam
-                    </span>
-                  </th>
-                  <th>
-                    <span className="league-schedule-th-team">
-                      <ShieldIcon />
-                      Uitteam
-                    </span>
-                  </th>
-                  <th>Accommodatie</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {group.matches.map((m) => (
-                  <tr key={m.matchCode} className={m.isOwn ? 'league-schedule-own-row' : ''}>
-                    <td className="league-schedule-date" data-label="Datum">
-                      {m.date}
-                    </td>
-                    <td className="league-schedule-time" data-label="Tijd">
-                      {m.time}
-                    </td>
-                    <td data-label="Thuis">
-                      <span className="league-schedule-team-cell">
-                        <ClubLogo
-                          clubcode={m.homeTeamRelatiecode}
-                          name={m.homeTeam}
-                          className="league-schedule-logo"
-                        />
-                        <span
-                          className={m.isOwnHome ? 'league-schedule-own-name' : ''}
-                          style={m.isOwnHome ? { color: '#c8102e', fontWeight: 600 } : undefined}
-                        >
-                          {m.homeTeam}
-                        </span>
+          {tableOnDesktop && (
+            <div className="league-week-table-wrap">
+              <table className="league-schedule-table">
+                <colgroup>
+                  <col className="col-date" />
+                  <col className="col-time" />
+                  <col className="col-home" />
+                  <col className="col-away" />
+                  <col className="col-venue" />
+                  <col className="col-status" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Datum</th>
+                    <th>Tijd</th>
+                    <th>
+                      <span className="league-schedule-th-team">
+                        <ShieldIcon />
+                        Thuisteam
                       </span>
-                    </td>
-                    <td data-label="Uit">
-                      <span className="league-schedule-team-cell">
-                        <ClubLogo
-                          clubcode={m.awayTeamRelatiecode}
-                          name={m.awayTeam}
-                          className="league-schedule-logo"
-                        />
-                        <span
-                          className={m.isOwnAway ? 'league-schedule-own-name' : ''}
-                          style={m.isOwnAway ? { color: '#c8102e', fontWeight: 600 } : undefined}
-                        >
-                          {m.awayTeam}
-                        </span>
+                    </th>
+                    <th>
+                      <span className="league-schedule-th-team">
+                        <ShieldIcon />
+                        Uitteam
                       </span>
-                    </td>
-                    <td className="league-schedule-location" data-label="Locatie">
-                      {m.venue}
-                    </td>
-                    <td className="league-schedule-status" data-label="Status">
-                      {m.status}
-                    </td>
+                    </th>
+                    <th>Accommodatie</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {group.matches.map((m) => {
+                    const href = `/wedstrijd/${m.matchCode}`
+                    return (
+                      <tr
+                        key={m.matchCode}
+                        className={`league-row--link${m.isOwn ? ' league-schedule-own-row' : ''}`}
+                        onClick={() => router.push(href)}
+                      >
+                        <td className="league-schedule-date" data-label="Datum">
+                          <Link href={href} className="league-row-link" onClick={(e) => e.stopPropagation()}>
+                            {m.date}
+                          </Link>
+                        </td>
+                        <td className="league-schedule-time" data-label="Tijd">
+                          {m.time}
+                        </td>
+                        <td data-label="Thuis">
+                          <span className="league-schedule-team-cell">
+                            <ClubLogo
+                              clubcode={m.homeTeamRelatiecode}
+                              name={m.homeTeam}
+                              className="league-schedule-logo"
+                            />
+                            <span
+                              className={m.isOwnHome ? 'league-schedule-own-name' : ''}
+                              style={m.isOwnHome ? { color: '#c8102e', fontWeight: 600 } : undefined}
+                            >
+                              {m.homeTeam}
+                            </span>
+                          </span>
+                        </td>
+                        <td data-label="Uit">
+                          <span className="league-schedule-team-cell">
+                            <ClubLogo
+                              clubcode={m.awayTeamRelatiecode}
+                              name={m.awayTeam}
+                              className="league-schedule-logo"
+                            />
+                            <span
+                              className={m.isOwnAway ? 'league-schedule-own-name' : ''}
+                              style={m.isOwnAway ? { color: '#c8102e', fontWeight: 600 } : undefined}
+                            >
+                              {m.awayTeam}
+                            </span>
+                          </span>
+                        </td>
+                        <td className="league-schedule-location" data-label="Locatie">
+                          {m.venue}
+                        </td>
+                        <td className="league-schedule-status" data-label="Status">
+                          {m.status}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-          {/* Mobile: cards */}
           <div className="card-match-list">
             {group.matches.map((m) => (
               <MatchCard
@@ -149,6 +169,7 @@ export default function ScheduleWeekGroups({
                 time={m.time}
                 venue={m.venue}
                 status={m.status}
+                href={`/wedstrijd/${m.matchCode}`}
               />
             ))}
           </div>

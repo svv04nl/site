@@ -36,6 +36,7 @@ export default async function VerenigingPage({ params }: Props) {
       section="vereniging"
       sectionLabel="Vereniging"
       content={page.content}
+      slug={slug}
     />
   )
 }

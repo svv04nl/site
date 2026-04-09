@@ -9,11 +9,9 @@ import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
 export const metadata = { title: "SVV'04 - Agenda" }
 
 export default async function AgendaPage() {
-  const activiteiten = await fetchClubData<RawActiviteitenResponse>(
-    'verenigingsactiviteiten',
-    null,
-    { aantaldagen: '365' },
-  ).catch(() => [] as RawActiviteitenResponse)
+  const activiteiten = await fetchClubData<RawActiviteitenResponse>('verenigingsactiviteiten', {
+    aantaldagen: '365',
+  }).catch(() => [] as RawActiviteitenResponse)
 
   // Group by month
   const grouped: { label: string; items: typeof activiteiten }[] = []
@@ -29,11 +27,11 @@ export default async function AgendaPage() {
   }
 
   return (
-    <main className="agenda-page">
+    <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Agenda' }]} />
 
       <div className="agenda-inner">
-        <h1 className="programma-title">Agenda</h1>
+        <h1 className="page-title">Agenda</h1>
 
         {activiteiten.length === 0 ? (
           <p className="agenda-empty">Geen activiteiten gepland.</p>

@@ -12,8 +12,9 @@ type Props = {
 }
 
 export default function LineupTab({ poules, initialIndex = 0 }: Props) {
-  const [selectedIndex, setSelectedIndex] = useState(initialIndex)
+  const [explicitIndex, setExplicitIndex] = useState<number | undefined>(undefined)
 
+  const selectedIndex = explicitIndex ?? initialIndex
   const selectedPoule = poules[selectedIndex]
   const poulecode = selectedPoule?.poulecode
 
@@ -31,7 +32,7 @@ export default function LineupTab({ poules, initialIndex = 0 }: Props) {
           <select
             className="league-fase-select"
             value={selectedIndex}
-            onChange={(e) => setSelectedIndex(Number(e.target.value))}
+            onChange={(e) => setExplicitIndex(Number(e.target.value))}
           >
             {poules.map((p, i) => (
               <option key={p.poulecode} value={i}>

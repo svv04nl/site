@@ -45,7 +45,7 @@ const PAGES = [
     title: 'Algemeen',
     content: richText([
       "SVV'04 Schoonebeek is een amateurvoetbalvereniging uit Schoonebeek, opgericht in 1904. De club heeft een rijke geschiedenis en is een begrip in de regio Emmen.",
-      'Met ruim 400 leden, verdeeld over senioren- en jeugdteams, is SVV\'04 een van de grotere voetbalclubs in Drenthe. De club speelt haar thuiswedstrijden op Sportpark De Kampen.',
+      "Met ruim 400 leden, verdeeld over senioren- en jeugdteams, is SVV'04 een van de grotere voetbalclubs in Drenthe. De club speelt haar thuiswedstrijden op Sportpark De Kampen.",
       'Wij staan voor goed voetbal, maar ook voor gezelligheid, respect en een veilige sportomgeving voor iedereen.',
     ]),
   },
@@ -54,7 +54,7 @@ const PAGES = [
     slug: 'bestuur',
     title: 'Bestuur',
     content: richText([
-      'Het bestuur van SVV\'04 bestaat uit een groep vrijwilligers die zich dagelijks inzet voor de vereniging. Zij zijn verantwoordelijk voor de algemene leiding en het beleid van de club.',
+      "Het bestuur van SVV'04 bestaat uit een groep vrijwilligers die zich dagelijks inzet voor de vereniging. Zij zijn verantwoordelijk voor de algemene leiding en het beleid van de club.",
       'Het bestuur vergadert maandelijks en is aanspreekbaar via secretaris@svv04.nl. Tijdens de jaarlijkse ledenvergadering legt het bestuur verantwoording af aan de leden.',
       'Wil je meer weten of heb je interesse om mee te besturen? Neem dan gerust contact met ons op.',
     ]),
@@ -74,7 +74,7 @@ const PAGES = [
     slug: 'sportpark',
     title: 'Sportpark',
     content: richText([
-      'Sportpark De Kampen ligt aan De Kampen 18 te Schoonebeek en is de thuisbasis van SVV\'04. Het park beschikt over drie natuurgrasvelden en één kunstgrasveld.',
+      "Sportpark De Kampen ligt aan De Kampen 18 te Schoonebeek en is de thuisbasis van SVV'04. Het park beschikt over drie natuurgrasvelden en één kunstgrasveld.",
       'In het clubgebouw bevinden zich kleedkamers, een kantine en vergaderruimtes. De kantine is tijdens thuiswedstrijden en trainingen geopend voor leden en bezoekers.',
       'Parkeren is mogelijk op het ruime parkeerterrein naast het clubgebouw. Het sportpark is goed bereikbaar via de N376 vanuit Coevorden en Emmen.',
     ]),
@@ -105,7 +105,7 @@ const PAGES = [
     title: 'Clubkleding',
     content: richText([
       "De officiële clubkleding van SVV'04 is verkrijgbaar via onze webshop bij Deventrade. Het tenue bestaat uit een rood-wit shirt, witte broek en rode kousen.",
-      'Naast het wedstrijdtenue zijn er ook trainingsshirts, jassen, sjaals en andere clubartikelen beschikbaar. Zo kun je altijd trots de kleuren van SVV\'04 dragen.',
+      "Naast het wedstrijdtenue zijn er ook trainingsshirts, jassen, sjaals en andere clubartikelen beschikbaar. Zo kun je altijd trots de kleuren van SVV'04 dragen.",
       'Bezoek onze webshop via de knop bovenaan de pagina of neem contact op met de kledingcommissie voor meer informatie.',
     ]),
   },
@@ -135,7 +135,7 @@ const PAGES = [
     title: 'Sponsoren',
     content: richText([
       "SVV'04 is mede mogelijk gemaakt door de steun van onze trouwe sponsors. Wij zijn dankbaar voor hun bijdrage aan onze vereniging en hopen op een langdurige samenwerking.",
-      'Bent u geïnteresseerd in het sponsoren van SVV\'04? Er zijn diverse sponsormogelijkheden, van shirtreclame tot bordsponsor en activiteitensponsoring. Neem contact op via sponsor@svv04.nl voor meer informatie.',
+      "Bent u geïnteresseerd in het sponsoren van SVV'04? Er zijn diverse sponsormogelijkheden, van shirtreclame tot bordsponsor en activiteitensponsoring. Neem contact op via sponsor@svv04.nl voor meer informatie.",
       'Een overzicht van onze huidige sponsors is te vinden op de homepage van onze website.',
     ]),
   },
@@ -146,7 +146,7 @@ const PAGES = [
     slug: 'activiteitencommissie',
     title: 'Activiteitencommissie',
     content: richText([
-      'De activiteitencommissie organiseert diverse evenementen voor de leden en de gemeenschap rondom SVV\'04. Denk aan het jaarlijkse zomertoernooi, de feestavond, de sinterklaasviering voor de jeugd en andere sociale activiteiten.',
+      "De activiteitencommissie organiseert diverse evenementen voor de leden en de gemeenschap rondom SVV'04. Denk aan het jaarlijkse zomertoernooi, de feestavond, de sinterklaasviering voor de jeugd en andere sociale activiteiten.",
       'De commissie bestaat uit een enthousiast team van vrijwilligers dat altijd op zoek is naar leuke ideeën en nieuwe leden. Heb je interesse? Stuur een mail naar activiteiten@svv04.nl.',
     ]),
   },
@@ -155,7 +155,7 @@ const PAGES = [
     slug: 'kantinecommissie',
     title: 'Kantinecommissie',
     content: richText([
-      'De kantinecommissie beheert de kantine van SVV\'04 en zorgt ervoor dat bezoekers en leden worden voorzien van drank en etenswaren tijdens thuiswedstrijden en trainingsavonden.',
+      "De kantinecommissie beheert de kantine van SVV'04 en zorgt ervoor dat bezoekers en leden worden voorzien van drank en etenswaren tijdens thuiswedstrijden en trainingsavonden.",
       'De kantine is de sociale spil van de vereniging. De commissie werkt met een rooster van vrijwilligers en regelt de inkoop, het beheer en de schoonmaak. Voor vragen of om je aan te melden als vrijwilliger: kantine@svv04.nl.',
     ]),
   },
@@ -173,7 +173,7 @@ const PAGES = [
     slug: 'commerciele-commissie',
     title: 'Commerciële commissie',
     content: richText([
-      'De commerciële commissie is verantwoordelijk voor het werven en onderhouden van sponsorrelaties. Zij zorgen ervoor dat SVV\'04 financieel gezond blijft en voldoende middelen heeft voor accommodatie, materialen en activiteiten.',
+      "De commerciële commissie is verantwoordelijk voor het werven en onderhouden van sponsorrelaties. Zij zorgen ervoor dat SVV'04 financieel gezond blijft en voldoende middelen heeft voor accommodatie, materialen en activiteiten.",
       'Voor sponsorvoorstellen en samenwerkingen kun je terecht bij de commerciële commissie via sponsor@svv04.nl.',
     ]),
   },
@@ -182,7 +182,7 @@ const PAGES = [
     slug: 'scheidsrechterscommissie',
     title: 'Scheidsrechterscommissie',
     content: richText([
-      'De scheidsrechterscommissie van SVV\'04 is verantwoordelijk voor de opleiding, planning en begeleiding van onze clubscheidsrechters. Zij leiden wedstrijden op alle niveaus, van de jongste jeugd tot aan de senioren.',
+      "De scheidsrechterscommissie van SVV'04 is verantwoordelijk voor de opleiding, planning en begeleiding van onze clubscheidsrechters. Zij leiden wedstrijden op alle niveaus, van de jongste jeugd tot aan de senioren.",
       'Heb je interesse in het leiden van wedstrijden? De KNVB biedt regelmatig opleidingen aan. Neem contact op via scheidsrechters@svv04.nl voor meer informatie.',
     ]),
   },
@@ -200,7 +200,7 @@ const PAGES = [
     slug: 'technische-commissie',
     title: 'Technische Commissie',
     content: richText([
-      'De Technische Commissie (TC) is verantwoordelijk voor het voetbaltechnische beleid van SVV\'04. De TC stelt trainers aan, begeleidt teams en werkt aan de doorontwikkeling van spelers van jeugd tot senioren.',
+      "De Technische Commissie (TC) is verantwoordelijk voor het voetbaltechnische beleid van SVV'04. De TC stelt trainers aan, begeleidt teams en werkt aan de doorontwikkeling van spelers van jeugd tot senioren.",
       'De commissie vergadert regelmatig met trainers en stafleden en legt verantwoording af aan het bestuur. Voor vragen over technisch beleid of trainersposities: tc@svv04.nl.',
     ]),
   },
@@ -209,8 +209,8 @@ const PAGES = [
     slug: 'communicatie-commissie',
     title: 'Communicatie commissie',
     content: richText([
-      'De communicatiecommissie beheert de website, sociale media en het clubblad van SVV\'04. Zij zorgen voor actuele en aantrekkelijke communicatie richting leden, supporters en de bredere gemeenschap.',
-      'Heb je nieuws, een wedstrijdverslag of foto\'s voor ons? Stuur ze naar communicatie@svv04.nl. We zijn ook op zoek naar vrijwilligers die willen helpen met teksten, foto\'s of social media.',
+      "De communicatiecommissie beheert de website, sociale media en het clubblad van SVV'04. Zij zorgen voor actuele en aantrekkelijke communicatie richting leden, supporters en de bredere gemeenschap.",
+      "Heb je nieuws, een wedstrijdverslag of foto's voor ons? Stuur ze naar communicatie@svv04.nl. We zijn ook op zoek naar vrijwilligers die willen helpen met teksten, foto's of social media.",
     ]),
   },
   {
@@ -218,7 +218,7 @@ const PAGES = [
     slug: 'kleding-en-materiaal',
     title: 'Kleding & materiaal',
     content: richText([
-      'De commissie Kleding & Materiaal beheert de clubkleding, ballen, trainingsmateriaal en andere benodigdheden voor alle teams van SVV\'04.',
+      "De commissie Kleding & Materiaal beheert de clubkleding, ballen, trainingsmateriaal en andere benodigdheden voor alle teams van SVV'04.",
       'Bij vragen over het bestellen van clubkleding, het uitwisselen van tenues of het aanvragen van materialen kun je terecht bij deze commissie via kleding@svv04.nl.',
     ]),
   },

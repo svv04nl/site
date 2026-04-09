@@ -3,7 +3,8 @@ import config from '@/payload.config'
 import React from 'react'
 import Link from 'next/link'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
-import type { Media } from '@/payload-types'
+import type { Post } from '@/payload-types'
+import { NewsCard } from '@/components/ui/NewsCard'
 
 export const metadata = { title: "SVV'04 - Nieuws" }
 
@@ -22,7 +23,7 @@ export default async function NewsPage({ searchParams }: Props) {
   const { docs: posts, totalDocs } = await payload.find({
     collection: 'posts',
     where: {
-      and: [{ status: { equals: 'published' } }, { category: { equals: 'nieuws' } }],
+      and: [{ status: { equals: 'published' } }],
     },
     sort: '-publishedAt',
     limit: PAGE_SIZE,
@@ -33,55 +34,19 @@ export default async function NewsPage({ searchParams }: Props) {
   const totalPages = Math.ceil(totalDocs / PAGE_SIZE)
 
   return (
-    <main className="nieuws-page">
+    <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Nieuws' }]} />
 
-      <div className="team-page-inner">
-        <h1 className="programma-title">Nieuws</h1>
+      <div className="page-inner">
+        <h1 className="page-title">Nieuws</h1>
 
         {posts.length === 0 ? (
           <p className="news-empty">Nog geen nieuwsberichten.</p>
         ) : (
           <div className="news-grid">
-            {posts.map((post) => {
-              const image = post.featuredImage as Media | null | undefined
-              const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
-              return (
-                <Link key={post.id} href={`/nieuws/${post.slug}`} className="card-news card">
-                  <div
-                    className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}
-                  >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={image?.alt ?? post.title}
-                        className="news-card-img"
-                      />
-                    ) : (
-                      <img
-                        src="/logo.png"
-                        alt=""
-                        className="news-card-img-placeholder"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </div>
-                  <div className="news-card-body">
-                    <time className="news-card-date">
-                      {post.publishedAt
-                        ? new Date(post.publishedAt).toLocaleDateString('nl-NL', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })
-                        : ''}
-                    </time>
-                    <h3 className="news-card-title">{post.title}</h3>
-                    {post.excerpt && <p className="news-card-excerpt">{post.excerpt}</p>}
-                  </div>
-                </Link>
-              )
-            })}
+            {posts.map((post) => (
+              <NewsCard key={post.id} post={post as Post} />
+            ))}
           </div>
         )}
 

@@ -15,7 +15,7 @@ type Props = {
 }
 
 export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: Props) {
-  const [selectedPoulecode, setSelectedPoulecode] = useState(poules[initialFaseIndex]?.poulecode)
+  const [selectedPoulecode, setSelectedPoulecode] = useState<number | undefined>(undefined)
   const [filterOwn, setFilterOwn] = useState(false)
 
   const scheduleQueries = useQueries({
@@ -27,8 +27,9 @@ export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: 
     return !q.isFetched || (q.data && q.data.length > 0)
   })
 
+  const defaultPoulecode = poules[initialFaseIndex]?.poulecode
   const poulecode =
-    availablePoules.find((p) => p.poulecode === selectedPoulecode)?.poulecode ??
+    availablePoules.find((p) => p.poulecode === (selectedPoulecode ?? defaultPoulecode))?.poulecode ??
     availablePoules[0]?.poulecode
 
   const selectedPoule = poules.find((p) => p.poulecode === poulecode)

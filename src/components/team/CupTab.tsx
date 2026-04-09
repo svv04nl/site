@@ -8,22 +8,6 @@ import MatchCard from '@/components/ui/MatchCard'
 import ClubLogo from '@/components/ClubLogo'
 import type { PouleInfo } from '@/lib/clubdata/types'
 
-const ShieldIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-  </svg>
-)
-
 type Props = {
   poules: PouleInfo[]
 }
@@ -89,101 +73,23 @@ export default function CupTab({ poules }: Props) {
       </div>
 
       {filtered.length > 0 ? (
-        <div style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
-          {/* Desktop */}
-          <div className="league-week-table-wrap">
-            <table className="league-results-table">
-              <colgroup>
-                <col className="col-date" />
-                <col className="col-home" />
-                <col className="col-away" />
-                <col className="col-score" />
-                <col className="col-status" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>Datum</th>
-                  <th>
-                    <span className="league-schedule-th-team">
-                      <ShieldIcon />
-                      Thuisteam
-                    </span>
-                  </th>
-                  <th>
-                    <span className="league-schedule-th-team">
-                      <ShieldIcon />
-                      Uitteam
-                    </span>
-                  </th>
-                  <th>Uitslag</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((m) => (
-                  <tr key={m.matchCode} className={cx({ 'league-schedule-own-row': m.isOwn })}>
-                    <td className="league-schedule-date" data-label="Datum">
-                      {m.date}
-                    </td>
-                    <td data-label="Thuis">
-                      <span className="league-schedule-team-cell">
-                        <ClubLogo
-                          clubcode={m.homeTeamRelatiecode}
-                          name={m.homeTeam}
-                          className="league-schedule-logo"
-                        />
-                        <span
-                          className={cx({ 'league-schedule-own-name': m.isOwnHome })}
-                          style={m.isOwnHome ? { color: '#c8102e', fontWeight: 600 } : undefined}
-                        >
-                          {m.homeTeam}
-                        </span>
-                      </span>
-                    </td>
-                    <td data-label="Uit">
-                      <span className="league-schedule-team-cell">
-                        <ClubLogo
-                          clubcode={m.awayTeamRelatiecode}
-                          name={m.awayTeam}
-                          className="league-schedule-logo"
-                        />
-                        <span
-                          className={cx({ 'league-schedule-own-name': m.isOwnAway })}
-                          style={m.isOwnAway ? { color: '#c8102e', fontWeight: 600 } : undefined}
-                        >
-                          {m.awayTeam}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="league-results-score" data-label="Uitslag">
-                      {m.score}
-                    </td>
-                    <td className="league-schedule-status" data-label="Status">
-                      {m.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {/* Mobile */}
-          <div className="card-match-list">
-            {filtered.map((m) => (
-              <MatchCard
-                key={m.matchCode}
-                date={m.date}
-                homeTeam={m.homeTeam}
-                awayTeam={m.awayTeam}
-                homeTeamRelatiecode={m.homeTeamRelatiecode}
-                awayTeamRelatiecode={m.awayTeamRelatiecode}
-                isOwnHome={m.isOwnHome}
-                isOwnAway={m.isOwnAway}
-                isOwn={m.isOwn}
-                score={m.score}
-                status={m.status}
-              />
-            ))}
-          </div>
+        <div className="card-match-list" style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
+          {filtered.map((m) => (
+            <MatchCard
+              key={m.matchCode}
+              date={m.date}
+              homeTeam={m.homeTeam}
+              awayTeam={m.awayTeam}
+              homeTeamRelatiecode={m.homeTeamRelatiecode}
+              awayTeamRelatiecode={m.awayTeamRelatiecode}
+              isOwnHome={m.isOwnHome}
+              isOwnAway={m.isOwnAway}
+              isOwn={m.isOwn}
+              score={m.score}
+              status={m.status}
+              href={`/wedstrijd/${m.matchCode}`}
+            />
+          ))}
         </div>
       ) : (
         !resultsLoading && <p className="league-empty">Geen uitslagen gevonden.</p>

@@ -214,9 +214,21 @@ export interface Post {
   title: string;
   slug: string;
   featuredImage?: (number | null) | Media;
+  /**
+   * Hoe de afbeelding in de nieuwskaart wordt weergegeven.
+   */
+  imageFit?: ('cover' | 'contain') | null;
+  /**
+   * Achtergrondkleur bij "passend maken".
+   */
+  imageBackground?: string | null;
   publishedAt?: string | null;
   status?: ('draft' | 'published') | null;
-  category?: ('nieuws' | 'overig') | null;
+  categories?: ('club' | 'senioren' | 'junioren')[] | null;
+  /**
+   * Koppel teams — categorie wordt automatisch ingesteld.
+   */
+  relatedTeams?: (number | Team)[] | null;
   content?: {
     root: {
       type: string;
@@ -233,7 +245,7 @@ export interface Post {
     [k: string]: unknown;
   } | null;
   /**
-   * Short summary shown in news overviews.
+   * Korte samenvatting zichtbaar in nieuwsoverzichten.
    */
   excerpt?: string | null;
   updatedAt: string;
@@ -278,6 +290,10 @@ export interface Team {
    */
   teamcode?: number | null;
   photo?: (number | null) | Media;
+  /**
+   * Teamsponsor (Payload sponsor item)
+   */
+  sponsor?: (number | null) | Sponsor;
   description?: {
     root: {
       type: string;
@@ -526,9 +542,12 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   featuredImage?: T;
+  imageFit?: T;
+  imageBackground?: T;
   publishedAt?: T;
   status?: T;
-  category?: T;
+  categories?: T;
+  relatedTeams?: T;
   content?: T;
   excerpt?: T;
   updatedAt?: T;
@@ -546,6 +565,7 @@ export interface TeamsSelect<T extends boolean = true> {
   order?: T;
   teamcode?: T;
   photo?: T;
+  sponsor?: T;
   description?: T;
   updatedAt?: T;
   createdAt?: T;

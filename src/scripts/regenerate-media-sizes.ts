@@ -11,7 +11,9 @@ import config from '@payload-config'
 import { list } from '@vercel/blob'
 import type { Media } from '@/payload-types'
 
-async function fetchFileBuffer(url: string): Promise<{ data: Buffer; mimetype: string; size: number }> {
+async function fetchFileBuffer(
+  url: string,
+): Promise<{ data: Buffer; mimetype: string; size: number }> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
   const contentType = res.headers.get('content-type') ?? 'image/jpeg'

@@ -19,11 +19,11 @@ export default async function JeugdPage() {
   })
 
   return (
-    <main className="teams-overview-page">
+    <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Jeugd' }]} />
 
-      <div className="team-page-inner">
-        <h1 className="programma-title">Jeugd</h1>
+      <div className="page-inner">
+        <h1 className="page-title">Jeugd</h1>
 
         {teams.length === 0 ? (
           <p className="news-empty">Geen teams gevonden.</p>

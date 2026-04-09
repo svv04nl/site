@@ -5,9 +5,18 @@ import React from 'react'
 import Link from 'next/link'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { RichText } from '@payloadcms/richtext-lexical/react'
-import type { Media } from '@/payload-types'
+import { defaultJSXConverters } from '@/lib/richtext'
+import { MoreLink } from '@/components/ui/MoreLink'
+import { Sidebar } from '@/components/ui/Sidebar'
+import type { Media, Team } from '@/payload-types'
 
 type Props = { params: Promise<{ slug: string }> }
+
+const CATEGORY_LABELS: Record<string, string> = {
+  club: 'Club',
+  senioren: 'Senioren',
+  junioren: 'Junioren',
+}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
@@ -19,25 +28,44 @@ export async function generateMetadata({ params }: Props) {
   })
   const post = docs[0]
   if (!post) return {}
-  return { title: `SVV'04 - ${docs[0].title}` }
+  return { title: `SVV'04 - ${post.title}` }
 }
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params
   const payload = await getPayload({ config: await config })
 
-  const { docs } = await payload.find({
-    collection: 'posts',
-    where: { slug: { equals: slug }, status: { equals: 'published' } },
-    limit: 1,
-    depth: 1,
-  })
+  const [{ docs }, { docs: sidebarPosts }] = await Promise.all([
+    payload.find({
+      collection: 'posts',
+      where: { slug: { equals: slug }, status: { equals: 'published' } },
+      limit: 1,
+      depth: 2,
+    }),
+    payload.find({
+      collection: 'posts',
+      where: {
+        and: [{ status: { equals: 'published' } }, { slug: { not_equals: slug } }],
+      },
+      sort: '-publishedAt',
+      limit: 4,
+      depth: 1,
+    }),
+  ])
 
   if (!docs[0]) notFound()
 
   const post = docs[0]
   const image = post.featuredImage as Media | null | undefined
+  const isContain = (post as any).imageFit === 'contain'
+  const bgColor = (post as any).imageBackground || '#ffffff'
   const imageUrl = image?.url ?? null
+
+  const categories = (post as any).categories as string[] | null | undefined
+  const relatedTeams = (post as any).relatedTeams as Array<Team | string> | null | undefined
+  const teamNames =
+    relatedTeams?.filter((t): t is Team => typeof t === 'object').map((t) => t.name) ?? []
+  const allTags = [...(categories?.map((c) => CATEGORY_LABELS[c] ?? c) ?? []), ...teamNames]
 
   const formattedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('nl-NL', {
@@ -49,7 +77,7 @@ export default async function PostPage({ params }: Props) {
     : null
 
   return (
-    <main className="news-detail">
+    <main className="page news-detail">
       <SetBreadcrumb
         crumbs={[
           { label: 'Home', href: '/' },
@@ -58,30 +86,97 @@ export default async function PostPage({ params }: Props) {
         ]}
       />
 
-      <div className="news-detail-hero">
-        <img
-          src={imageUrl ?? '/hero-sportpark.jpg'}
-          alt={imageUrl ? (image?.alt ?? post.title) : ''}
-          className="news-detail-hero-img"
-        />
-      </div>
+      <div className="news-detail-layout">
+        {/* Main article */}
+        <article className="news-detail-main">
+          {imageUrl && (
+            <div
+              className="news-detail-hero"
+              style={isContain ? { backgroundColor: bgColor } : undefined}
+            >
+              <img
+                src={imageUrl}
+                alt={image?.alt ?? post.title}
+                className="news-detail-hero-img"
+                style={isContain ? { objectFit: 'contain' } : undefined}
+              />
+            </div>
+          )}
 
-      <div className="news-detail-inner">
-        {formattedDate && <time className="news-detail-date">{formattedDate}</time>}
+          <div className="news-detail-inner">
+            <div className="news-card-meta">
+              {formattedDate && <time className="news-card-date">{formattedDate}</time>}
+              {allTags.length > 0 && (
+                <div className="news-card-tags">
+                  {allTags.map((tag) => (
+                    <span key={tag} className="news-card-tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
 
-        <h1 className="news-detail-title">{post.title}</h1>
+            <h1 className="news-detail-title">{post.title}</h1>
 
-        {post.content && (
-          <div className="news-detail-body">
-            <RichText data={post.content} />
+            {post.content && (
+              <div className="news-detail-body">
+                <RichText data={post.content} converters={defaultJSXConverters} />
+              </div>
+            )}
+
+            <div className="news-detail-footer">
+              <Link href="/nieuws" className="news-detail-back">
+                ← Terug naar nieuwsoverzicht
+              </Link>
+            </div>
           </div>
-        )}
+        </article>
 
-        <div className="news-detail-footer">
-          <Link href="/nieuws" className="news-detail-back">
-            ← Terug naar nieuwsoverzicht
-          </Link>
-        </div>
+        {/* Sidebar */}
+        <Sidebar>
+          <div className="sidebar-section">
+            <h2 className="sidebar-section-title">Laatste Nieuws</h2>
+            <ul className="news-sidebar-list">
+              {sidebarPosts.map((p) => {
+                const pCats = (p as any).categories as string[] | null | undefined
+                const pTeams = (p as any).relatedTeams as Array<Team | string> | null | undefined
+                const pTeamNames =
+                  pTeams?.filter((t): t is Team => typeof t === 'object').map((t) => t.name) ?? []
+                const pTags = [...(pCats?.map((c) => CATEGORY_LABELS[c] ?? c) ?? []), ...pTeamNames]
+                return (
+                  <li key={p.id}>
+                    <Link href={`/nieuws/${p.slug}`} className="news-sidebar-item">
+                      <div className="news-sidebar-item-meta">
+                        {p.publishedAt && (
+                          <time className="news-secondary-date">
+                            {new Date(p.publishedAt).toLocaleDateString('nl-NL', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            })}
+                          </time>
+                        )}
+                        {pTags.length > 0 && (
+                          <div className="news-card-tags">
+                            {pTags.map((tag) => (
+                              <span key={tag} className="news-card-tag">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="news-sidebar-item-title">{p.title}</h3>
+                      {p.excerpt && <p className="news-sidebar-item-excerpt">{p.excerpt}</p>}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+            <MoreLink href="/nieuws" text="Meer nieuws" />
+          </div>
+        </Sidebar>
       </div>
     </main>
   )

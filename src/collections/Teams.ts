@@ -79,6 +79,14 @@ export const Teams: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'sponsor',
+      type: 'relationship',
+      relationTo: 'sponsors',
+      admin: {
+        description: 'Teamsponsor (Payload sponsor item)',
+      },
+    },
+    {
       name: 'description',
       type: 'richText',
     },

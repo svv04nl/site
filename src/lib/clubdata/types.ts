@@ -199,3 +199,112 @@ export type RawTeamSponsor = {
 }
 
 export type RawTeamSponsorsResponse = RawTeamSponsor[]
+
+// wedstrijd-informatie endpoint — single object (not array)
+export type RawWedstrijdInformatie = {
+  wedstrijdinformatie: {
+    wedstrijdnummer: number
+    wedstijdnummerintern: number
+    veldnaam: string
+    veldlocatie: string
+    vertrektijd: string | null
+    rijder: string
+    thuisscore: number | null
+    'thuisscore-regulier': number | null
+    'thuisscore-nv': number | null
+    'thuisscore-s': number | null
+    uitscore: number | null
+    'uitscore-regulier': number | null
+    'uitscore-nv': number | null
+    'uitscore-s': number | null
+    klasse: string
+    wedstrijdtype: string
+    competitietype: string
+    categorie: string
+    wedstrijddatetime: string
+    wedstrijddatum: string
+    wedstrijddatumopgemaakt: string
+    aanvangstijd: string
+    aanvangstijdopgemaakt: string
+    duur: string
+    speltype: string
+    aanduiding: string
+    poulecode: number
+    poule: string
+    thuisteamid: number
+    thuisteam: string
+    uitteamid: number
+    uitteam: string
+    opmerkingen: string
+  }
+  officials: {
+    verenigingsscheidsrechtercode: string | null
+    verenigingsscheidsrechter: string | null
+    overigeofficialcode: string | null
+    overigeofficial: string | null
+  }
+  matchofficials: {
+    scheidsrechters: string
+  }
+  kleedkamers: {
+    thuis: string
+    uit: string
+    official: string
+  }
+  accommodatie: {
+    naam: string
+    straat: string
+    plaats: string
+    telefoon: string
+    routeplanner: string
+  }
+  thuisteam: {
+    naam: string
+    code: string // club relatiecode
+    website: string
+    shirtkleur: string
+    straat: string
+    postcodeplaats: string
+    telefoon: string
+    email: string
+  }
+  uitteam: {
+    naam: string
+    code: string // club relatiecode
+    website: string
+    shirtkleur: string
+    straat: string
+    postcodeplaats: string
+    telefoon: string
+    email: string
+  }
+}
+
+// wedstrijd-thuisteam / wedstrijd-uitteam endpoints
+export type RawWedstrijdSpeler = {
+  relatiecode: string | null
+  naam: string
+  rol: string // "Teamspeler" | "Technische staf" | ...
+  einddatum: string | null
+  functie: string
+  email: string | null
+  email2: string | null
+  telefoon: string | null
+  telefoon2: string | null
+  mobiel: string | null
+  foto: string | null
+}
+
+export type RawWedstrijdSpelersResponse = RawWedstrijdSpeler[]
+
+// wedstrijd-statistieken endpoint
+export type RawWedstrijdEvenement = {
+  minuut: string | number
+  soort: string // "doelpunt" | "geelkaart" | "roodkaart" | "wissel" | ...
+  teamtype: string // "thuisteam" | "uitteam"
+  spelernaam: string
+  uitvallernaam?: string // for substitutions
+  toevoeging?: string // e.g. "strafschop", "eigen doelpunt"
+}
+
+export type RawWedstrijdEvenementenResponse = RawWedstrijdEvenement[]

@@ -21,6 +21,9 @@ import type {
   RawTeamSponsorsResponse,
   RawPeriodeNummer,
   PouleInfo,
+  RawWedstrijdInformatie as RawGameInfoResponse,
+  RawWedstrijdSpelersResponse as RawGamePlayersResponse,
+  RawWedstrijdEvenementenResponse,
 } from '@/lib/clubdata/types'
 
 const STALE_TIME = 5 * 60 * 1000
@@ -57,7 +60,7 @@ export const teamPoulesQuery = (teamcode: number | null) => ({
     const teamPoules = raw.filter((e) => e.teamcode === teamcode)
     const regularPoules = teamPoules.filter((e) => e.competitiesoort === 'regulier')
     const cupPoules = teamPoules.filter((e) => e.competitiesoort === 'beker')
-    const fasePoules = teamPoules.filter((e) => isFasePoule(e.klasse))
+    const fasePoules = regularPoules.filter((e) => isFasePoule(e.klasse))
     const poules = regularPoules.filter((e) => !isFasePoule(e.klasse))
 
     return {
@@ -70,10 +73,10 @@ export const teamPoulesQuery = (teamcode: number | null) => ({
   staleTime: STALE_TIME,
 })
 
-export const periodestandQuery = (poulecode: number | undefined, periodeNummer: number) => ({
+export const periodStandingQuery = (poulecode: number | undefined, periodeNummer: number) => ({
   queryKey: ['periodestand', poulecode, periodeNummer] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawPeriodestandResponse>('periodestand', null, {
+    const raw = await fetchClubData<RawPeriodestandResponse>('periodestand', {
       poulecode: String(poulecode),
       periodenummer: String(periodeNummer),
     })
@@ -83,10 +86,10 @@ export const periodestandQuery = (poulecode: number | undefined, periodeNummer: 
   staleTime: STALE_TIME,
 })
 
-export const periodenummersQuery = (poulecode: number | undefined) => ({
+export const periodNumbersQuery = (poulecode: number | undefined) => ({
   queryKey: ['periodenummers', poulecode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawPeriodeNummer[]>('keuzelijst-periodenummers', null, {
+    const raw = await fetchClubData<RawPeriodeNummer[]>('keuzelijst-periodenummers', {
       poulecode: String(poulecode),
     })
     return raw
@@ -100,7 +103,8 @@ export const periodenummersQuery = (poulecode: number | undefined) => ({
 export const teamRosterQuery = (teamcode: number | null) => ({
   queryKey: ['team-roster', teamcode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawTeamIndelingResponse>('team-indeling', teamcode, {
+    const raw = await fetchClubData<RawTeamIndelingResponse>('team-indeling', {
+      teamcode: String(teamcode),
       lokaleteamcode: 'NULL',
       toonlidfoto: 'NEE',
     })
@@ -113,7 +117,8 @@ export const teamRosterQuery = (teamcode: number | null) => ({
 export const teamSponsorsQuery = (teamcode: number | null) => ({
   queryKey: ['team-sponsors', teamcode] as const,
   queryFn: () =>
-    fetchClubData<RawTeamSponsorsResponse>('team-sponsors', teamcode, {
+    fetchClubData<RawTeamSponsorsResponse>('team-sponsors', {
+      teamcode: String(teamcode),
       lokaleteamcode: 'NULL',
     }),
   enabled: !!teamcode,
@@ -123,7 +128,7 @@ export const teamSponsorsQuery = (teamcode: number | null) => ({
 export const standingsQuery = (poulecode: number | undefined) => ({
   queryKey: ['standings', poulecode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawPoulestandResponse>('poulestand', null, {
+    const raw = await fetchClubData<RawPoulestandResponse>('poulestand', {
       poulecode: String(poulecode),
     })
     return transformStandings(raw, CLUB_RELATIECODE)
@@ -135,7 +140,7 @@ export const standingsQuery = (poulecode: number | undefined) => ({
 export const lineupQuery = (poulecode: number | undefined) => ({
   queryKey: ['lineup', poulecode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawPouleIndelingResponse>('poule-indeling', null, {
+    const raw = await fetchClubData<RawPouleIndelingResponse>('poule-indeling', {
       poulecode: String(poulecode),
     })
     return transformLineup(raw)
@@ -147,9 +152,10 @@ export const lineupQuery = (poulecode: number | undefined) => ({
 export const resultsQuery = (poulecode: number | undefined) => ({
   queryKey: ['results', poulecode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawPouleUitslagenResponse>('pouleuitslagen', null, {
+    const raw = await fetchClubData<RawPouleUitslagenResponse>('pouleuitslagen', {
       poulecode: String(poulecode),
       eigenwedstrijden: 'NEE',
+      aantaldagen: '100',
     })
     return transformResults(raw, CLUB_RELATIECODE)
   },
@@ -160,7 +166,7 @@ export const resultsQuery = (poulecode: number | undefined) => ({
 export const cupResultsQuery = (poulecode: number | undefined) => ({
   queryKey: ['cup-results', poulecode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawPouleUitslagenResponse>('pouleuitslagen', null, {
+    const raw = await fetchClubData<RawPouleUitslagenResponse>('pouleuitslagen', {
       poulecode: String(poulecode),
       aantaldagen: '365',
       weekoffset: '-52',
@@ -176,7 +182,7 @@ export const cupResultsQuery = (poulecode: number | undefined) => ({
 export const pouleScheduleQuery = (poulecode: number, teamcode: number) => ({
   queryKey: ['poule-programma', poulecode] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawProgrammaResponse>('poule-programma', null, {
+    const raw = await fetchClubData<RawProgrammaResponse>('poule-programma', {
       poulecode: String(poulecode),
       eigenwedstrijden: 'NEE',
     })
@@ -188,7 +194,8 @@ export const pouleScheduleQuery = (poulecode: number, teamcode: number) => ({
 export const nextMatchQuery = (teamcode: number | null, maxDays = 365) => ({
   queryKey: ['next-match', teamcode, maxDays] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawProgrammaResponse>('programma', teamcode, {
+    const raw = await fetchClubData<RawProgrammaResponse>('programma', {
+      teamcode: String(teamcode),
       aantaldagen: String(maxDays),
       aantalregels: '1',
     })
@@ -198,10 +205,37 @@ export const nextMatchQuery = (teamcode: number | null, maxDays = 365) => ({
   staleTime: STALE_TIME,
 })
 
+export const gameInfoQuery = (wedstrijdcode: string | number) => ({
+  queryKey: ['wedstrijd-informatie', String(wedstrijdcode)] as const,
+  queryFn: () =>
+    fetchClubData<RawGameInfoResponse>('wedstrijd-informatie', {
+      wedstrijdcode: String(wedstrijdcode),
+    }),
+  staleTime: STALE_TIME,
+})
+
+export const gameHomeTeamQuery = (wedstrijdcode: string | number) => ({
+  queryKey: ['wedstrijd-thuisteam', String(wedstrijdcode)] as const,
+  queryFn: () =>
+    fetchClubData<RawGamePlayersResponse>('wedstrijd-thuisteam', {
+      wedstrijdcode: String(wedstrijdcode),
+    }),
+  staleTime: STALE_TIME,
+})
+
+export const gameAwayTeamQuery = (wedstrijdcode: string | number) => ({
+  queryKey: ['wedstrijd-uitteam', String(wedstrijdcode)] as const,
+  queryFn: () =>
+    fetchClubData<RawGamePlayersResponse>('wedstrijd-uitteam', {
+      wedstrijdcode: String(wedstrijdcode),
+    }),
+  staleTime: STALE_TIME,
+})
+
 export const clubScheduleQuery = (filter: 'thuis' | 'uit' | 'alles') => ({
   queryKey: ['programma', filter] as const,
   queryFn: async () => {
-    const raw = await fetchClubData<RawProgrammaResponse>('programma', null, {
+    const raw = await fetchClubData<RawProgrammaResponse>('programma', {
       ...CLUB_PROGRAMMA_PARAMS,
       thuis: filter !== 'uit' ? 'ja' : 'nee',
       uit: filter !== 'thuis' ? 'ja' : 'nee',

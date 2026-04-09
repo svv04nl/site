@@ -1,12 +1,7 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
 import cx from 'classnames'
-import { teamPoulesQuery } from '@/lib/clubdata/queries'
-import { useTeam } from '@/components/team/TeamContext'
 
 const TABS = [
   {
@@ -122,28 +117,28 @@ const TABS = [
   },
 ]
 
-export default function TeamTabNav() {
-  const { teamcode, slug: teamSlug } = useTeam()
-  const pathname = usePathname()
-  const { data: poules } = useQuery(teamPoulesQuery(teamcode))
-  const hasCup = (poules?.cupPoules.length ?? 0) > 0
+type Props = {
+  activeTab: string
+  onTabChange: (tab: string) => void
+  hasCup: boolean
+}
+
+export default function TeamTabNav({ activeTab, onTabChange, hasCup }: Props) {
   const tabs = TABS.filter((t) => t.id !== 'beker' || hasCup)
 
   return (
     <div className="league-tabs">
-      {tabs.map((tab) => {
-        const href = `/teams/${teamSlug}/${tab.id}`
-        const isBase = pathname === `/teams/${teamSlug}`
-        const isActive = isBase
-          ? tab.id === 'stand'
-          : pathname === href || pathname.startsWith(`${href}/`)
-        return (
-          <Link key={tab.id} href={href} className={cx('league-tab', { 'is-active': isActive })}>
-            {tab.icon}
-            {tab.label}
-          </Link>
-        )
-      })}
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          className={cx('league-tab', { 'is-active': activeTab === tab.id })}
+          onClick={() => onTabChange(tab.id)}
+        >
+          {tab.icon}
+          {tab.label}
+        </button>
+      ))}
     </div>
   )
 }

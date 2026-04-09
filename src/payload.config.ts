@@ -1,7 +1,7 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { resendAdapter } from '@payloadcms/email-resend'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
-import { lexicalEditor, BlocksFeature } from '@payloadcms/richtext-lexical'
+import { lexicalEditor, BlocksFeature, LinkFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { nl } from 'payload/i18n/nl'
@@ -38,7 +38,30 @@ export default buildConfig({
   collections: [Users, Media, Posts, Teams, Sponsors, Pages],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
-      ...defaultFeatures,
+      ...defaultFeatures.filter((f) => f.key !== 'link'),
+      LinkFeature({
+        enabledCollections: ['pages', 'posts', 'teams'],
+        fields: ({ defaultFields }) => [
+          ...defaultFields,
+          {
+            name: 'quickLink',
+            type: 'select' as const,
+            label: 'Snelle link',
+            options: [
+              { label: 'Nieuws', value: '/nieuws' },
+              { label: 'Agenda', value: '/agenda' },
+              { label: 'Programma', value: '/programma' },
+              { label: 'Senioren', value: '/senioren' },
+              { label: 'Jeugd', value: '/jeugd' },
+              { label: 'Contact', value: '/contact' },
+            ],
+            admin: {
+              condition: (data) => data.linkType !== 'internal',
+              description: 'Of kies een vaste pagina (vervangt de URL hierboven).',
+            },
+          },
+        ],
+      }),
       BlocksFeature({
         blocks: [CtaBlock],
       }),

@@ -54,6 +54,7 @@ export default function ClubSchedule() {
           weekGroups={weekGroups}
           isLoading={isLoading}
           emptyMessage="Geen wedstrijden gevonden."
+          tableOnDesktop
         />
       )}
     </div>

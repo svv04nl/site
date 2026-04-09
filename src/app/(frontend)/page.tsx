@@ -4,8 +4,11 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import NextMatchServer from '@/components/NextMatchServer'
 import { fetchClubData } from '@/lib/clubdata/fetch'
-import type { Media } from '@/payload-types'
+import type { Post } from '@/payload-types'
 import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
+import { NewsCard } from '@/components/ui/NewsCard'
+import { MoreLink } from '@/components/ui/MoreLink'
+import { Sidebar } from '@/components/ui/Sidebar'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-o21-1', 'svv04-jo9-1']
 
@@ -22,13 +25,13 @@ export default async function HomePage() {
     payload.find({
       collection: 'posts',
       where: {
-        and: [{ status: { equals: 'published' } }, { category: { equals: 'nieuws' } }],
+        and: [{ status: { equals: 'published' } }],
       },
       sort: '-publishedAt',
-      limit: 3,
+      limit: 4,
       depth: 1,
     }),
-    fetchClubData<RawActiviteitenResponse>('verenigingsactiviteiten', null, {
+    fetchClubData<RawActiviteitenResponse>('verenigingsactiviteiten', {
       aantaldagen: '365',
     }).catch(() => [] as RawActiviteitenResponse),
   ])
@@ -64,139 +67,94 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Fixtures */}
-        <section className="matches-section">
-          <div className="home-section-inner">
-            <h2 className="matches-title">Wedstrijden</h2>
-            <div className="matches-grid">
-              {teams.map((team) => (
-                <NextMatchServer
-                  key={team.slug}
-                  teamcode={team.teamcode!}
-                  teamName={team.name}
-                  showTitle={false}
-                  maxDays={7}
-                />
-              ))}
-            </div>
-            <div className="matches-footer">
-              <Link className="home-section-link" href="/programma">
-                Volledig programma &rarr;
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Latest news */}
-        <section className="home-section">
-          <div className="home-section-inner">
-            <div className="home-section-header">
-              <h2 className="home-section-title">
-                Het Laatste nieuws{' '}
-                <Link className="home-section-inline-link" href="/nieuws">
-                  Bekijk alle nieuws &rarr;
+        {/* Latest news + sidebar (matches + agenda) */}
+        <section className="home-news-sidebar-section">
+          <div className="home-news-sidebar-inner">
+            {/* Left: news */}
+            <div className="home-news-col">
+              <div className="home-news-header">
+                <h2 className="home-news-title">Laatste Nieuws</h2>
+                <Link className="home-news-viewall" href="/nieuws">
+                  Bekijk alles
                 </Link>
-              </h2>
+              </div>
+              <div className="home-news-layout">
+                {latestPosts.map((post) => (
+                  <NewsCard key={post.id} post={post as Post} />
+                ))}
+              </div>
             </div>
-            <div className="news-grid">
-              {latestPosts.map((post) => {
-                const image = post.featuredImage as Media | null | undefined
-                const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
-                return (
-                  <Link key={post.id} href={`/nieuws/${post.slug}`} className="card-news card">
-                    <div
-                      className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}
-                    >
-                      {imageUrl ? (
-                        <img
-                          src={imageUrl}
-                          alt={image?.alt ?? post.title}
-                          className="news-card-img"
-                        />
-                      ) : (
-                        <img
-                          src="/logo.png"
-                          alt=""
-                          className="news-card-img-placeholder"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </div>
-                    <div className="news-card-body">
-                      <time className="news-card-date">
-                        {post.publishedAt
-                          ? new Date(post.publishedAt).toLocaleDateString('nl-NL', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })
-                          : ''}
-                      </time>
-                      <h3 className="news-card-title">{post.title}</h3>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
+
+            {/* Right: sidebar */}
+            <Sidebar>
+              {/* Matches */}
+              <div className="sidebar-section">
+                <h2 className="sidebar-section-title">Komende wedstrijden</h2>
+                <div className="sidebar-matches-list">
+                  {teams.map((team) => (
+                    <NextMatchServer
+                      key={team.slug}
+                      teamcode={team.teamcode!}
+                      teamName={team.name}
+                      showTitle={false}
+                      maxDays={7}
+                    />
+                  ))}
+                </div>
+                <MoreLink href="/programma" text="Volledig programma" />
+              </div>
+
+              {/* Agenda */}
+              <div className="sidebar-section">
+                <h2 className="sidebar-section-title">Agenda</h2>
+                <ul className="sidebar-agenda-list">
+                  {activiteiten.length === 0 && (
+                    <li style={{ color: '#888', fontSize: '0.875rem' }}>
+                      Geen activiteiten gepland.
+                    </li>
+                  )}
+                  {activiteiten.slice(0, 4).map((item, i) => {
+                    const date = new Date(item.datumvan)
+                    return (
+                      <li key={i} className="sidebar-agenda-item">
+                        <div
+                          className={`sidebar-agenda-date-box${i === 0 ? ' sidebar-agenda-date-box--primary' : ''}`}
+                        >
+                          <span className="sidebar-agenda-day">{date.getDate()}</span>
+                          <span className="sidebar-agenda-month">
+                            {date.toLocaleDateString('nl-NL', { month: 'short' }).replace('.', '')}
+                          </span>
+                        </div>
+                        <div className="sidebar-agenda-content">
+                          {item.url ? (
+                            <a
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="sidebar-agenda-name"
+                            >
+                              {item.activiteit}
+                            </a>
+                          ) : (
+                            <span className="sidebar-agenda-name">{item.activiteit}</span>
+                          )}
+                          {item.plaats && (
+                            <span className="sidebar-agenda-meta">{item.plaats}</span>
+                          )}
+                        </div>
+                      </li>
+                    )
+                  })}
+                </ul>
+                <MoreLink href="/agenda" text="Volledige agenda" />
+              </div>
+            </Sidebar>
           </div>
         </section>
 
-        {/* Agenda + CTA tiles */}
+        {/* CTA tiles */}
         <section className="home-calendar-section">
-          <div className="home-section-inner home-calendar-inner">
-            <div className="calendar-panel">
-              <h2 className="calendar-title">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                  <circle cx="12" cy="15" r="1" fill="currentColor" />
-                </svg>
-                Agenda
-              </h2>
-              <ol className="calendar-list">
-                {activiteiten.length === 0 && (
-                  <li className="calendar-item calendar-item--empty">Geen activiteiten gepland.</li>
-                )}
-                {activiteiten.map((item, i) => {
-                  const date = new Date(item.datumvan)
-                  const formatted = date.toLocaleDateString('nl-NL', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })
-                  return (
-                    <li key={i} className="calendar-item">
-                      <time className="calendar-date">{formatted}</time>
-                      <span className="calendar-event">
-                        {item.url ? (
-                          <a href={item.url} target="_blank" rel="noopener noreferrer">
-                            {item.activiteit}
-                          </a>
-                        ) : (
-                          item.activiteit
-                        )}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ol>
-              <Link className="calendar-more" href="/agenda">
-                Volledige agenda bekijken &rarr;
-              </Link>
-            </div>
-
+          <div className="home-section-inner">
             <div className="cta-grid">
               <Link
                 className="cta-tile"

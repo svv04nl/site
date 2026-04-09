@@ -23,6 +23,7 @@
 $breakpoint-tablet: 768px;
 $breakpoint-tablet-landscape: 1024px;
 $breakpoint-nav: 1030px;
+$breakpoint-sidebar: 1100px;
 
 // ─── Reset ────────────────────────────────────────────────────────────────────
 
@@ -182,7 +183,7 @@ p {
   color: var(--color-white) !important;
   margin-left: 0.5rem;
   padding: 0.45rem 1.125rem !important;
-  transition: background-color 0.15s ease !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
 
   &:hover {
     background-color: #a80000 !important;
@@ -276,10 +277,11 @@ p {
   color: rgba(255 255 255 / 0.4);
   display: flex;
   line-height: 0;
-  transition: color 0.15s ease;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
 
   &:hover {
-    color: var(--color-white);
+    opacity: 1;
   }
 }
 
@@ -350,12 +352,12 @@ p {
 
 .site-hero {
   background-color: var(--color-dark);
-  min-height: 32vh;
+  min-height: 22vh;
   overflow: hidden;
   position: relative;
 
   @media screen and (max-width: $breakpoint-tablet) {
-    min-height: 25.6vh;
+    min-height: 18vh;
   }
 }
 
@@ -390,19 +392,19 @@ p {
   margin-left: auto;
   margin-right: auto;
   max-width: var(--grid-base);
-  min-height: 42vh;
-  padding-bottom: 2.5rem;
+  min-height: 30vh;
+  padding-bottom: 2rem;
   padding-left: var(--container-padding);
   padding-right: var(--container-padding);
-  padding-top: 5rem;
+  padding-top: 4rem;
   position: relative;
   z-index: 2;
 
   @media screen and (max-width: $breakpoint-tablet-landscape) {
     grid-template-columns: 1fr;
-    min-height: 28vh;
-    padding-bottom: 2rem;
-    padding-top: 4rem;
+    min-height: 22vh;
+    padding-bottom: 1.5rem;
+    padding-top: 3rem;
   }
 }
 
@@ -413,10 +415,10 @@ p {
 .site-hero-tagline {
   color: rgba(255 255 255 / 0.75);
   font-family: var(--font-body);
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
   font-weight: 300;
   line-height: 1.5;
-  margin-top: 1.25rem;
+  margin-top: 0.75rem;
 
   @media screen and (max-width: $breakpoint-tablet) {
     font-size: 0.9375rem;
@@ -452,7 +454,7 @@ p {
 .site-hero-title {
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 5vw;
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
   white-space: nowrap;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -918,6 +920,313 @@ p {
   transition: letter-spacing 0.2s ease;
 }
 
+// ─── Homepage: News + Sidebar two-column layout ───────────────────────────────
+
+.home-news-sidebar-section {
+  background: var(--color-white);
+  padding-bottom: 5rem;
+  padding-top: 5rem;
+}
+
+.home-news-sidebar-inner {
+  align-items: flex-start;
+  display: grid;
+  gap: 4rem;
+  grid-template-columns: 1.85fr 1fr;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--grid-base);
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+
+  @media screen and (max-width: $breakpoint-sidebar) {
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+}
+
+// Left news column
+
+.home-news-col {
+  min-width: 0;
+}
+
+.home-news-header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.home-news-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.home-news-viewall {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: #a80000;
+  }
+}
+
+.more-link {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: #a80000;
+  }
+}
+
+// News inner layout: 2×2 equal tiles
+
+.home-news-layout {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+
+  @media screen and (max-width: 650px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.news-card-meta {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.news-card-tags {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.news-card-tag {
+  background: var(--color-primary);
+  border-radius: 3px;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  padding: 0.15rem 0.4rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// Secondary posts list
+
+.news-secondary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.news-secondary-item {
+  align-items: center;
+  border-bottom: 1px solid #ebebeb;
+  color: var(--color-dark);
+  display: grid;
+  gap: 0.875rem;
+  grid-template-columns: 72px 1fr;
+  padding: 0.875rem 0;
+  text-decoration: none;
+
+  &:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover .news-secondary-title {
+    color: var(--color-primary);
+  }
+}
+
+.news-secondary-thumb {
+  aspect-ratio: 1;
+  background: #d0d0d0;
+  border-radius: 4px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+
+  img {
+    height: 100%;
+    left: 0;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}
+
+.news-secondary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.news-secondary-date {
+  color: #999;
+  font-size: 0.775rem;
+}
+
+.news-secondary-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+  transition: color 0.15s ease;
+}
+
+// Right sidebar column
+
+.sidebar-col {
+  background: #f4f4f4;
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.sidebar-col__inner {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.5rem;
+
+}
+
+.sidebar-section {
+  margin-bottom: 1rem;
+}
+
+.sidebar-section-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 1rem 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.sidebar-matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+// Sidebar agenda
+
+.sidebar-agenda-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.sidebar-agenda-item {
+  align-items: center;
+  background: #f7f7f7;
+  border-radius: 6px;
+  display: grid;
+  gap: 0.875rem;
+  grid-template-columns: 52px 1fr;
+  padding: 0.75rem 0.875rem;
+}
+
+.sidebar-agenda-date-box {
+  align-items: center;
+  background: #e5e5e5;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.375rem 0.25rem;
+  text-align: center;
+
+  &--primary {
+    background: var(--color-primary);
+
+    .sidebar-agenda-day,
+    .sidebar-agenda-month {
+      color: var(--color-white);
+    }
+  }
+}
+
+.sidebar-agenda-day {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sidebar-agenda-month {
+  color: #666;
+  font-family: var(--font-heading);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sidebar-agenda-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.sidebar-agenda-name {
+  color: var(--color-dark);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sidebar-agenda-meta {
+  color: #999;
+  font-size: 0.775rem;
+}
+
 // ─── Main sponsors in hero ────────────────────────────────────────────────────
 
 .site-hero-sponsors {
@@ -1170,39 +1479,18 @@ p {
   color: #999;
   display: block;
   font-size: 0.8rem;
-  margin-bottom: 0.4rem;
-  transition: color 0.2s ease;
-
-  .card-news:hover & {
-    color: var(--color-primary);
-  }
 }
 
 .news-card-title {
   font-family: var(--font-heading);
   font-size: 1.1rem;
   font-weight: 700;
-
   line-height: 1.3;
-  margin: 0;
-
-  a {
-    color: var(--color-dark);
-    transition: color 0.2s ease;
-
-    .card-news:hover & {
-      color: var(--color-primary);
-    }
-  }
+  margin: 0.5rem 0 0;
 }
 
 .news-card-excerpt {
   color: #666;
-  transition: color 0.2s ease;
-
-  .card-news:hover & {
-    color: var(--color-primary);
-  }
   display: -webkit-box;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -1212,11 +1500,29 @@ p {
   -webkit-line-clamp: 3;
 }
 
-// ─── Nieuws listing page ──────────────────────────────────────────────────────
 
-.nieuws-page {
+
+// ─── Shared page layout ──────────────────────────────────────────────────────
+
+.page {
   padding-bottom: 4rem;
+  padding-top: 4rem;
 }
+
+.page-inner {
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 0 var(--container-padding);
+}
+
+.page-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 0 0 1.5rem;
+}
+
+// ─── Nieuws listing page ──────────────────────────────────────────────────────
 
 .news-empty {
   color: #999;
@@ -1224,10 +1530,6 @@ p {
 }
 
 // ─── Agenda page ──────────────────────────────────────────────────────────────
-
-.agenda-page {
-  padding-bottom: 4rem;
-}
 
 .agenda-inner {
   margin: 0 auto;
@@ -1302,10 +1604,6 @@ p {
 }
 
 // ─── Teams overview (senioren / jeugd) ───────────────────────────────────────
-
-.teams-overview-page {
-  padding-bottom: 4rem;
-}
 
 .teams-category-group {
   margin-bottom: 3rem;
@@ -1419,15 +1717,6 @@ p {
 
 // ─── Static pages (privacy, cookies) ─────────────────────────────────────────
 
-.static-page {
-  padding-bottom: 5rem;
-}
-
-.static-page-inner {
-  margin: 0 auto;
-  max-width: 720px;
-  padding: 0 var(--container-padding);
-}
 
 .static-page-date {
   color: #999;
@@ -1482,6 +1771,56 @@ p {
   justify-content: center;
 }
 
+// ─── CMS page with subpage menu ───────────────────────────────────────────────
+
+.cms-page-layout {
+  align-items: flex-start;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: 1.85fr 1fr;
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cms-page-content {
+  min-width: 0;
+}
+
+.cms-page-nav-label {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 0 0 1rem;
+}
+
+.cms-page-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cms-page-nav-link {
+  color: var(--color-dark);
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.65rem 0 0.65rem 1rem;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+
+  &.cms-page-nav-link--active {
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
 .cta-button {
   display: inline-block;
   background: var(--color-primary);
@@ -1504,9 +1843,6 @@ p {
 
 // ─── Contact page ─────────────────────────────────────────────────────────────
 
-.contact-page {
-  padding-bottom: 5rem;
-}
 
 .contact-inner {
   padding-top: 0;
@@ -1535,7 +1871,7 @@ p {
 .contact-layout {
   display: grid;
   gap: 2.5rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 3fr;
 
   @media screen and (max-width: 900px) {
     grid-template-columns: 1fr;
@@ -1760,16 +2096,30 @@ p {
 
 // ─── Nieuws detail page ───────────────────────────────────────────────────────
 
-.news-detail {
-  padding-bottom: 4rem;
+.news-detail-layout {
+  display: grid;
+  gap: 4rem;
+  grid-template-columns: 1.85fr 1fr;
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 0 var(--container-padding);
+
+  @media screen and (max-width: 900px) {
+    grid-template-columns: 1fr;
+
+    > :last-child {
+      display: none;
+    }
+  }
+}
+
+.news-detail-main {
+  min-width: 0;
 }
 
 .news-detail-hero {
   border-radius: 8px;
-  margin: 2rem auto 0;
-  max-width: 720px;
   overflow: hidden;
-  padding: 0 var(--container-padding);
 }
 
 .news-detail-hero-img {
@@ -1782,9 +2132,77 @@ p {
 }
 
 .news-detail-inner {
-  margin: 0 auto;
-  max-width: 720px;
-  padding: 2rem var(--container-padding) 0;
+  padding-top: 2rem;
+}
+
+.news-sidebar-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+
+  li {
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.news-sidebar-item {
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 4px;
+  color: var(--color-dark);
+  display: block;
+  margin: 0 -0.5rem;
+  padding: 1.25rem 0.5rem;
+  text-decoration: none;
+  transition: background 0.15s ease;
+
+  &:first-child {
+    padding-top: 0.5rem;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #ebebeb;
+
+    .news-sidebar-item-title {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.news-sidebar-item-meta {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.news-sidebar-item-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 0.3rem;
+  transition: color 0.15s ease;
+}
+
+.news-sidebar-item-excerpt {
+  color: #666;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .news-detail-date {
@@ -1802,7 +2220,6 @@ p {
   font-weight: 800;
   line-height: 1.2;
   margin: 0 0 2rem;
-  text-align: center;
 
   @media screen and (max-width: 600px) {
     font-size: 1.5rem;
@@ -1955,78 +2372,6 @@ p {
   max-width: var(--grid-base);
   padding-left: var(--container-padding);
   padding-right: var(--container-padding);
-}
-
-// Top — brand + social
-
-.site-footer-top {
-  padding-bottom: 2.5rem;
-  padding-top: 2.5rem;
-}
-
-.site-footer-top .site-footer-inner {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-}
-
-.site-footer-brand {
-  align-items: center;
-  display: flex;
-  gap: 1.5rem;
-}
-
-.site-footer-brand-logo {
-  height: 5rem;
-  width: auto;
-  filter: drop-shadow(0 2px 8px rgba(0 0 0 / 0.4));
-  flex-shrink: 0;
-}
-
-.site-footer-brand-name {
-  color: var(--color-white);
-  display: block;
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  margin-bottom: 0.4rem;
-  text-transform: uppercase;
-}
-
-.site-footer-beschrijving {
-  color: rgba(255 255 255 / 0.65);
-  font-size: 0.875rem;
-  line-height: 1.65;
-  max-width: 520px;
-}
-
-.site-footer-social {
-  display: flex;
-  gap: 0.625rem;
-  flex-shrink: 0;
-}
-
-.site-footer-social-link {
-  align-items: center;
-  background-color: var(--color-primary);
-  border-radius: 4px;
-  color: var(--color-white);
-  display: flex;
-  height: 2.25rem;
-  justify-content: center;
-  transition: background-color 0.15s ease;
-  width: 2.25rem;
-
-  &:hover {
-    background-color: #a80000;
-  }
-}
-
-// Divider
-
-.site-footer-divider .site-footer-inner {
-  border-top: 1px solid rgba(255 255 255 / 0.12);
 }
 
 // Nav columns
@@ -2453,31 +2798,12 @@ p {
 
 // ─── Home section links ────────────────────────────────────────────────────────
 
-.home-section-link {
-  color: var(--color-primary);
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: color 0.15s ease;
-  white-space: nowrap;
-
-  &:hover {
-    color: var(--color-accent);
-  }
-}
-
 // ─── Team page ────────────────────────────────────────────────────────────────
-
-.team-page {
-  padding-bottom: 0;
-}
 
 .team-page-inner--title {
   padding-bottom: 0.25rem;
 
-  .programma-title {
+  .page-title {
     margin-bottom: 0.25rem;
   }
 }
@@ -2528,11 +2854,18 @@ p {
   display: grid;
   grid-template-columns: 3fr 2fr;
   gap: 2rem;
-  padding: 2.5rem 0 1.5rem;
+  padding: 2.5rem 0 3rem;
   align-items: stretch;
 
-  @media screen and (max-width: $breakpoint-tablet) {
+  @media screen and (max-width: $breakpoint-sidebar) {
     grid-template-columns: 1fr;
+
+    .sidebar-col {
+      border-radius: 0;
+      margin-left: calc(-1 * var(--container-padding));
+      margin-right: calc(-1 * var(--container-padding));
+      width: calc(100% + 2 * var(--container-padding));
+    }
   }
 }
 
@@ -2643,11 +2976,17 @@ p {
   }
 }
 
-.team-sidebar {
+.team-sidebar-sections {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  align-self: stretch;
+  gap: 2rem;
+}
+
+.team-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 // ─── Base card ────────────────────────────────────────────────────────────────
@@ -2757,9 +3096,6 @@ p {
   margin: 0;
 }
 
-.card-match--own {
-  border-left: 3px solid var(--color-primary);
-}
 
 .next-match-club-name--own {
   color: var(--color-primary);
@@ -2785,30 +3121,13 @@ p {
 }
 
 .card-match-list {
-  display: none;
+  display: flex;
   flex-direction: column;
+  gap: 0.75rem;
   margin-top: 0.75rem;
-  @media (max-width: 900px) {
-    display: flex;
-  }
 
   .card-match {
-    border-radius: 0;
-
-    // collapse borders between adjacent cards
-    & + .card-match {
-      margin-top: -1px;
-    }
-
-    &:first-child {
-      border-radius: 8px 8px 0 0;
-    }
-    &:last-child {
-      border-radius: 0 0 8px 8px;
-    }
-    &:only-child {
-      border-radius: 8px;
-    }
+    border-radius: 8px;
   }
 }
 
@@ -2843,6 +3162,7 @@ p {
   display: block;
   height: auto;
   object-fit: contain;
+  padding: .5rem 3rem;
   width: 100%;
 }
 
@@ -2860,17 +3180,6 @@ p {
 
 // ─── Programma page ───────────────────────────────────────────────────────────
 
-.programma-page {
-  padding-bottom: 4rem;
-}
-
-.programma-title {
-  font-family: var(--font-heading);
-  font-size: 2rem;
-  font-weight: 900;
-  margin: 2rem 0 1.5rem;
-}
-
 .programma-section {
   display: flex;
   flex-direction: column;
@@ -2886,7 +3195,7 @@ p {
 
 // League section
 .team-league-wrap {
-  padding: 0 0 3rem;
+  margin-top: 1.5rem;
 }
 
 .league-section {
@@ -2935,6 +3244,26 @@ p {
 
 .league-content {
   padding: var(--container-padding);
+}
+
+.league-no-standings {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.league-no-standings-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 3vw, 1.75rem);
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+}
+
+.league-no-standings-body {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 480px;
 }
 
 .league-empty {
@@ -3089,6 +3418,21 @@ p {
   -webkit-overflow-scrolling: touch;
   @media (max-width: 900px) {
     display: none;
+  }
+}
+
+.schedule--table-on-desktop {
+  .card-match-list {
+    display: none;
+    @media (max-width: 900px) {
+      display: flex;
+    }
+  }
+}
+
+.card-match-list {
+  .card-match {
+    padding: 0.75rem 2rem;
   }
 }
 
@@ -3487,13 +3831,6 @@ p {
     margin-right: calc(-1 * var(--container-padding));
   }
 
-  // Team sidebar: full-width, no gap between stacked cards
-  .team-sidebar {
-    gap: 0;
-    margin-left: calc(-1 * var(--container-padding));
-    margin-right: calc(-1 * var(--container-padding));
-    width: calc(100% + 2 * var(--container-padding));
-  }
 
   // Team roster: full-width, flush to the section above
   .card-roster {
@@ -3511,22 +3848,19 @@ p {
     border-top: 2px solid #e8e8e8;
   }
 
-  // Own-match indicator: remove left border (top border already serves as separator)
-  .card-match--own {
-    border-left: none;
+  // Next match card in sidebar: keep full border and rounded corners
+  .team-sidebar-section .card-match {
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
   }
 
-  // Reset card-match-list border-radius overrides
+  // Programma/results match cards: keep side borders and add spacing
   .card-match-list .card-match {
-    &:first-child,
-    &:last-child,
-    &:only-child {
-      border-radius: 0;
-    }
-    & + .card-match {
-      margin-top: 0;
-    }
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    margin-bottom: 1rem;
   }
+
 
   // Filter toggle: full width, buttons share space equally
   .league-filter-toggle {
@@ -3576,6 +3910,394 @@ p {
   }
 
   .league-fase-select {
+    width: 100%;
+  }
+}
+
+// ─── Clickable table rows ─────────────────────────────────────────────────────
+
+.league-row--link {
+  position: relative;
+  cursor: pointer;
+
+  &:hover td {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+// Anchor in the date cell — inherits row color, no underline
+.league-row-link {
+  color: inherit;
+}
+
+// ─── Clickable match card ─────────────────────────────────────────────────────
+
+.card-match--clickable {
+  display: block;
+  color: inherit;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background-color: #fafafa;
+  }
+}
+
+// ─── Wedstrijd detail page ────────────────────────────────────────────────────
+
+.wedstrijd-detail-page {
+  .wedstrijd-back-link {
+    display: block;
+    margin-top: 1.5rem;
+  }
+
+  .page-title {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.wedstrijd-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.wedstrijd-header {
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+
+  &--own {
+    border-left: 3px solid var(--color-primary);
+  }
+}
+
+.wedstrijd-header-meta {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+}
+
+.wedstrijd-header-teams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.wedstrijd-header-club {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.wedstrijd-header-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+
+    img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      opacity: 0.5;
+    }
+  }
+}
+
+.wedstrijd-header-name {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  &--own {
+    // no highlight on detail page — style intentionally kept neutral
+  }
+}
+
+.wedstrijd-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wedstrijd-header-date {
+  font-size: 1rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wedstrijd-header-score {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wedstrijd-score-sep {
+  color: #ccc;
+}
+
+.wedstrijd-header-time {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.3rem 0.9rem;
+}
+
+.wedstrijd-header-status {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.wedstrijd-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: #888;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: #555;
+    }
+  }
+}
+
+.wedstrijd-section {
+  margin-bottom: 2rem;
+}
+
+.wedstrijd-section-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 1rem;
+}
+
+// Events
+.wedstrijd-events {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 1rem;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: var(--color-white);
+}
+
+.wedstrijd-events-divider {
+  background: #e8e8e8;
+}
+
+.wedstrijd-events-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wedstrijd-event {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+
+  &--away {
+    justify-content: flex-end;
+    text-align: right;
+  }
+}
+
+.wedstrijd-event-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.wedstrijd-event-name {
+  font-weight: 500;
+}
+
+.wedstrijd-event-extra {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.wedstrijd-event-minute {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #666;
+  flex-shrink: 0;
+}
+
+// Lineups
+.wedstrijd-lineups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.wedstrijd-lineup {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: var(--color-white);
+}
+
+.wedstrijd-lineup-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.wedstrijd-lineup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.wedstrijd-lineup-player {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #f8f8f8;
+
+  &--reserve {
+    color: #888;
+  }
+}
+
+.wedstrijd-lineup-nr {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #aaa;
+  width: 1.5rem;
+  flex-shrink: 0;
+}
+
+.wedstrijd-lineup-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.wedstrijd-lineup-captain {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.wedstrijd-lineup-hidden {
+  color: #bbb;
+  font-style: italic;
+}
+
+.wedstrijd-lineup-pos {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.wedstrijd-officials {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wedstrijd-official-row {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.wedstrijd-official-label {
+  color: #999;
+  min-width: 10rem;
+  flex-shrink: 0;
+}
+
+.wedstrijd-official-value {
+  font-weight: 500;
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .wedstrijd-header-teams {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.75rem;
+  }
+
+  .wedstrijd-header-logo,
+  .wedstrijd-header-logo--placeholder {
+    width: 52px;
+    height: 52px;
+  }
+
+  .wedstrijd-header-name {
+    font-size: 0.875rem;
+  }
+
+  .wedstrijd-header-score {
+    font-size: 1.75rem;
+  }
+
+  .wedstrijd-lineups {
+    grid-template-columns: 1fr;
+  }
+
+  .wedstrijd-events {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .wedstrijd-events-divider {
+    height: 1px;
     width: 100%;
   }
 }

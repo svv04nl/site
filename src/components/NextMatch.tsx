@@ -5,6 +5,7 @@ import ClubLogo from '@/components/ClubLogo'
 export type MatchData = {
   date: string // e.g. "ZA 5 APR"
   time: string // e.g. "14:30"
+  matchCode?: number
   homeTeam: {
     name: string
     shortName?: string
@@ -27,9 +28,17 @@ type Props = {
   showTitle?: boolean
 }
 
-export default function NextMatch({ match, teamName, showTitle = true }: Props) {
+function MatchCardContent({
+  match,
+  teamName,
+  showTitle,
+}: {
+  match?: MatchData | null
+  teamName?: string
+  showTitle: boolean
+}) {
   return (
-    <div className="card-match card">
+    <>
       {showTitle && <h2 className="next-match-title">Volgende wedstrijd</h2>}
       {match ? (
         <div className="next-match-body">
@@ -61,6 +70,24 @@ export default function NextMatch({ match, teamName, showTitle = true }: Props) 
           {teamName ? `Nog geen wedstrijd gepland voor ${teamName}.` : 'Wedstrijdgegevens volgen.'}
         </p>
       )}
+    </>
+  )
+}
+
+export default function NextMatch({ match, teamName, showTitle = true }: Props) {
+  const href = match?.matchCode ? `/wedstrijd/${match.matchCode}` : undefined
+
+  if (href) {
+    return (
+      <Link href={href} className="card-match card card-match--clickable">
+        <MatchCardContent match={match} teamName={teamName} showTitle={showTitle} />
+      </Link>
+    )
+  }
+
+  return (
+    <div className="card-match card">
+      <MatchCardContent match={match} teamName={teamName} showTitle={showTitle} />
     </div>
   )
 }

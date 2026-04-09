@@ -36,6 +36,7 @@ export default async function CommissiePage({ params }: Props) {
       section="commissies"
       sectionLabel="Commissies"
       content={page.content}
+      slug={slug}
     />
   )
 }

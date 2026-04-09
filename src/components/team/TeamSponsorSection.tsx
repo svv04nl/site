@@ -1,47 +1,47 @@
-'use client'
+import type { Sponsor, Media } from '@/payload-types'
 
-import { useQuery } from '@tanstack/react-query'
-import { teamSponsorsQuery } from '@/lib/clubdata/queries'
-import { useTeam } from '@/components/team/TeamContext'
+type Props = {
+  sponsor?: Sponsor | number | null
+  bare?: boolean
+}
 
-export default function TeamSponsorSection() {
-  const { teamcode } = useTeam()
-  const { data: sponsors } = useQuery(teamSponsorsQuery(teamcode))
+export default function TeamSponsorSection({ sponsor, bare }: Props) {
+  const s = typeof sponsor === 'object' && sponsor !== null ? sponsor : null
+
+  const content = s ? (
+    <div className="team-sponsor-logos">
+      {(() => {
+        const logo = s.logo as Media | null
+        const logoUrl = logo?.url ?? null
+        const img = logoUrl ? (
+          <img src={logoUrl} alt={s.name} className="team-sponsor-logo-img" />
+        ) : null
+
+        return s.url ? (
+          <a
+            href={s.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="team-sponsor-link"
+            title={s.name}
+          >
+            {img}
+          </a>
+        ) : (
+          img
+        )
+      })()}
+    </div>
+  ) : (
+    <p className="team-sponsor-empty">Dit team heeft nog geen sponsor.</p>
+  )
+
+  if (bare) return content
 
   return (
     <div className="card-sponsor card">
       <h2 className="team-sponsor-title">Sponsor</h2>
-      {sponsors && sponsors.length > 0 ? (
-        <div className="team-sponsor-logos">
-          {sponsors.map((sponsor) =>
-            sponsor.website ? (
-              <a
-                key={sponsor.naam}
-                href={sponsor.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="team-sponsor-link"
-                title={sponsor.naam}
-              >
-                <img
-                  src={`data:image/png;base64,${sponsor.logo}`}
-                  alt={sponsor.naam}
-                  className="team-sponsor-logo-img"
-                />
-              </a>
-            ) : (
-              <img
-                key={sponsor.naam}
-                src={`data:image/png;base64,${sponsor.logo}`}
-                alt={sponsor.naam}
-                className="team-sponsor-logo-img"
-              />
-            ),
-          )}
-        </div>
-      ) : (
-        <p className="team-sponsor-empty">Dit team heeft nog geen sponsor.</p>
-      )}
+      {content}
     </div>
   )
 }

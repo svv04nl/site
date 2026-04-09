@@ -4,15 +4,15 @@ import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import NextMatch from '@/components/NextMatch'
 import { TeamProvider } from '@/components/team/TeamContext'
 import TeamRosterSection from '@/components/team/TeamRosterSection'
 import TeamSponsorSection from '@/components/team/TeamSponsorSection'
-import TeamTabNav from '@/components/team/TeamTabNav'
 import TeamPhotoWithLightbox from '@/components/team/TeamPhotoWithLightbox'
 import type { Media } from '@/payload-types'
-import NextMatchServer from '@/components/NextMatchServer'
 import ScrollToTop from '@/components/team/ScrollToTop'
+import { Sidebar } from '@/components/ui/Sidebar'
+import { MoreLink } from '@/components/ui/MoreLink'
+import TeamNextMatchSection from '@/components/team/TeamNextMatchSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,7 +28,7 @@ export default async function TeamLayout({ params, children }: Props) {
   const { docs } = await payload.find({
     collection: 'teams',
     where: { slug: { equals: slug } },
-    depth: 1,
+    depth: 2,
     limit: 1,
   })
 
@@ -43,10 +43,20 @@ export default async function TeamLayout({ params, children }: Props) {
   const categoryLabel = team.category ?? null
   const sectionHref = team.type === 'youth' ? '/jeugd' : team.type === 'senior' ? '/senioren' : null
 
+  const { docs: teamPosts } = await payload.find({
+    collection: 'posts',
+    where: {
+      and: [{ status: { equals: 'published' } }, { relatedTeams: { contains: team.id } }],
+    },
+    sort: '-publishedAt',
+    limit: 3,
+    depth: 0,
+  })
+
   return (
     <TeamProvider teamcode={teamcode} slug={slug}>
       <ScrollToTop />
-      <main className="team-page">
+      <main className="page">
         <SetBreadcrumb
           crumbs={[
             { label: 'Home', href: '/' },
@@ -59,7 +69,7 @@ export default async function TeamLayout({ params, children }: Props) {
 
         {/* Two-column layout */}
         <div className="team-page-inner team-page-inner--title">
-          <h1 className="programma-title">{team.name}</h1>
+          <h1 className="page-title">{team.name}</h1>
           {categoryLabel && <p className="team-page-category">{categoryLabel}</p>}
         </div>
         <div className="team-page-inner">
@@ -83,22 +93,48 @@ export default async function TeamLayout({ params, children }: Props) {
                 )}
               </div>
               <TeamRosterSection />
+              <div className="team-league-wrap">{children}</div>
             </div>
 
-            <aside className="team-sidebar">
-              <NextMatchServer teamcode={teamcode!} teamName={team.name} />
-              <TeamSponsorSection />
-            </aside>
-          </div>
-        </div>
+            <Sidebar>
+              <div className="sidebar-section">
+                <TeamNextMatchSection teamcode={teamcode!} teamName={team.name} />
+              </div>
 
-        {/* League section */}
-        <div className="team-league-wrap">
-          <div className="team-page-inner">
-            <div className="league-section">
-              <TeamTabNav />
-              <div className="league-content">{children}</div>
-            </div>
+              <div className="sidebar-section">
+                <h2 className="sidebar-section-title">Sponsor</h2>
+                <TeamSponsorSection sponsor={team.sponsor} bare />
+              </div>
+
+              {teamPosts.length > 0 && (
+                <div className="sidebar-section">
+                  <h2 className="sidebar-section-title">Team nieuws</h2>
+                  <ul className="news-sidebar-list">
+                    {teamPosts.map((post) => (
+                      <li key={post.id}>
+                        <Link href={`/nieuws/${post.slug}`} className="news-sidebar-item">
+                          <div className="news-sidebar-item-meta">
+                            {post.publishedAt && (
+                              <time className="news-secondary-date">
+                                {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric',
+                                })}
+                              </time>
+                            )}
+                          </div>
+                          <h3 className="news-sidebar-item-title">{post.title}</h3>
+                          {post.excerpt && (
+                            <p className="news-sidebar-item-excerpt">{post.excerpt}</p>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </Sidebar>
           </div>
         </div>
       </main>
