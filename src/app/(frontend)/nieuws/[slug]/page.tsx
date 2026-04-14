@@ -87,7 +87,7 @@ export default async function PostPage({ params }: Props) {
 
       <div className="section-with-sidebar">
         {/* Main article */}
-        <article className="news-detail-main">
+        <article className="sidebar-content-col sidebar-content-col--no-gap news-detail-main">
           {imageUrl && (
             <div
               className="news-detail-hero"

@@ -21,10 +21,14 @@ export type RawWedstrijd = {
   poule: string
   klassepoule: string
   accommodatie: string
+  veld: string
   locatie: string
   plaats: string
   status: string
   meer: string
+  kleedkamerthuisteam: string
+  kleedkameruitteam: string
+  kleedkamerscheidsrechter: string
   eigenteam?: 'true' | 'false'
 }
 

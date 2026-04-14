@@ -5,6 +5,10 @@
   flex-direction: column;
   gap: 3rem;
   min-width: 0;
+
+  &--no-gap {
+    gap: 0;
+  }
 }
 
 .sidebar-col {

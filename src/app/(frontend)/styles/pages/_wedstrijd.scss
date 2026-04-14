@@ -11,9 +11,6 @@
   margin-bottom: 1.5rem;
   text-align: center;
 
-  &--own {
-    border-left: 3px solid var(--color-primary);
-  }
 }
 
 .wedstrijd-header-meta {
@@ -44,22 +41,6 @@
   height: 72px;
   object-fit: contain;
 
-  &--placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f0f0f0;
-    border-radius: 50%;
-    width: 72px;
-    height: 72px;
-
-    img {
-      width: 46px;
-      height: 46px;
-      object-fit: contain;
-      opacity: 0.5;
-    }
-  }
 }
 
 .wedstrijd-header-name {
@@ -173,9 +154,6 @@
   padding: 0.25rem 0;
   border-bottom: 1px solid #f8f8f8;
 
-  &--reserve {
-    color: #888;
-  }
 }
 
 .wedstrijd-lineup-name {

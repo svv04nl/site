@@ -142,7 +142,7 @@ export default function ContactPage() {
 
       <div className="section-with-sidebar">
         {/* Left: form */}
-        <div className="sidebar-content-col">
+        <div className="sidebar-content-col sidebar-content-col--no-gap">
           <SectionHeader as="h1" title="Contact" />
           <p className="contact-intro">
             Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je

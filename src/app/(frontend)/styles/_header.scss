@@ -148,11 +148,6 @@
   gap: 4rem;
 }
 
-.sub-menu-overview a {
-  color: var(--color-primary) !important;
-  font-weight: 600 !important;
-}
-
 .sub-menu-list {
   flex: 0 0 auto;
   list-style: none;
@@ -231,7 +226,6 @@
   justify-content: flex-end;
 }
 
-.site-header-nav-left,
 .site-header-nav-right {
   .menu-items {
     align-items: center;

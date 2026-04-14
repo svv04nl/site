@@ -24,6 +24,7 @@ import type {
   RawWedstrijdInformatie as RawGameInfoResponse,
   RawWedstrijdSpelersResponse as RawGamePlayersResponse,
   RawWedstrijdEvenementenResponse,
+  RawActiviteitenResponse,
 } from '@/lib/clubdata/types'
 
 const STALE_TIME = 5 * 60 * 1000
@@ -229,6 +230,38 @@ export const gameAwayTeamQuery = (wedstrijdcode: string | number) => ({
     fetchClubData<RawGamePlayersResponse>('wedstrijd-uitteam', {
       wedstrijdcode: String(wedstrijdcode),
     }),
+  staleTime: STALE_TIME,
+})
+
+export const ordiedienstScheduleQuery = () => ({
+  queryKey: ['ordedienst-programma'] as const,
+  queryFn: () =>
+    fetchClubData<RawProgrammaResponse>('programma', {
+      teamcode: 'NULL',
+      lokaleteamcode: 'NULL',
+      sorteervolgorde: 'datum',
+      gebruiklokaleteamgegevens: 'NEE',
+      aantalregels: '100',
+      aantaldagen: '7',
+      weekoffset: '0',
+      eigenwedstrijden: 'NEE',
+      spelsoort: 'ALLES',
+      competitiesoort: 'ALLES',
+      dagsoort: 'ALLES',
+      leeftijdscategorie: 'ALLES',
+      wedstrijdtype: '',
+      thuis: 'ja',
+      uit: 'ja',
+    }).catch(() => [] as RawProgrammaResponse),
+  staleTime: STALE_TIME,
+})
+
+export const activiteitenQuery = (aantaldagen = 365) => ({
+  queryKey: ['verenigingsactiviteiten', aantaldagen] as const,
+  queryFn: () =>
+    fetchClubData<RawActiviteitenResponse>('verenigingsactiviteiten', {
+      aantaldagen: String(aantaldagen),
+    }).catch(() => [] as RawActiviteitenResponse),
   staleTime: STALE_TIME,
 })
 

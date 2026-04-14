@@ -1,18 +1,13 @@
-export const dynamic = 'force-dynamic'
+'use client'
 
 import React from 'react'
-import Link from 'next/link'
-import { fetchClubData } from '@/lib/clubdata/fetch'
+import { useQuery } from '@tanstack/react-query'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
-import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
+import { activiteitenQuery } from '@/lib/clubdata/queries'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
-export const metadata = { title: "SVV'04 - Agenda" }
-
-export default async function AgendaPage() {
-  const activiteiten = await fetchClubData<RawActiviteitenResponse>('verenigingsactiviteiten', {
-    aantaldagen: '365',
-  }).catch(() => [] as RawActiviteitenResponse)
+export default function AgendaPage() {
+  const { data: activiteiten = [] } = useQuery(activiteitenQuery(365))
 
   // Group by month
   const grouped: { label: string; items: typeof activiteiten }[] = []
@@ -44,7 +39,6 @@ export default async function AgendaPage() {
                 {group.items.map((item, i) => {
                   const date = new Date(item.datumvan)
                   const dateToRaw = item.datumtm ? new Date(item.datumtm) : null
-                  // Only show end date when it's strictly after the start date (different calendar day)
                   const dateTo =
                     dateToRaw &&
                     dateToRaw.toDateString() !== date.toDateString() &&

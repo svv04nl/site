@@ -1,28 +1,5 @@
 // ─── CMS page with subpage menu ───────────────────────────────────────────────
 
-.cms-page-layout {
-  align-items: flex-start;
-  display: grid;
-  gap: 3rem;
-  grid-template-columns: 1.85fr 1fr;
-
-  @media screen and (max-width: $breakpoint-tablet) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cms-page-content {
-  min-width: 0;
-}
-
-.cms-page-nav-label {
-  color: var(--color-dark);
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin: 0 0 1rem;
-}
-
 .cms-page-nav-list {
   list-style: none;
   margin: 0;
@@ -49,12 +26,6 @@
 }
 
 // ─── Static pages ─────────────────────────────────────────
-
-.static-page-date {
-  color: #999;
-  font-size: 0.875rem;
-  margin: -0.5rem 0 2rem;
-}
 
 .static-page-body {
   color: #444;
