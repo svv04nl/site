@@ -9,7 +9,7 @@ import type {
   RawPouleUitslagenResponse,
   StandingRow,
 } from './types'
-import type { MatchData } from '@/components/NextMatch'
+import type { MatchData } from '@/components/NextMatchCard'
 
 // ─── Date utilities ───────────────────────────────────────────────────────────
 

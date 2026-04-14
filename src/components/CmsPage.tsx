@@ -5,10 +5,10 @@ import config from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import CtaBlockComponent from '@/blocks/CtaBlock/Component'
-import { Sidebar } from '@/components/ui/Sidebar'
 import type { Page } from '@/payload-types'
 import { defaultJSXConverters } from '@/lib/richtext'
 import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
+import { SectionHeader } from './ui/SectionHeader'
 
 const jsxConverters: JSXConvertersFunction = (args) => ({
   ...defaultJSXConverters(args),
@@ -57,43 +57,44 @@ export default async function CmsPage({
       />
 
       {showSubpageMenu ? (
-        <div className="page-inner cms-page-layout">
-          <div className="cms-page-content">
-            <h1 className="page-title">{title}</h1>
-            {content && (
-              <div className="static-page-body">
-                <RichText data={content} converters={jsxConverters} />
-              </div>
-            )}
+        <div className="section-with-sidebar">
+          <div className="sidebar-content-col">
+            <div className="static-page-body">
+              <SectionHeader as="h1" title={title} />
+              {content && <RichText data={content} converters={jsxConverters} />}
+            </div>
           </div>
-
-          <Sidebar>
-            <nav aria-label={sectionLabel}>
-              <p className="cms-page-nav-label">{sectionLabel} pagina&apos;s</p>
-              <ul className="cms-page-nav-list">
-                {sectionPages.map((p) => (
-                  <li key={p.id}>
-                    <Link
-                      href={`/${section}/${p.slug}`}
-                      className={`cms-page-nav-link${p.slug === slug ? ' cms-page-nav-link--active' : ''}`}
-                    >
-                      {p.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </Sidebar>
+          <div className="sidebar-col">
+            <div className="sidebar-col__inner">
+              <nav aria-label={sectionLabel}>
+                <div className="sidebar-section">
+                  <h2 className="sidebar-section-title">{sectionLabel} pagina&apos;s</h2>
+                  <ul className="cms-page-nav-list">
+                    {sectionPages.map((p) => (
+                      <li key={p.id}>
+                        <Link
+                          href={`/${section}/${p.slug}`}
+                          className={`cms-page-nav-link${p.slug === slug ? ' cms-page-nav-link--active' : ''}`}
+                        >
+                          {p.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </nav>
+            </div>
+          </div>
         </div>
       ) : (
-        <div className="page-inner">
-          <h1 className="page-title">{title}</h1>
-          {content && (
+        content && (
+          <div className="page-inner">
+            <SectionHeader as="h1" title={title} />
             <div className="static-page-body">
               <RichText data={content} converters={jsxConverters} />
             </div>
-          )}
-        </div>
+          </div>
+        )
       )}
     </main>
   )

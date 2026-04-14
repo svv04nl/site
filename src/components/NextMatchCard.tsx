@@ -39,34 +39,34 @@ function MatchCardContent({
 }) {
   return (
     <>
-      {showTitle && <h2 className="next-match-title">Volgende wedstrijd</h2>}
+      {showTitle && <h2 className="card-match-title">Volgende wedstrijd</h2>}
       {match ? (
-        <div className="next-match-body">
-          <div className="next-match-club">
+        <div className="card-match-body">
+          <div className="card-match-club">
             <ClubLogo
               clubcode={match.homeTeam.clubRelatiecode}
               name={match.homeTeam.name}
-              className="next-match-logo"
+              className="card-match-logo"
             />
-            <span className="next-match-club-name">{match.homeTeam.name}</span>
+            <span className="card-match-club-name">{match.homeTeam.name}</span>
           </div>
 
-          <div className="next-match-info">
-            <time className="next-match-date">{match.date}</time>
-            <div className="next-match-time">{match.time}</div>
+          <div className="card-match-info">
+            <time className="card-match-date">{match.date}</time>
+            <div className="card-match-time">{match.time}</div>
           </div>
 
-          <div className="next-match-club">
+          <div className="card-match-club">
             <ClubLogo
               clubcode={match.awayTeam.clubRelatiecode}
               name={match.awayTeam.name}
-              className="next-match-logo"
+              className="card-match-logo"
             />
-            <span className="next-match-club-name">{match.awayTeam.name}</span>
+            <span className="card-match-club-name">{match.awayTeam.name}</span>
           </div>
         </div>
       ) : (
-        <p className="next-match-empty">
+        <p className="card-match-empty">
           {teamName ? `Nog geen wedstrijd gepland voor ${teamName}.` : 'Wedstrijdgegevens volgen.'}
         </p>
       )}
@@ -74,7 +74,7 @@ function MatchCardContent({
   )
 }
 
-export default function NextMatch({ match, teamName, showTitle = true }: Props) {
+export default function NextMatchCard({ match, teamName, showTitle = true }: Props) {
   const href = match?.matchCode ? `/wedstrijd/${match.matchCode}` : undefined
 
   if (href) {

@@ -1,0 +1,105 @@
+// ─── Sponsors ticker ──────────────────────────────────────────────────────────
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.sponsors-ticker {
+  background-color: #f5f5f5;
+  border-top: 1px solid #e2e2e2;
+  overflow: hidden;
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+}
+
+.sponsors-ticker-track {
+  animation: marquee 28s linear infinite;
+  display: flex;
+  width: max-content;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+.sponsors-ticker-inner {
+  align-items: center;
+  display: flex;
+  gap: 4rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.sponsors-ticker-logo {
+  display: block;
+  flex-shrink: 0;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  img {
+    display: block;
+    filter: grayscale(100%);
+    height: 2.5rem;
+    mix-blend-mode: multiply;
+    object-fit: contain;
+    transition: filter 0.2s ease;
+    width: auto;
+  }
+
+  &:hover img {
+    filter: grayscale(0%);
+  }
+}
+
+// Mobile ticker override
+@media screen and (max-width: $breakpoint-nav) {
+  .sponsors-ticker {
+    padding-bottom: 1.5rem;
+    padding-top: 1.5rem;
+  }
+}
+
+// ─── Team sponsor section ─────────────────────────────────────────────────────
+
+.team-sponsor-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.team-sponsor-empty {
+  font-size: 0.875rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.team-sponsor-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.team-sponsor-logo-img {
+  display: block;
+  height: auto;
+  object-fit: contain;
+  padding: 0.5rem 3rem;
+  width: 100%;
+}
+
+.team-sponsor-link {
+  display: block;
+  width: 100%;
+}

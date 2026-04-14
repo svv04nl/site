@@ -1,0 +1,144 @@
+// ─── Shared page layout ───────────────────────────────────────────────────────
+
+.page {
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+.page-inner {
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 0 var(--container-padding);
+}
+
+.page-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 0 0 1.5rem;
+}
+
+// ─── Section header (title + optional subtitle + optional link) ───────────────
+
+.section-header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+
+  .page-title {
+    margin-bottom: 0;
+  }
+
+  // Grid whenever there's a subtitle: title row 1 col 1, subtitle row 2 full width,
+  // control (if present) row 1 col 2. Auto column collapses when no control.
+  &--has-subtitle {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    row-gap: 0.25rem;
+
+    .page-title {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: center;
+      margin-bottom: 0;
+    }
+
+    .page-subtitle {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin-top: 0;
+    }
+
+  }
+}
+
+.section-header-link {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-top: 0.5rem;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: #a80000;
+  }
+}
+
+.page-subtitle {
+  color: #888;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin: 0.1rem 0 0;
+  text-transform: uppercase;
+}
+
+// ─── Page with sidebar layout ─────────────────────────────────────────────────
+
+.section-with-sidebar {
+  align-items: stretch;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: 3fr 1.5fr;
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 0 var(--container-padding);
+
+  @media screen and (max-width: $breakpoint-sidebar) {
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Shared section layout ────────────────────────────────────────────────────
+
+.home-section-inner {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--grid-base);
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+.more-link {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: #a80000;
+  }
+}
+
+.cta-button {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff !important;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 1.75rem;
+  min-width: 280px;
+  text-align: center;
+  border-radius: 4px;
+  text-decoration: none !important;
+  transition: background 0.15s;
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-primary) 80%, black);
+  }
+}

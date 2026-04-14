@@ -7,7 +7,6 @@ import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { defaultJSXConverters } from '@/lib/richtext'
 import { MoreLink } from '@/components/ui/MoreLink'
-import { Sidebar } from '@/components/ui/Sidebar'
 import type { Media, Team } from '@/payload-types'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -86,7 +85,7 @@ export default async function PostPage({ params }: Props) {
         ]}
       />
 
-      <div className="news-detail-layout">
+      <div className="section-with-sidebar">
         {/* Main article */}
         <article className="news-detail-main">
           {imageUrl && (
@@ -104,12 +103,12 @@ export default async function PostPage({ params }: Props) {
           )}
 
           <div className="news-detail-inner">
-            <div className="news-card-meta">
-              {formattedDate && <time className="news-card-date">{formattedDate}</time>}
+            <div className="card-news-meta">
+              {formattedDate && <time className="card-news-date">{formattedDate}</time>}
               {allTags.length > 0 && (
-                <div className="news-card-tags">
+                <div className="card-news-tags">
                   {allTags.map((tag) => (
-                    <span key={tag} className="news-card-tag">
+                    <span key={tag} className="card-news-tag">
                       {tag}
                     </span>
                   ))}
@@ -134,7 +133,8 @@ export default async function PostPage({ params }: Props) {
         </article>
 
         {/* Sidebar */}
-        <Sidebar>
+        <div className="sidebar-col">
+          <div className="sidebar-col__inner">
           <div className="sidebar-section">
             <h2 className="sidebar-section-title">Laatste Nieuws</h2>
             <ul className="news-sidebar-list">
@@ -158,9 +158,9 @@ export default async function PostPage({ params }: Props) {
                           </time>
                         )}
                         {pTags.length > 0 && (
-                          <div className="news-card-tags">
+                          <div className="card-news-tags">
                             {pTags.map((tag) => (
-                              <span key={tag} className="news-card-tag">
+                              <span key={tag} className="card-news-tag">
                                 {tag}
                               </span>
                             ))}
@@ -176,7 +176,8 @@ export default async function PostPage({ params }: Props) {
             </ul>
             <MoreLink href="/nieuws" text="Meer nieuws" />
           </div>
-        </Sidebar>
+          </div>
+        </div>
       </div>
     </main>
   )

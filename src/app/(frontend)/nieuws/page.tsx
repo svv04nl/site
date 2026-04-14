@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { Post } from '@/payload-types'
 import { NewsCard } from '@/components/ui/NewsCard'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export const metadata = { title: "SVV'04 - Nieuws" }
 
@@ -38,7 +39,7 @@ export default async function NewsPage({ searchParams }: Props) {
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Nieuws' }]} />
 
       <div className="page-inner">
-        <h1 className="page-title">Nieuws</h1>
+        <SectionHeader as="h1" title="Nieuws" />
 
         {posts.length === 0 ? (
           <p className="news-empty">Nog geen nieuwsberichten.</p>

@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { Media } from '@/payload-types'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export const metadata = { title: "SVV'04 - Senioren" }
 
@@ -23,7 +24,7 @@ export default async function SeniorenPage() {
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Senioren' }]} />
 
       <div className="page-inner">
-        <h1 className="page-title">Senioren</h1>
+        <SectionHeader as="h1" title="Senioren" />
 
         {teams.length === 0 ? (
           <p className="news-empty">Geen teams gevonden.</p>
@@ -34,16 +35,16 @@ export default async function SeniorenPage() {
               const photoUrl = photo?.sizes?.teamCard?.url ?? photo?.url ?? null
               return (
                 <Link key={team.id} href={`/teams/${team.slug}`} className="card-team card">
-                  <div className="team-card-img-wrap">
+                  <div className="card-team-img-wrap">
                     <img
                       src={photoUrl ?? '/team-placeholder.png'}
                       alt={photo?.alt ?? team.name}
-                      className="team-card-img"
+                      className="card-team-img"
                     />
                   </div>
-                  <div className="team-card-body">
-                    {team.category && <span className="team-card-category">{team.category}</span>}
-                    <h3 className="team-card-name">{team.name}</h3>
+                  <div className="card-team-body">
+                    {team.category && <span className="card-team-category">{team.category}</span>}
+                    <h3 className="card-team-name">{team.name}</h3>
                   </div>
                 </Link>
               )

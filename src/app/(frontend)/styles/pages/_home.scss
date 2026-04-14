@@ -1,0 +1,111 @@
+// ─── Homepage ─────────────────────────────────────────────────────────────────
+
+// News + sidebar two-column layout
+
+.home-news-layout {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// CTA tiles
+
+.home-cta-section {
+  background-color: var(--color-light);
+  padding-bottom: 6rem;
+  padding-top: 6rem;
+}
+
+.cta-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  min-height: 400px;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cta-tile {
+  background-color: var(--color-dark);
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+
+  &:hover .cta-tile-overlay {
+    background-color: rgba(180 0 0 / 0.72);
+  }
+
+  &:hover .cta-tile-link {
+    letter-spacing: 0.1em;
+  }
+}
+
+.cta-tile-overlay {
+  background-color: rgba(0 0 0 / 0.62);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: background-color 0.25s ease;
+}
+
+.cta-tile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 1.75rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-tile-title {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.cta-tile-desc {
+  color: rgba(255 255 255 / 0.8);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cta-tile-link {
+  border-bottom: 2px solid var(--color-white);
+  color: var(--color-white);
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 0.375rem;
+  padding-bottom: 0.2rem;
+  text-transform: uppercase;
+  transition: letter-spacing 0.2s ease;
+}
+
+// Mobile home overrides
+@media screen and (max-width: $breakpoint-nav) {
+  .home-cta-section {
+    padding-bottom: 3rem;
+    padding-top: 3rem;
+  }
+}

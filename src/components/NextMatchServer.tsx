@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
-import NextMatch from '@/components/NextMatch'
+import NextMatchCard from '@/components/NextMatchCard'
 import { nextMatchQuery } from '@/lib/clubdata/queries'
 
 type Props = {
@@ -17,5 +17,5 @@ export default function NextMatchServer({ teamcode, teamName, showTitle = true, 
 
   if (!match) return null
 
-  return <NextMatch match={match} teamName={teamName} showTitle={showTitle} />
+  return <NextMatchCard match={match} teamName={teamName} showTitle={showTitle} />
 }

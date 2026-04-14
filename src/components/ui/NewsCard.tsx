@@ -33,23 +33,23 @@ export function NewsCard({ post }: Props) {
   return (
     <Link href={`/nieuws/${post.slug}`} className="card-news card">
       <div
-        className={`news-card-img-wrap${imageUrl ? '' : ' news-card-img-wrap--placeholder'}`}
+        className={`card-news-img-wrap${imageUrl ? '' : ' card-news-img-wrap--placeholder'}`}
         style={isContain ? { backgroundColor: bgColor } : undefined}
       >
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={image?.alt ?? post.title}
-            className="news-card-img"
+            className="card-news-img"
             style={isContain ? { objectFit: 'contain', padding: '0.75rem' } : undefined}
           />
         ) : (
-          <img src="/logo.png" alt="" className="news-card-img-placeholder" aria-hidden="true" />
+          <img src="/logo.png" alt="" className="card-news-img-placeholder" aria-hidden="true" />
         )}
       </div>
-      <div className="news-card-body">
-        <div className="news-card-meta">
-          <time className="news-card-date">
+      <div className="card-news-body">
+        <div className="card-news-meta">
+          <time className="card-news-date">
             {post.publishedAt
               ? new Date(post.publishedAt).toLocaleDateString('nl-NL', {
                   day: 'numeric',
@@ -58,14 +58,14 @@ export function NewsCard({ post }: Props) {
                 })
               : ''}
           </time>
-          <div className="news-card-tags">
+          <div className="card-news-tags">
             {allTags.map((tag) => (
-              <span key={tag} className="news-card-tag">{tag}</span>
+              <span key={tag} className="card-news-tag">{tag}</span>
             ))}
           </div>
         </div>
-        <h3 className="news-card-title">{post.title}</h3>
-        {post.excerpt && <p className="news-card-excerpt">{post.excerpt}</p>}
+        <h3 className="card-news-title">{post.title}</h3>
+        {post.excerpt && <p className="card-news-excerpt">{post.excerpt}</p>}
         <MoreLink text="Lees meer" />
       </div>
     </Link>

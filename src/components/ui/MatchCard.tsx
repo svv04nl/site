@@ -37,30 +37,30 @@ export default function MatchCard({
   const className = `card-match card${href ? ' card-match--clickable' : ''}`
 
   const body = (
-    <div className="next-match-body">
-      <div className="next-match-club">
-        <ClubLogo clubcode={homeTeamRelatiecode} name={homeTeam} className="next-match-logo" />
-        <span className={`next-match-club-name${isOwnHome ? ' next-match-club-name--own' : ''}`}>
+    <div className="card-match-body">
+      <div className="card-match-club">
+        <ClubLogo clubcode={homeTeamRelatiecode} name={homeTeam} className="card-match-logo" />
+        <span className={`card-match-club-name${isOwnHome ? ' card-match-club-name--own' : ''}`}>
           {homeTeam}
         </span>
       </div>
 
-      <div className="next-match-info">
-        <time className="next-match-date">{date}</time>
+      <div className="card-match-info">
+        <time className="card-match-date">{date}</time>
         {centerLabel && (
-          <div className={score ? 'next-match-score' : 'next-match-time'}>{centerLabel}</div>
+          <div className={score ? 'card-match-score' : 'card-match-time'}>{centerLabel}</div>
         )}
         {(venue || (status && status !== 'Te spelen' && status !== 'Uitgespeeld')) && (
-          <div className="next-match-meta">
+          <div className="card-match-meta">
             {venue && <span>{venue}</span>}
             {status && status !== 'Te spelen' && status !== 'Uitgespeeld' && <span>{status}</span>}
           </div>
         )}
       </div>
 
-      <div className="next-match-club">
-        <ClubLogo clubcode={awayTeamRelatiecode} name={awayTeam} className="next-match-logo" />
-        <span className={`next-match-club-name${isOwnAway ? ' next-match-club-name--own' : ''}`}>
+      <div className="card-match-club">
+        <ClubLogo clubcode={awayTeamRelatiecode} name={awayTeam} className="card-match-logo" />
+        <span className={`card-match-club-name${isOwnAway ? ' card-match-club-name--own' : ''}`}>
           {awayTeam}
         </span>
       </div>

@@ -68,10 +68,10 @@ export default function StandingsTab({ poules, initialIndex = 0 }: Props) {
   }
 
   return (
-    <div className="league-standings">
-      <div className="league-standings-controls">
-        <h2 className="league-standings-title">Stand</h2>
-        <div className="league-standings-controls-right">
+    <div>
+      <div className="league-controls">
+        <h2 className="league-title">Stand</h2>
+        <div className="league-controls-right">
           {hasPeriodes && (
             <div className="league-filter-toggle">
               <button
@@ -110,7 +110,7 @@ export default function StandingsTab({ poules, initialIndex = 0 }: Props) {
       </div>
 
       {selectedPoule?.klassepoule && (
-        <p className="league-standings-subtitle">
+        <p className="league-subtitle">
           {isPeriodeMode
             ? `${selectedPoule.klassepoule} (Periode ${periodeNummer})`
             : selectedPoule.klassepoule}

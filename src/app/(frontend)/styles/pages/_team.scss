@@ -1,0 +1,93 @@
+// ─── Team detail page ─────────────────────────────────────────────────────────
+
+.team-photo {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e8e8e8;
+
+  .team-photo-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 3 / 2;
+    max-height: 520px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  @media (min-width: $breakpoint-nav) {
+    position: relative;
+    cursor: pointer;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      transition: background 0.2s;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    &:hover::after {
+      background: rgba(0, 0, 0, 0.12);
+    }
+  }
+}
+
+// Selection (roster) card
+
+.team-selection-group {
+  & + & {
+    margin-top: 1.25rem;
+  }
+}
+
+.team-selection-role {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #888;
+  margin: 0 0 0.5rem;
+}
+
+.team-selection-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.25rem 1rem;
+
+  li {
+    font-size: 0.875rem;
+    color: #333;
+    padding: 0.15rem 0;
+  }
+
+  @media screen and (max-width: $breakpoint-mobile) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.team-selection-hidden {
+  color: #aaa;
+  font-style: italic;
+}
+
+.league-table-note-cell {
+  text-align: center;
+}
+
+.league-table-note-icon {
+  display: inline-flex;
+  align-items: center;
+  cursor: default;
+  color: #888;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}

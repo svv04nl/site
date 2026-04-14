@@ -7,6 +7,7 @@ import { standingsQuery, cupResultsQuery } from '@/lib/clubdata/queries'
 import MatchCard from '@/components/ui/MatchCard'
 import ClubLogo from '@/components/ClubLogo'
 import type { PouleInfo } from '@/lib/clubdata/types'
+import { SectionHeader } from '../ui/SectionHeader'
 
 type Props = {
   poules: PouleInfo[]
@@ -29,51 +30,55 @@ export default function CupTab({ poules }: Props) {
   }
 
   return (
-    <div className="league-standings">
-      <div className="league-standings-controls">
-        <h2 className="league-standings-title">Beker</h2>
+    <div>
+      <div className="league-controls">
+        <h2 className="league-title">Beker</h2>
+
         {poules.length > 1 && (
-          <select
-            className="league-fase-select"
-            value={selectedIndex}
-            onChange={(e) => setSelectedIndex(Number(e.target.value))}
-          >
-            {poules.map((p, i) => (
-              <option key={p.poulecode} value={i}>
-                {p.klasse}
-              </option>
-            ))}
-          </select>
+          <div className="league-controls-right">
+            <select
+              className="league-fase-select"
+              value={selectedIndex}
+              onChange={(e) => setSelectedIndex(Number(e.target.value))}
+            >
+              {poules.map((p, i) => (
+                <option key={p.poulecode} value={i}>
+                  {p.klasse}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
       </div>
 
-      {selectedPoule.klassepoule && (
-        <p className="league-standings-subtitle">{selectedPoule.klassepoule}</p>
-      )}
-
       {/* Uitslagen */}
-      <div className="league-schedule-controls">
-        <h2 className="league-standings-title league-standings-title--sm">Uitslagen</h2>
-        <div className="league-filter-toggle">
-          <button
-            className={cx('league-filter-btn', { 'is-active': !filterOwn })}
-            onClick={() => setFilterOwn(false)}
-            type="button"
-          >
-            Alle wedstrijden
-          </button>
-          <button
-            className={cx('league-filter-btn', { 'is-active': filterOwn })}
-            onClick={() => setFilterOwn(true)}
-            type="button"
-          >
-            Eigen club
-          </button>
+      <div className="league-controls">
+        <h3 className="league-title">Uitslagen</h3>
+        <div className="league-controls-right">
+          <div className="league-filter-toggle">
+            <button
+              className={cx('league-filter-btn', { 'is-active': !filterOwn })}
+              onClick={() => setFilterOwn(false)}
+              type="button"
+            >
+              Alle wedstrijden
+            </button>
+            <button
+              className={cx('league-filter-btn', { 'is-active': filterOwn })}
+              onClick={() => setFilterOwn(true)}
+              type="button"
+            >
+              Eigen club
+            </button>
+          </div>
         </div>
       </div>
 
       {filtered.length > 0 ? (
-        <div className="card-match-list" style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
+        <div
+          className="card-match-list"
+          style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}
+        >
           {filtered.map((m) => (
             <MatchCard
               key={m.matchCode}
@@ -98,7 +103,7 @@ export default function CupTab({ poules }: Props) {
       <div style={{ marginBottom: '2rem' }} />
 
       {/* Stand */}
-      <h2 className="league-standings-title league-standings-title--sm">Stand</h2>
+      <h3 className="league-title">Stand</h3>
       {standing ? (
         <div style={{ opacity: standingLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
           <table className="league-table">

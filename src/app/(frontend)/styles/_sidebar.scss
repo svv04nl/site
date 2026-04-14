@@ -1,0 +1,127 @@
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+
+.sidebar-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  min-width: 0;
+}
+
+.sidebar-col {
+  background: #f4f4f4;
+  border-radius: 8px;
+  height: 100%;
+  min-width: 0;
+
+  @media screen and (max-width: $breakpoint-sidebar) {
+    background: none;
+  }
+}
+
+.sidebar-col__inner {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.5rem;
+  gap: 3rem;
+
+  @media screen and (max-width: $breakpoint-sidebar) {
+    padding: 0;
+  }
+}
+
+.sidebar-section-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 1rem 0 0.75rem;
+
+  @media screen and (max-width: $breakpoint-sidebar) {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+  }
+}
+
+.sidebar-matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+// Agenda
+
+.sidebar-agenda-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.sidebar-agenda-item {
+  align-items: center;
+  background: #f7f7f7;
+  border-radius: 6px;
+  display: grid;
+  gap: 0.875rem;
+  grid-template-columns: 52px 1fr;
+  padding: 0.75rem 0.875rem;
+}
+
+.sidebar-agenda-date-box {
+  align-items: center;
+  background: #e5e5e5;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.375rem 0.25rem;
+  text-align: center;
+
+  &--primary {
+    background: var(--color-primary);
+
+    .sidebar-agenda-day,
+    .sidebar-agenda-month {
+      color: var(--color-white);
+    }
+  }
+}
+
+.sidebar-agenda-day {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sidebar-agenda-month {
+  color: #666;
+  font-family: var(--font-heading);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sidebar-agenda-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.sidebar-agenda-name {
+  color: var(--color-dark);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sidebar-agenda-meta {
+  color: #999;
+  font-size: 0.775rem;
+}

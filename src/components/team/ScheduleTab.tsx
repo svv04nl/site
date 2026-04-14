@@ -29,8 +29,8 @@ export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: 
 
   const defaultPoulecode = poules[initialFaseIndex]?.poulecode
   const poulecode =
-    availablePoules.find((p) => p.poulecode === (selectedPoulecode ?? defaultPoulecode))?.poulecode ??
-    availablePoules[0]?.poulecode
+    availablePoules.find((p) => p.poulecode === (selectedPoulecode ?? defaultPoulecode))
+      ?.poulecode ?? availablePoules[0]?.poulecode
 
   const selectedPoule = poules.find((p) => p.poulecode === poulecode)
   const queryIndex = poules.findIndex((p) => p.poulecode === poulecode)
@@ -44,10 +44,10 @@ export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: 
   const weekGroups = groupScheduleByWeek(filtered)
 
   return (
-    <div className="league-schedule">
-      <div className="league-schedule-controls">
-        <h2 className="league-standings-title">Programma</h2>
-        <div className="league-schedule-controls-right">
+    <div>
+      <div className="league-controls">
+        <h2 className="league-title">Programma</h2>
+        <div className="league-controls-right">
           <div className="league-filter-toggle">
             <button
               className={cx('league-filter-btn', { 'is-active': !filterOwn })}

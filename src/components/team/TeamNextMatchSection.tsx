@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import NextMatch from '@/components/NextMatch'
+import NextMatchCard from '@/components/NextMatchCard'
 import { nextMatchQuery } from '@/lib/clubdata/queries'
 import { MoreLink } from '@/components/ui/MoreLink'
 
@@ -19,9 +19,9 @@ export default function TeamNextMatchSection({ teamcode, teamName, programmaHref
   if (!match) return null
 
   return (
-    <div className="team-sidebar-section">
+    <div className="sidebar-section">
       <h2 className="sidebar-section-title">Volgende wedstrijd</h2>
-      <NextMatch match={match} teamName={teamName} showTitle={false} />
+      <NextMatchCard match={match} teamName={teamName} showTitle={false} />
       {programmaHref && <MoreLink href={programmaHref} text="Volledig programma" />}
     </div>
   )

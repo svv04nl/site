@@ -30,10 +30,13 @@ export function SetBreadcrumb({ crumbs }: { crumbs: Crumb[] }) {
 
 export function BreadcrumbBar() {
   const { crumbs } = useContext(BreadcrumbCtx)
-  if (crumbs.length === 0) return null
+  if (crumbs.length === 0) {
+    return null
+  }
+
   return (
-    <nav className="team-breadcrumb" aria-label="Kruimelpad">
-      <div className="team-page-inner">
+    <nav className="breadcrumb" aria-label="Breadcrumbs">
+      <div className="page-inner">
         {crumbs.map((crumb, i) => (
           <React.Fragment key={i}>
             {i > 0 && <span aria-hidden="true">›</span>}

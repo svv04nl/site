@@ -1,7 +1,7 @@
 import React from 'react'
-import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export const metadata = { title: "SVV'04 - Contact" }
 
@@ -140,82 +140,78 @@ export default function ContactPage() {
     <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
 
-      <div className="page-inner contact-inner">
-        <div className="contact-header">
-          <div>
-            <h1 className="page-title">Contact</h1>
-            <p className="contact-intro">
-              Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je
-              snel te helpen.
-            </p>
-          </div>
+      <div className="section-with-sidebar">
+        {/* Left: form */}
+        <div className="sidebar-content-col">
+          <SectionHeader as="h1" title="Contact" />
+          <p className="contact-intro">
+            Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je
+            snel te helpen.
+          </p>
+          <ContactForm />
         </div>
 
-        <div className="contact-layout">
-          {/* Left: contact info */}
-          <div className="card-contact-info card">
-            {CONTACT_SECTIONS.map((section) => (
-              <div key={section.title} className="contact-section">
-                <h2 className="contact-section-title">{section.title}</h2>
+        {/* Right: contact details */}
+        <div className="sidebar-col">
+          <div className="sidebar-col__inner">
+            <div>
+              {CONTACT_SECTIONS.map((section) => (
+                <div key={section.title} className="contact-section">
+                  <h2 className="contact-section-title">{section.title}</h2>
 
-                {section.items?.map((item, i) => (
-                  <div key={i} className="contact-info-row">
-                    {item.type === 'phone' && (
-                      <>
-                        <PhoneIcon />
-                        <a href={`tel:${item.value.replace(/\s/g, '')}`}>{item.value}</a>
-                      </>
-                    )}
-                    {item.type === 'email' && (
-                      <>
-                        <EmailIcon />
-                        <a href={`mailto:${item.value}`}>{item.value}</a>
-                      </>
-                    )}
-                    {item.type === 'address' && (
-                      <>
-                        <AddressIcon />
-                        <span>{item.value}</span>
-                      </>
-                    )}
-                    {item.type === 'bank' && (
-                      <>
-                        <BankIcon />
-                        <span>{item.value}</span>
-                      </>
-                    )}
-                  </div>
-                ))}
-
-                {section.persons?.map((person, i) => (
-                  <div key={i} className="contact-person">
-                    <div className="contact-info-row contact-info-row--name">
-                      <PersonIcon />
-                      <span className="contact-person-name">{person.name}</span>
+                  {section.items?.map((item, i) => (
+                    <div key={i} className="contact-info-row">
+                      {item.type === 'phone' && (
+                        <>
+                          <PhoneIcon />
+                          <a href={`tel:${item.value.replace(/\s/g, '')}`}>{item.value}</a>
+                        </>
+                      )}
+                      {item.type === 'email' && (
+                        <>
+                          <EmailIcon />
+                          <a href={`mailto:${item.value}`}>{item.value}</a>
+                        </>
+                      )}
+                      {item.type === 'address' && (
+                        <>
+                          <AddressIcon />
+                          <span>{item.value}</span>
+                        </>
+                      )}
+                      {item.type === 'bank' && (
+                        <>
+                          <BankIcon />
+                          <span>{item.value}</span>
+                        </>
+                      )}
                     </div>
-                    {person.role && <p className="contact-person-role">{person.role}</p>}
-                    {person.phone && (
-                      <div className="contact-info-row">
-                        <PhoneIcon />
-                        <a href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a>
-                      </div>
-                    )}
-                    {person.email && (
-                      <div className="contact-info-row">
-                        <EmailIcon />
-                        <a href={`mailto:${person.email}`}>{person.email}</a>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+                  ))}
 
-          {/* Right: contact form */}
-          <div className="card-contact-form card">
-            <h2 className="contact-panel-title">Contactformulier</h2>
-            <ContactForm />
+                  {section.persons?.map((person, i) => (
+                    <div key={i} className="contact-person">
+                      <div className="contact-info-row contact-info-row--name">
+                        <PersonIcon />
+                        <span className="contact-person-name">{person.name}</span>
+                      </div>
+                      {person.role && <p className="contact-person-role">{person.role}</p>}
+                      {person.phone && (
+                        <div className="contact-info-row">
+                          <PhoneIcon />
+                          <a href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a>
+                        </div>
+                      )}
+                      {person.email && (
+                        <div className="contact-info-row">
+                          <EmailIcon />
+                          <a href={`mailto:${person.email}`}>{person.email}</a>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

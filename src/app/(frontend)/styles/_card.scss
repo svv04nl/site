@@ -1,0 +1,365 @@
+// ─── Base card ────────────────────────────────────────────────────────────────
+
+.card {
+  background: var(--color-white);
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 2rem;
+
+  @media screen and (max-width: $breakpoint-mobile) {
+    padding: 1.25rem;
+  }
+}
+
+// ─── Card variants ────────────────────────────────────────────────────────────
+
+.card.card-match {
+  flex-shrink: 0;
+}
+
+.card.card-news {
+  border: none;
+  box-shadow: 0 1px 4px rgba(0 0 0 / 0.07);
+  color: var(--color-dark);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 1px 4px rgba(0 0 0 / 0.07);
+  }
+}
+
+.card.card-team {
+  border: none;
+  box-shadow: 0 1px 4px rgba(0 0 0 / 0.07);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  text-decoration: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0 0 0 / 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.card.card-selection {
+  p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #444;
+    margin: 0;
+  }
+}
+
+.card.card-contact-form,
+.card.card-contact-info {
+  border-color: rgba(0 0 0 / 0.08);
+}
+
+// ─── News card internals ──────────────────────────────────────────────────────
+
+.card-news-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.card-news-img-wrap {
+  aspect-ratio: 4 / 2;
+  background-color: #d0d0d0;
+  display: block;
+  margin-bottom: 0;
+  overflow: hidden;
+  position: relative;
+
+  &--placeholder {
+    align-items: center;
+    background-image: url('/hero-sportpark.jpg');
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+
+    &::after {
+      background: rgba(0, 0, 0, 0.35);
+      content: '';
+      inset: 0;
+      position: absolute;
+    }
+  }
+}
+
+.card-news-img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+  width: 100%;
+
+  .card-news:hover & {
+    transform: scale(1.04);
+  }
+}
+
+.card-news-img-placeholder {
+  height: 55%;
+  object-fit: contain;
+  position: relative;
+  width: 55%;
+  z-index: 1;
+}
+
+.card-news-meta {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.card-news-tags {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.card-news-tag {
+  background: var(--color-primary);
+  border-radius: 3px;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  padding: 0.15rem 0.4rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.card-news-date {
+  color: #999;
+  display: block;
+  font-size: 0.8rem;
+}
+
+.card-news-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0.5rem 0 0;
+}
+
+.card-news-excerpt {
+  color: #666;
+  display: -webkit-box;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0.375rem 0 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+// ─── Team card internals ──────────────────────────────────────────────────────
+
+.card-team-img-wrap {
+  aspect-ratio: 4 / 3;
+  background-color: #d0d0d0;
+  overflow: hidden;
+}
+
+.card-team-img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s ease;
+  width: 100%;
+
+  .card-team:hover & {
+    transform: scale(1.04);
+  }
+}
+
+.card-team-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0.875rem 1rem 1rem;
+}
+
+.card-team-category {
+  color: var(--color-primary);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.card-team-name {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  transition: color 0.2s ease;
+
+  .card-team:hover & {
+    color: var(--color-primary);
+  }
+}
+
+// ─── Match card internals ─────────────────────────────────────────────────────
+
+.card-match-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card-match-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.25rem;
+  align-items: center;
+  text-align: center;
+}
+
+.card-match-club {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-match-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+
+    img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      opacity: 0.5;
+    }
+  }
+}
+
+.card-match-club-name {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  &--own {
+    color: var(--color-primary);
+  }
+}
+
+.card-match-club-location {
+  font-size: 0.72rem;
+  color: #888;
+}
+
+.card-match-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-match-date {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.card-match-time {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-match-score {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-match-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.72rem;
+  color: #888;
+  margin-top: 0.1rem;
+}
+
+.card-match-empty {
+  font-size: 0.875rem;
+  color: #aaa;
+  text-align: center;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+.card-match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.card-match-list .card-match {
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+}
+
+.card-match--clickable {
+  display: block;
+  color: inherit;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background-color: #fafafa;
+  }
+}

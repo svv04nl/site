@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { fetchClubData } from '@/lib/clubdata/fetch'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export const metadata = { title: "SVV'04 - Agenda" }
 
@@ -30,8 +31,8 @@ export default async function AgendaPage() {
     <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Agenda' }]} />
 
-      <div className="agenda-inner">
-        <h1 className="page-title">Agenda</h1>
+      <div className="page-inner agenda-inner">
+        <SectionHeader as="h1" title="Agenda" />
 
         {activiteiten.length === 0 ? (
           <p className="agenda-empty">Geen activiteiten gepland.</p>

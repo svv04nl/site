@@ -25,26 +25,26 @@ export default function LineupTab({ poules, initialIndex = 0 }: Props) {
   }
 
   return (
-    <div className="league-standings">
-      <div className="league-standings-controls">
-        <h2 className="league-standings-title">Indeling</h2>
-        {poules.length > 1 && (
-          <select
-            className="league-fase-select"
-            value={selectedIndex}
-            onChange={(e) => setExplicitIndex(Number(e.target.value))}
-          >
-            {poules.map((p, i) => (
-              <option key={p.poulecode} value={i}>
-                {p.klasse}
-              </option>
-            ))}
-          </select>
-        )}
+    <div>
+      <div className="league-controls">
+        <h2 className="league-title">Indeling</h2>
+        <div className="league-controls-right">
+          {poules.length > 1 && (
+            <select
+              className="league-fase-select"
+              value={selectedIndex}
+              onChange={(e) => setExplicitIndex(Number(e.target.value))}
+            >
+              {poules.map((p, i) => (
+                <option key={p.poulecode} value={i}>
+                  {p.klasse}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
-      {selectedPoule?.klassepoule && (
-        <p className="league-standings-subtitle">{selectedPoule.klassepoule}</p>
-      )}
+      {selectedPoule?.klassepoule && <p className="league-subtitle">{selectedPoule.klassepoule}</p>}
 
       {isError && <p className="league-error">Gegevens konden niet worden geladen.</p>}
 

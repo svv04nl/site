@@ -8,7 +8,7 @@ import type { Post } from '@/payload-types'
 import type { RawActiviteitenResponse } from '@/lib/clubdata/types'
 import { NewsCard } from '@/components/ui/NewsCard'
 import { MoreLink } from '@/components/ui/MoreLink'
-import { Sidebar } from '@/components/ui/Sidebar'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-o21-1', 'svv04-jo9-1']
 
@@ -67,17 +67,15 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Latest news + sidebar (matches + agenda) */}
-        <section className="home-news-sidebar-section">
-          <div className="home-news-sidebar-inner">
+        <div className="page">
+          {/* Latest news + sidebar (matches + agenda) */}
+          <div className="section-with-sidebar">
             {/* Left: news */}
-            <div className="home-news-col">
-              <div className="home-news-header">
-                <h2 className="home-news-title">Laatste Nieuws</h2>
-                <Link className="home-news-viewall" href="/nieuws">
-                  Bekijk alles
-                </Link>
-              </div>
+            <div className="sidebar-content-col">
+              <SectionHeader
+                title="Laatste Nieuws"
+                link={{ href: '/nieuws', label: 'Bekijk alles' }}
+              />
               <div className="home-news-layout">
                 {latestPosts.map((post) => (
                   <NewsCard key={post.id} post={post as Post} />
@@ -86,74 +84,78 @@ export default async function HomePage() {
             </div>
 
             {/* Right: sidebar */}
-            <Sidebar>
-              {/* Matches */}
-              <div className="sidebar-section">
-                <h2 className="sidebar-section-title">Komende wedstrijden</h2>
-                <div className="sidebar-matches-list">
-                  {teams.map((team) => (
-                    <NextMatchServer
-                      key={team.slug}
-                      teamcode={team.teamcode!}
-                      teamName={team.name}
-                      showTitle={false}
-                      maxDays={7}
-                    />
-                  ))}
+            <div className="sidebar-col">
+              <div className="sidebar-col__inner">
+                {/* Matches */}
+                <div className="sidebar-section">
+                  <h2 className="sidebar-section-title">Komende wedstrijden</h2>
+                  <div className="sidebar-matches-list">
+                    {teams.map((team) => (
+                      <NextMatchServer
+                        key={team.slug}
+                        teamcode={team.teamcode!}
+                        teamName={team.name}
+                        showTitle={false}
+                        maxDays={7}
+                      />
+                    ))}
+                  </div>
+                  <MoreLink href="/programma" text="Volledig programma" />
                 </div>
-                <MoreLink href="/programma" text="Volledig programma" />
-              </div>
 
-              {/* Agenda */}
-              <div className="sidebar-section">
-                <h2 className="sidebar-section-title">Agenda</h2>
-                <ul className="sidebar-agenda-list">
-                  {activiteiten.length === 0 && (
-                    <li style={{ color: '#888', fontSize: '0.875rem' }}>
-                      Geen activiteiten gepland.
-                    </li>
-                  )}
-                  {activiteiten.slice(0, 4).map((item, i) => {
-                    const date = new Date(item.datumvan)
-                    return (
-                      <li key={i} className="sidebar-agenda-item">
-                        <div
-                          className={`sidebar-agenda-date-box${i === 0 ? ' sidebar-agenda-date-box--primary' : ''}`}
-                        >
-                          <span className="sidebar-agenda-day">{date.getDate()}</span>
-                          <span className="sidebar-agenda-month">
-                            {date.toLocaleDateString('nl-NL', { month: 'short' }).replace('.', '')}
-                          </span>
-                        </div>
-                        <div className="sidebar-agenda-content">
-                          {item.url ? (
-                            <a
-                              href={item.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="sidebar-agenda-name"
-                            >
-                              {item.activiteit}
-                            </a>
-                          ) : (
-                            <span className="sidebar-agenda-name">{item.activiteit}</span>
-                          )}
-                          {item.plaats && (
-                            <span className="sidebar-agenda-meta">{item.plaats}</span>
-                          )}
-                        </div>
+                {/* Agenda */}
+                <div className="sidebar-section">
+                  <h2 className="sidebar-section-title">Agenda</h2>
+                  <ul className="sidebar-agenda-list">
+                    {activiteiten.length === 0 && (
+                      <li style={{ color: '#888', fontSize: '0.875rem' }}>
+                        Geen activiteiten gepland.
                       </li>
-                    )
-                  })}
-                </ul>
-                <MoreLink href="/agenda" text="Volledige agenda" />
+                    )}
+                    {activiteiten.slice(0, 4).map((item, i) => {
+                      const date = new Date(item.datumvan)
+                      return (
+                        <li key={i} className="sidebar-agenda-item">
+                          <div
+                            className={`sidebar-agenda-date-box${i === 0 ? ' sidebar-agenda-date-box--primary' : ''}`}
+                          >
+                            <span className="sidebar-agenda-day">{date.getDate()}</span>
+                            <span className="sidebar-agenda-month">
+                              {date
+                                .toLocaleDateString('nl-NL', { month: 'short' })
+                                .replace('.', '')}
+                            </span>
+                          </div>
+                          <div className="sidebar-agenda-content">
+                            {item.url ? (
+                              <a
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="sidebar-agenda-name"
+                              >
+                                {item.activiteit}
+                              </a>
+                            ) : (
+                              <span className="sidebar-agenda-name">{item.activiteit}</span>
+                            )}
+                            {item.plaats && (
+                              <span className="sidebar-agenda-meta">{item.plaats}</span>
+                            )}
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                  <MoreLink href="/agenda" text="Volledige agenda" />
+                </div>
               </div>
-            </Sidebar>
+            </div>
           </div>
-        </section>
+        </div>
 
         {/* CTA tiles */}
-        <section className="home-calendar-section">
+        <section className="home-cta-section">
           <div className="home-section-inner">
             <div className="cta-grid">
               <Link

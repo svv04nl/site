@@ -1,0 +1,16 @@
+// ─── Teams overview (senioren / jeugd) ───────────────────────────────────────
+
+.teams-grid {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: repeat(3, 1fr);
+
+  @media (max-width: $breakpoint-tablet-landscape) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+

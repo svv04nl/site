@@ -11,6 +11,7 @@ import ClubLogo from '@/components/ClubLogo'
 import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 function parseDateStr(s: string): Date | null {
   if (!s) return null
@@ -77,11 +78,9 @@ export default function WedstrijdDetailPage() {
         ]}
       />
 
-      <div className="team-page-inner team-page-inner--title">
-<h1 className="page-title">{pageTitle}</h1>
-      </div>
+      <div className="page-inner">
+        <SectionHeader as="h1" title={pageTitle} />
 
-      <div className="team-page-inner">
         {isLoading && (
           <div className="schedule-loading" aria-label="Laden…">
             <span className="schedule-spinner" />
@@ -158,8 +157,8 @@ export default function WedstrijdDetailPage() {
               </div>
 
               <div className="wedstrijd-header-info">
-                {accommodatie?.naam && (
-                  accommodatie.routeplanner ? (
+                {accommodatie?.naam &&
+                  (accommodatie.routeplanner ? (
                     <a href={accommodatie.routeplanner} target="_blank" rel="noopener noreferrer">
                       {accommodatie.naam}
                       {accommodatie.plaats ? `, ${accommodatie.plaats}` : ''}
@@ -169,8 +168,7 @@ export default function WedstrijdDetailPage() {
                       {accommodatie.naam}
                       {accommodatie.plaats ? `, ${accommodatie.plaats}` : ''}
                     </span>
-                  )
-                )}
+                  ))}
               </div>
             </div>
 
@@ -188,20 +186,26 @@ export default function WedstrijdDetailPage() {
                   <div className="wedstrijd-officials card">
                     {parsedRefs.map((ref, i) => (
                       <div key={i} className="wedstrijd-official-row">
-                        <span className="wedstrijd-official-label">{ref.role || 'Scheidsrechter'}</span>
+                        <span className="wedstrijd-official-label">
+                          {ref.role || 'Scheidsrechter'}
+                        </span>
                         <span className="wedstrijd-official-value">{ref.name}</span>
                       </div>
                     ))}
                     {officials?.verenigingsscheidsrechter && (
                       <div className="wedstrijd-official-row">
                         <span className="wedstrijd-official-label">Verenigingsscheidsrechter</span>
-                        <span className="wedstrijd-official-value">{officials.verenigingsscheidsrechter}</span>
+                        <span className="wedstrijd-official-value">
+                          {officials.verenigingsscheidsrechter}
+                        </span>
                       </div>
                     )}
                     {officials?.overigeofficial && (
                       <div className="wedstrijd-official-row">
                         <span className="wedstrijd-official-label">Overige official</span>
-                        <span className="wedstrijd-official-value">{officials.overigeofficial}</span>
+                        <span className="wedstrijd-official-value">
+                          {officials.overigeofficial}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -216,8 +220,14 @@ export default function WedstrijdDetailPage() {
                 <div className="wedstrijd-lineups">
                   {(
                     [
-                      { title: info.thuisteam, players: homePlayers.filter((p) => p.rol === 'Teamspeler') },
-                      { title: info.uitteam, players: awayPlayers.filter((p) => p.rol === 'Teamspeler') },
+                      {
+                        title: info.thuisteam,
+                        players: homePlayers.filter((p) => p.rol === 'Teamspeler'),
+                      },
+                      {
+                        title: info.uitteam,
+                        players: awayPlayers.filter((p) => p.rol === 'Teamspeler'),
+                      },
                     ] as { title: string; players: RawWedstrijdSpeler[] }[]
                   ).map(({ title, players }) => {
                     const visible = players.filter((p) => p.relatiecode !== null)

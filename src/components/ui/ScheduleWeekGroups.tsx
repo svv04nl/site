@@ -59,8 +59,8 @@ export default function ScheduleWeekGroups({
     >
       {weekGroups.map((group) => (
         <div key={group.weekKey} className="league-week-group">
-          <h2 className="league-week-title">{group.label}</h2>
-          {subtitle && <p className="league-standings-subtitle">{subtitle}</p>}
+          <h3 className="league-title">{group.label}</h3>
+          {subtitle && <p className="league-subtitle">{subtitle}</p>}
 
           {tableOnDesktop && (
             <div className="league-week-table-wrap">
@@ -103,7 +103,11 @@ export default function ScheduleWeekGroups({
                         onClick={() => router.push(href)}
                       >
                         <td className="league-schedule-date" data-label="Datum">
-                          <Link href={href} className="league-row-link" onClick={(e) => e.stopPropagation()}>
+                          <Link
+                            href={href}
+                            className="league-row-link"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             {m.date}
                           </Link>
                         </td>
@@ -119,7 +123,9 @@ export default function ScheduleWeekGroups({
                             />
                             <span
                               className={m.isOwnHome ? 'league-schedule-own-name' : ''}
-                              style={m.isOwnHome ? { color: '#c8102e', fontWeight: 600 } : undefined}
+                              style={
+                                m.isOwnHome ? { color: '#c8102e', fontWeight: 600 } : undefined
+                              }
                             >
                               {m.homeTeam}
                             </span>
@@ -134,7 +140,9 @@ export default function ScheduleWeekGroups({
                             />
                             <span
                               className={m.isOwnAway ? 'league-schedule-own-name' : ''}
-                              style={m.isOwnAway ? { color: '#c8102e', fontWeight: 600 } : undefined}
+                              style={
+                                m.isOwnAway ? { color: '#c8102e', fontWeight: 600 } : undefined
+                              }
                             >
                               {m.awayTeam}
                             </span>

@@ -4,6 +4,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import ReactMarkdown from 'react-markdown'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export const metadata = { title: "SVV'04 - Privacyverklaring" }
 
@@ -15,7 +16,7 @@ export default function PrivacyPage() {
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Privacyverklaring' }]} />
 
       <div className="page-inner">
-        <h1 className="page-title">Privacyverklaring</h1>
+        <SectionHeader as="h1" title="Privacyverklaring" subtitle="Laatst bijgewerkt: april 2026" />
         <div className="static-page-body">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>

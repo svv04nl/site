@@ -1,0 +1,124 @@
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
+.site-hero {
+  background-color: var(--color-dark);
+  min-height: 22vh;
+  overflow: hidden;
+  position: relative;
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    min-height: 18vh;
+  }
+}
+
+.site-hero-image {
+  background-position: center 80%;
+  background-size: cover;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.site-hero-overlay {
+  background-color: rgba(0 0 0 / 0.55);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.site-hero-inner {
+  align-items: flex-end;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: 1fr;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--grid-base);
+  min-height: 30vh;
+  padding-bottom: 2rem;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  padding-top: 4rem;
+  position: relative;
+  z-index: 2;
+
+  @media screen and (max-width: $breakpoint-tablet-landscape) {
+    grid-template-columns: 1fr;
+    min-height: 22vh;
+    padding-bottom: 1.5rem;
+    padding-top: 3rem;
+  }
+}
+
+.site-hero-content {
+  max-width: 760px;
+}
+
+.site-hero-tagline {
+  color: rgba(255 255 255 / 0.75);
+  font-family: var(--font-body);
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  font-weight: 300;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    font-size: 0.9375rem;
+
+    .site-hero-tagline-br {
+      display: none;
+    }
+  }
+}
+
+.site-hero-eyebrow {
+  align-items: center;
+  color: var(--color-primary);
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+
+  &::before {
+    background-color: var(--color-primary);
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    height: 2px;
+    width: 2.5rem;
+  }
+}
+
+.site-hero-title {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  text-transform: uppercase;
+
+  em {
+    color: var(--color-primary);
+    font-style: normal;
+  }
+}
+
+// Mobile hero overrides (within main mobile nav media query)
+@media screen and (max-width: $breakpoint-nav) {
+  .site-hero-title {
+    font-size: 10vw;
+    white-space: normal;
+  }
+}

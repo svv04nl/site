@@ -53,6 +53,12 @@ async function main() {
         url: toBlobUrl(doc.sizes!.featuredPost!.url!),
       }
     }
+    if (isRelative(doc.sizes?.teamCard?.url)) {
+      sizes.teamCard = { ...doc.sizes!.teamCard, url: toBlobUrl(doc.sizes!.teamCard!.url!) }
+    }
+    if (isRelative(doc.sizes?.teamPhoto?.url)) {
+      sizes.teamPhoto = { ...doc.sizes!.teamPhoto, url: toBlobUrl(doc.sizes!.teamPhoto!.url!) }
+    }
     if (Object.keys(sizes).length > 0) {
       patch.sizes = { ...doc.sizes, ...sizes }
     }

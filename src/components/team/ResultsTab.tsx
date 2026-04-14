@@ -28,8 +28,8 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
 
   const defaultPoulecode = poules[initialIndex]?.poulecode
   const poulecode =
-    availablePoules.find((p) => p.poulecode === (selectedPoulecode ?? defaultPoulecode))?.poulecode ??
-    availablePoules[0]?.poulecode
+    availablePoules.find((p) => p.poulecode === (selectedPoulecode ?? defaultPoulecode))
+      ?.poulecode ?? availablePoules[0]?.poulecode
 
   const selectedPoule = poules.find((p) => p.poulecode === poulecode)
   const queryIndex = poules.findIndex((p) => p.poulecode === poulecode)
@@ -43,10 +43,10 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
   const weekGroups = groupResultsByWeek(filtered)
 
   return (
-    <div className="league-schedule">
-      <div className="league-schedule-controls">
-        <h2 className="league-standings-title">Uitslagen</h2>
-        <div className="league-schedule-controls-right">
+    <div>
+      <div className="league-controls">
+        <h2 className="league-title">Uitslagen</h2>
+        <div className="league-controls-right">
           <div className="league-filter-toggle">
             <button
               className={cx('league-filter-btn', { 'is-active': !filterOwn })}
@@ -94,7 +94,7 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
               <div key={group.weekKey} className="league-week-group">
                 <h2 className="league-week-title">{group.label}</h2>
                 {selectedPoule?.klassepoule && (
-                  <p className="league-standings-subtitle">{selectedPoule.klassepoule}</p>
+                  <p className="league-subtitle">{selectedPoule.klassepoule}</p>
                 )}
                 <div className="card-match-list">
                   {group.matches.map((m) => (

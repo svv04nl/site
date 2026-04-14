@@ -2,10 +2,9 @@ import type { Sponsor, Media } from '@/payload-types'
 
 type Props = {
   sponsor?: Sponsor | number | null
-  bare?: boolean
 }
 
-export default function TeamSponsorSection({ sponsor, bare }: Props) {
+export default function TeamSponsorSection({ sponsor }: Props) {
   const s = typeof sponsor === 'object' && sponsor !== null ? sponsor : null
 
   const content = s ? (
@@ -36,12 +35,10 @@ export default function TeamSponsorSection({ sponsor, bare }: Props) {
     <p className="team-sponsor-empty">Dit team heeft nog geen sponsor.</p>
   )
 
-  if (bare) return content
-
   return (
-    <div className="card-sponsor card">
-      <h2 className="team-sponsor-title">Sponsor</h2>
-      {content}
+    <div className="sidebar-section">
+      <h2 className="sidebar-section-title">Team sponsor</h2>
+      <div className="card-sponsor card">{content}</div>
     </div>
   )
 }
