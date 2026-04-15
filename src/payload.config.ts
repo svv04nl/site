@@ -19,6 +19,9 @@ import { Pages } from './collections/Pages'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const blobToken = process.env.BLOB_READ_WRITE_TOKEN || ''
+const blobStoreId = blobToken.match(/^vercel_blob_rw_([a-z\d]+)_/i)?.[1]?.toLowerCase() ?? ''
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -79,13 +82,16 @@ export default buildConfig({
   sharp,
   plugins: [
     vercelBlobStorage({
-      enabled: true,
+      enabled: !!blobToken,
       collections: {
         media: {
           prefix: 'media',
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) =>
+            `https://${blobStoreId}.public.blob.vercel-storage.com/${prefix ?? 'media'}/${encodeURIComponent(filename)}`,
         },
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      token: blobToken,
     }),
   ],
 })

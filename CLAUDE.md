@@ -33,22 +33,34 @@ src/
 ├── app/
 │   ├── (frontend)/          # Frontend routes
 │   └── (payload)/           # Payload admin routes
-├── collections/             # Collection configs
-├── globals/                 # Global configs
+├── collections/             # Collection configs (Users, Posts, Teams, Media, Pages, Sponsors)
 ├── components/              # Custom React components
-├── hooks/                   # Hook functions
-├── access/                  # Access control functions
-└── payload.config.ts        # Main config
+│   ├── team/                # Team-specific components (tabs, roster, schedule, etc.)
+│   └── ui/                  # Shared UI components (cards, headers, etc.)
+├── blocks/                  # Custom Lexical editor blocks
+├── lib/
+│   └── clubdata/            # Club.Dataservice (Sportlink) integration
+│       ├── config.ts        # API configuration
+│       ├── fetch.ts         # HTTP client
+│       ├── queries.ts       # GraphQL queries
+│       ├── transform.ts     # Response transformers
+│       └── types.ts         # TypeScript types
+├── migrations/              # PostgreSQL migration files
+├── scripts/                 # Maintenance scripts (seed, media, sync)
+└── payload.config.ts        # Main Payload config
 ```
 
 ## Configuration
 
 ### Minimal Config Pattern
 
+This project uses **PostgreSQL via Neon** and **Vercel Blob** for media storage.
+
 ```typescript
 import { buildConfig } from 'payload'
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -68,9 +80,16 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URL,
+  db: postgresAdapter({
+    pool: { connectionString: process.env.DATABASE_URL },
   }),
+  plugins: [
+    vercelBlobStorage({
+      enabled: true,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+      collections: { media: true },
+    }),
+  ],
 })
 ```
 
@@ -99,26 +118,29 @@ export const Posts: CollectionConfig = {
 
 ### Auth Collection with RBAC
 
+This project uses a single `role` field (not an array) with `admin` and `editor` values:
+
 ```typescript
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: true,
   fields: [
     {
-      name: 'roles',
+      name: 'role',
       type: 'select',
-      hasMany: true,
-      options: ['admin', 'editor', 'user'],
-      defaultValue: ['user'],
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Editor', value: 'editor' },
+      ],
+      defaultValue: 'editor',
       required: true,
       saveToJWT: true, // Include in JWT for fast access checks
-      access: {
-        update: ({ req: { user } }) => user?.roles?.includes('admin'),
-      },
     },
   ],
 }
 ```
+
+Access checks use `user?.role === 'admin'` (not `user?.roles?.includes('admin')`).
 
 ## Fields
 
@@ -265,7 +287,7 @@ const authenticated: Access = ({ req: { user } }) => Boolean(user)
 // Query constraint (row-level security)
 const ownPostsOnly: Access = ({ req: { user } }) => {
   if (!user) return false
-  if (user?.roles?.includes('admin')) return true
+  if (user?.role === 'admin') return true
 
   return {
     author: { equals: user.id },
@@ -277,7 +299,7 @@ const projectMemberAccess: Access = async ({ req, id }) => {
   const { user, payload } = req
 
   if (!user) return false
-  if (user.roles?.includes('admin')) return true
+  if (user.role === 'admin') return true
 
   const project = await payload.findByID({
     collection: 'projects',
@@ -299,10 +321,10 @@ const projectMemberAccess: Access = async ({ req, id }) => {
   access: {
     read: ({ req: { user }, doc }) => {
       if (user?.id === doc?.id) return true
-      return user?.roles?.includes('admin')
+      return user?.role === 'admin'
     },
     update: ({ req: { user } }) => {
-      return user?.roles?.includes('admin')
+      return user?.role === 'admin'
     },
   },
 }
@@ -313,9 +335,9 @@ const projectMemberAccess: Access = async ({ req, id }) => {
 ```typescript
 export const anyone: Access = () => true
 export const authenticated: Access = ({ req: { user } }) => Boolean(user)
-export const adminOnly: Access = ({ req: { user } }) => user?.roles?.includes('admin')
+export const adminOnly: Access = ({ req: { user } }) => user?.role === 'admin'
 export const adminOrSelf: Access = ({ req: { user } }) => {
-  if (user?.roles?.includes('admin')) return true
+  if (user?.role === 'admin') return true
   return { id: { equals: user?.id } }
 }
 export const authenticatedOrPublished: Access = ({ req: { user } }) => {
@@ -714,7 +736,7 @@ Always spread existing config. Never overwrite arrays — always spread and appe
 2. Field-level access only returns boolean (no query constraints)
 3. Default to restrictive access, gradually add permissions
 4. Never trust client-provided data
-5. Use `saveToJWT: true` for roles to avoid database lookups
+5. Use `saveToJWT: true` for the `role` field to avoid database lookups
 
 ### Performance
 
@@ -728,7 +750,7 @@ Always spread existing config. Never overwrite arrays — always spread and appe
 
 1. Always pass `req` to nested operations in hooks
 2. Use context flags to prevent infinite hook loops
-3. Enable transactions for MongoDB (requires replica set) and Postgres
+3. Enable transactions for PostgreSQL (this project uses Neon — transactions work out of the box)
 4. Use `beforeValidate` for data formatting, `beforeChange` for business logic
 
 ### Type Safety
@@ -754,9 +776,9 @@ Always spread existing config. Never overwrite arrays — always spread and appe
 5. **Relationship Depth**: Default depth is 2, set to 0 for IDs only
 6. **Draft Status**: `_status` field auto-injected when drafts enabled
 7. **Type Generation**: Types not updated until `generate:types` runs
-8. **MongoDB Transactions**: Require replica set configuration
-9. **SQLite Transactions**: Disabled by default
-10. **Point Fields**: Not supported in SQLite
+8. **PostgreSQL Transactions**: Work out of the box with Neon — pass `req` to keep operations atomic
+9. **Role Field**: This project uses `user.role` (string), not `user.roles` (array) — access checks use `user?.role === 'admin'`
+10. **Unpooled Connection Required for Migrations**: DDL statements (migrations) must use `DATABASE_URL_UNPOOLED`
 
 ## Resources
 

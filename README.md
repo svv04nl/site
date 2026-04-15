@@ -45,13 +45,21 @@ De dev-omgeving gebruikt de **Neon `dev` branch** — gescheiden van productie. 
 | Script | Beschrijving |
 |--------|-------------|
 | `pnpm dev` | Start dev server |
+| `pnpm devsafe` | Start dev server na schone `.next`-build |
 | `pnpm build` | Productie build |
 | `pnpm generate` | Genereer TypeScript types + import map |
-| `pnpm seed:pages` | Seed standaardpagina's |
+| `pnpm migrate:create` | Maak een nieuwe migratie aan (alleen vóór productie-deploy) |
+| `pnpm seed` | Seed basisdata (teams, etc.) |
+| `pnpm seed:pages` | Seed standaardpagina's (vereniging, commissies, meedoen) |
+| `pnpm seed:posts` | Seed nieuwsberichten |
+| `pnpm sync:teamcodes` | Synchroniseer Sportlink teamcodes naar CMS |
 | `pnpm fix:media-urls` | Herstel legacy media-URLs naar directe blob-URLs |
-| `pnpm regenerate:media-sizes` | Genereer alle afbeeldingsformaten opnieuw voor teamfoto's |
+| `pnpm regenerate:media-sizes` | Genereer alle afbeeldingsformaten opnieuw |
 | `pnpm db:dev:reset` | Reset de Neon dev-branch naar productie |
 | `pnpm db:dev:no-expiry` | Zet de Neon dev-branch op geen vervaldatum |
+| `pnpm test` | Voer alle tests uit (integration + e2e) |
+| `pnpm test:int` | Voer integratietests uit (Vitest) |
+| `pnpm test:e2e` | Voer e2e-tests uit (Playwright) |
 
 ## Databases
 
@@ -68,11 +76,14 @@ src/
 │   ├── (frontend)/          # Publieke frontend routes
 │   └── (payload)/           # Payload admin routes
 ├── collections/             # CMS-collectie configuraties
-├── globals/                 # CMS-globals
 ├── components/              # React componenten
-├── hooks/                   # Payload hook functies
-├── access/                  # Toegangscontrole functies
-├── scripts/                 # Beheerscripts (migraties, seeds)
+│   ├── team/                # Team-specifieke componenten
+│   └── ui/                  # Gedeelde UI-componenten
+├── blocks/                  # Lexical editor blocks
+├── lib/
+│   └── clubdata/            # Club.Dataservice (Sportlink) integratie
+├── migrations/              # PostgreSQL migraties
+├── scripts/                 # Beheerscripts (seed, media, sync)
 └── payload.config.ts        # Hoofd Payload-configuratie
 ```
 
