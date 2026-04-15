@@ -1,4 +1,5 @@
 import React from 'react'
+import { preload } from 'react-dom'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -12,6 +13,8 @@ import { ActiviteitenSidebar } from '@/components/ActiviteitenSidebar'
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-o21-1', 'svv04-jo19-1']
 
 export default async function HomePage() {
+  preload('/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
+
   const payload = await getPayload({ config })
 
   const [{ docs: featuredTeams }, { docs: latestPosts }] = await Promise.all([
@@ -45,7 +48,7 @@ export default async function HomePage() {
           <div
             className="site-hero-image"
             aria-hidden="true"
-            style={{ backgroundImage: 'url(/hero-sportpark.jpg)' }}
+            style={{ backgroundImage: 'url(/hero-sportpark.webp)' }}
           >
             <div className="site-hero-overlay" />
           </div>
@@ -113,7 +116,7 @@ export default async function HomePage() {
               <Link
                 className="cta-tile"
                 href="/meedoen/lid-worden"
-                style={{ backgroundImage: 'url(/hero-sportpark.jpg)' }}
+                style={{ backgroundImage: 'url(/hero-sportpark.webp)' }}
               >
                 <div className="cta-tile-overlay" />
                 <div className="cta-tile-content">
@@ -128,7 +131,7 @@ export default async function HomePage() {
                 className="cta-tile"
                 href="/meedoen/sponsor-worden"
                 style={{
-                  backgroundImage: 'url(/hero-sportpark.jpg)',
+                  backgroundImage: 'url(/hero-sportpark.webp)',
                   backgroundPosition: '60% center',
                 }}
               >
@@ -145,7 +148,7 @@ export default async function HomePage() {
                 className="cta-tile"
                 href="/meedoen/vrijwilliger-worden"
                 style={{
-                  backgroundImage: 'url(/hero-sportpark.jpg)',
+                  backgroundImage: 'url(/hero-sportpark.webp)',
                   backgroundPosition: 'center 70%',
                 }}
               >
@@ -162,7 +165,7 @@ export default async function HomePage() {
                 className="cta-tile"
                 href="/vereniging/voetbal-nl-app"
                 style={{
-                  backgroundImage: 'url(/hero-sportpark.jpg)',
+                  backgroundImage: 'url(/hero-sportpark.webp)',
                   backgroundPosition: '80% 40%',
                 }}
               >
@@ -185,45 +188,47 @@ export default async function HomePage() {
         <div className="sponsors-ticker-track">
           <div className="sponsors-ticker-inner">
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-anura.webp" alt="Anura" />
+              <img src="/sponsors/logo-anura.webp" alt="Anura" width="1609" height="539" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo-Mind-Motion.webp" alt="Lifestylecenter Mind &amp; Motion" />
+              <img src="/sponsors/Logo-Mind-Motion.webp" alt="Lifestylecenter Mind &amp; Motion" width="705" height="200" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="Klaverblad Verzekeringen" />
+              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="Klaverblad Verzekeringen" width="4267" height="1180" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/problicity_header-logo_geel.webp" alt="Problicity" />
+              <img src="/sponsors/problicity_header-logo_geel.webp" alt="Problicity" width="476" height="100" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="Riant Makelaars" />
+              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="Riant Makelaars" width="291" height="173" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
               <img
                 src="/sponsors/logo-scholma-removebg-preview.webp"
                 alt="Scholma Print &amp; Media"
+                width="600"
+                height="120"
               />
             </a>
           </div>
           <div className="sponsors-ticker-inner" aria-hidden="true">
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-anura.webp" alt="" />
+            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
+              <img src="/sponsors/logo-anura.webp" alt="" width="1609" height="539" />
             </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo-Mind-Motion.webp" alt="" />
+            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
+              <img src="/sponsors/Logo-Mind-Motion.webp" alt="" width="705" height="200" />
             </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="" />
+            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
+              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="" width="4267" height="1180" />
             </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/problicity_header-logo_geel.webp" alt="" />
+            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
+              <img src="/sponsors/problicity_header-logo_geel.webp" alt="" width="476" height="100" />
             </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="" />
+            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
+              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="" width="291" height="173" />
             </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-scholma-removebg-preview.webp" alt="" />
+            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
+              <img src="/sponsors/logo-scholma-removebg-preview.webp" alt="" width="600" height="120" />
             </a>
           </div>
         </div>
