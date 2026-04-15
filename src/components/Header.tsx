@@ -100,7 +100,7 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
       <div className="site-header-topbar">
         <div className="site-header-topbar-inner">
           <Link className="site-header-topbar-logo" href="/" aria-label="SVV'04 Schoonebeek - home">
-            <img src="/logo.png" alt="SVV'04 Schoonebeek" className="site-header-topbar-logo-img" />
+            <img src="/logo.webp" alt="SVV'04 Schoonebeek" className="site-header-topbar-logo-img" />
           </Link>
           <div className="site-header-topbar-right">
             {actiePages.length > 0 && (
@@ -165,7 +165,7 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
 
           {/* Mobile: logo */}
           <Link className="site-header-mobile-logo" href="/">
-            <img src="/logo.png" alt="SVV'04" className="site-header-mobile-logo-img" />
+            <img src="/logo.webp" alt="SVV'04" className="site-header-mobile-logo-img" />
           </Link>
 
           {/* Mobile: webshop */}

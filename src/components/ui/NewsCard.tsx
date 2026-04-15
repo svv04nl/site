@@ -44,7 +44,7 @@ export function NewsCard({ post }: Props) {
             style={isContain ? { objectFit: 'contain', padding: '0.75rem' } : undefined}
           />
         ) : (
-          <img src="/logo.png" alt="" className="card-news-img-placeholder" aria-hidden="true" />
+          <img src="/logo.webp" alt="" className="card-news-img-placeholder" aria-hidden="true" />
         )}
       </div>
       <div className="card-news-body">

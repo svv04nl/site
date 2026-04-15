@@ -185,45 +185,45 @@ export default async function HomePage() {
         <div className="sponsors-ticker-track">
           <div className="sponsors-ticker-inner">
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-anura.png" alt="Anura" />
+              <img src="/sponsors/logo-anura.webp" alt="Anura" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo-Mind-Motion.png" alt="Lifestylecenter Mind &amp; Motion" />
+              <img src="/sponsors/Logo-Mind-Motion.webp" alt="Lifestylecenter Mind &amp; Motion" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo_Klaverblad_FC_Hor.png" alt="Klaverblad Verzekeringen" />
+              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="Klaverblad Verzekeringen" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/problicity_header-logo_geel.png" alt="Problicity" />
+              <img src="/sponsors/problicity_header-logo_geel.webp" alt="Problicity" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/riant-logo-removebg-preview.png" alt="Riant Makelaars" />
+              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="Riant Makelaars" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
               <img
-                src="/sponsors/logo-scholma-removebg-preview.png"
+                src="/sponsors/logo-scholma-removebg-preview.webp"
                 alt="Scholma Print &amp; Media"
               />
             </a>
           </div>
           <div className="sponsors-ticker-inner" aria-hidden="true">
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-anura.png" alt="" />
+              <img src="/sponsors/logo-anura.webp" alt="" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo-Mind-Motion.png" alt="" />
+              <img src="/sponsors/Logo-Mind-Motion.webp" alt="" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo_Klaverblad_FC_Hor.png" alt="" />
+              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/problicity_header-logo_geel.png" alt="" />
+              <img src="/sponsors/problicity_header-logo_geel.webp" alt="" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/riant-logo-removebg-preview.png" alt="" />
+              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="" />
             </a>
             <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-scholma-removebg-preview.png" alt="" />
+              <img src="/sponsors/logo-scholma-removebg-preview.webp" alt="" />
             </a>
           </div>
         </div>
