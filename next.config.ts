@@ -20,7 +20,7 @@ const csp = [
 
   // Next.js requires 'unsafe-inline' for hydration scripts.
   // 'unsafe-eval' is only needed for webpack hot-reload in development.
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${isDev ? " 'unsafe-eval'" : ''}`,
 
   // Inline styles are used by Next.js and various components.
   `style-src 'self' 'unsafe-inline'`,
