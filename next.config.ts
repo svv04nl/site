@@ -44,6 +44,7 @@ const csp = [
 ].join('; ')
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: true,
   async headers() {
     return [
       {
