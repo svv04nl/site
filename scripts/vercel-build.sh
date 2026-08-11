@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 #
-# Vercel build + database migrations.
+# Vercel database migrations + build.
 #
-# Runs the Next.js build, then applies Payload migrations against the database
-# that belongs to THIS deployment's environment:
+# Migrations run FIRST, then the Next.js build. This order is required because
+# the build statically prerenders routes (e.g. /sitemap.xml) that query the
+# database — those tables must already exist when the build runs.
+#
+# Migrations target the database that belongs to THIS deployment's environment:
 #   - Production deploys  -> the production Neon branch
 #   - Preview deploys      -> the per-preview Neon branch created by the
 #                            Neon-Vercel integration (isolated copy of prod)
@@ -13,9 +16,6 @@
 # migrations or falling back to another environment's database.
 set -euo pipefail
 
-echo "▸ Building (VERCEL_ENV=${VERCEL_ENV:-unknown})…"
-NODE_ENV=production pnpm build
-
 if [ -z "${DATABASE_URL_UNPOOLED:-}" ]; then
   echo "✗ DATABASE_URL_UNPOOLED is not set for this environment." >&2
   echo "  Preview deploys need the Neon-Vercel integration to provision a" >&2
@@ -23,7 +23,10 @@ if [ -z "${DATABASE_URL_UNPOOLED:-}" ]; then
   exit 1
 fi
 
-echo "▸ Running migrations against this environment's Neon branch…"
+echo "▸ Running migrations against this environment's Neon branch (VERCEL_ENV=${VERCEL_ENV:-unknown})…"
 DATABASE_URL="$DATABASE_URL_UNPOOLED" pnpm migrate
 
-echo "✓ Build + migrations complete."
+echo "▸ Building…"
+NODE_ENV=production pnpm build
+
+echo "✓ Migrations + build complete."

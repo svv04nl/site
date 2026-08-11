@@ -4,6 +4,11 @@ import config from '@payload-config'
 
 const BASE = 'https://svv04.nl'
 
+// Render on request, not at build time: the sitemap queries CMS content, so it
+// must stay in sync with the database without a redeploy and must not make the
+// build depend on database contents.
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const payload = await getPayload({ config })
 

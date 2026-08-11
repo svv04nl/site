@@ -93,8 +93,10 @@ src/
 
 Elke push naar `main` triggert automatisch een productie-deployment; elke PR een
 preview-deployment. De build-command (`vercel.json`) draait `scripts/vercel-build.sh`:
-eerst de Next.js-build, daarna de Payload-migraties tegen de database van **die**
-omgeving, via de **unpooled** Neon-verbinding (vereist voor DDL).
+eerst de Payload-migraties tegen de database van **die** omgeving (via de
+**unpooled** Neon-verbinding, vereist voor DDL), dáárna de Next.js-build. Die
+volgorde is nodig omdat de build routes zoals `/sitemap.xml` statisch
+prerendert en die de database bevragen — de tabellen moeten dus al bestaan.
 
 Het script stopt bewust met een foutmelding als `DATABASE_URL_UNPOOLED` ontbreekt —
 zo migreert een preview-build nooit per ongeluk tegen een verkeerde database.

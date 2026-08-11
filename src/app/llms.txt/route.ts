@@ -4,6 +4,11 @@ import config from '@payload-config'
 // Capitalise only the first letter, leaving the rest as-is (Dutch casing).
 const capitalise = (value: string) => value.charAt(0).toUpperCase() + value.slice(1)
 
+// Render on request, not at build time: this route queries CMS content, so it
+// must stay in sync with the database without a redeploy and must not make the
+// build depend on database contents.
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const payload = await getPayload({ config })
 
