@@ -1,0 +1,80 @@
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+// Shared button system used across the site (hero actions, join cards, banners).
+
+.btn {
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  justify-content: center;
+  letter-spacing: 0.06em;
+  padding: 0.8rem 1.6rem;
+  text-decoration: none !important;
+  text-transform: uppercase;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn--lg {
+  font-size: 1rem;
+  padding: 0.95rem 1.9rem;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  box-shadow: 0 6px 18px rgba(204 0 0 / 0.28);
+  color: var(--color-white) !important;
+
+  &:hover {
+    background: #a80000;
+    box-shadow: 0 10px 24px rgba(204 0 0 / 0.34);
+    transform: translateY(-2px);
+  }
+}
+
+.btn--light {
+  background: var(--color-white);
+  box-shadow: 0 6px 18px rgba(0 0 0 / 0.18);
+  color: var(--color-primary) !important;
+
+  &:hover {
+    background: var(--color-dark);
+    color: var(--color-white) !important;
+    transform: translateY(-2px);
+  }
+}
+
+.btn--outline-light {
+  background: rgba(255 255 255 / 0.12);
+  border: 1.5px solid rgba(255 255 255 / 0.5);
+  color: var(--color-white) !important;
+
+  &:hover {
+    background: var(--color-white);
+    color: var(--color-dark) !important;
+    transform: translateY(-2px);
+  }
+}
+
+.btn--outline-dark {
+  background: var(--color-white);
+  border: 1.5px solid var(--color-dark);
+  color: var(--color-dark) !important;
+
+  &:hover {
+    background: var(--color-dark);
+    color: var(--color-white) !important;
+    transform: translateY(-2px);
+  }
+}

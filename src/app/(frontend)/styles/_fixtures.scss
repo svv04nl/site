@@ -1,0 +1,108 @@
+// ─── Fixtures strip ───────────────────────────────────────────────────────────
+// Prominent dark band with the next matches, directly under the hero.
+
+.fixtures-strip {
+  background-color: var(--color-dark);
+}
+
+.fixtures-strip-inner {
+  align-items: center;
+  display: flex;
+  gap: 2.25rem;
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 1.6rem var(--container-padding);
+
+  @media screen and (max-width: $breakpoint-sidebar) {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.fixtures-strip-title {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fixtures-strip-list {
+  display: grid;
+  flex: 1;
+  gap: 0.875rem;
+  grid-template-columns: repeat(3, 1fr);
+
+  @media screen and (max-width: $breakpoint-medium) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Compact fixture card ─────────────────────────────────────────────────────
+// Dark card with a red accent border, used only inside the fixtures strip.
+
+.fixture-card {
+  background-color: #242424;
+  border-left: 3px solid var(--color-primary);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+}
+
+.fixture-card--clickable {
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background-color: #2c2c2c;
+    transform: translateY(-2px);
+  }
+}
+
+.fixture-card-meta {
+  color: rgba(255 255 255 / 0.55);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.fixture-card-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.fixture-card-team {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  &--own {
+    color: var(--color-primary);
+  }
+}
+
+.fixtures-strip-link.more-link {
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--color-white) !important;
+  margin: 0;
+  padding: 0 0 0.4rem;
+  white-space: nowrap;
+
+  &:hover {
+    border-bottom-color: var(--color-white);
+    color: var(--color-white) !important;
+  }
+}

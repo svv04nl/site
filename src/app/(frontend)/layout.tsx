@@ -25,6 +25,7 @@ const outfit = Outfit({
 })
 
 export const metadata = {
+  metadataBase: new URL('https://svv04.nl'),
   description: "Voetbalvereniging SVV'04 uit Schoonebeek.",
   title: "SVV'04 Schoonebeek",
   icons: {

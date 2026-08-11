@@ -9,12 +9,15 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 import { CtaBlock } from './blocks/CtaBlock/config'
+import { ContactBlock } from './blocks/ContactBlock/config'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { Teams } from './collections/Teams'
 import { Sponsors } from './collections/Sponsors'
 import { Pages } from './collections/Pages'
+import { Contacts } from './collections/Contacts'
+import { Audiences } from './collections/Audiences'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -38,7 +41,7 @@ export default buildConfig({
     supportedLanguages: { nl },
     fallbackLanguage: 'nl',
   },
-  collections: [Users, Media, Posts, Teams, Sponsors, Pages],
+  collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures.filter((f) => f.key !== 'link'),
@@ -66,7 +69,7 @@ export default buildConfig({
         ],
       }),
       BlocksFeature({
-        blocks: [CtaBlock],
+        blocks: [CtaBlock, ContactBlock],
       }),
     ],
   }),

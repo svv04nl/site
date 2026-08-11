@@ -3,17 +3,20 @@ import { preload } from 'react-dom'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import NextMatchServer from '@/components/NextMatchServer'
+import FixturesStrip from '@/components/FixturesStrip'
 import type { Post } from '@/payload-types'
-import { NewsCard } from '@/components/ui/NewsCard'
-import { MoreLink } from '@/components/ui/MoreLink'
+import { NewsRowCard } from '@/components/ui/NewsRowCard'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { ActiviteitenSidebar } from '@/components/ActiviteitenSidebar'
+import { SponsorSidebar } from '@/components/SponsorSidebar'
+import { SponsorsTicker } from '@/components/SponsorsTicker'
+import { FindYourWaySection } from '@/components/FindYourWaySection'
+import { WebshopBanner } from '@/components/WebshopBanner'
 
-const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-o21-1', 'svv04-jo19-1']
+const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-jo19-1']
 
 export default async function HomePage() {
-  preload('/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
+  preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
 
   const payload = await getPayload({ config })
 
@@ -43,12 +46,12 @@ export default async function HomePage() {
   return (
     <>
       <main>
-        {/* Hero */}
-        <section className="site-hero">
+        {/* Hero — centered, with clear actions */}
+        <section className="site-hero site-hero--centered">
           <div
             className="site-hero-image"
             aria-hidden="true"
-            style={{ backgroundImage: 'url(/hero-sportpark.webp)' }}
+            style={{ backgroundImage: 'url(/images/hero-sportpark.webp)' }}
           >
             <div className="site-hero-overlay" />
           </div>
@@ -59,180 +62,58 @@ export default async function HomePage() {
                 Welkom bij <em>SVV&rsquo;04</em>
               </h1>
               <p className="site-hero-tagline">
-                Een sterke gezellige voetbalvereniging uit Schoonebeek,
-                <br className="site-hero-tagline-br" /> met een prachtige accommodatie.
+                Een sterke, gezellige club voor jong en oud. Kom voetballen, supporteren of gewoon
+                een balletje trappen op ons prachtige sportpark.
               </p>
+              <div className="site-hero-actions">
+                <Link className="btn btn--primary btn--lg" href="/meedoen/lid-worden">
+                  Word lid van SVV&rsquo;04 &rarr;
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
+        {/* Fixtures strip — prominent dark band, max 3 upcoming matches */}
+        <FixturesStrip
+          teams={teams.map((team) => ({ teamcode: team.teamcode!, teamName: team.name }))}
+          maxDays={31}
+          limit={3}
+        />
+
         <div className="page">
-          {/* Latest news + sidebar (matches + agenda) */}
+          {/* Latest news + sidebar (sponsors + agenda) */}
           <div className="section-with-sidebar">
             {/* Left: news */}
             <div className="sidebar-content-col sidebar-content-col--no-gap">
               <SectionHeader
                 title="Laatste Nieuws"
-                link={{ href: '/nieuws', label: 'Bekijk alles' }}
+                link={{ href: '/nieuws', label: 'Bekijk alle nieuws' }}
               />
               <div className="home-news-layout">
-                {latestPosts.map((post) => (
-                  <NewsCard key={post.id} post={post as Post} />
+                {latestPosts.slice(0, 3).map((post) => (
+                  <NewsRowCard key={post.id} post={post as Post} />
                 ))}
               </div>
             </div>
 
             {/* Right: sidebar */}
-            <div className="sidebar-col">
+            <div className="sidebar-col sidebar-col--plain">
               <div className="sidebar-col__inner">
-                {/* Matches */}
-                <div className="sidebar-section">
-                  <h2 className="sidebar-section-title">Komende wedstrijden</h2>
-                  <div className="sidebar-matches-list">
-                    {teams.map((team) => (
-                      <NextMatchServer
-                        key={team.slug}
-                        teamcode={team.teamcode!}
-                        teamName={team.name}
-                        showTitle={false}
-                        maxDays={7}
-                      />
-                    ))}
-                  </div>
-                  <MoreLink href="/programma" text="Volledig programma" />
-                </div>
-
-                {/* Agenda */}
+                <WebshopBanner />
+                <SponsorSidebar />
                 <ActiviteitenSidebar />
               </div>
             </div>
           </div>
         </div>
 
-        {/* CTA tiles */}
-        <section className="home-cta-section">
-          <div className="home-section-inner">
-            <div className="cta-grid">
-              <Link
-                className="cta-tile"
-                href="/meedoen/lid-worden"
-                style={{ backgroundImage: 'url(/hero-sportpark.webp)' }}
-              >
-                <div className="cta-tile-overlay" />
-                <div className="cta-tile-content">
-                  <h3 className="cta-tile-title">Lid worden</h3>
-                  <p className="cta-tile-desc">
-                    Wil jij voetballen bij SVV&rsquo;04? Word hier lid van onze club.
-                  </p>
-                  <span className="cta-tile-link">Lid worden &rarr;</span>
-                </div>
-              </Link>
-              <Link
-                className="cta-tile"
-                href="/meedoen/sponsor-worden"
-                style={{
-                  backgroundImage: 'url(/hero-sportpark.webp)',
-                  backgroundPosition: '60% center',
-                }}
-              >
-                <div className="cta-tile-overlay" />
-                <div className="cta-tile-content">
-                  <h3 className="cta-tile-title">Sponsor worden</h3>
-                  <p className="cta-tile-desc">
-                    Draag jij SVV&rsquo;04 een warm hart toe? Word sponsor van onze club.
-                  </p>
-                  <span className="cta-tile-link">Sponsoren &rarr;</span>
-                </div>
-              </Link>
-              <Link
-                className="cta-tile"
-                href="/meedoen/vrijwilliger-worden"
-                style={{
-                  backgroundImage: 'url(/hero-sportpark.webp)',
-                  backgroundPosition: 'center 70%',
-                }}
-              >
-                <div className="cta-tile-overlay" />
-                <div className="cta-tile-content">
-                  <h3 className="cta-tile-title">Vrijwilliger worden</h3>
-                  <p className="cta-tile-desc">
-                    We zijn altijd op zoek naar mensen die een steentje willen bijdragen.
-                  </p>
-                  <span className="cta-tile-link">Word vrijwilliger &rarr;</span>
-                </div>
-              </Link>
-              <Link
-                className="cta-tile"
-                href="/vereniging/voetbal-nl-app"
-                style={{
-                  backgroundImage: 'url(/hero-sportpark.webp)',
-                  backgroundPosition: '80% 40%',
-                }}
-              >
-                <div className="cta-tile-overlay" />
-                <div className="cta-tile-content">
-                  <h3 className="cta-tile-title">Voetbal.nl App</h3>
-                  <p className="cta-tile-desc">
-                    Volg wedstrijden en standen via de officiële voetbal.nl app.
-                  </p>
-                  <span className="cta-tile-link">Downloaden &rarr;</span>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
+        {/* Sponsor strip — color, data-driven */}
+        <SponsorsTicker />
 
-      {/* Sponsor strip */}
-      <div className="sponsors-ticker">
-        <div className="sponsors-ticker-track">
-          <div className="sponsors-ticker-inner">
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/logo-anura.webp" alt="Anura" width="1609" height="539" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo-Mind-Motion.webp" alt="Lifestylecenter Mind &amp; Motion" width="705" height="200" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="Klaverblad Verzekeringen" width="4267" height="1180" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/problicity_header-logo_geel.webp" alt="Problicity" width="476" height="100" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="Riant Makelaars" width="291" height="173" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo">
-              <img
-                src="/sponsors/logo-scholma-removebg-preview.webp"
-                alt="Scholma Print &amp; Media"
-                width="600"
-                height="120"
-              />
-            </a>
-          </div>
-          <div className="sponsors-ticker-inner" aria-hidden="true">
-            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
-              <img src="/sponsors/logo-anura.webp" alt="" width="1609" height="539" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
-              <img src="/sponsors/Logo-Mind-Motion.webp" alt="" width="705" height="200" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
-              <img src="/sponsors/Logo_Klaverblad_FC_Hor.webp" alt="" width="4267" height="1180" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
-              <img src="/sponsors/problicity_header-logo_geel.webp" alt="" width="476" height="100" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
-              <img src="/sponsors/riant-logo-removebg-preview.webp" alt="" width="291" height="173" />
-            </a>
-            <a href="#" className="sponsors-ticker-logo" tabIndex={-1}>
-              <img src="/sponsors/logo-scholma-removebg-preview.webp" alt="" width="600" height="120" />
-            </a>
-          </div>
-        </div>
-      </div>
+        {/* Vind jouw weg — audience cards */}
+        <FindYourWaySection />
+      </main>
     </>
   )
 }

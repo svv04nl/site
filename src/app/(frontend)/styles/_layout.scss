@@ -54,6 +54,7 @@
 }
 
 .section-header-link {
+  border-bottom: 2px solid var(--color-primary);
   color: var(--color-primary);
   flex-shrink: 0;
   font-family: var(--font-heading);
@@ -61,10 +62,15 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   margin-top: 0.5rem;
-  transition: color 0.15s ease;
+  padding-bottom: 0.15rem;
+  text-transform: uppercase;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
   white-space: nowrap;
 
   &:hover {
+    border-color: #a80000;
     color: #a80000;
   }
 }

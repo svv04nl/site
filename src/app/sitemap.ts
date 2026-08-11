@@ -61,5 +61,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly',
   }))
 
-  return [...staticRoutes, ...postRoutes, ...teamRoutes, ...pageRoutes]
+  // ── Audience landing pages (voor-jou) ─────────────────────────────────────
+  const { docs: audiences } = await payload.find({
+    collection: 'audiences',
+    limit: 0,
+    depth: 0,
+    select: { slug: true },
+  })
+
+  const audienceRoutes: MetadataRoute.Sitemap = audiences.map((audience) => ({
+    url: `${BASE}/voor-jou/${audience.slug}`,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
+
+  return [...staticRoutes, ...postRoutes, ...teamRoutes, ...pageRoutes, ...audienceRoutes]
 }

@@ -2,17 +2,16 @@
 
 import React, { useState } from 'react'
 
-const AFDELINGEN = [
-  'Secretariaat',
-  'Wedstrijdsecretariaat',
-  'Bestuur',
-  'Jeugdafdeling',
-  'Technische Commissie',
-  'Kantinecommissie',
-  'Overig',
-]
+export type ContactFormOption = {
+  label: string
+  value: string
+}
 
-export default function ContactForm() {
+type Props = {
+  afdelingen: ContactFormOption[]
+}
+
+export default function ContactForm({ afdelingen }: Props) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -59,8 +58,10 @@ export default function ContactForm() {
         <label htmlFor="cf-afdeling">Afdeling</label>
         <div className="contact-form-select-wrap">
           <select id="cf-afdeling" name="afdeling">
-            {AFDELINGEN.map((a) => (
-              <option key={a}>{a}</option>
+            {afdelingen.map((a) => (
+              <option key={a.value} value={a.value}>
+                {a.label}
+              </option>
             ))}
           </select>
         </div>

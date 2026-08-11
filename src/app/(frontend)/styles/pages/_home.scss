@@ -3,108 +3,237 @@
 // News + sidebar two-column layout
 
 .home-news-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Horizontale nieuwskaart: afbeelding links, tekst rechts.
+.news-row {
+  align-items: stretch;
+  background: var(--color-white);
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  color: var(--color-dark);
   display: grid;
-  gap: 2rem;
-  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  grid-template-columns: 320px 1fr;
+  height: 220px;
+  overflow: hidden;
+  text-decoration: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0 0 0 / 0.1);
+    transform: translateY(-2px);
+
+    .news-row-title {
+      color: var(--color-primary);
+    }
+  }
 
   @media screen and (max-width: $breakpoint-mobile-lg) {
     grid-template-columns: 1fr;
+    gap: 0;
+    height: auto;
   }
 }
 
-// CTA tiles
+.news-row-img-wrap {
+  background-color: #d0d0d0;
+  overflow: hidden;
+  position: relative;
 
-.home-cta-section {
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    aspect-ratio: 16 / 9;
+  }
+
+  &--placeholder {
+    align-items: center;
+    background-image: url('/images/hero-sportpark.jpg');
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.news-row-img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+
+  .news-row:hover & {
+    transform: scale(1.04);
+  }
+
+  transition: transform 0.3s ease;
+}
+
+.news-row-img-placeholder {
+  height: 55%;
+  object-fit: contain;
+  width: 55%;
+}
+
+.news-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 1.5rem 1.75rem 1.5rem 0;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding: 1.25rem;
+  }
+}
+
+.news-row-meta {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.news-row-tags {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.news-row-date {
+  color: #6b6b6b;
+  font-size: 0.85rem;
+}
+
+.news-row-title {
+  color: var(--color-dark);
+  display: -webkit-box;
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.25rem 0 0;
+  overflow: hidden;
+  transition: color 0.2s ease;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.news-row-excerpt {
+  color: #666;
+  display: -webkit-box;
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0.25rem 0 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+// ─── "Vind jouw weg" audience cards ───────────────────────────────────────────
+
+.findway-section {
   background-color: var(--color-light);
   padding-bottom: 6rem;
   padding-top: 6rem;
 }
 
-.cta-grid {
+.findway-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.findway-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.findway-subtitle {
+  color: #666;
+  font-size: 1rem;
+  margin: 0.5rem 0 0;
+}
+
+.findway-grid {
   display: grid;
-  gap: 0.75rem;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  min-height: 400px;
+  gap: 1.25rem;
+  grid-template-columns: repeat(5, 1fr);
+
+  @media screen and (max-width: $breakpoint-tablet-landscape) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media screen and (max-width: $breakpoint-mobile-lg) {
     grid-template-columns: 1fr;
   }
 }
 
-.cta-tile {
-  background-color: var(--color-dark);
-  background-size: cover;
-  background-position: center;
-  border-radius: 4px;
-  display: flex;
-  overflow: hidden;
-  position: relative;
-  text-decoration: none;
-
-  &:hover .cta-tile-overlay {
-    background-color: rgba(180 0 0 / 0.72);
-  }
-
-  &:hover .cta-tile-link {
-    letter-spacing: 0.1em;
-  }
-}
-
-.cta-tile-overlay {
-  background-color: rgba(0 0 0 / 0.62);
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: background-color 0.25s ease;
-}
-
-.cta-tile-content {
+.findway-card {
+  background: var(--color-white);
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  color: var(--color-dark);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  justify-content: flex-end;
-  padding: 1.75rem 2rem;
-  position: relative;
-  z-index: 1;
+  padding: 1.75rem 1.5rem;
+  text-decoration: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 14px 32px rgba(0 0 0 / 0.12);
+    transform: translateY(-3px);
+
+    .findway-card-title {
+      color: var(--color-primary);
+    }
+  }
 }
 
-.cta-tile-title {
-  color: var(--color-white);
+.findway-card-title {
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
   margin: 0;
   text-transform: uppercase;
+  transition: color 0.2s ease;
 }
 
-.cta-tile-desc {
-  color: rgba(255 255 255 / 0.8);
-  font-size: 0.85rem;
+.findway-card-desc {
+  color: #666;
+  flex: 1;
+  font-size: 0.9rem;
   line-height: 1.5;
-  margin: 0;
+  margin: 0.6rem 0 1.25rem;
 }
 
-.cta-tile-link {
-  border-bottom: 2px solid var(--color-white);
-  color: var(--color-white);
-  display: inline-block;
+.findway-card-link {
+  color: var(--color-primary);
   font-family: var(--font-heading);
   font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  margin-top: 0.375rem;
-  padding-bottom: 0.2rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: letter-spacing 0.2s ease;
 }
 
 // Mobile home overrides
 @media screen and (max-width: $breakpoint-nav) {
-  .home-cta-section {
+  .findway-section {
     padding-bottom: 3rem;
     padding-top: 3rem;
   }
