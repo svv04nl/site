@@ -22,6 +22,7 @@
     "fix:media-urls": "node --no-deprecation --env-file=.env.production --import=tsx/esm src/scripts/fix-media-urls.ts",
     "regenerate:media-sizes": "node --no-deprecation --env-file=.env.production --import=tsx/esm src/scripts/regenerate-media-sizes.ts",
     "seed:pages": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/scripts/seed-pages.ts",
+    "seed:audiences": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/scripts/seed-audiences.ts",
     "seed:posts": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/seed-posts.ts",
     "sync:teamcodes": "node --no-deprecation --env-file=.env.local --import=tsx/esm src/sync-teamcodes.ts",
     "db:dev:no-expiry": "neon branches set-expiration dev",
