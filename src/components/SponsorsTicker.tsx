@@ -14,12 +14,22 @@ const LOGOS = [
   { src: '/sponsors/riant-logo-removebg-preview.webp', name: 'Riant' },
 ] as const
 
+/**
+ * Number of identical copies of the logo row in the track. The marquee moves
+ * left by exactly one copy and loops, which only looks seamless while the
+ * remaining copies keep the viewport filled. With 6 logos one copy is narrower
+ * than a wide screen, so we need several copies: the visible window must never
+ * exceed (COPIES - 1) copy-widths. The CSS reads this via `--sponsors-copies`
+ * to translate by exactly one copy (`-100% / COPIES`), keeping the two in sync.
+ */
+const COPIES = 4
+
 export function SponsorsTicker() {
-  const row = (duplicate: boolean) => (
-    <div className="sponsors-ticker-inner" aria-hidden={duplicate || undefined}>
+  const row = (copy: number) => (
+    <div className="sponsors-ticker-inner" aria-hidden={copy > 0 || undefined}>
       {LOGOS.map((logo) => (
-        <span key={`${duplicate ? 'b' : 'a'}-${logo.src}`} className="sponsors-ticker-logo">
-          <img src={logo.src} alt={duplicate ? '' : logo.name} />
+        <span key={`${copy}-${logo.src}`} className="sponsors-ticker-logo">
+          <img src={logo.src} alt={copy === 0 ? logo.name : ''} />
         </span>
       ))}
     </div>
@@ -27,9 +37,13 @@ export function SponsorsTicker() {
 
   return (
     <div className="sponsors-ticker">
-      <div className="sponsors-ticker-track">
-        {row(false)}
-        {row(true)}
+      <div
+        className="sponsors-ticker-track"
+        style={{ '--sponsors-copies': COPIES } as React.CSSProperties}
+      >
+        {Array.from({ length: COPIES }, (_, copy) => (
+          <React.Fragment key={copy}>{row(copy)}</React.Fragment>
+        ))}
       </div>
     </div>
   )

@@ -87,22 +87,6 @@
   transition: transform 0.15s ease;
 }
 
-// Webshop button in mainbar
-
-.menu-item-webshop a {
-  background-color: var(--color-primary) !important;
-  border-radius: 4px;
-  color: var(--color-white) !important;
-  margin-left: 0.5rem;
-  padding: 0.45rem 1.125rem !important;
-  transition: background-color 0.15s ease, color 0.15s ease !important;
-
-  &:hover {
-    background-color: #a80000 !important;
-    color: var(--color-white) !important;
-  }
-}
-
 // Dropdowns
 
 .menu-item-has-children {

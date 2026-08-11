@@ -339,7 +339,7 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
               <li>
                 <Link href="/contact">Contact</Link>
               </li>
-              <li className="menu-item-webshop">
+              <li>
                 <a
                   href="https://clubs.deventrade.com/nl/svv-04/clubcollectie"
                   target="_blank"
