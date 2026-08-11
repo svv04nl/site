@@ -51,6 +51,7 @@ De dev-omgeving gebruikt de **Neon `dev` branch** — gescheiden van productie. 
 | `pnpm migrate:create` | Maak een nieuwe migratie aan (alleen vóór productie-deploy) |
 | `pnpm seed` | Seed basisdata (teams, etc.) |
 | `pnpm seed:pages` | Seed standaardpagina's (vereniging, commissies, meedoen) |
+| `pnpm seed:audiences` | Seed "Voor jou"-doelgroeppagina's |
 | `pnpm seed:posts` | Seed nieuwsberichten |
 | `pnpm sync:teamcodes` | Synchroniseer Sportlink teamcodes naar CMS |
 | `pnpm fix:media-urls` | Herstel legacy media-URLs naar directe blob-URLs |
@@ -66,7 +67,8 @@ De dev-omgeving gebruikt de **Neon `dev` branch** — gescheiden van productie. 
 | Omgeving | Neon branch | Verbinding |
 |----------|-------------|-----------|
 | Lokaal / dev | `dev` | `.env.local` → `DATABASE_URL` |
-| Productie | `production` | Vercel env → `DATABASE_URL` |
+| Preview | `preview/<git-branch>` (automatisch) | Vercel Preview env → `DATABASE_URL` (geïnjecteerd door Neon-integratie) |
+| Productie | `production` | Vercel Production env → `DATABASE_URL` |
 
 ## Projectstructuur
 
@@ -89,10 +91,38 @@ src/
 
 ## Deployment
 
-Elke push naar `main` triggert automatisch een Vercel-deployment. De build-command is:
+Elke push naar `main` triggert automatisch een productie-deployment; elke PR een
+preview-deployment. De build-command (`vercel.json`) draait `scripts/vercel-build.sh`:
+eerst de Payload-migraties tegen de database van **die** omgeving (via de
+**unpooled** Neon-verbinding, vereist voor DDL), dáárna de Next.js-build. Die
+volgorde is nodig omdat de build routes zoals `/sitemap.xml` statisch
+prerendert en die de database bevragen — de tabellen moeten dus al bestaan.
 
-```
-NODE_ENV=production pnpm build && DATABASE_URL=$DATABASE_URL_UNPOOLED pnpm migrate
-```
+Het script stopt bewust met een foutmelding als `DATABASE_URL_UNPOOLED` ontbreekt —
+zo migreert een preview-build nooit per ongeluk tegen een verkeerde database.
 
-Migraties draaien tegen de **unpooled** Neon-verbinding (vereist voor DDL-statements).
+### Preview-branches met automatische Neon-branch
+
+Previews krijgen een eigen, geïsoleerde kopie van de productie-database via de
+**Neon-Vercel integratie**. Per PR wordt een Neon-branch aangemaakt, de migraties
+draaien daar (niet op productie), en bij het sluiten van de PR wordt de branch
+opgeruimd.
+
+**Eenmalige setup in de dashboards (kan niet vanuit de repo):**
+
+1. **Neon-integratie koppelen** — Vercel → project → *Integrations* →
+   *Neon* (Marketplace) → koppel aan het juiste Neon-project. Kies bij de
+   integratie-instellingen: *Create a database branch for each preview deployment*.
+2. **Env-scope controleren** — de integratie zet `DATABASE_URL` en
+   `DATABASE_URL_UNPOOLED` in de **Preview**-scope. Zorg dat er géén handmatige
+   `DATABASE_URL_UNPOOLED` in de Preview-scope staat die naar productie wijst
+   (anders wint die en migreer je alsnog op prod). Production- en
+   Development-scopes blijven ongewijzigd.
+3. **Neon-plan** — automatische branches per preview vereisen voldoende
+   branch-quota; op het gratis plan is dat beperkt. Controleer je Neon-plan als
+   previews falen op "branch limit reached".
+
+> **Productie-migraties**: bij de eerste deploy met deze migratiegeschiedenis is
+> de baseline (`..._baseline_prod_schema`) handmatig als toegepast gemarkeerd in
+> `payload_migrations`, omdat de productie-tabellen al bestonden. Nieuwe
+> deployments draaien alleen nog niet-toegepaste migraties.

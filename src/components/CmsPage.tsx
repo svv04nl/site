@@ -4,7 +4,9 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
+import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
 import CtaBlockComponent from '@/blocks/CtaBlock/Component'
+import ContactBlockComponent from '@/blocks/ContactBlock/Component'
 import type { Page } from '@/payload-types'
 import { defaultJSXConverters } from '@/lib/richtext'
 import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
@@ -15,6 +17,9 @@ const jsxConverters: JSXConvertersFunction = (args) => ({
   blocks: {
     ctaBlock: ({ node }: { node: any }) => (
       <CtaBlockComponent buttonLabel={node.fields.buttonLabel} buttonUrl={node.fields.buttonUrl} />
+    ),
+    contactBlock: ({ node }: { node: any }) => (
+      <ContactBlockComponent heading={node.fields.heading} contacts={node.fields.contacts} />
     ),
   },
 })
@@ -50,10 +55,13 @@ export default async function CmsPage({
     sectionPages = docs.map((p) => ({ id: String(p.id), title: p.title, slug: p.slug ?? '' }))
   }
 
+  const crumbs = [{ label: 'Home', href: '/' }, { label: sectionLabel }, { label: title }]
+
   return (
     <main className="page">
-      <SetBreadcrumb
-        crumbs={[{ label: 'Home', href: '/' }, { label: sectionLabel }, { label: title }]}
+      <SetBreadcrumb crumbs={crumbs} />
+      <BreadcrumbJsonLd
+        items={crumbs.map((c) => ({ name: c.label, href: (c as { href?: string }).href }))}
       />
 
       {showSubpageMenu ? (

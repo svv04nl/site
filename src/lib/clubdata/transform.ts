@@ -59,9 +59,14 @@ export function transformNextMatch(raw: RawProgrammaResponse, teamcode: number):
   const displayDate = matchDate
     ? format(matchDate, 'EEE d MMMM', { locale: nl })
     : (match.datum ?? '')
+  const displayDateShort = matchDate
+    ? format(matchDate, 'EEE d MMM', { locale: nl })
+    : (match.datum ?? '')
 
   return {
     date: displayDate,
+    dateShort: displayDateShort,
+    dateISO: matchDate ? matchDate.toISOString() : undefined,
     time: match.aanvangstijd, // "10:30"
     matchCode: match.wedstrijdcode,
     homeTeam: {

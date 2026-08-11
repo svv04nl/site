@@ -73,6 +73,8 @@ export interface Config {
     teams: Team;
     sponsors: Sponsor;
     pages: Page;
+    contacts: Contact;
+    audiences: Audience;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +88,8 @@ export interface Config {
     teams: TeamsSelect<false> | TeamsSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    contacts: ContactsSelect<false> | ContactsSelect<true>;
+    audiences: AudiencesSelect<false> | AudiencesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -324,7 +328,10 @@ export interface Sponsor {
    * Website URL of the sponsor.
    */
   url?: string | null;
-  tier?: ('main' | 'regular') | null;
+  /**
+   * Bepaalt de plek op de site. main/sub/youth verschijnen in de sponsor-sidebar op de homepage; alle sponsors verschijnen in de ticker.
+   */
+  tier?: ('main' | 'sub' | 'youth' | 'regular') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -355,6 +362,109 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts".
+ */
+export interface Contact {
+  id: number;
+  name: string;
+  role?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  /**
+   * Kopje waaronder dit contact op de contactpagina valt, bijv. "Secretariaat".
+   */
+  group?: string | null;
+  /**
+   * Lager = hoger in de lijst.
+   */
+  order?: number | null;
+  /**
+   * Alleen aangevinkte contacten verschijnen als optie in het contactformulier.
+   */
+  showInContactForm?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audiences".
+ */
+export interface Audience {
+  id: number;
+  /**
+   * Bijv. "Spelers". Wordt gebruikt in de titel "Alles voor <naam> van SVV'04".
+   */
+  name: string;
+  /**
+   * URL-deel, bijv. "spelers" → /voor-jou/spelers
+   */
+  slug: string;
+  /**
+   * Lager = eerder in de "Vind jouw weg"-sectie.
+   */
+  order?: number | null;
+  showOnHome?: boolean | null;
+  /**
+   * Bijv. "Speler". Titel op de kaart in de "Vind jouw weg"-sectie.
+   */
+  cardTitle: string;
+  /**
+   * Bijv. "Trainingstijden, teamindeling, programma en meer."
+   */
+  cardDescription: string;
+  /**
+   * Inleidende alinea bovenaan de doelgroeppagina.
+   */
+  intro?: string | null;
+  /**
+   * Uitgebreide, unieke tekst voor deze doelgroep. Belangrijk voor SEO: hoe meer relevante, unieke inhoud, hoe beter deze pagina vindbaar is in Google.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Titel in Google/zoekresultaten (± 60 tekens). Bijv. "Sponsor worden bij SVV'04 Schoonebeek". Leeg = automatische titel.
+   */
+  metaTitle?: string | null;
+  /**
+   * Omschrijving onder de titel in Google (± 155 tekens). Leeg = de introtekst of kaartomschrijving wordt gebruikt.
+   */
+  metaDescription?: string | null;
+  links?:
+    | {
+        title: string;
+        description?: string | null;
+        /**
+         * Bijv. /programma of https://…
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  cta?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    text?: string | null;
+    buttonLabel?: string | null;
+    buttonUrl?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -405,6 +515,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'contacts';
+        value: number | Contact;
+      } | null)
+    | ({
+        relationTo: 'audiences';
+        value: number | Audience;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -591,6 +709,56 @@ export interface PagesSelect<T extends boolean = true> {
   section?: T;
   slug?: T;
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts_select".
+ */
+export interface ContactsSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  email?: T;
+  phone?: T;
+  group?: T;
+  order?: T;
+  showInContactForm?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audiences_select".
+ */
+export interface AudiencesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  order?: T;
+  showOnHome?: T;
+  cardTitle?: T;
+  cardDescription?: T;
+  intro?: T;
+  body?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  links?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        href?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        text?: T;
+        buttonLabel?: T;
+        buttonUrl?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

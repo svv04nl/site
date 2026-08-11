@@ -6,15 +6,18 @@
 @import './styles/variables';
 @import './styles/reset';
 @import './styles/layout';
+@import './styles/buttons';
 
 // Components
 @import './styles/header';
 @import './styles/navigation';
 @import './styles/hero';
+@import './styles/fixtures';
 @import './styles/footer';
 @import './styles/sidebar';
 @import './styles/card';
 @import './styles/sponsors';
+@import './styles/webshop';
 @import './styles/breadcrumb';
 
 // Pages
@@ -25,5 +28,6 @@
 @import './styles/pages/contact';
 @import './styles/pages/agenda';
 @import './styles/pages/cms';
+@import './styles/pages/audience';
 @import './styles/pages/programma';
 @import './styles/pages/wedstrijd';

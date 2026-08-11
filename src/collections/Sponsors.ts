@@ -32,10 +32,16 @@ export const Sponsors: CollectionConfig = {
       name: 'tier',
       type: 'select',
       options: [
-        { label: 'Main sponsor', value: 'main' },
-        { label: 'Regular', value: 'regular' },
+        { label: 'Hoofdsponsor', value: 'main' },
+        { label: 'Subsponsor', value: 'sub' },
+        { label: 'Hoofdsponsor jeugd', value: 'youth' },
+        { label: 'Regulier', value: 'regular' },
       ],
       defaultValue: 'regular',
+      admin: {
+        description:
+          'Bepaalt de plek op de site. main/sub/youth verschijnen in de sponsor-sidebar op de homepage; alle sponsors verschijnen in de ticker.',
+      },
     },
   ],
 }

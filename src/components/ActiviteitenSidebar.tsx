@@ -6,22 +6,25 @@ import { activiteitenQuery } from '@/lib/clubdata/queries'
 import { MoreLink } from '@/components/ui/MoreLink'
 
 export function ActiviteitenSidebar() {
-  const { data: activiteiten = [] } = useQuery(activiteitenQuery(100))
+  const { data: activiteiten = [], isLoading } = useQuery(activiteitenQuery(100))
+
+  // Geen agenda-items (en niet meer aan het laden): laat de sectie helemaal weg.
+  if (!isLoading && activiteiten.length === 0) return null
 
   return (
     <div className="sidebar-section">
       <h2 className="sidebar-section-title">Agenda</h2>
       <ul className="sidebar-agenda-list">
-        {activiteiten.length === 0 && (
-          <li style={{ color: '#888', fontSize: '0.875rem' }}>Geen activiteiten gepland.</li>
-        )}
         {activiteiten.slice(0, 4).map((item, i) => {
           const date = new Date(item.datumvan)
+          const isAllDay = item.heledag === 'true'
+          const time = isAllDay
+            ? null
+            : date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })
+          const metaParts = [time, item.plaats].filter(Boolean)
           return (
             <li key={i} className="sidebar-agenda-item">
-              <div
-                className={`sidebar-agenda-date-box${i === 0 ? ' sidebar-agenda-date-box--primary' : ''}`}
-              >
+              <div className="sidebar-agenda-date-box">
                 <span className="sidebar-agenda-day">{date.getDate()}</span>
                 <span className="sidebar-agenda-month">
                   {date.toLocaleDateString('nl-NL', { month: 'short' }).replace('.', '')}
@@ -40,7 +43,9 @@ export function ActiviteitenSidebar() {
                 ) : (
                   <span className="sidebar-agenda-name">{item.activiteit}</span>
                 )}
-                {item.plaats && <span className="sidebar-agenda-meta">{item.plaats}</span>}
+                {metaParts.length > 0 && (
+                  <span className="sidebar-agenda-meta">{metaParts.join(' · ')}</span>
+                )}
               </div>
             </li>
           )

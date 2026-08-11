@@ -1,0 +1,64 @@
+// ─── Webshop banner (cross-fading Stanno product photos) ──────────────────────
+
+.webshop-banner {
+  aspect-ratio: 1 / 1;
+  background: var(--color-white);
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0 0 0 / 0.06);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.webshop-banner-stage {
+  inset: 0;
+  position: absolute;
+}
+
+.webshop-banner-slide {
+  height: 100%;
+  inset: 0;
+  object-fit: contain;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 0.9s ease-in-out;
+  width: 100%;
+
+  &.is-active {
+    opacity: 1;
+  }
+}
+
+.webshop-banner-button {
+  background: var(--color-primary);
+  border-radius: 10px;
+  bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(204 0 0 / 0.18);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  left: 1.25rem;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 1.6rem;
+  position: absolute;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:hover {
+    background: #a80000;
+    box-shadow: 0 6px 16px rgba(204 0 0 / 0.24);
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .webshop-banner-slide {
+    transition: none;
+  }
+}

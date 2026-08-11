@@ -58,6 +58,7 @@
 
 .site-hero-content {
   max-width: 760px;
+  text-shadow: 0 2px 12px rgba(0 0 0 / 0.55);
 }
 
 .site-hero-tagline {
@@ -113,6 +114,55 @@
     color: var(--color-primary);
     font-style: normal;
   }
+}
+
+// ─── Centered hero variant (homepage) ─────────────────────────────────────────
+
+.site-hero--centered {
+  .site-hero-inner {
+    align-items: center;
+    justify-content: center;
+    min-height: 420px;
+    padding-bottom: 3rem;
+    padding-top: 3rem;
+    text-align: center;
+
+    @media screen and (max-width: $breakpoint-nav) {
+      min-height: 320px;
+    }
+  }
+
+  .site-hero-content {
+    margin: 0 auto;
+    max-width: 720px;
+  }
+
+  // Symmetric flanking lines around the eyebrow when centered.
+  .site-hero-eyebrow {
+    justify-content: center;
+
+    &::after {
+      background-color: var(--color-primary);
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      height: 2px;
+      width: 2.5rem;
+    }
+  }
+
+  .site-hero-title {
+    font-size: clamp(2.25rem, 5vw, 4.125rem);
+    white-space: normal;
+  }
+}
+
+.site-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  justify-content: center;
+  margin-top: 1.75rem;
 }
 
 // Mobile hero overrides (within main mobile nav media query)

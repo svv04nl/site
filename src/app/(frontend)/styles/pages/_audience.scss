@@ -1,0 +1,135 @@
+// ─── Audience landing page (/voor-jou/[slug]) ─────────────────────────────────
+
+.audience-header {
+  margin-bottom: 2.5rem;
+  max-width: 720px;
+}
+
+.audience-title {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    font-size: 1.75rem;
+  }
+}
+
+.audience-title-accent {
+  color: var(--color-primary);
+}
+
+.audience-intro {
+  color: #555;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 1rem 0 0;
+}
+
+.audience-body {
+  margin-bottom: 2.5rem;
+  max-width: 760px;
+}
+
+.audience-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(3, 1fr);
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.audience-link-card {
+  background: var(--color-white);
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  color: var(--color-dark);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.5rem 1.5rem;
+  position: relative;
+  text-decoration: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 14px 32px rgba(0 0 0 / 0.12);
+    transform: translateY(-3px);
+
+    .audience-link-title {
+      color: var(--color-primary);
+    }
+
+    .audience-link-arrow {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.audience-link-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  padding-right: 1.5rem;
+  transition: color 0.2s ease;
+}
+
+.audience-link-desc {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0.5rem 0 0;
+}
+
+.audience-link-arrow {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  position: absolute;
+  right: 1.5rem;
+  top: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+// Red CTA banner
+.audience-cta {
+  align-items: center;
+  background: var(--color-primary);
+  border-radius: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+  margin-top: 3rem;
+  padding: 2.5rem;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding: 1.75rem;
+  }
+}
+
+.audience-cta-title {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.audience-cta-desc {
+  color: rgba(255 255 255 / 0.9);
+  font-size: 1rem;
+  margin: 0.4rem 0 0;
+}

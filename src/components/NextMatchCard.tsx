@@ -4,6 +4,8 @@ import ClubLogo from '@/components/ClubLogo'
 
 export type MatchData = {
   date: string // e.g. "ZA 5 APR"
+  dateShort?: string // abbreviated, e.g. "za 5 apr"
+  dateISO?: string // sortable ISO date, e.g. "2026-04-05T14:30:00+0200"
   time: string // e.g. "14:30"
   matchCode?: number
   homeTeam: {

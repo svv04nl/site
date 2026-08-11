@@ -4,6 +4,11 @@ import config from '@payload-config'
 
 const BASE = 'https://svv04.nl'
 
+// Render on request, not at build time: the sitemap queries CMS content, so it
+// must stay in sync with the database without a redeploy and must not make the
+// build depend on database contents.
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const payload = await getPayload({ config })
 
@@ -61,5 +66,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly',
   }))
 
-  return [...staticRoutes, ...postRoutes, ...teamRoutes, ...pageRoutes]
+  // ── Audience landing pages (voor-jou) ─────────────────────────────────────
+  const { docs: audiences } = await payload.find({
+    collection: 'audiences',
+    limit: 0,
+    depth: 0,
+    select: { slug: true },
+  })
+
+  const audienceRoutes: MetadataRoute.Sitemap = audiences.map((audience) => ({
+    url: `${BASE}/voor-jou/${audience.slug}`,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
+
+  return [...staticRoutes, ...postRoutes, ...teamRoutes, ...pageRoutes, ...audienceRoutes]
 }
