@@ -5,11 +5,11 @@ import React, { useEffect, useState } from 'react'
 const WEBSHOP_URL = 'https://clubs.deventrade.com/nl/svv-04/clubcollectie'
 
 const IMAGES = [
-  '/webshop/webshop-banner-1.png',
-  '/webshop/webshop-banner-2.png',
-  '/webshop/webshop-banner-3.png',
-  '/webshop/webshop-banner-4.png',
-  '/webshop/webshop-banner-5.png',
+  '/webshop/webshop-banner-1.webp',
+  '/webshop/webshop-banner-2.webp',
+  '/webshop/webshop-banner-3.webp',
+  '/webshop/webshop-banner-4.webp',
+  '/webshop/webshop-banner-5.webp',
 ]
 
 const INTERVAL_MS = 4500
