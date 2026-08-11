@@ -34,7 +34,7 @@
   background: var(--color-primary);
   border-radius: 10px;
   bottom: 1.25rem;
-  box-shadow: 0 8px 22px rgba(204 0 0 / 0.4);
+  box-shadow: 0 4px 12px rgba(204 0 0 / 0.18);
   color: var(--color-white);
   font-family: var(--font-heading);
   font-size: 0.95rem;
@@ -52,7 +52,7 @@
 
   &:hover {
     background: #a80000;
-    box-shadow: 0 10px 26px rgba(204 0 0 / 0.5);
+    box-shadow: 0 6px 16px rgba(204 0 0 / 0.24);
     transform: translateY(-2px);
   }
 }
