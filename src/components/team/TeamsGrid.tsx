@@ -27,11 +27,6 @@ function TeamCard({ team }: { team: GridTeam }) {
   return (
     <Link href={`/teams/${team.slug}`} className="card-team card">
       <div className="card-team-img-wrap">
-        {groupLabel[team.type] && (
-          <span className={`card-team-badge card-team-badge--${team.type}`}>
-            {groupLabel[team.type]}
-          </span>
-        )}
         <img
           src={photoUrl ?? '/team-placeholder.png'}
           alt={photo?.alt ?? team.name}

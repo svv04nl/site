@@ -181,7 +181,6 @@
   aspect-ratio: 4 / 3;
   background-color: #d0d0d0;
   overflow: hidden;
-  position: relative;
 }
 
 .card-team-img {
@@ -193,30 +192,6 @@
 
   .card-team:hover & {
     transform: scale(1.04);
-  }
-}
-
-.card-team-badge {
-  border-radius: 3px;
-  color: var(--color-white);
-  font-family: var(--font-heading);
-  font-size: 0.6rem;
-  font-weight: 700;
-  left: 0.5rem;
-  letter-spacing: 0.06em;
-  padding: 0.15rem 0.4rem;
-  position: absolute;
-  text-transform: uppercase;
-  top: 0.5rem;
-  white-space: nowrap;
-  z-index: 1;
-
-  &--senior {
-    background: var(--color-primary);
-  }
-
-  &--youth {
-    background: var(--color-dark);
   }
 }
 
