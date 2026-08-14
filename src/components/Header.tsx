@@ -98,6 +98,15 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
 
   const toggleSubmenu = (name: string) => setOpenSubmenu((prev) => (prev === name ? null : name))
 
+  // Split into columns of at most `size` rows so long lists wrap sideways instead of overflowing the panel height.
+  function chunk<T>(arr: T[], size: number): T[][] {
+    const result: T[][] = []
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size))
+    }
+    return result
+  }
+
   return (
     <header className="site-header">
       {/* Topbar */}
@@ -221,25 +230,33 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
                     label: 'Teams',
                     content: (
                       <div className="sub-menu-grid">
-                        <div className="sub-menu-col">
+                        <div className="sub-menu-col-group">
                           <p className="sub-menu-col-title">Senioren</p>
-                          <ul className="sub-menu-list">
-                            {seniorTeams.map((team) => (
-                              <li key={team.id}>
-                                <Link href={`/teams/${team.slug}`}>{team.name}</Link>
-                              </li>
+                          <div className="sub-menu-col-group-cols">
+                            {chunk(seniorTeams, 6).map((col, i) => (
+                              <ul key={i} className="sub-menu-list">
+                                {col.map((team) => (
+                                  <li key={team.id}>
+                                    <Link href={`/teams/${team.slug}`}>{team.name}</Link>
+                                  </li>
+                                ))}
+                              </ul>
                             ))}
-                          </ul>
+                          </div>
                         </div>
-                        <div className="sub-menu-col">
+                        <div className="sub-menu-col-group">
                           <p className="sub-menu-col-title">Jeugd</p>
-                          <ul className="sub-menu-list">
-                            {youthTeams.map((team) => (
-                              <li key={team.id}>
-                                <Link href={`/teams/${team.slug}`}>{team.name}</Link>
-                              </li>
+                          <div className="sub-menu-col-group-cols">
+                            {chunk(youthTeams, 6).map((col, i) => (
+                              <ul key={i} className="sub-menu-list">
+                                {col.map((team) => (
+                                  <li key={team.id}>
+                                    <Link href={`/teams/${team.slug}`}>{team.name}</Link>
+                                  </li>
+                                ))}
+                              </ul>
                             ))}
-                          </ul>
+                          </div>
                         </div>
                       </div>
                     ),

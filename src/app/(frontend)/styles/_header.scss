@@ -132,8 +132,13 @@
   gap: 4rem;
 }
 
-.sub-menu-col {
+.sub-menu-col-group {
   flex: 0 0 auto;
+}
+
+.sub-menu-col-group-cols {
+  display: flex;
+  gap: 2rem;
 }
 
 .sub-menu-col-title {
