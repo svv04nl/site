@@ -18,6 +18,7 @@ import { Sponsors } from './collections/Sponsors'
 import { Pages } from './collections/Pages'
 import { Contacts } from './collections/Contacts'
 import { Audiences } from './collections/Audiences'
+import { searchEndpoint } from './endpoints/search'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -42,6 +43,7 @@ export default buildConfig({
     fallbackLanguage: 'nl',
   },
   collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences],
+  endpoints: [searchEndpoint],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures.filter((f) => f.key !== 'link'),

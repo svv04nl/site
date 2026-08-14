@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BreadcrumbBar } from './BreadcrumbContext'
+import SearchModal from './SearchModal'
 
 const NavArrow = () => (
   <svg
@@ -51,7 +52,7 @@ type Team = {
   category?: string | null
 }
 
-type ActionPage = {
+export type ActionPage = {
   id: string | number
   title: string
   slug: string
@@ -67,6 +68,7 @@ type Props = {
 export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
   const pathname = usePathname()
 
   // Close mobile menu on navigation
@@ -74,6 +76,25 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
     setMobileOpen(false)
     setOpenSubmenu(null)
   }, [pathname])
+
+  // Cmd/Ctrl+K opens search from anywhere; Escape closes it
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault()
+        setSearchOpen(true)
+      } else if (e.key === 'Escape') {
+        setSearchOpen(false)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  const openSearch = () => {
+    setMobileOpen(false)
+    setSearchOpen(true)
+  }
 
   const toggleSubmenu = (name: string) => setOpenSubmenu((prev) => (prev === name ? null : name))
 
@@ -114,6 +135,27 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
                 </ul>
               </nav>
             )}
+            <button
+              type="button"
+              className="search-trigger"
+              aria-label="Zoeken"
+              onClick={openSearch}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>
+              Zoeken
+            </button>
             <div className="site-header-topbar-social">
               <a
                 href="https://www.facebook.com/svv04"
@@ -360,6 +402,11 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
         >
           <ul className="mobile-nav-list">
             <li>
+              <button type="button" className="mobile-nav-search" onClick={openSearch}>
+                Zoeken
+              </button>
+            </li>
+            <li>
               <Link href="/nieuws">Nieuws</Link>
             </li>
             <li>
@@ -457,6 +504,11 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
           </ul>
         </div>
       </nav>
+      <SearchModal
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        actiePages={actiePages}
+      />
       <BreadcrumbBar />
     </header>
   )
