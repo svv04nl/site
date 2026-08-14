@@ -86,6 +86,9 @@ export default async function FooterServer() {
                 <Link href="/nieuws">Nieuws</Link>
               </li>
               <li>
+                <Link href="/teams">Teams</Link>
+              </li>
+              <li>
                 <Link href="/agenda">Agenda</Link>
               </li>
               <li>

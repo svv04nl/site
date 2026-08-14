@@ -34,7 +34,7 @@ const AUDIENCES: AudienceSeed[] = [
       "Alles wat je als speler van SVV'04 nodig hebt: van je trainingstijden en teamindeling tot het wedstrijdprogramma en de clubregels. Vind snel je weg.",
     links: [
       { title: 'Programma & uitslagen', description: 'Bekijk wanneer en waar je speelt.', href: '/programma' },
-      { title: 'Teams', description: 'Vind jouw team en teamgenoten.', href: '/senioren' },
+      { title: 'Teams', description: 'Vind jouw team en teamgenoten.', href: '/teams' },
       { title: 'Trainingstijden', description: "De actuele trainingsschema's per team.", href: '/vereniging/trainingstijden' },
       { title: 'Agenda', description: 'Toernooien, activiteiten en clubevenementen.', href: '/agenda' },
       { title: 'Nieuws', description: 'Blijf op de hoogte van het laatste clubnieuws.', href: '/nieuws' },
@@ -57,7 +57,7 @@ const AUDIENCES: AudienceSeed[] = [
     intro:
       "Als ouder van een jeugdspeler wil je goed geïnformeerd zijn. Hier vind je alles over de jeugdafdeling, contributie, rijschema's en een veilig sportklimaat.",
     links: [
-      { title: 'Jeugd', description: "Alles over de jeugdafdeling van SVV'04.", href: '/jeugd' },
+      { title: 'Jeugd', description: "Alles over de jeugdafdeling van SVV'04.", href: '/teams' },
       { title: 'Programma & uitslagen', description: 'Wanneer en waar speelt jouw kind?', href: '/programma' },
       { title: 'Contributie', description: 'Tarieven en betaling van de contributie.', href: '/vereniging/contributie' },
       { title: 'Veilig sportklimaat', description: 'Onze afspraken voor een veilige omgeving.', href: '/vereniging/veilig-sportklimaat' },
@@ -82,7 +82,7 @@ const AUDIENCES: AudienceSeed[] = [
       'Als trainer of leider maak je het verschil op en naast het veld. Hier vind je de praktische informatie en ondersteuning die je nodig hebt.',
     links: [
       { title: 'Programma & uitslagen', description: "Wedstrijdschema's en uitslagen doorgeven.", href: '/programma' },
-      { title: 'Teams', description: 'Overzicht van alle teams en indelingen.', href: '/senioren' },
+      { title: 'Teams', description: 'Overzicht van alle teams en indelingen.', href: '/teams' },
       { title: 'Trainingstijden', description: "Veldindeling en trainingsschema's.", href: '/vereniging/trainingstijden' },
       { title: 'Veilig sportklimaat', description: 'Gedragsregels en vertrouwenspersoon.', href: '/vereniging/veilig-sportklimaat' },
       { title: 'Contact', description: 'Vragen aan het bestuur of de commissie.', href: '/contact' },

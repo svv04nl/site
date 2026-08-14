@@ -45,6 +45,12 @@ const csp = [
 
 const nextConfig: NextConfig = {
   productionBrowserSourceMaps: true,
+  async redirects() {
+    return [
+      { source: '/senioren', destination: '/teams', permanent: true },
+      { source: '/jeugd', destination: '/teams', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {
