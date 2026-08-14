@@ -44,6 +44,14 @@ const MobileNavArrow = () => (
   </svg>
 )
 
+type Team = {
+  id: string | number
+  name: string
+  slug: string
+  type: string
+  category?: string | null
+}
+
 export type ActionPage = {
   id: string | number
   title: string
@@ -52,10 +60,12 @@ export type ActionPage = {
 }
 
 type Props = {
+  seniorTeams: Team[]
+  youthTeams: Team[]
   actiePages: ActionPage[]
 }
 
-export default function Header({ actiePages }: Props) {
+export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -205,11 +215,35 @@ export default function Header({ actiePages }: Props) {
               <li>
                 <Link href="/programma">Programma</Link>
               </li>
-              <li>
-                <Link href="/teams">Teams</Link>
-              </li>
               {(
                 [
+                  {
+                    label: 'Teams',
+                    content: (
+                      <div className="sub-menu-grid">
+                        <div className="sub-menu-col">
+                          <p className="sub-menu-col-title">Senioren</p>
+                          <ul className="sub-menu-list">
+                            {seniorTeams.map((team) => (
+                              <li key={team.id}>
+                                <Link href={`/teams/${team.slug}`}>{team.name}</Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="sub-menu-col">
+                          <p className="sub-menu-col-title">Jeugd</p>
+                          <ul className="sub-menu-list">
+                            {youthTeams.map((team) => (
+                              <li key={team.id}>
+                                <Link href={`/teams/${team.slug}`}>{team.name}</Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ),
+                  },
                   {
                     label: 'Vereniging',
                     content: (

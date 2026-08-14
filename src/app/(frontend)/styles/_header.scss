@@ -132,6 +132,20 @@
   gap: 4rem;
 }
 
+.sub-menu-col {
+  flex: 0 0 auto;
+}
+
+.sub-menu-col-title {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
 .sub-menu-list {
   flex: 0 0 auto;
   list-style: none;
