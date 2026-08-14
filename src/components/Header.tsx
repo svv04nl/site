@@ -98,19 +98,11 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
 
   const toggleSubmenu = (name: string) => setOpenSubmenu((prev) => (prev === name ? null : name))
 
-  // Split into balanced columns (max ~5 per col, items distributed evenly)
-  function balancedChunk<T>(arr: T[], maxPerCol: number): T[][] {
-    const n = arr.length
-    if (n === 0) return []
-    const cols = Math.ceil(n / maxPerCol)
-    const base = Math.floor(n / cols)
-    const remainder = n % cols
+  // Split into columns of at most `size` rows so long lists wrap sideways instead of overflowing the panel height.
+  function chunk<T>(arr: T[], size: number): T[][] {
     const result: T[][] = []
-    let i = 0
-    for (let c = 0; c < cols; c++) {
-      const size = base + (c < remainder ? 1 : 0)
+    for (let i = 0; i < arr.length; i += size) {
       result.push(arr.slice(i, i + size))
-      i += size
     }
     return result
   }
@@ -235,36 +227,37 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
               {(
                 [
                   {
-                    label: 'Senioren',
+                    label: 'Teams',
                     content: (
                       <div className="sub-menu-grid">
-                        {balancedChunk(seniorTeams.length > 0 ? seniorTeams : [], 5).map(
-                          (col, i) => (
-                            <ul key={i} className="sub-menu-list">
-                              {col.map((team) => (
-                                <li key={team.id}>
-                                  <Link href={`/teams/${team.slug}`}>{team.name}</Link>
-                                </li>
-                              ))}
-                            </ul>
-                          ),
-                        )}
-                      </div>
-                    ),
-                  },
-                  {
-                    label: 'Jeugd',
-                    content: (
-                      <div className="sub-menu-grid">
-                        {balancedChunk(youthTeams.length > 0 ? youthTeams : [], 5).map((col, i) => (
-                          <ul key={i} className="sub-menu-list">
-                            {col.map((team) => (
-                              <li key={team.id}>
-                                <Link href={`/teams/${team.slug}`}>{team.name}</Link>
-                              </li>
+                        <div className="sub-menu-col-group">
+                          <p className="sub-menu-col-title">Senioren</p>
+                          <div className="sub-menu-col-group-cols">
+                            {chunk(seniorTeams, 6).map((col, i) => (
+                              <ul key={i} className="sub-menu-list">
+                                {col.map((team) => (
+                                  <li key={team.id}>
+                                    <Link href={`/teams/${team.slug}`}>{team.name}</Link>
+                                  </li>
+                                ))}
+                              </ul>
                             ))}
-                          </ul>
-                        ))}
+                          </div>
+                        </div>
+                        <div className="sub-menu-col-group">
+                          <p className="sub-menu-col-title">Jeugd</p>
+                          <div className="sub-menu-col-group-cols">
+                            {chunk(youthTeams, 6).map((col, i) => (
+                              <ul key={i} className="sub-menu-list">
+                                {col.map((team) => (
+                                  <li key={team.id}>
+                                    <Link href={`/teams/${team.slug}`}>{team.name}</Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     ),
                   },
@@ -416,10 +409,7 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
               <Link href="/programma">Programma</Link>
             </li>
             <li>
-              <Link href="/senioren">Senioren</Link>
-            </li>
-            <li>
-              <Link href="/jeugd">Jeugd</Link>
+              <Link href="/teams">Teams</Link>
             </li>
             {(
               [

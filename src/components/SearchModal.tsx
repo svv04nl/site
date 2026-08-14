@@ -60,10 +60,7 @@ function buildQuickLinkGroups(actiePages: ActionPage[]): SearchGroup[] {
   return [
     {
       group: 'Teams',
-      items: [
-        { label: 'Senioren', sub: 'Zondag, zaterdag, 35+, Dames', href: '/senioren' },
-        { label: 'Jeugd', sub: 'JO19 t/m Kabouters', href: '/jeugd' },
-      ],
+      items: [{ label: 'Teams', sub: 'Senioren en jeugd, O19 t/m Kabouters', href: '/teams' }],
     },
     {
       // Merged into "Meedoen" (same label) so quick links and join-actions

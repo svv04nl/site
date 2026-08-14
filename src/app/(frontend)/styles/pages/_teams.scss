@@ -1,16 +1,33 @@
-// ─── Teams overview (senioren / jeugd) ───────────────────────────────────────
+// ─── Teams overview (senioren + jeugd) ────────────────────────────────────────
+
+.teams-group + .teams-group {
+  margin-top: 2.5rem;
+}
+
+.teams-group-title {
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.5rem;
+}
 
 .teams-grid {
   display: grid;
-  gap: 1.75rem;
-  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  grid-template-columns: repeat(4, 1fr);
 
   @media (max-width: $breakpoint-tablet-landscape) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: $breakpoint-medium) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: $breakpoint-mobile-lg) {
+  @media (max-width: $breakpoint-mobile) {
     grid-template-columns: 1fr;
   }
 }
-

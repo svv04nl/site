@@ -198,23 +198,23 @@
 .card-team-body {
   display: flex;
   flex-direction: column;
-  padding: 0.875rem 1rem 1rem;
+  padding: 0.625rem 0.75rem 0.75rem;
 }
 
 .card-team-category {
   color: var(--color-primary);
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.04em;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
   text-transform: uppercase;
 }
 
 .card-team-name {
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;

@@ -42,7 +42,6 @@ export default async function TeamPage({ params }: Props) {
   const teamcode = team.teamcode ?? null
 
   const categoryLabel = team.category ?? null
-  const sectionHref = team.type === 'youth' ? '/jeugd' : team.type === 'senior' ? '/senioren' : null
 
   const { docs: teamPosts } = await payload.find({
     collection: 'posts',
@@ -61,9 +60,7 @@ export default async function TeamPage({ params }: Props) {
         <SetBreadcrumb
           crumbs={[
             { label: 'Home', href: '/' },
-            sectionHref
-              ? { label: team.type === 'youth' ? 'Jeugd' : 'Senioren', href: sectionHref }
-              : { label: 'Teams', href: '/teams' },
+            { label: 'Teams', href: '/teams' },
             { label: team.name },
           ]}
         />
