@@ -3,26 +3,34 @@
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import cx from 'classnames'
-import { standingsQuery, cupResultsQuery } from '@/lib/clubdata/queries'
+import { standingsQuery, cupResultsQuery, pouleScheduleQuery } from '@/lib/clubdata/queries'
+import { groupScheduleByWeek } from '@/lib/clubdata/transform'
 import MatchCard from '@/components/ui/MatchCard'
 import ClubLogo from '@/components/ClubLogo'
+import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 import type { PouleInfo } from '@/lib/clubdata/types'
 import { SectionHeader } from '../ui/SectionHeader'
 
 type Props = {
   poules: PouleInfo[]
+  teamcode: number
 }
 
-export default function CupTab({ poules }: Props) {
+export default function CupTab({ poules, teamcode }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [filterOwn, setFilterOwn] = useState(true)
 
   const selectedPoule = poules[selectedIndex]
   const poulecode = selectedPoule?.poulecode
 
+  const { data: schedule, isLoading: scheduleLoading } = useQuery(
+    pouleScheduleQuery(poulecode ?? 0, teamcode),
+  )
   const { data: results, isLoading: resultsLoading } = useQuery(cupResultsQuery(poulecode))
   const { data: standing, isLoading: standingLoading } = useQuery(standingsQuery(poulecode))
 
+  const filteredUpcoming = filterOwn ? (schedule ?? []).filter((m) => m.isOwn) : (schedule ?? [])
+  const weekGroups = groupScheduleByWeek(filteredUpcoming)
   const filtered = filterOwn ? (results ?? []).filter((m) => m.isOwn) : (results ?? [])
 
   if (!poulecode) {
@@ -51,9 +59,8 @@ export default function CupTab({ poules }: Props) {
         )}
       </div>
 
-      {/* Uitslagen */}
       <div className="league-controls">
-        <h3 className="league-title">Uitslagen</h3>
+        <h3 className="league-title">Programma</h3>
         <div className="league-controls-right">
           <div className="league-filter-toggle">
             <button
@@ -73,6 +80,17 @@ export default function CupTab({ poules }: Props) {
           </div>
         </div>
       </div>
+
+      <ScheduleWeekGroups
+        weekGroups={weekGroups}
+        isLoading={scheduleLoading}
+        emptyMessage="Geen programma gevonden."
+      />
+
+      <div style={{ marginBottom: '2rem' }} />
+
+      {/* Uitslagen */}
+      <h3 className="league-title">Uitslagen</h3>
 
       {filtered.length > 0 ? (
         <div

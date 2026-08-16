@@ -13,7 +13,7 @@ import { SponsorsTicker } from '@/components/SponsorsTicker'
 import { FindYourWaySection } from '@/components/FindYourWaySection'
 import { WebshopBanner } from '@/components/WebshopBanner'
 
-const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-jo19-1']
+const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-o19-1']
 
 export default async function HomePage() {
   preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
@@ -66,7 +66,7 @@ export default async function HomePage() {
                 een balletje trappen op ons prachtige sportpark.
               </p>
               <div className="site-hero-actions">
-                <Link className="btn btn--primary btn--lg" href="/meedoen/lid-worden">
+                <Link className="btn btn--primary btn--lg" href="/vereniging/lidmaatschap">
                   Word lid van SVV&rsquo;04 &rarr;
                 </Link>
               </div>

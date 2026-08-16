@@ -215,7 +215,7 @@ const teamData = [
     players: [],
   },
   {
-    slug: 'svv04-jo19-1',
+    slug: 'svv04-o19-1',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO19.JPG',
     players: [
       'Jim Ramaker',
@@ -240,7 +240,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo17-1',
+    slug: 'svv04-o17-1',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO17-1.JPG',
     players: [
       'Bart Slomp',
@@ -260,7 +260,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo15-1jm',
+    slug: 'svv04-o15-1jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO15-1.JPG',
     players: [
       'Lars Heijnen',
@@ -280,7 +280,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo15-2jm',
+    slug: 'svv04-o15-2jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO15-2.JPG',
     players: [
       'Edvard Muncsan',
@@ -294,7 +294,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo13-1',
+    slug: 'svv04-o13-1',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO13.JPG',
     players: [
       'Timo Hidding',
@@ -318,7 +318,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo12-1jm',
+    slug: 'svv04-o12-1jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO12-1.JPG',
     players: [
       'Jordy Bunskoek',
@@ -337,7 +337,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo11-1jm',
+    slug: 'svv04-o11-1jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO-11.JPG',
     players: [
       'Timon Maatje',
@@ -355,7 +355,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo10-1',
+    slug: 'svv04-o10-1',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO10-1.JPG',
     players: [
       'Gerjan Gommer',
@@ -371,7 +371,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo9-1',
+    slug: 'svv04-o9-1',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO9-1.JPG',
     players: [
       'Stijn Anholts',
@@ -386,7 +386,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo9-2jm',
+    slug: 'svv04-o9-2jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO9-2.JPG',
     players: [
       'Marchiel Gijlers',
@@ -401,7 +401,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo9-3jm',
+    slug: 'svv04-o9-3jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO9-3.JPG',
     players: [
       'Dennis Blaauwgeers',
@@ -417,7 +417,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo8-1jm',
+    slug: 'svv04-o8-1jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO8-1%202.JPG',
     players: [
       'Stijn Anholts',
@@ -432,7 +432,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo7-1jm',
+    slug: 'svv04-o7-1jm',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO7-1.JPG',
     players: [
       'Pieter IJzerman',
@@ -445,7 +445,7 @@ const teamData = [
     ],
   },
   {
-    slug: 'svv04-jo7-2',
+    slug: 'svv04-o7-2',
     photoUrl: 'https://www.svv04.nl/web2022/images/Teams2025-2026/JO7-2.JPG',
     players: [
       'Julius Kerkdijk',

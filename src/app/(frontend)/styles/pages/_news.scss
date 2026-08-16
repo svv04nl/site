@@ -140,6 +140,14 @@
     margin: 0 0 1.25rem;
     padding-left: 1.5rem;
   }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
 }
 
 .news-detail-footer {

@@ -55,6 +55,14 @@ type Team = {
 export type ActionPage = {
   id: string | number
   title: string
+  actionLabel?: string | null
+  slug: string
+  section: string
+}
+
+export type NavPage = {
+  id: string | number
+  title: string
   slug: string
   section: string
 }
@@ -63,9 +71,17 @@ type Props = {
   seniorTeams: Team[]
   youthTeams: Team[]
   actiePages: ActionPage[]
+  verenigingPages: NavPage[]
+  commissiesPages: NavPage[]
 }
 
-export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
+export default function Header({
+  seniorTeams,
+  youthTeams,
+  actiePages,
+  verenigingPages,
+  commissiesPages,
+}: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -121,7 +137,9 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
                 <ul className="site-header-topbar-list">
                   {actiePages.map((page) => (
                     <li key={page.id}>
-                      <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                      <Link href={`/${page.section}/${page.slug}`}>
+                        {page.actionLabel || page.title}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -265,42 +283,15 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
                     label: 'Vereniging',
                     content: (
                       <div className="sub-menu-grid">
-                        <ul className="sub-menu-list">
-                          <li>
-                            <Link href="/vereniging/algemeen">Algemeen</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/bestuur">Bestuur</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/historie">Historie</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/sportpark">Sportpark</Link>
-                          </li>
-                        </ul>
-                        <ul className="sub-menu-list">
-                          <li>
-                            <Link href="/vereniging/clubblad">Clubblad</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/lidmaatschap">Lidmaatschap</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/clubkleding">Clubkleding</Link>
-                          </li>
-                        </ul>
-                        <ul className="sub-menu-list">
-                          <li>
-                            <Link href="/vereniging/vrijwilligers">Vrijwilligers</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/jeugdafdeling">Jeugdafdeling</Link>
-                          </li>
-                          <li>
-                            <Link href="/vereniging/sponsoren">Sponsoren</Link>
-                          </li>
-                        </ul>
+                        {chunk(verenigingPages, 4).map((col, i) => (
+                          <ul key={i} className="sub-menu-list">
+                            {col.map((page) => (
+                              <li key={page.id}>
+                                <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                              </li>
+                            ))}
+                          </ul>
+                        ))}
                       </div>
                     ),
                   },
@@ -308,51 +299,15 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
                     label: 'Commissies',
                     content: (
                       <div className="sub-menu-grid">
-                        <ul className="sub-menu-list">
-                          <li>
-                            <Link href="/commissies/activiteitencommissie">
-                              Activiteitencommissie
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/commissies/kantinecommissie">Kantinecommissie</Link>
-                          </li>
-                          <li>
-                            <Link href="/commissies/toernooicommissie">Toernooicommissie</Link>
-                          </li>
-                        </ul>
-                        <ul className="sub-menu-list">
-                          <li>
-                            <Link href="/commissies/commerciele-commissie">
-                              Commerciële commissie
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/commissies/scheidsrechterscommissie">
-                              Scheidsrechterscommissie
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/commissies/vertrouwenspersoon">Vertrouwenspersoon</Link>
-                          </li>
-                        </ul>
-                        <ul className="sub-menu-list">
-                          <li>
-                            <Link href="/commissies/technische-commissie">
-                              Technische Commissie
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/commissies/communicatie-commissie">
-                              Communicatie commissie
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/commissies/kleding-en-materiaal">
-                              Kleding &amp; materiaal
-                            </Link>
-                          </li>
-                        </ul>
+                        {chunk(commissiesPages, 4).map((col, i) => (
+                          <ul key={i} className="sub-menu-list">
+                            {col.map((page) => (
+                              <li key={page.id}>
+                                <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                              </li>
+                            ))}
+                          </ul>
+                        ))}
                       </div>
                     ),
                   },
@@ -413,40 +368,10 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
             </li>
             {(
               [
-                {
-                  label: 'Vereniging',
-                  items: [
-                    { label: 'Algemeen', href: '/vereniging/algemeen' },
-                    { label: 'Bestuur', href: '/vereniging/bestuur' },
-                    { label: 'Historie', href: '/vereniging/historie' },
-                    { label: 'Sportpark', href: '/vereniging/sportpark' },
-                    { label: 'Clubblad', href: '/vereniging/clubblad' },
-                    { label: 'Lidmaatschap', href: '/vereniging/lidmaatschap' },
-                    { label: 'Clubkleding', href: '/vereniging/clubkleding' },
-                    { label: 'Vrijwilligers', href: '/vereniging/vrijwilligers' },
-                    { label: 'Jeugdafdeling', href: '/vereniging/jeugdafdeling' },
-                    { label: 'Sponsoren', href: '/vereniging/sponsoren' },
-                  ],
-                },
-                {
-                  label: 'Commissies',
-                  items: [
-                    { label: 'Activiteitencommissie', href: '/commissies/activiteitencommissie' },
-                    { label: 'Kantinecommissie', href: '/commissies/kantinecommissie' },
-                    { label: 'Toernooicommissie', href: '/commissies/toernooicommissie' },
-                    { label: 'Commerciële commissie', href: '/commissies/commerciele-commissie' },
-                    {
-                      label: 'Scheidsrechterscommissie',
-                      href: '/commissies/scheidsrechterscommissie',
-                    },
-                    { label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' },
-                    { label: 'Technische Commissie', href: '/commissies/technische-commissie' },
-                    { label: 'Communicatie commissie', href: '/commissies/communicatie-commissie' },
-                    { label: 'Kleding & materiaal', href: '/commissies/kleding-en-materiaal' },
-                  ],
-                },
+                { label: 'Vereniging', pages: verenigingPages },
+                { label: 'Commissies', pages: commissiesPages },
               ] as const
-            ).map(({ label, items }) => (
+            ).map(({ label, pages }) => (
               <li
                 key={label}
                 className={`mobile-nav-has-children${openSubmenu === label ? ' is-open' : ''}`}
@@ -459,9 +384,9 @@ export default function Header({ seniorTeams, youthTeams, actiePages }: Props) {
                   {label} <MobileNavArrow />
                 </button>
                 <ul className="mobile-nav-sub">
-                  {items.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.href}>{item.label}</Link>
+                  {pages.map((page) => (
+                    <li key={page.id}>
+                      <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
                     </li>
                   ))}
                 </ul>

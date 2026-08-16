@@ -40,9 +40,8 @@ export default function LeagueSection() {
         )}
         {activeTab === 'programma' && (
           <ScheduleTab
-            poules={regularPoules}
             teamcode={teamcode ?? 0}
-            initialFaseIndex={latestFaseIndex}
+            poules={[...regularPoules, ...(poules?.cupPoules ?? [])]}
           />
         )}
         {activeTab === 'uitslagen' && (
@@ -51,7 +50,9 @@ export default function LeagueSection() {
         {activeTab === 'indeling' && (
           <LineupTab poules={regularPoules} initialIndex={latestFaseIndex} />
         )}
-        {activeTab === 'beker' && <CupTab poules={poules?.cupPoules ?? []} />}
+        {activeTab === 'beker' && (
+          <CupTab poules={poules?.cupPoules ?? []} teamcode={teamcode ?? 0} />
+        )}
       </div>
     </div>
   )

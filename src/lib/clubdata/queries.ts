@@ -180,12 +180,14 @@ export const cupResultsQuery = (poulecode: number | undefined) => ({
   staleTime: STALE_TIME,
 })
 
-export const pouleScheduleQuery = (poulecode: number, teamcode: number) => ({
-  queryKey: ['poule-programma', poulecode] as const,
+export const pouleScheduleQuery = (poulecode: number, teamcode: number, maxDays = 365) => ({
+  queryKey: ['poule-programma', poulecode, maxDays] as const,
   queryFn: async () => {
     const raw = await fetchClubData<RawProgrammaResponse>('poule-programma', {
       poulecode: String(poulecode),
       eigenwedstrijden: 'NEE',
+      aantaldagen: String(maxDays),
+      aantalregels: '200',
     })
     return transformSchedule(raw, CLUB_RELATIECODE, teamcode)
   },

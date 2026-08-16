@@ -132,7 +132,7 @@
 }
 
 .league-controls {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
@@ -145,6 +145,19 @@
 }
 
 .league-controls-right {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .league-filter-toggle {
+    align-self: stretch;
+  }
+
+  .league-filter-btn {
+    flex: 1;
+  }
+
   @media screen and (max-width: $breakpoint-mobile-lg) {
     width: 100%;
   }

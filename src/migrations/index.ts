@@ -1,6 +1,7 @@
 import * as migration_20260811_103337_baseline_prod_schema from './20260811_103337_baseline_prod_schema';
 import * as migration_20260811_103354_homepage_2a from './20260811_103354_homepage_2a';
 import * as migration_20260814_141114_normalize_youth_team_names from './20260814_141114_normalize_youth_team_names';
+import * as migration_20260816_123006_add_messages_contacts_pages from './20260816_123006_add_messages_contacts_pages';
 
 export const migrations = [
   {
@@ -16,6 +17,11 @@ export const migrations = [
   {
     up: migration_20260814_141114_normalize_youth_team_names.up,
     down: migration_20260814_141114_normalize_youth_team_names.down,
-    name: '20260814_141114_normalize_youth_team_names'
+    name: '20260814_141114_normalize_youth_team_names',
+  },
+  {
+    up: migration_20260816_123006_add_messages_contacts_pages.up,
+    down: migration_20260816_123006_add_messages_contacts_pages.down,
+    name: '20260816_123006_add_messages_contacts_pages',
   },
 ];

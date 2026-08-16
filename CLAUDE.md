@@ -780,6 +780,41 @@ Always spread existing config. Never overwrite arrays — always spread and appe
 9. **Role Field**: This project uses `user.role` (string), not `user.roles` (array) — access checks use `user?.role === 'admin'`
 10. **Unpooled Connection Required for Migrations**: DDL statements (migrations) must use `DATABASE_URL_UNPOOLED`
 
+## SVV'04 Site Conventions
+
+Project-specific patterns for this club website, on top of the generic Payload rules above.
+
+### Content editing workflow
+
+- For one-off content changes (rewriting a page, adding a block, fixing a typo), edit directly via the Payload Local API in an inline `node --env-file=.env.local --import=tsx/esm -e "..."` command. **Do not** create a persistent script file for a single content edit — that's noise in the repo. Only write a real script file for something that will be re-run (seeding, a repeatable migration-style transform).
+- Never invent content. Page copy must come from real sources: the old site (`svv04.nl/web2022/...`), club documents (PDFs), or facts the user gives directly. When summarizing/rewriting a source, say so; don't present a paraphrase as a literal quote.
+- Written copy follows the `humanizer` skill's rules: no em-dashes, no "niet alleen X maar ook Y", no invented statistics, direct sentences, informal-zakelijk Dutch tone matching existing pages.
+
+### Internal linking
+
+- Always use internal Payload links (`linkType: 'internal'`, relationship to the target doc) instead of hardcoded paths inside richText — see `resolveInternalUrl`/`buildNestedPagePath` in `src/lib/richtext.tsx`. This keeps links correct across page renames and nesting changes.
+- **Contact deep-linking by role**: to link a CTA button (or any link) straight to a pre-filled contact form for a specific role, use `/contact?afdeling=<role-slug>` — the slug comes from the matching entry in that contact's `roles` array (`src/collections/Contacts.ts`), auto-generated from the role's `title` if left blank. The contact page (`src/app/(frontend)/contact/page.tsx`) matches this against `role.slug || role.title` to pre-select the dropdown and show the contact card. Check the actual stored slug before hardcoding it (the auto-slugify can mangle diacritics, e.g. "coördinator" → "cordinator").
+
+### Page nesting
+
+- Pages (`pages` collection) can nest via the `parent` field. Nested pages automatically appear indented under their parent in the section sidebar (`buildNavTree`/`NavList` in `src/components/CmsPage.tsx`) and get the correct multi-segment URL via the `[...slug]` catch-all routes (`src/app/(frontend)/vereniging/[...slug]/page.tsx`, `.../commissies/[...slug]/page.tsx`).
+- Set `hideFromNav: true` on a page to keep it out of both the sidebar and the topbar dropdowns while still being reachable via a direct link/button from another page (e.g. a detail page meant to be opened from a CTA rather than browsed).
+- **Depth pitfall**: page content queries must not use `depth: 0` if the richText can contain `upload` nodes (images) or internal `link` nodes — those need the related doc populated to render. Omit `depth` (defaults to 2) or set it explicitly ≥1. This was a real bug once (routes rewritten with `depth: 0` for the nesting feature silently broke every image on those pages).
+
+### Custom richText blocks (`src/blocks/`)
+
+Each block is a `config.ts` (Payload `Block` definition) + `Component.tsx` (renderer), registered in `payload.config.ts`'s `BlocksFeature` and in the JSX converter map in `src/components/CmsPage.tsx`. Current blocks and when to reach for them:
+
+- `ctaBlock` — a single action button (label + URL). Use for "Word vrijwilliger", "Direct aanmelden", etc.
+- `contactBlock` — one or more contact cards by contact ID.
+- `quoteBlock` — centered pull-quote for a policy statement or value the club wants to highlight. Wrap words in `*asterisks*` in the `text` field to render them in the club's accent color (this is a deliberate editorial choice per word, not automatic all-caps detection).
+- `documentDownloadBlock` — a downloadable file card (title, optional description, `file` upload). Opens in a new tab.
+- `addressBlock` — address card with an embedded Google Maps card.
+- `pricingTableBlock`, `taskTableBlock` — tabular data (pricing tiers, volunteer tasks).
+- `qrCodeBlock`, `appStoreButtonsBlock` — small utility blocks for the app pages.
+
+All the centered "card" blocks (`quoteBlock`, `documentDownloadBlock`, `addressBlock`, `contact-person-card`) share one width via `$content-block-width` in `src/app/(frontend)/styles/_variables.scss` — change that one variable rather than each block's own `max-width`.
+
 ## Resources
 
 - Docs: https://payloadcms.com/docs

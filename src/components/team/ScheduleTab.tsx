@@ -8,39 +8,38 @@ import { pouleScheduleQuery } from '@/lib/clubdata/queries'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 import type { PouleInfo } from '@/lib/clubdata/types'
 
+const ALL_VALUE = 'all'
+
 type Props = {
-  poules: PouleInfo[]
   teamcode: number
-  initialFaseIndex?: number
+  poules: PouleInfo[]
 }
 
-export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: Props) {
-  const [selectedPoulecode, setSelectedPoulecode] = useState<number | undefined>(undefined)
-  const [filterOwn, setFilterOwn] = useState(false)
+export default function ScheduleTab({ teamcode, poules }: Props) {
+  const [selected, setSelected] = useState<string>(ALL_VALUE)
+  const [filterOwn, setFilterOwn] = useState(true)
 
   const scheduleQueries = useQueries({
     queries: poules.map((p) => pouleScheduleQuery(p.poulecode, teamcode)),
   })
 
-  const availablePoules = poules.filter((_, i) => {
-    const q = scheduleQueries[i]
-    return !q.isFetched || (q.data && q.data.length > 0)
-  })
-
-  const defaultPoulecode = poules[initialFaseIndex]?.poulecode
-  const poulecode =
-    availablePoules.find((p) => p.poulecode === (selectedPoulecode ?? defaultPoulecode))
-      ?.poulecode ?? availablePoules[0]?.poulecode
-
+  const isAll = selected === ALL_VALUE
+  const poulecode = isAll ? undefined : Number(selected)
   const selectedPoule = poules.find((p) => p.poulecode === poulecode)
-  const queryIndex = poules.findIndex((p) => p.poulecode === poulecode)
-  const { data: allMatches, isLoading, isError, error } = scheduleQueries[queryIndex] ?? {}
+  const selectedIndex = poules.findIndex((p) => p.poulecode === poulecode)
 
-  if (!poulecode) {
-    return <p className="league-empty">Geen competitiegegevens beschikbaar.</p>
-  }
+  const isLoading = isAll
+    ? scheduleQueries.some((q) => q.isLoading)
+    : (scheduleQueries[selectedIndex]?.isLoading ?? false)
+  const isError = isAll
+    ? scheduleQueries.some((q) => q.isError)
+    : (scheduleQueries[selectedIndex]?.isError ?? false)
 
-  const filtered = filterOwn ? (allMatches ?? []).filter((m) => m.isOwn) : (allMatches ?? [])
+  const allMatches = isAll
+    ? scheduleQueries.flatMap((q) => q.data ?? [])
+    : (scheduleQueries[selectedIndex]?.data ?? [])
+
+  const filtered = filterOwn ? allMatches.filter((m) => m.isOwn) : allMatches
   const weekGroups = groupScheduleByWeek(filtered)
 
   return (
@@ -48,6 +47,21 @@ export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: 
       <div className="league-controls">
         <h2 className="league-title">Programma</h2>
         <div className="league-controls-right">
+          {poules.length > 0 && (
+            <select
+              value={selected}
+              onChange={(e) => setSelected(e.target.value)}
+              className="league-fase-select"
+            >
+              <option value={ALL_VALUE}>Volledig programma</option>
+              {poules.map((p) => (
+                <option key={p.poulecode} value={p.poulecode}>
+                  {p.klasse}
+                </option>
+              ))}
+            </select>
+          )}
+
           <div className="league-filter-toggle">
             <button
               className={cx('league-filter-btn', { 'is-active': !filterOwn })}
@@ -64,35 +78,17 @@ export default function ScheduleTab({ poules, teamcode, initialFaseIndex = 0 }: 
               Eigen club
             </button>
           </div>
-
-          {availablePoules.length > 1 && (
-            <select
-              value={poulecode}
-              onChange={(e) => setSelectedPoulecode(Number(e.target.value))}
-              className="league-fase-select"
-            >
-              {availablePoules.map((p) => (
-                <option key={p.poulecode} value={p.poulecode}>
-                  {p.klasse}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
       </div>
 
-      {isError && (
-        <p className="league-error">
-          Programma kon niet worden geladen:{' '}
-          {error instanceof Error ? error.message : 'Onbekende fout'}
-        </p>
-      )}
+      {isError && <p className="league-error">Programma kon niet worden geladen.</p>}
 
       {!isError && (
         <ScheduleWeekGroups
           weekGroups={weekGroups}
-          subtitle={selectedPoule?.klassepoule}
-          isLoading={isLoading ?? false}
+          subtitle={!isAll ? selectedPoule?.klassepoule : undefined}
+          isLoading={isLoading}
+          emptyMessage="Geen wedstrijden gevonden."
         />
       )}
     </div>
