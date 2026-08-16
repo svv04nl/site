@@ -1,4 +1,5 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import { withBotId } from 'botid/next/config'
 import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -20,7 +21,8 @@ const csp = [
 
   // Next.js requires 'unsafe-inline' for hydration scripts.
   // 'unsafe-eval' is only needed for webpack hot-reload in development.
-  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${isDev ? " 'unsafe-eval'" : ''}`,
+  // maps.googleapis.com loads the Google Maps JavaScript API (AddressBlock).
+  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://maps.googleapis.com${isDev ? " 'unsafe-eval'" : ''}`,
 
   // Inline styles are used by Next.js and various components.
   `style-src 'self' 'unsafe-inline'`,
@@ -30,11 +32,13 @@ const csp = [
 
   // Media is served directly from Vercel Blob (disablePayloadAccessControl: true).
   // Team logos are loaded from logoapi.voetbal.nl.
-  `img-src 'self' data: blob:${blobHost ? ` ${blobHost}` : ''} https://logoapi.voetbal.nl`,
+  // Google Maps tiles/icons are served from maps.gstatic.com and maps.googleapis.com.
+  `img-src 'self' data: blob:${blobHost ? ` ${blobHost}` : ''} https://logoapi.voetbal.nl https://maps.gstatic.com https://maps.googleapis.com`,
 
   // Client-side TanStack Query hooks fetch live sports data directly from Sportlink.
   // Vercel Analytics and Speed Insights send beacons to vitals.vercel-insights.com.
-  `connect-src 'self' https://data.sportlink.com https://vitals.vercel-insights.com${isDev ? ' ws://localhost:*' : ''}`,
+  // Google Maps JS API (geocoding, tile requests) calls maps.googleapis.com.
+  `connect-src 'self' https://data.sportlink.com https://vitals.vercel-insights.com https://maps.googleapis.com${isDev ? ' ws://localhost:*' : ''}`,
 
   `frame-src 'none'`,
   `object-src 'none'`,
@@ -73,4 +77,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+export default withBotId(withPayload(nextConfig, { devBundleServerPackages: false }))

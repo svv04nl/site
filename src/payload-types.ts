@@ -75,6 +75,7 @@ export interface Config {
     pages: Page;
     contacts: Contact;
     audiences: Audience;
+    messages: Message;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +91,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     audiences: AudiencesSelect<false> | AudiencesSelect<true>;
+    messages: MessagesSelect<false> | MessagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -347,6 +349,18 @@ export interface Page {
    * URL slug, e.g. "technische-commissie" → /commissies/technische-commissie
    */
   slug: string;
+  /**
+   * Korte actietekst voor de topbar en het zoekvenster, bijv. "Lid worden". Leeg = paginatitel.
+   */
+  actionLabel?: string | null;
+  /**
+   * Maakt dit een subpagina met een geneste URL, bijv. /vereniging/lidmaatschap/taken. Subpagina's verschijnen niet in het menu of de zijbalk — alleen bereikbaar via een link vanaf de bovenliggende pagina.
+   */
+  parent?: (number | null) | Page;
+  /**
+   * Verbergt deze pagina uit de Vereniging/Commissies-dropdown en de "pagina's"-zijbalk. De pagina blijft gewoon bereikbaar via een directe link.
+   */
+  hideFromNav?: boolean | null;
   content?: {
     root: {
       type: string;
@@ -372,7 +386,23 @@ export interface Page {
 export interface Contact {
   id: number;
   name: string;
-  role?: string | null;
+  /**
+   * Een persoon kan meerdere functies hebben. Linken (bijv. vanuit een ContactBlock of het contactformulier) gebeurt via de slug van de functie, niet via de persoon.
+   */
+  roles?:
+    | {
+        title: string;
+        /**
+         * Waar een bezoeker op zoekt, bijv. "Algemeen". Verschijnt in het contactformulier als "Onderwerp (Functie)", bijv. "Algemeen (Secretaris)". Leeg = toont alleen de functienaam.
+         */
+        topic?: string | null;
+        /**
+         * URL-vriendelijke code voor deep links naar het contactformulier, bijv. "ledenadministratie". Leeg = automatisch afgeleid van de functie.
+         */
+        slug?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   email?: string | null;
   phone?: string | null;
   /**
@@ -387,6 +417,10 @@ export interface Contact {
    * Alleen aangevinkte contacten verschijnen als optie in het contactformulier.
    */
   showInContactForm?: boolean | null;
+  /**
+   * Zet uit om dit contact te verbergen in de rechterkolom van de contactpagina (bijv. contacten die alleen via een ContactBlock op een specifieke pagina getoond worden).
+   */
+  showOnContactPage?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -469,6 +503,32 @@ export interface Audience {
   createdAt: string;
 }
 /**
+ * Berichten via de feedback-widget en het contactformulier op de site. Alleen aanmaken via /api/message-submit (met BotID-check), niet rechtstreeks via de API.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages".
+ */
+export interface Message {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  /**
+   * Alleen gezet bij een bericht via het contactformulier (rol-slug uit contacts). Leeg = via de feedback-widget.
+   */
+  afdeling?: string | null;
+  /**
+   * Alleen gezet bij een bericht via het contactformulier.
+   */
+  onderwerp?: string | null;
+  /**
+   * Pagina waarop dit bericht is verstuurd.
+   */
+  pageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -523,6 +583,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'audiences';
         value: number | Audience;
+      } | null)
+    | ({
+        relationTo: 'messages';
+        value: number | Message;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -708,6 +772,9 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   section?: T;
   slug?: T;
+  actionLabel?: T;
+  parent?: T;
+  hideFromNav?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -718,12 +785,20 @@ export interface PagesSelect<T extends boolean = true> {
  */
 export interface ContactsSelect<T extends boolean = true> {
   name?: T;
-  role?: T;
+  roles?:
+    | T
+    | {
+        title?: T;
+        topic?: T;
+        slug?: T;
+        id?: T;
+      };
   email?: T;
   phone?: T;
   group?: T;
   order?: T;
   showInContactForm?: T;
+  showOnContactPage?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -759,6 +834,20 @@ export interface AudiencesSelect<T extends boolean = true> {
         buttonLabel?: T;
         buttonUrl?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages_select".
+ */
+export interface MessagesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  message?: T;
+  afdeling?: T;
+  onderwerp?: T;
+  pageUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }

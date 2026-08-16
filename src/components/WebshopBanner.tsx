@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-
-const WEBSHOP_URL = 'https://clubs.deventrade.com/nl/svv-04/clubcollectie'
+import Link from 'next/link'
 
 const IMAGES = [
   '/webshop/webshop-banner-1.webp',
@@ -41,14 +40,9 @@ export function WebshopBanner() {
           />
         ))}
       </div>
-      <a
-        className="webshop-banner-button"
-        href={WEBSHOP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Webshop SVV&rsquo;04 &rarr;
-      </a>
+      <Link className="webshop-banner-button" href="/vereniging/clubkleding">
+        Kleding kopen &rarr;
+      </Link>
     </div>
   )
 }

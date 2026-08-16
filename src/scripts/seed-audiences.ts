@@ -45,7 +45,7 @@ const AUDIENCES: AudienceSeed[] = [
       title: 'Nog geen lid?',
       text: "Kom voetballen bij SVV'04 — er is een plek voor iedereen.",
       buttonLabel: "Word lid van SVV'04",
-      buttonUrl: '/meedoen/lid-worden',
+      buttonUrl: '/vereniging/lidmaatschap',
     },
   },
   {
@@ -59,7 +59,7 @@ const AUDIENCES: AudienceSeed[] = [
     links: [
       { title: 'Jeugd', description: "Alles over de jeugdafdeling van SVV'04.", href: '/teams' },
       { title: 'Programma & uitslagen', description: 'Wanneer en waar speelt jouw kind?', href: '/programma' },
-      { title: 'Contributie', description: 'Tarieven en betaling van de contributie.', href: '/vereniging/contributie' },
+      { title: 'Contributie', description: 'Tarieven en betaling van de contributie.', href: '/vereniging/lidmaatschap' },
       { title: 'Veilig sportklimaat', description: 'Onze afspraken voor een veilige omgeving.', href: '/vereniging/veilig-sportklimaat' },
       { title: 'Agenda', description: 'Activiteiten en evenementen voor de jeugd.', href: '/agenda' },
       { title: 'Contact', description: 'Vragen? Neem contact op met de club.', href: '/contact' },
@@ -69,7 +69,7 @@ const AUDIENCES: AudienceSeed[] = [
       title: 'Kind aanmelden?',
       text: 'Meld je zoon of dochter aan voor een gratis proeftraining.',
       buttonLabel: "Word lid van SVV'04",
-      buttonUrl: '/meedoen/lid-worden',
+      buttonUrl: '/vereniging/lidmaatschap',
     },
   },
   {
@@ -92,7 +92,7 @@ const AUDIENCES: AudienceSeed[] = [
       title: 'Wil je meehelpen?',
       text: 'We kunnen altijd extra trainers en leiders gebruiken.',
       buttonLabel: 'Word vrijwilliger',
-      buttonUrl: '/meedoen/vrijwilliger-worden',
+      buttonUrl: '/vereniging/vrijwilligerswerk',
     },
   },
   {
@@ -104,7 +104,7 @@ const AUDIENCES: AudienceSeed[] = [
     intro:
       "SVV'04 draait op vrijwilligers. Elk uur telt. Ontdek waar jij kunt bijdragen en hoe je je aanmeldt.",
     links: [
-      { title: 'Vrijwilliger worden', description: 'Meld je aan en ontdek de mogelijkheden.', href: '/meedoen/vrijwilliger-worden' },
+      { title: 'Vrijwilliger worden', description: 'Meld je aan en ontdek de mogelijkheden.', href: '/vereniging/vrijwilligerswerk' },
       { title: 'De vereniging', description: 'Leer de club en haar commissies kennen.', href: '/vereniging' },
       { title: 'Agenda', description: 'Activiteiten waar hulp welkom is.', href: '/agenda' },
       { title: 'Nieuws', description: 'Oproepen en nieuws voor vrijwilligers.', href: '/nieuws' },
@@ -115,7 +115,7 @@ const AUDIENCES: AudienceSeed[] = [
       title: 'Meld je aan',
       text: "Samen maken we SVV'04 nog mooier. Doe mee!",
       buttonLabel: 'Word vrijwilliger',
-      buttonUrl: '/meedoen/vrijwilliger-worden',
+      buttonUrl: '/vereniging/vrijwilligerswerk',
     },
   },
   {
@@ -127,7 +127,7 @@ const AUDIENCES: AudienceSeed[] = [
     intro:
       "Verbind jouw onderneming aan een bruisende club. Ontdek de sponsormogelijkheden van SVV'04 en wat we samen kunnen bereiken.",
     links: [
-      { title: 'Sponsor worden', description: 'Bekijk de sponsormogelijkheden en pakketten.', href: '/meedoen/sponsor-worden' },
+      { title: 'Sponsor worden', description: 'Bekijk de sponsormogelijkheden en pakketten.', href: '/vereniging/sponsoring' },
       { title: 'Onze sponsoren', description: "De bedrijven die SVV'04 steunen.", href: '/vereniging/sponsoren' },
       { title: 'De vereniging', description: 'Leer de club achter de sponsoring kennen.', href: '/vereniging' },
       { title: 'Contact', description: 'Neem contact op met de sponsorcommissie.', href: '/contact' },
@@ -137,7 +137,7 @@ const AUDIENCES: AudienceSeed[] = [
       title: 'Interesse?',
       text: 'Neem contact op en ontdek wat we voor elkaar kunnen betekenen.',
       buttonLabel: 'Word sponsor',
-      buttonUrl: '/meedoen/sponsor-worden',
+      buttonUrl: '/vereniging/sponsoring',
     },
   },
 ]

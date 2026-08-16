@@ -47,6 +47,20 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
       <div className="league-controls">
         <h2 className="league-title">Uitslagen</h2>
         <div className="league-controls-right">
+          {availablePoules.length > 1 && (
+            <select
+              value={poulecode}
+              onChange={(e) => setSelectedPoulecode(Number(e.target.value))}
+              className="league-fase-select"
+            >
+              {availablePoules.map((p) => (
+                <option key={p.poulecode} value={p.poulecode}>
+                  {p.klasse}
+                </option>
+              ))}
+            </select>
+          )}
+
           <div className="league-filter-toggle">
             <button
               className={cx('league-filter-btn', { 'is-active': !filterOwn })}
@@ -63,19 +77,6 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
               Eigen club
             </button>
           </div>
-          {availablePoules.length > 1 && (
-            <select
-              value={poulecode}
-              onChange={(e) => setSelectedPoulecode(Number(e.target.value))}
-              className="league-fase-select"
-            >
-              {availablePoules.map((p) => (
-                <option key={p.poulecode} value={p.poulecode}>
-                  {p.klasse}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
       </div>
 

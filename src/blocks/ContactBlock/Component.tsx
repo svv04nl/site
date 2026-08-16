@@ -18,7 +18,7 @@ export default function ContactBlockComponent({ heading, contacts }: Props) {
     <div className="contact-block">
       {heading && <h2 className="contact-section-title">{heading}</h2>}
       {resolved.map((contact) => (
-        <ContactPerson key={contact.id} contact={contact} />
+        <ContactPerson key={contact.id} contact={contact} linkEmailToContactForm layout="card" />
       ))}
     </div>
   )

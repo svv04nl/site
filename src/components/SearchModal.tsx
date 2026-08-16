@@ -51,9 +51,9 @@ type SearchGroup = {
 }
 
 const MEEDOEN_SUBTEXT: Record<string, string> = {
-  'lid-worden': "Aanmelden bij SVV'04",
-  'sponsor-worden': 'Partner van de club',
-  'vrijwilliger-worden': 'Help mee op en rond het veld',
+  lidmaatschap: "Aanmelden bij SVV'04",
+  sponsoring: 'Partner van de club',
+  vrijwilligerswerk: 'Help mee op en rond het veld',
 }
 
 function buildQuickLinkGroups(actiePages: ActionPage[]): SearchGroup[] {
@@ -78,7 +78,7 @@ function buildQuickLinkGroups(actiePages: ActionPage[]): SearchGroup[] {
         },
         { label: 'Contact', sub: 'Sportpark & bestuur', href: '/contact' },
         ...actiePages.map((page) => ({
-          label: page.title,
+          label: page.actionLabel || page.title,
           sub: MEEDOEN_SUBTEXT[page.slug] ?? "Meedoen bij SVV'04",
           href: `/${page.section}/${page.slug}`,
         })),

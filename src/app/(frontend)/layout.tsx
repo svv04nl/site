@@ -4,6 +4,7 @@ import React from 'react'
 import { Rajdhani, Outfit } from 'next/font/google'
 import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
+import FeedbackWidget from '@/components/FeedbackWidget'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
 import { Analytics } from '@vercel/analytics/next'
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </BreadcrumbProvider>
         <Footer />
+        <FeedbackWidget />
         <Analytics />
         <SpeedInsights />
       </body>

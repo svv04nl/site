@@ -8,6 +8,12 @@ $breakpoint-tablet-landscape: 1024px;
 $breakpoint-nav: 1030px;
 $breakpoint-sidebar: 1100px;
 
+// ─── Shared widths ────────────────────────────────────────────────────────────
+
+// Common max-width for centered content cards (quote, address, document,
+// contact-person) so they all line up visually within page content.
+$content-block-width: 480px;
+
 // ─── Design tokens ────────────────────────────────────────────────────────────
 
 :root {

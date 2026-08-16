@@ -10,6 +10,13 @@ import sharp from 'sharp'
 
 import { CtaBlock } from './blocks/CtaBlock/config'
 import { ContactBlock } from './blocks/ContactBlock/config'
+import { PricingTableBlock } from './blocks/PricingTableBlock/config'
+import { QrCodeBlock } from './blocks/QrCodeBlock/config'
+import { AppStoreButtonsBlock } from './blocks/AppStoreButtonsBlock/config'
+import { AddressBlock } from './blocks/AddressBlock/config'
+import { TaskTableBlock } from './blocks/TaskTableBlock/config'
+import { QuoteBlock } from './blocks/QuoteBlock/config'
+import { DocumentDownloadBlock } from './blocks/DocumentDownloadBlock/config'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
@@ -18,7 +25,9 @@ import { Sponsors } from './collections/Sponsors'
 import { Pages } from './collections/Pages'
 import { Contacts } from './collections/Contacts'
 import { Audiences } from './collections/Audiences'
+import { Messages } from './collections/Messages'
 import { searchEndpoint } from './endpoints/search'
+import { messageSubmitEndpoint } from './endpoints/message-submit'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -42,8 +51,8 @@ export default buildConfig({
     supportedLanguages: { nl },
     fallbackLanguage: 'nl',
   },
-  collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences],
-  endpoints: [searchEndpoint],
+  collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences, Messages],
+  endpoints: [searchEndpoint, messageSubmitEndpoint],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures.filter((f) => f.key !== 'link'),
@@ -71,7 +80,17 @@ export default buildConfig({
         ],
       }),
       BlocksFeature({
-        blocks: [CtaBlock, ContactBlock],
+        blocks: [
+          CtaBlock,
+          ContactBlock,
+          PricingTableBlock,
+          QrCodeBlock,
+          AppStoreButtonsBlock,
+          AddressBlock,
+          TaskTableBlock,
+          QuoteBlock,
+          DocumentDownloadBlock,
+        ],
       }),
     ],
   }),

@@ -1,0 +1,13 @@
+Nieuw bericht via de website
+SVV'04 Schoonebeek
+
+Naam: {{{NAME}}}
+E-mail: {{{SENDER_EMAIL}}}
+
+Bericht:
+{{{MESSAGE}}}
+
+Verstuurd vanaf: {{{PAGE_URL}}}
+
+---
+Dit bericht is automatisch verzonden vanaf de website van SVV'04 Schoonebeek.

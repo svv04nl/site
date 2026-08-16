@@ -23,7 +23,12 @@ const BANKRELATIE = {
   items: [{ type: 'bank' as const, value: 'Rabobank: NL02 RABO 0358304342' }],
 }
 
-export default async function ContactPage() {
+type Props = {
+  searchParams: Promise<{ afdeling?: string }>
+}
+
+export default async function ContactPage({ searchParams }: Props) {
+  const { afdeling: defaultAfdeling } = await searchParams
   const payload = await getPayload({ config })
 
   const { docs: contacts } = await payload.find({
@@ -33,15 +38,28 @@ export default async function ContactPage() {
     depth: 0,
   })
 
-  // Contactformulier: alleen de contacten die daarvoor gemarkeerd zijn.
+  // Contactformulier: één optie per functie (niet per persoon), alleen voor
+  // functies met een contactonderwerp (topic) — dat is wat een bezoeker
+  // herkent, niet elke functienaam op zich. Linken gebeurt via de slug.
   const afdelingen = contacts
     .filter((c) => c.showInContactForm)
-    .map((c) => ({ label: c.role || c.name, value: c.email || c.name }))
+    .flatMap((c) =>
+      (c.roles ?? [])
+        .filter((r) => r.topic)
+        .map((r) => ({
+          label: `${r.topic} (${r.title})`,
+          value: r.slug || r.title,
+          name: c.name,
+          phone: c.phone,
+          email: c.email,
+        })),
+    )
 
   // Groepeer contacten op hun "group"-kopje, in de volgorde waarin de groepen
   // voor het eerst voorkomen (contacten zijn al op `order` gesorteerd).
   const groups: { title: string; persons: Contact[] }[] = []
   for (const contact of contacts) {
+    if (contact.showOnContactPage === false) continue
     const title = contact.group?.trim() || 'Contact'
     let group = groups.find((g) => g.title === title)
     if (!group) {
@@ -63,7 +81,7 @@ export default async function ContactPage() {
             Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je
             snel te helpen.
           </p>
-          <ContactForm afdelingen={afdelingen} />
+          <ContactForm afdelingen={afdelingen} defaultAfdeling={defaultAfdeling} />
         </div>
 
         {/* Right: contact details */}
