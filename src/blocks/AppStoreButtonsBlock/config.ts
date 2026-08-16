@@ -21,19 +21,5 @@ export const AppStoreButtonsBlock: Block = {
       required: true,
       defaultValue: 'https://play.google.com/store/apps/details?id=com.xs2theworld.voetballNL&hl=nl',
     },
-    {
-      name: 'appStoreBadge',
-      type: 'upload',
-      relationTo: 'media',
-      label: 'App Store-badge (afbeelding)',
-      required: true,
-    },
-    {
-      name: 'playStoreBadge',
-      type: 'upload',
-      relationTo: 'media',
-      label: 'Google Play-badge (afbeelding)',
-      required: true,
-    },
   ],
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import type { Media } from '@/payload-types'
 
 type Platform = 'ios' | 'android' | 'desktop'
 
@@ -16,41 +15,27 @@ function detectPlatform(): Platform {
 type Props = {
   appStoreUrl?: string | null
   playStoreUrl?: string | null
-  appStoreBadge?: Media | number | string | null
-  playStoreBadge?: Media | number | string | null
 }
 
-function isMedia(value: unknown): value is Media {
-  return typeof value === 'object' && value !== null
-}
-
-export default function AppStoreButtonsBlockComponent({
-  appStoreUrl,
-  playStoreUrl,
-  appStoreBadge,
-  playStoreBadge,
-}: Props) {
+export default function AppStoreButtonsBlockComponent({ appStoreUrl, playStoreUrl }: Props) {
   const [platform, setPlatform] = useState<Platform>('desktop')
 
   useEffect(() => {
     setPlatform(detectPlatform())
   }, [])
 
-  const appStoreImg = isMedia(appStoreBadge) ? appStoreBadge : null
-  const playStoreImg = isMedia(playStoreBadge) ? playStoreBadge : null
+  if (!appStoreUrl && !playStoreUrl) return null
 
-  if ((!appStoreUrl || !appStoreImg) && (!playStoreUrl || !playStoreImg)) return null
-
-  const showApple = platform !== 'android' && appStoreUrl && appStoreImg
-  const showPlay = platform !== 'ios' && playStoreUrl && playStoreImg
+  const showApple = platform !== 'android' && appStoreUrl
+  const showPlay = platform !== 'ios' && playStoreUrl
 
   return (
     <div className="app-store-buttons">
       {showApple && (
         <a href={appStoreUrl!} target="_blank" rel="noopener noreferrer">
           <img
-            src={appStoreImg!.url ?? undefined}
-            alt={appStoreImg!.alt}
+            src="/app-store-badge-nl.svg"
+            alt="Download in de App Store"
             className="app-store-badge"
           />
         </a>
@@ -58,8 +43,8 @@ export default function AppStoreButtonsBlockComponent({
       {showPlay && (
         <a href={playStoreUrl!} target="_blank" rel="noopener noreferrer">
           <img
-            src={playStoreImg!.url ?? undefined}
-            alt={playStoreImg!.alt}
+            src="/google-play-badge-nl.png"
+            alt="Beschikbaar op Google Play"
             className="app-store-badge"
           />
         </a>

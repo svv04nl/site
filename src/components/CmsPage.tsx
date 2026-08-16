@@ -88,8 +88,6 @@ const jsxConverters: JSXConvertersFunction = (args) => ({
       <AppStoreButtonsBlockComponent
         appStoreUrl={node.fields.appStoreUrl}
         playStoreUrl={node.fields.playStoreUrl}
-        appStoreBadge={node.fields.appStoreBadge}
-        playStoreBadge={node.fields.playStoreBadge}
       />
     ),
     addressBlock: ({ node }: { node: any }) => (
