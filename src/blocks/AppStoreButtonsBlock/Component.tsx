@@ -34,7 +34,7 @@ export default function AppStoreButtonsBlockComponent({ appStoreUrl, playStoreUr
       {showApple && (
         <a href={appStoreUrl!} target="_blank" rel="noopener noreferrer">
           <img
-            src="/app-store-badge-nl.svg"
+            src="/images/app-store-badge-nl.svg"
             alt="Download in de App Store"
             className="app-store-badge"
           />
@@ -43,7 +43,7 @@ export default function AppStoreButtonsBlockComponent({ appStoreUrl, playStoreUr
       {showPlay && (
         <a href={playStoreUrl!} target="_blank" rel="noopener noreferrer">
           <img
-            src="/google-play-badge-nl.png"
+            src="/images/google-play-badge-nl.png"
             alt="Beschikbaar op Google Play"
             className="app-store-badge"
           />
