@@ -37,15 +37,19 @@
 }
 
 .wedstrijd-header-logo {
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   object-fit: contain;
 
+  @media (min-width: $breakpoint-tablet-landscape) {
+    width: 120px;
+    height: 120px;
+  }
 }
 
 .wedstrijd-header-name {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -87,6 +91,40 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 0.3rem 0.9rem;
+}
+
+.wedstrijd-header-field {
+  font-size: 0.95rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wedstrijd-header-divider {
+  grid-column: 1 / -1;
+  border-top: 1px solid #f0f0f0;
+  margin: 0.25rem 0;
+}
+
+.wedstrijd-header-kleedkamer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  min-height: 2.5em;
+}
+
+.wedstrijd-header-kleedkamer-label {
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wedstrijd-header-kleedkamer-value {
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .wedstrijd-header-info {
@@ -171,6 +209,14 @@
   color: #aaa;
 }
 
+// Opmerkingen
+
+.wedstrijd-opmerkingen {
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  white-space: pre-line;
+}
+
 // Officials
 
 .wedstrijd-officials {
@@ -211,7 +257,7 @@
   }
 
   .wedstrijd-header-name {
-    font-size: 0.875rem;
+    font-size: 1rem;
   }
 
   .wedstrijd-header-score {
