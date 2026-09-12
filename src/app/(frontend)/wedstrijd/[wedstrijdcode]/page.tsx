@@ -11,7 +11,6 @@ import ClubLogo from '@/components/ClubLogo'
 import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
-import { SectionHeader } from '@/components/ui/SectionHeader'
 
 function parseDateStr(s: string): Date | null {
   if (!s) return null
@@ -50,6 +49,7 @@ export default function WedstrijdDetailPage() {
   const accommodatie = detailQuery.data?.accommodatie
   const matchofficials = detailQuery.data?.matchofficials
   const officials = detailQuery.data?.officials
+  const kleedkamers = detailQuery.data?.kleedkamers
   const thuisteamData = detailQuery.data?.thuisteam
   const uitteamData = detailQuery.data?.uitteam
   const homePlayers = thuisteamQuery.data ?? []
@@ -79,8 +79,6 @@ export default function WedstrijdDetailPage() {
       />
 
       <div className="page-inner">
-        <SectionHeader as="h1" title={pageTitle} />
-
         {isLoading && (
           <div className="schedule-loading" aria-label="Laden…">
             <span className="schedule-spinner" />
@@ -140,6 +138,7 @@ export default function WedstrijdDetailPage() {
                   ) : (
                     <div className="wedstrijd-header-time">{info.aanvangstijdopgemaakt}</div>
                   )}
+                  {info.veldnaam && <div className="wedstrijd-header-field">{info.veldnaam}</div>}
                 </div>
 
                 <div className="wedstrijd-header-club">
@@ -154,6 +153,33 @@ export default function WedstrijdDetailPage() {
                     {info.uitteam}
                   </span>
                 </div>
+
+                {(kleedkamers?.thuis || kleedkamers?.uit) && (
+                  <>
+                    <div className="wedstrijd-header-divider" />
+                    <div className="wedstrijd-header-kleedkamer">
+                      {kleedkamers?.thuis && (
+                        <>
+                          <span className="wedstrijd-header-kleedkamer-label">Kleedkamer</span>
+                          <span className="wedstrijd-header-kleedkamer-value">
+                            {kleedkamers.thuis}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div />
+                    <div className="wedstrijd-header-kleedkamer">
+                      {kleedkamers?.uit && (
+                        <>
+                          <span className="wedstrijd-header-kleedkamer-label">Kleedkamer</span>
+                          <span className="wedstrijd-header-kleedkamer-value">
+                            {kleedkamers.uit}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="wedstrijd-header-info">
@@ -171,6 +197,27 @@ export default function WedstrijdDetailPage() {
                   ))}
               </div>
             </div>
+
+            {/* Opmerkingen */}
+            {info.opmerkingen && (
+              <section className="wedstrijd-section">
+                <h2 className="wedstrijd-section-title">Opmerkingen</h2>
+                <div className="card wedstrijd-opmerkingen">{info.opmerkingen}</div>
+              </section>
+            )}
+
+            {/* Kleedkamer scheidsrechter */}
+            {kleedkamers?.official && (
+              <section className="wedstrijd-section">
+                <h2 className="wedstrijd-section-title">Kleedkamers</h2>
+                <div className="wedstrijd-officials card">
+                  <div className="wedstrijd-official-row">
+                    <span className="wedstrijd-official-label">Scheidsrechter</span>
+                    <span className="wedstrijd-official-value">{kleedkamers.official}</span>
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Officials */}
             {(() => {
