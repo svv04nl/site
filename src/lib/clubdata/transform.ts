@@ -47,6 +47,11 @@ function formatDisplayDate(d: Date): string {
   return format(d, 'EEE d MMMM', { locale: nl })
 }
 
+function formatDayLabel(d: Date): string {
+  const label = format(d, 'EEEE d MMMM yyyy', { locale: nl })
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
 // ─── Next match ───────────────────────────────────────────────────────────────
 
 export function transformNextMatch(raw: RawProgrammaResponse, teamcode: number): MatchData | null {
@@ -155,12 +160,19 @@ export type ScheduleMatch = {
   isOwnAway: boolean
   isOwn: boolean
   weekKey: string // "YYYY-MM-DD" Monday of the week
+  dayKey: string // "YYYY-MM-DD"
+}
+
+export type ScheduleDayGroup = {
+  dayKey: string
+  label: string // e.g. "Zondag 10 september 2026"
+  matches: ScheduleMatch[]
 }
 
 export type ScheduleWeekGroup = {
   weekKey: string
   label: string
-  matches: ScheduleMatch[]
+  days: ScheduleDayGroup[]
 }
 
 export function transformSchedule(
@@ -182,6 +194,7 @@ export function transformSchedule(
     // poule-programma uses `datum` as the date field; programma uses `wedstrijddatum`
     const date = parseDateStr(w.wedstrijddatum) ?? parseDateStr(w.datum)
     const weekKey = date ? getMondayKey(date) : 'unknown'
+    const dayKey = date ? format(date, 'yyyy-MM-dd') : 'unknown'
     const displayDate = date ? formatDisplayDate(date) : w.datum || ''
 
     const homeRelatiecode = w.thuisteamclubrelatiecode || undefined
@@ -201,13 +214,29 @@ export function transformSchedule(
       isOwnAway,
       isOwn,
       weekKey,
+      dayKey,
     }
   })
 }
 
+function groupMatchesByDay(matches: ScheduleMatch[]): ScheduleDayGroup[] {
+  const map = new Map<string, ScheduleMatch[]>()
+
+  for (const m of matches) {
+    if (!map.has(m.dayKey)) map.set(m.dayKey, [])
+    map.get(m.dayKey)!.push(m)
+  }
+
+  return Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([dayKey, dMatches]) => ({
+      dayKey,
+      label: dayKey === 'unknown' ? '' : formatDayLabel(parse(dayKey, 'yyyy-MM-dd', new Date())),
+      matches: dMatches,
+    }))
+}
+
 export function groupScheduleByWeek(matches: ScheduleMatch[]): ScheduleWeekGroup[] {
-  const thisWeek = getMondayKey(new Date())
-  const nextWeek = format(addDays(parse(thisWeek, 'yyyy-MM-dd', new Date()), 7), 'yyyy-MM-dd')
   const map = new Map<string, ScheduleMatch[]>()
 
   for (const m of matches) {
@@ -219,14 +248,29 @@ export function groupScheduleByWeek(matches: ScheduleMatch[]): ScheduleWeekGroup
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([weekKey, wMatches]) => ({
       weekKey,
-      label:
-        weekKey === thisWeek
-          ? 'Deze week'
-          : weekKey === nextWeek
-            ? 'Volgende week'
-            : `Week ${getISOWeek(parse(weekKey, 'yyyy-MM-dd', new Date()))}`,
-      matches: wMatches,
+      label: `Week ${getISOWeek(parse(weekKey, 'yyyy-MM-dd', new Date()))}`,
+      days: groupMatchesByDay(wMatches),
     }))
+}
+
+export type ScheduleRange = 'vandaag' | 'deze-week' | 'volgende-week'
+
+export function filterScheduleByRange(
+  matches: ScheduleMatch[],
+  range: ScheduleRange,
+): ScheduleMatch[] {
+  if (range === 'vandaag') {
+    const todayKey = format(new Date(), 'yyyy-MM-dd')
+    return matches.filter((m) => m.dayKey === todayKey)
+  }
+
+  const thisWeekKey = getMondayKey(new Date())
+  if (range === 'deze-week') {
+    return matches.filter((m) => m.weekKey === thisWeekKey)
+  }
+
+  const nextWeekKey = format(addDays(parse(thisWeekKey, 'yyyy-MM-dd', new Date()), 7), 'yyyy-MM-dd')
+  return matches.filter((m) => m.weekKey === nextWeekKey)
 }
 
 // ─── Standings (poulestand) ───────────────────────────────────────────────────

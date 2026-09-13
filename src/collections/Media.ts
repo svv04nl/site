@@ -45,7 +45,7 @@ export const Media: CollectionConfig = {
         height: undefined,
         formatOptions: {
           format: 'webp',
-          options: { quality: 80 },
+          options: { quality: 90 },
         },
       },
       {
@@ -55,12 +55,13 @@ export const Media: CollectionConfig = {
         height: undefined,
         formatOptions: {
           format: 'webp',
-          options: { quality: 85 },
+          options: { quality: 90 },
         },
       },
     ],
     adminThumbnail: 'featuredPost',
     focalPoint: true,
+    withMetadata: true,
     resizeOptions: {
       width: 3840,
       withoutEnlargement: true,
