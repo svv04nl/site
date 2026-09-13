@@ -2,18 +2,24 @@
 
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { groupScheduleByWeek } from '@/lib/clubdata/transform'
+import { groupScheduleByWeek, filterScheduleByRange, type ScheduleRange } from '@/lib/clubdata/transform'
 import { clubScheduleQuery } from '@/lib/clubdata/queries'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 
 type Filter = 'thuis' | 'uit' | 'alles'
 
-export default function ClubSchedule() {
+type Props = {
+  range?: ScheduleRange
+  emptyMessage?: string
+}
+
+export default function ClubSchedule({ range, emptyMessage }: Props) {
   const [filter, setFilter] = useState<Filter>('alles')
 
   const { data: matches, isLoading, isError } = useQuery(clubScheduleQuery(filter))
 
-  const weekGroups = groupScheduleByWeek(matches ?? [])
+  const scopedMatches = range ? filterScheduleByRange(matches ?? [], range) : (matches ?? [])
+  const weekGroups = groupScheduleByWeek(scopedMatches)
 
   return (
     <div className="programma-section">
@@ -53,8 +59,9 @@ export default function ClubSchedule() {
         <ScheduleWeekGroups
           weekGroups={weekGroups}
           isLoading={isLoading}
-          emptyMessage="Geen wedstrijden gevonden."
+          emptyMessage={emptyMessage ?? 'Geen wedstrijden gevonden.'}
           tableOnDesktop
+          showWeekLabel={false}
         />
       )}
     </div>

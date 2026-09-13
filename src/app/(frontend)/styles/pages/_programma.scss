@@ -368,10 +368,9 @@
   table-layout: fixed;
   width: 100%;
 
-  col.col-date { width: 150px; }
-  col.col-time { width: 70px; }
-  col.col-home { width: 28%; }
-  col.col-away { width: 28%; }
+  col.col-time { width: 90px; }
+  col.col-home { width: 30%; }
+  col.col-away { width: 30%; }
   col.col-venue { width: auto; }
   col.col-status { width: 100px; }
 
@@ -428,11 +427,6 @@
   font-weight: 700;
 }
 
-.league-schedule-date {
-  color: #555;
-  white-space: nowrap;
-}
-
 .league-schedule-time {
   color: #555;
   font-weight: 600;
@@ -446,6 +440,37 @@
 .league-schedule-status {
   color: #555;
   white-space: nowrap;
+}
+
+.league-schedule-day-row td {
+  background: #f3f3f3 !important;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.65rem 0.75rem;
+  text-transform: uppercase;
+}
+
+.league-day-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 1.25rem 0 0.5rem;
+  text-transform: none;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.league-day-group {
+  & + & {
+    margin-top: 2rem;
+  }
 }
 
 // Lineup table
