@@ -218,7 +218,7 @@
   border-radius: 8px;
   display: flex;
   justify-content: center;
-  min-height: 8rem;
+  min-height: 10rem;
   padding: 1.25rem;
   transition: box-shadow 0.2s ease;
 
@@ -227,7 +227,7 @@
   }
 
   img {
-    max-height: 4.5rem;
+    max-height: 5.5rem;
     max-width: 100%;
     object-fit: contain;
   }
