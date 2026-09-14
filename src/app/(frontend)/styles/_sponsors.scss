@@ -247,13 +247,20 @@
 }
 
 .sponsors-list {
+  column-gap: 3rem;
+  columns: 2;
   list-style: none;
   margin: 2rem 0 0;
   padding: 0;
+
+  @media screen and (max-width: $breakpoint-medium) {
+    columns: 1;
+  }
 }
 
 .sponsors-list-item {
   align-items: baseline;
+  break-inside: avoid;
   border-bottom: 1px solid #eee;
   color: var(--color-dark);
   display: flex;
