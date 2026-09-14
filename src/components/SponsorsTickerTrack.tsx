@@ -44,11 +44,21 @@ export function SponsorsTickerTrack({ logos }: { logos: Logo[] }) {
     </div>
   )
 
+  // Duration scales with the number of logos so the scroll speed (px/sec)
+  // stays roughly constant regardless of how many sponsors are in the CMS —
+  // otherwise a fixed duration makes the ticker race by as sponsors are added.
+  const duration = Math.min(90, Math.max(20, order.length * 2.7))
+
   return (
     <div className="sponsors-ticker">
       <div
         className="sponsors-ticker-track"
-        style={{ '--sponsors-copies': COPIES } as React.CSSProperties}
+        style={
+          {
+            '--sponsors-copies': COPIES,
+            '--sponsors-duration': `${duration}s`,
+          } as React.CSSProperties
+        }
       >
         {Array.from({ length: COPIES }, (_, copy) => (
           <React.Fragment key={copy}>{row(copy)}</React.Fragment>

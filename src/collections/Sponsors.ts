@@ -23,7 +23,9 @@ export const Sponsors: CollectionConfig = {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',
-      required: true,
+      admin: {
+        description: 'Leeg laten als er nog geen logo is aangeleverd — de sponsor wordt dan overgeslagen in de ticker.',
+      },
     },
     {
       name: 'url',

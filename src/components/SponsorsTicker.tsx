@@ -8,6 +8,7 @@ export async function SponsorsTicker() {
 
   const { docs: sponsors } = await payload.find({
     collection: 'sponsors',
+    where: { logo: { exists: true } },
     depth: 1,
     limit: 100,
   })

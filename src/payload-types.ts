@@ -327,7 +327,10 @@ export interface Team {
 export interface Sponsor {
   id: number;
   name: string;
-  logo: number | Media;
+  /**
+   * Leeg laten als er nog geen logo is aangeleverd — de sponsor wordt dan overgeslagen in de ticker.
+   */
+  logo?: (number | null) | Media;
   /**
    * Website URL of the sponsor.
    */
