@@ -21,8 +21,9 @@
 
 .sponsors-ticker-track {
   --sponsors-copies: 4;
+  --sponsors-duration: 32s;
 
-  animation: marquee 32s linear infinite;
+  animation: marquee var(--sponsors-duration) linear infinite;
   display: flex;
   width: max-content;
 
