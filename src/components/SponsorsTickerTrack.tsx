@@ -47,7 +47,7 @@ export function SponsorsTickerTrack({ logos }: { logos: Logo[] }) {
   // Duration scales with the number of logos so the scroll speed (px/sec)
   // stays roughly constant regardless of how many sponsors are in the CMS —
   // otherwise a fixed duration makes the ticker race by as sponsors are added.
-  const duration = Math.min(90, Math.max(20, order.length * 2.7))
+  const duration = Math.min(160, Math.max(20, order.length * 3.5))
 
   return (
     <div className="sponsors-ticker">
