@@ -5,9 +5,9 @@ import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { SponsorsOverview } from '@/components/SponsorsOverview'
 
-export const metadata = { title: "SVV'04 - Sponsoren" }
+export const metadata = { title: "SVV'04 - Sponsors" }
 
-export default async function SponsorenPage() {
+export default async function SponsorsPage() {
   const payload = await getPayload({ config })
 
   const { docs: sponsors } = await payload.find({
@@ -19,10 +19,10 @@ export default async function SponsorenPage() {
 
   return (
     <main className="page">
-      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Sponsoren' }]} />
+      <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Sponsors' }]} />
 
       <div className="page-inner">
-        <SectionHeader as="h1" title="Sponsoren" />
+        <SectionHeader as="h1" title="Sponsors" />
 
         <SponsorsOverview sponsors={sponsors} />
       </div>
