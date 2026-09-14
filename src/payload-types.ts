@@ -328,7 +328,7 @@ export interface Sponsor {
   id: number;
   name: string;
   /**
-   * Leeg laten als er nog geen logo is aangeleverd — de sponsor wordt dan overgeslagen in de ticker.
+   * Leeg laten als er nog geen logo is aangeleverd. Let op: een logo alleen is niet genoeg om in de ticker te verschijnen — dat vereist ook "Website sponsor" hieronder.
    */
   logo?: (number | null) | Media;
   /**
@@ -336,7 +336,11 @@ export interface Sponsor {
    */
   url?: string | null;
   /**
-   * Bepaalt de plek op de site. main/sub/youth verschijnen in de sponsor-sidebar op de homepage; alle sponsors verschijnen in de ticker.
+   * Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /sponsors, ook als ze wel een logo hebben.
+   */
+  websiteSponsor?: boolean | null;
+  /**
+   * Bepaalt de plek op de site. main/sub/youth verschijnen in de sponsor-sidebar op de homepage.
    */
   tier?: ('main' | 'sub' | 'youth' | 'regular') | null;
   updatedAt: string;
@@ -765,6 +769,7 @@ export interface SponsorsSelect<T extends boolean = true> {
   name?: T;
   logo?: T;
   url?: T;
+  websiteSponsor?: T;
   tier?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -34,7 +34,7 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
   const rest = sponsors.filter((s) => s.tier !== 'main' && s.tier !== 'youth')
 
   const withLogo = rest
-    .filter((s) => (s.logo as Media | null | undefined)?.url)
+    .filter((s) => s.websiteSponsor && (s.logo as Media | null | undefined)?.url)
     .map((s) => ({
       id: s.id,
       name: s.name,
@@ -43,7 +43,7 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
     }))
 
   const withoutLogo = rest
-    .filter((s) => !(s.logo as Media | null | undefined)?.url)
+    .filter((s) => !(s.websiteSponsor && (s.logo as Media | null | undefined)?.url))
     .sort((a, b) => a.name.localeCompare(b.name, 'nl'))
 
   if (sponsors.length === 0) {

@@ -4,6 +4,7 @@ import * as migration_20260814_141114_normalize_youth_team_names from './2026081
 import * as migration_20260816_123006_add_messages_contacts_pages from './20260816_123006_add_messages_contacts_pages';
 import * as migration_20260913_074545 from './20260913_074545';
 import * as migration_20260914_060139 from './20260914_060139';
+import * as migration_20260914_174545 from './20260914_174545';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20260914_060139.up,
     down: migration_20260914_060139.down,
-    name: '20260914_060139'
+    name: '20260914_060139',
+  },
+  {
+    up: migration_20260914_174545.up,
+    down: migration_20260914_174545.down,
+    name: '20260914_174545'
   },
 ];
