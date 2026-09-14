@@ -299,9 +299,9 @@ export interface Team {
   teamcode?: number | null;
   photo?: (number | null) | Media;
   /**
-   * Teamsponsor (Payload sponsor item)
+   * Teamsponsor(en) (Payload sponsor items) — meestal 1, soms 2 bij een gedeelde tenuedeal.
    */
-  sponsor?: (number | null) | Sponsor;
+  sponsors?: (number | Sponsor)[] | null;
   description?: {
     root: {
       type: string;
@@ -756,7 +756,7 @@ export interface TeamsSelect<T extends boolean = true> {
   order?: T;
   teamcode?: T;
   photo?: T;
-  sponsor?: T;
+  sponsors?: T;
   description?: T;
   updatedAt?: T;
   createdAt?: T;
