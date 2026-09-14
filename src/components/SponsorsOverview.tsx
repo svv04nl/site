@@ -30,14 +30,21 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
   const featured = sponsors
     .filter((s) => TIER_ORDER.includes(s.tier ?? ''))
     .sort((a, b) => TIER_ORDER.indexOf(a.tier ?? '') - TIER_ORDER.indexOf(b.tier ?? ''))
-  const rest = sponsors
-    .filter((s) => s.tier !== 'main' && s.tier !== 'youth')
+
+  const rest = sponsors.filter((s) => s.tier !== 'main' && s.tier !== 'youth')
+
+  const withLogo = rest
+    .filter((s) => (s.logo as Media | null | undefined)?.url)
     .map((s) => ({
       id: s.id,
       name: s.name,
       url: s.url,
-      logoUrl: (s.logo as Media | null | undefined)?.url,
+      logoUrl: (s.logo as Media).url as string,
     }))
+
+  const withoutLogo = rest
+    .filter((s) => !(s.logo as Media | null | undefined)?.url)
+    .sort((a, b) => a.name.localeCompare(b.name, 'nl'))
 
   if (sponsors.length === 0) {
     return <p className="news-empty">Geen sponsors gevonden.</p>
@@ -63,7 +70,31 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
         </div>
       )}
 
-      {rest.length > 0 && <SponsorsGrid sponsors={rest} />}
+      {withLogo.length > 0 && (
+        <>
+          <h2 className="sponsors-section-title">Website sponsoren</h2>
+          <SponsorsGrid sponsors={withLogo} />
+        </>
+      )}
+
+      {withoutLogo.length > 0 && (
+        <>
+          <h2 className="sponsors-section-title">Overige sponsoren</h2>
+          <ul className="sponsors-list">
+            {withoutLogo.map((sponsor) => (
+              <li key={sponsor.id} className="sponsors-list-item">
+                {sponsor.url ? (
+                  <a href={sponsor.url} target="_blank" rel="noopener noreferrer">
+                    {sponsor.name}
+                  </a>
+                ) : (
+                  sponsor.name
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </>
   )
 }

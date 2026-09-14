@@ -138,11 +138,24 @@
 
 // ─── Sponsors overview page ───────────────────────────────────────────────────
 
+.sponsors-section-title {
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1.25rem;
+  padding-bottom: 0.5rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
 .sponsors-featured {
   display: grid;
   gap: 1.25rem;
   grid-template-columns: repeat(2, 1fr);
-  margin-bottom: 2.5rem;
 
   @media screen and (max-width: $breakpoint-medium) {
     grid-template-columns: 1fr;
@@ -233,10 +246,36 @@
   }
 }
 
-.sponsors-grid-name {
+.sponsors-list {
+  column-gap: 2rem;
+  columns: 3;
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+
+  @media screen and (max-width: $breakpoint-tablet-landscape) {
+    columns: 2;
+  }
+
+  @media screen and (max-width: $breakpoint-mobile) {
+    columns: 1;
+  }
+}
+
+.sponsors-list-item {
+  break-inside: avoid;
+  border-bottom: 1px solid #eee;
   color: var(--color-dark);
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-align: center;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+  }
 }

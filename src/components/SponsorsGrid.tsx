@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-type GridSponsor = { id: string | number; name: string; url?: string | null; logoUrl?: string | null }
+type GridSponsor = { id: string | number; name: string; url?: string | null; logoUrl: string }
 
 function shuffle(items: GridSponsor[]): GridSponsor[] {
   const result = [...items]
@@ -34,19 +34,11 @@ export function SponsorsGrid({ sponsors }: { sponsors: GridSponsor[] }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            {sponsor.logoUrl ? (
-              <img src={sponsor.logoUrl} alt={sponsor.name} />
-            ) : (
-              <span className="sponsors-grid-name">{sponsor.name}</span>
-            )}
+            <img src={sponsor.logoUrl} alt={sponsor.name} />
           </a>
         ) : (
           <div key={sponsor.id} className="sponsors-grid-card">
-            {sponsor.logoUrl ? (
-              <img src={sponsor.logoUrl} alt={sponsor.name} />
-            ) : (
-              <span className="sponsors-grid-name">{sponsor.name}</span>
-            )}
+            <img src={sponsor.logoUrl} alt={sponsor.name} />
           </div>
         ),
       )}
