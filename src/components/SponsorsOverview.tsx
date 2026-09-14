@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Media, Sponsor } from '@/payload-types'
+import { SponsorsGrid } from '@/components/SponsorsGrid'
 
 const TIER_LABEL: Record<string, string> = {
   main: 'Hoofdsponsor',
@@ -31,10 +32,15 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
     .sort((a, b) => TIER_ORDER.indexOf(a.tier ?? '') - TIER_ORDER.indexOf(b.tier ?? ''))
   const rest = sponsors
     .filter((s) => s.tier !== 'main' && s.tier !== 'youth')
-    .sort((a, b) => a.name.localeCompare(b.name, 'nl'))
+    .map((s) => ({
+      id: s.id,
+      name: s.name,
+      url: s.url,
+      logoUrl: (s.logo as Media | null | undefined)?.url,
+    }))
 
   if (sponsors.length === 0) {
-    return <p className="news-empty">Geen sponsoren gevonden.</p>
+    return <p className="news-empty">Geen sponsors gevonden.</p>
   }
 
   return (
@@ -46,32 +52,18 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
             return (
               <SponsorLink key={sponsor.id} sponsor={sponsor} className="sponsors-featured-card">
                 <span className="sponsors-featured-label">{TIER_LABEL[sponsor.tier ?? '']}</span>
-                <span className="sponsors-featured-logo">
-                  {logo?.url && <img src={logo.url} alt={sponsor.name} />}
+                <span className="sponsors-featured-body">
+                  <span className="sponsors-featured-logo">
+                    {logo?.url && <img src={logo.url} alt={sponsor.name} />}
+                  </span>
                 </span>
-                <span className="sponsors-featured-name">{sponsor.name}</span>
               </SponsorLink>
             )
           })}
         </div>
       )}
 
-      {rest.length > 0 && (
-        <div className="sponsors-grid">
-          {rest.map((sponsor) => {
-            const logo = sponsor.logo as Media | null | undefined
-            return (
-              <SponsorLink key={sponsor.id} sponsor={sponsor} className="sponsors-grid-card">
-                {logo?.url ? (
-                  <img src={logo.url} alt={sponsor.name} />
-                ) : (
-                  <span className="sponsors-grid-name">{sponsor.name}</span>
-                )}
-              </SponsorLink>
-            )
-          })}
-        </div>
-      )}
+      {rest.length > 0 && <SponsorsGrid sponsors={rest} />}
     </>
   )
 }
