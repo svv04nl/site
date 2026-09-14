@@ -85,11 +85,12 @@ export const Teams: CollectionConfig = {
       relationTo: 'media',
     },
     {
-      name: 'sponsor',
+      name: 'sponsors',
       type: 'relationship',
       relationTo: 'sponsors',
+      hasMany: true,
       admin: {
-        description: 'Teamsponsor (Payload sponsor item)',
+        description: 'Teamsponsor(en) (Payload sponsor items) — meestal 1, soms 2 bij een gedeelde tenuedeal.',
       },
     },
     {
