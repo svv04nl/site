@@ -41,7 +41,7 @@ export default function TeamSponsorSection({ sponsors }: Props) {
 
   return (
     <div className="sidebar-section">
-      <h2 className="sidebar-section-title">Team sponsor</h2>
+      <h2 className="sidebar-section-title">Tenue sponsor</h2>
       <div className="card-sponsor card">{content}</div>
     </div>
   )
