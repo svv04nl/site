@@ -16,6 +16,8 @@
   border-top: 1px solid #ececec;
   overflow: hidden;
   padding-bottom: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   padding-top: 2rem;
 }
 
@@ -132,4 +134,110 @@
 .team-sponsor-link {
   display: block;
   width: 100%;
+}
+
+// ─── Sponsoren overview page ──────────────────────────────────────────────────
+
+.sponsors-featured {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  margin-bottom: 2.5rem;
+
+  @media screen and (max-width: $breakpoint-medium) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sponsors-featured-card {
+  align-items: center;
+  background: var(--color-white);
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.sponsors-featured-label {
+  background: var(--color-dark);
+  border-radius: 3px;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.85rem;
+  text-transform: uppercase;
+}
+
+.sponsors-featured-logo {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 5rem;
+
+  img {
+    max-height: 5rem;
+    max-width: 100%;
+    object-fit: contain;
+  }
+}
+
+.sponsors-featured-name {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sponsors-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+
+  @media screen and (max-width: $breakpoint-tablet-landscape) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (max-width: $breakpoint-medium) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sponsors-grid-card {
+  align-items: center;
+  background: var(--color-white);
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  min-height: 6rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  }
+
+  img {
+    max-height: 3.5rem;
+    max-width: 100%;
+    object-fit: contain;
+  }
+}
+
+.sponsors-grid-name {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
 }
