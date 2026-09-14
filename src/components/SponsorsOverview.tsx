@@ -83,12 +83,16 @@ export function SponsorsOverview({ sponsors }: { sponsors: Sponsor[] }) {
           <ul className="sponsors-list">
             {withoutLogo.map((sponsor) => (
               <li key={sponsor.id} className="sponsors-list-item">
-                {sponsor.url ? (
-                  <a href={sponsor.url} target="_blank" rel="noopener noreferrer">
-                    {sponsor.name}
+                <span className="sponsors-list-name">{sponsor.name}</span>
+                {sponsor.url && (
+                  <a
+                    className="sponsors-list-link"
+                    href={sponsor.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {sponsor.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
                   </a>
-                ) : (
-                  sponsor.name
                 )}
               </li>
             ))}
