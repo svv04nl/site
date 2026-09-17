@@ -49,6 +49,10 @@ const csp = [
 
 const nextConfig: NextConfig = {
   productionBrowserSourceMaps: true,
+  // Allows the dev server (HMR, RSC requests) to be reached through a
+  // Cloudflare quick tunnel for testing on a phone/other device. The
+  // subdomain is random per tunnel run, hence the wildcard.
+  allowedDevOrigins: isDev ? ['*.trycloudflare.com'] : undefined,
   async redirects() {
     return [
       { source: '/senioren', destination: '/teams', permanent: true },
