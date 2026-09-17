@@ -155,6 +155,8 @@ export type ScheduleMatch = {
   awayTeam: string
   awayTeamRelatiecode?: string
   venue: string
+  venuePlaats: string
+  competitie: string
   status: string
   isOwnHome: boolean
   isOwnAway: boolean
@@ -209,6 +211,8 @@ export function transformSchedule(
       awayTeam: w.uitteam,
       awayTeamRelatiecode: awayRelatiecode,
       venue: w.accommodatie,
+      venuePlaats: w.plaats,
+      competitie: w.competitie,
       status: w.status,
       isOwnHome,
       isOwnAway,
