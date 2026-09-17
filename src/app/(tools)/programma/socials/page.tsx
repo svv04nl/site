@@ -48,6 +48,32 @@ export default function ProgrammaSocialsPage() {
 
   const { width, height } = POSTER_DIMENSIONS[format]
 
+  async function handleShare(image: GalleryImage) {
+    const filename = `svv04-programma-${image.dayKey}-deel${image.page}-${format}.png`
+
+    try {
+      const response = await fetch(image.url)
+      const blob = await response.blob()
+      const file = new File([blob], filename, { type: 'image/png' })
+
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file] })
+        return
+      }
+    } catch {
+      // User cancelled the share sheet, or sharing failed — don't fall back
+      // to a surprise download in that case.
+      return
+    }
+
+    // Web Share API with files isn't supported here (most desktop browsers)
+    // — fall back to a normal file download.
+    const a = document.createElement('a')
+    a.href = image.url
+    a.download = filename
+    a.click()
+  }
+
   return (
     <main className="page">
       <div className="page-inner">
@@ -137,22 +163,23 @@ export default function ProgrammaSocialsPage() {
                     />
                   </a>
 
-                  <a
-                    href={image.url}
-                    download={`svv04-programma-${image.dayKey}-deel${image.page}-${format}.png`}
+                  <button
+                    type="button"
+                    onClick={() => handleShare(image)}
                     className="league-filter-btn is-active"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      textDecoration: 'none',
                       border: '1px solid var(--color-dark)',
                       borderRadius: '6px',
-                      height: '2.125rem',
+                      height: '3rem',
+                      fontSize: '1.05rem',
+                      fontWeight: 700,
                     }}
                   >
-                    Download als PNG
-                  </a>
+                    Delen
+                  </button>
                 </div>
               ))}
             </div>
