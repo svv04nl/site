@@ -1,8 +1,7 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import { ImageResponse } from 'next/og'
 import { loadGoogleFont } from '@/lib/og/fonts'
 import { getWeekMatches, getDayOptions, pickDefaultDay, getScheduleForDay } from '../data'
+import { getClubLogoDataUri } from '../logos'
 import {
   Poster,
   POSTER_DIMENSIONS,
@@ -12,16 +11,6 @@ import {
 } from '../Poster'
 
 export const dynamic = 'force-dynamic'
-
-let cachedLogoDataUri: string | null = null
-
-function getLogoDataUri() {
-  if (cachedLogoDataUri) return cachedLogoDataUri
-  const filePath = path.join(process.cwd(), 'public', 'svv04-logo.png')
-  const buffer = fs.readFileSync(filePath)
-  cachedLogoDataUri = `data:image/png;base64,${buffer.toString('base64')}`
-  return cachedLogoDataUri
-}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -57,7 +46,7 @@ export async function GET(request: Request) {
     <Poster
       schedule={pageSchedule}
       format={posterFormat}
-      logoDataUri={getLogoDataUri()}
+      logoDataUri={getClubLogoDataUri()}
       bigStyle={bigStyle}
     />,
     {

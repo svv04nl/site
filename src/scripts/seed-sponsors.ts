@@ -29,15 +29,9 @@ type SponsorSeed = {
   mimetype: string
 }
 
-const SPONSORS: SponsorSeed[] = [
-  {
-    name: 'DNN-Groep',
-    tier: 'youth',
-    url: 'https://dnn.nl',
-    logo: 'sponsors/logo-dnn-groep.webp',
-    mimetype: 'image/webp',
-  },
-]
+// DNN-Groep was the last pending entry here — already seeded (logo on
+// Vercel Blob). Add new sponsors below as they come in.
+const SPONSORS: SponsorSeed[] = []
 
 async function main() {
   const payload = await getPayload({ config })

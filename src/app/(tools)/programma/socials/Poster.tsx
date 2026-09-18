@@ -1,4 +1,4 @@
-import type { SocialSchedule, SocialTeamGroup } from './data'
+import type { SocialSchedule, SocialTeamGroup, SocialTournamentTeam } from './data'
 
 export type PosterFormat = 'story' | 'post'
 
@@ -24,6 +24,9 @@ function clamp(value: number, min: number, max: number) {
 // The venue label is a plain text line above the white block (not a filled
 // header bar attached to it), so it costs far less height than a card header.
 const GROUP_LABEL_PX = 46
+// Extra height for groups that show a distinct venue line below their
+// heading (e.g. "Thuiswedstrijden" + "Sportpark de Kampen, Schoonebeek").
+const GROUP_VENUE_LINE_PX = 32
 const CARD_ROW_PX = 116
 // A quiet day (few matches total) has plenty of room, so rows switch to a
 // bigger, centered "match card" style (logo above name, both sides) instead
@@ -38,12 +41,38 @@ const CONTENT_TOP_PAD_PX = 20
 // page. 0.75 let a busy single day cram down to a noticeably small scale
 // instead of just splitting — raised so it reaches for another page sooner.
 const MIN_SCALE = 0.85
-const HEADER_HEIGHT: Record<PosterFormat, number> = { story: 440, post: 300 }
+const HEADER_HEIGHT: Record<PosterFormat, number> = { story: 440, post: 380 }
 const FOOTER_HEIGHT = 80
 const OUTER_PADDING: Record<PosterFormat, number> = { story: 64, post: 48 }
+// Extra breathing room above the club logo, scaled per format — post's
+// header box is much shorter than story's, so a flat pixel value that fits
+// story would overflow post's (fixed via a matching HEADER_HEIGHT.post bump
+// above).
+const HEADER_TOP_PAD: Record<PosterFormat, number> = { story: 104, post: 90 }
+
+// Pixel heights (at scale 1) for the 7x7 tournament poster's two-column team
+// cards — a team-name pill, a venue line, then one row per opponent.
+const TOURNAMENT_HEADER_PX = 64
+const TOURNAMENT_VENUE_PX = 34
+const TOURNAMENT_ROW_PX = 78
+// Single gap used for both grid directions — satori's `gap` shorthand sets
+// row-gap and column-gap together, so the column-width math below must use
+// the same constant as the rendered gap to stay in sync.
+const TOURNAMENT_GRID_GAP_PX = 32
+// This poster has no multi-page fallback (unlike paginateTeamGroups), so its
+// scale floor is much lower than MIN_SCALE — a busy evening with several own
+// teams must still shrink to fit one image rather than overlap the header.
+const TOURNAMENT_MIN_SCALE = 0.5
 
 function totalMatchCount(groups: SocialTeamGroup[]) {
   return groups.reduce((sum, g) => sum + g.rows.length, 0)
+}
+
+/** Height (at scale 1) of one group's heading — two lines for groups with a
+ * distinct venue line (e.g. Thuiswedstrijden), one line otherwise. */
+function groupLabelHeight1x(group: SocialTeamGroup) {
+  const hasDistinctVenueLine = Boolean(group.venue) && group.venue !== group.label
+  return hasDistinctVenueLine ? GROUP_LABEL_PX + GROUP_VENUE_LINE_PX : GROUP_LABEL_PX
 }
 
 /** Height (at scale 1) of the stacked venue groups (label + white block). */
@@ -52,7 +81,10 @@ function contentHeight1x(
   rowPx: number = CARD_ROW_PX,
   gapPx: number = CARD_GAP_PX,
 ) {
-  const cardsHeight = groups.reduce((sum, g) => sum + GROUP_LABEL_PX + g.rows.length * rowPx, 0)
+  const cardsHeight = groups.reduce(
+    (sum, g) => sum + groupLabelHeight1x(g) + g.rows.length * rowPx,
+    0,
+  )
   const gaps = Math.max(0, groups.length - 1) * gapPx
   return cardsHeight + gaps + CONTENT_TOP_PAD_PX
 }
@@ -60,6 +92,24 @@ function contentHeight1x(
 function contentBudget(format: PosterFormat) {
   const { height } = POSTER_DIMENSIONS[format]
   return height - HEADER_HEIGHT[format] - FOOTER_HEIGHT - OUTER_PADDING[format]
+}
+
+/** Height (at scale 1) of one team card: name pill + venue line + its rows. */
+function tournamentCardHeight1x(team: SocialTournamentTeam) {
+  return TOURNAMENT_HEADER_PX + TOURNAMENT_VENUE_PX + team.rows.length * TOURNAMENT_ROW_PX
+}
+
+/** Height (at scale 1) of the full two-column team grid — teams render two
+ * per row in list order, so each grid row's height is its taller card. */
+function tournamentContentHeight1x(teams: SocialTournamentTeam[]) {
+  let total = CONTENT_TOP_PAD_PX
+  for (let i = 0; i < teams.length; i += 2) {
+    const left = tournamentCardHeight1x(teams[i])
+    const right = teams[i + 1] ? tournamentCardHeight1x(teams[i + 1]) : 0
+    total += Math.max(left, right)
+    if (i + 2 < teams.length) total += TOURNAMENT_GRID_GAP_PX
+  }
+  return total
 }
 
 /**
@@ -109,12 +159,11 @@ export function paginateTeamGroups(
   const heightOf = (start: number, end: number) => {
     const gStart = rowGroup[start]
     const gEnd = rowGroup[end - 1]
+    let labelHeight = 0
+    for (let g = gStart; g <= gEnd; g++) labelHeight += groupLabelHeight1x(teamGroups[g])
     const touchedGroups = gEnd - gStart + 1
     return (
-      touchedGroups * GROUP_LABEL_PX +
-      (end - start) * rowPx +
-      (touchedGroups - 1) * gapPx +
-      CONTENT_TOP_PAD_PX
+      labelHeight + (end - start) * rowPx + (touchedGroups - 1) * gapPx + CONTENT_TOP_PAD_PX
     )
   }
 
@@ -122,7 +171,7 @@ export function paginateTeamGroups(
   // or if the group it would cut into doesn't fit on a page by itself anyway
   // (so splitting it is the only way to fit it at all).
   const groupWholeHeight = (g: number) =>
-    GROUP_LABEL_PX + teamGroups[g].rows.length * rowPx + CONTENT_TOP_PAD_PX
+    groupLabelHeight1x(teamGroups[g]) + teamGroups[g].rows.length * rowPx + CONTENT_TOP_PAD_PX
   const isAllowedCut = (p: number) =>
     rowGroup[p - 1] !== rowGroup[p] || groupWholeHeight(rowGroup[p]) > maxHeightAtMinScale
 
@@ -462,22 +511,46 @@ function VenueGroup({
   bigStyle: boolean
 }) {
   const radius = 14 * scale
+  // Thuiswedstrijden gets its own heading above the actual venue name (e.g.
+  // "Sportpark de Kampen, Schoonebeek") — the 7x7 venue groups and
+  // Uitwedstrijden don't, since there label already *is* the venue (or, for
+  // Uitwedstrijden, there's no single venue to show).
+  const hasDistinctVenueLine = Boolean(group.venue) && group.venue !== group.label
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 * scale }}>
-      <span
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          fontFamily: 'Rajdhani',
-          fontWeight: 700,
-          fontSize: 30 * scale,
-          letterSpacing: 1,
-          color: COLORS.white,
-          textTransform: 'uppercase',
-        }}
-      >
-        {group.venuePlaats ? `${group.label}, ${group.venuePlaats}` : group.label}
-      </span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 * scale }}>
+        <span
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            fontFamily: 'Rajdhani',
+            fontWeight: 700,
+            fontSize: 30 * scale,
+            letterSpacing: 1,
+            color: COLORS.white,
+            textTransform: 'uppercase',
+          }}
+        >
+          {hasDistinctVenueLine || !group.venuePlaats
+            ? group.label
+            : `${group.label}, ${group.venuePlaats}`}
+        </span>
+        {hasDistinctVenueLine && (
+          <span
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              fontFamily: 'Outfit',
+              fontWeight: 500,
+              fontSize: 20 * scale,
+              color: COLORS.white,
+              opacity: 0.75,
+            }}
+          >
+            {group.venuePlaats ? `${group.venue}, ${group.venuePlaats}` : group.venue}
+          </span>
+        )}
+      </div>
       <div
         style={{
           display: 'flex',
@@ -555,7 +628,7 @@ export function Poster({
           height: headerHeight,
           justifyContent: 'center',
           gap: 14,
-          padding: `0 ${outerPadding}px`,
+          padding: `${HEADER_TOP_PAD[format]}px ${outerPadding}px 0`,
         }}
       >
         <img src={logoDataUri} width={logoWidth} height={logoHeight} />
@@ -601,6 +674,274 @@ export function Poster({
         {schedule.teamGroups.map((group) => (
           <VenueGroup key={group.label} group={group} scale={scale} bigStyle={bigStyle} />
         ))}
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '16px 0 20px',
+          gap: 4,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'Outfit',
+            fontWeight: 400,
+            fontSize: 20,
+            color: COLORS.muted,
+            letterSpacing: 1,
+          }}
+        >
+          svv04.nl
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/** One opponent + time row inside a tournament team card — the own team is
+ * fixed per card, so unlike CompactMatchRow this only shows the opponent. */
+function TournamentMatchRow({
+  row,
+  scale,
+  isFirst,
+}: {
+  row: SocialTournamentTeam['rows'][number]
+  scale: number
+  isFirst: boolean
+}) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16 * scale,
+        padding: `${18 * scale}px ${22 * scale}px`,
+        borderTop: isFirst ? 'none' : `1px solid ${COLORS.cardBorder}`,
+      }}
+    >
+      <span
+        style={{
+          display: 'flex',
+          flexShrink: 0,
+          fontFamily: 'Outfit',
+          fontWeight: 700,
+          fontSize: 24 * scale,
+          color: COLORS.dark,
+        }}
+      >
+        {row.time}
+      </span>
+      <ClubLogo clubcode={row.opponentClubcode} name={row.opponent} scale={scale} baseSize={44} />
+      <span
+        style={{
+          display: 'flex',
+          flex: 1,
+          fontFamily: 'Outfit',
+          fontWeight: 600,
+          fontSize: 26 * scale,
+          color: COLORS.dark,
+          minWidth: 0,
+        }}
+      >
+        {row.opponent}
+      </span>
+      {row.cancelled && (
+        <span
+          style={{
+            display: 'flex',
+            flexShrink: 0,
+            fontFamily: 'Outfit',
+            fontWeight: 600,
+            fontSize: 16 * scale,
+            color: COLORS.primary,
+            letterSpacing: 0.5,
+          }}
+        >
+          AFGELAST
+        </span>
+      )}
+    </div>
+  )
+}
+
+/** One own team's evening: name pill + venue line, then a white block of
+ * its opponent rows — the 7x7 poster's equivalent of VenueGroup. */
+function TournamentTeamCard({ team, scale }: { team: SocialTournamentTeam; scale: number }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          backgroundColor: COLORS.primary,
+          borderRadius: 999,
+          padding: `${10 * scale}px ${18 * scale}px`,
+          marginBottom: 6 * scale,
+        }}
+      >
+        <span
+          style={{
+            display: 'flex',
+            textAlign: 'center',
+            fontFamily: 'Rajdhani',
+            fontWeight: 700,
+            fontSize: 26 * scale,
+            letterSpacing: 0.5,
+            color: COLORS.white,
+            textTransform: 'uppercase',
+          }}
+        >
+          {team.teamName}
+        </span>
+      </div>
+      <span
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          textAlign: 'center',
+          fontFamily: 'Outfit',
+          fontWeight: 500,
+          fontSize: 18 * scale,
+          color: COLORS.white,
+          opacity: 0.75,
+          marginBottom: 10 * scale,
+        }}
+      >
+        {team.venuePlaats ? `${team.venue}, ${team.venuePlaats}` : team.venue}
+      </span>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: COLORS.white,
+          borderRadius: 12 * scale,
+          overflow: 'hidden',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.28)',
+        }}
+      >
+        {team.rows.map((row, i) => (
+          <TournamentMatchRow key={row.matchCode} row={row} scale={scale} isFirst={i === 0} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Separate poster for the 18+/35+/45+/VR18+ "Toernooivorm 7x7" evenings —
+ * one card per own team (a category can field more than one team), listing
+ * every opponent it plays that evening, laid out two columns side by side.
+ * Kept as its own image alongside the regular thuis/uit poster rather than
+ * folded into it, since the round-robin format reads better per team than
+ * per shared venue when there's more than one category playing that day.
+ */
+export function Tournament7x7Poster({
+  teams,
+  format,
+  logoDataUri,
+  sevenBySevenLogoDataUri,
+  periodLabel,
+}: {
+  teams: SocialTournamentTeam[]
+  format: PosterFormat
+  logoDataUri: string
+  sevenBySevenLogoDataUri: string
+  periodLabel: string
+}) {
+  const { width, height } = POSTER_DIMENSIONS[format]
+  const headerHeight = HEADER_HEIGHT[format]
+  const outerPadding = OUTER_PADDING[format]
+  const logoHeight = format === 'story' ? 150 : 110
+  const logoWidth = logoHeight * 0.827
+  // Corner badge, fixed size regardless of content scale (mirrors the club
+  // logo in the header) — 500x460 source aspect ratio.
+  const badgeWidth = format === 'story' ? 180 : 134
+  const badgeHeight = badgeWidth / (500 / 460)
+
+  const columnWidth = (width - outerPadding * 2 - TOURNAMENT_GRID_GAP_PX) / 2
+  const idealHeight = Math.max(tournamentContentHeight1x(teams), 1)
+  const scale = clamp(contentBudget(format) / idealHeight, TOURNAMENT_MIN_SCALE, 1)
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width,
+        height,
+        backgroundColor: COLORS.bg,
+        position: 'relative',
+        fontFamily: 'Outfit',
+      }}
+    >
+      <img
+        src={sevenBySevenLogoDataUri}
+        width={badgeWidth}
+        height={badgeHeight}
+        style={{ position: 'absolute', top: outerPadding * 0.6, right: outerPadding * 0.6 }}
+      />
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          height: headerHeight,
+          justifyContent: 'center',
+          gap: 14,
+          padding: `${HEADER_TOP_PAD[format]}px ${outerPadding}px 0`,
+        }}
+      >
+        <img src={logoDataUri} width={logoWidth} height={logoHeight} />
+        <span
+          style={{
+            fontFamily: 'Rajdhani',
+            fontWeight: 700,
+            fontSize: format === 'story' ? 70 : 54,
+            letterSpacing: 2,
+            color: COLORS.white,
+            textTransform: 'uppercase',
+          }}
+        >
+          Wedstrijdprogramma
+        </span>
+        <span
+          style={{
+            display: 'flex',
+            fontFamily: 'Outfit',
+            fontWeight: 600,
+            fontSize: format === 'story' ? 32 : 27,
+            color: COLORS.white,
+            backgroundColor: COLORS.primary,
+            padding: '10px 30px',
+            borderRadius: 999,
+            letterSpacing: 0.5,
+          }}
+        >
+          {periodLabel.toUpperCase()}
+        </span>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: `${20 * scale}px ${outerPadding}px`,
+        }}
+      >
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: TOURNAMENT_GRID_GAP_PX * scale }}>
+          {teams.map((team) => (
+            <div key={team.teamName} style={{ display: 'flex', width: columnWidth }}>
+              <TournamentTeamCard team={team} scale={scale} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div

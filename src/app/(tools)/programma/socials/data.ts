@@ -32,6 +32,21 @@ export type SocialSchedule = {
   periodLabel: string
 }
 
+export type SocialTournamentMatchRow = {
+  matchCode: number
+  time: string
+  opponent: string
+  opponentClubcode?: string
+  cancelled: boolean
+}
+
+export type SocialTournamentTeam = {
+  teamName: string
+  venue: string
+  venuePlaats?: string
+  rows: SocialTournamentMatchRow[]
+}
+
 export type SocialDayOption = {
   dayKey: string
   label: string
@@ -72,7 +87,7 @@ function groupKeyFor(m: ScheduleMatch): GroupKey {
     return { key: `venue:${venue}`, label: venue, venue: m.venue, venuePlaats: m.venuePlaats }
   }
   if (isAtHomeVenue(m.venue)) {
-    return { key: 'thuis', label: m.venue, venue: m.venue, venuePlaats: m.venuePlaats }
+    return { key: 'thuis', label: 'Thuiswedstrijden', venue: m.venue, venuePlaats: m.venuePlaats }
   }
   return { key: 'uit', label: 'Uitwedstrijden' }
 }
@@ -143,4 +158,39 @@ export function getScheduleForDay(matches: ScheduleMatch[], dayKey: string): Soc
     teamGroups: buildVenueGroups(dayMatches),
     periodLabel: capitalize(formatDate(date, 'EEEE d MMMM yyyy', { locale: nl })),
   }
+}
+
+/** Per-own-team schedule for a 7x7 tournament evening — one card per own
+ * team listing every opponent + time it plays that evening, instead of the
+ * thuis/uit venue grouping used for regular league matches. Several own
+ * teams (different age categories) can each have their own evening, at
+ * different host venues, on the same day. */
+export function getTournamentTeamsForDay(
+  matches: ScheduleMatch[],
+  dayKey: string,
+): SocialTournamentTeam[] {
+  const dayMatches = matches.filter((m) => m.dayKey === dayKey && isTournamentFormat(m.competitie))
+  const teams = new Map<string, SocialTournamentTeam>()
+
+  for (const m of dayMatches) {
+    const teamName = m.isOwnHome ? m.homeTeam : m.awayTeam
+    const opponent = m.isOwnHome ? m.awayTeam : m.homeTeam
+    const opponentClubcode = m.isOwnHome ? m.awayTeamRelatiecode : m.homeTeamRelatiecode
+    const cancelled = CANCELLED_KEYWORDS.some((kw) => m.status?.toLowerCase().includes(kw))
+
+    if (!teams.has(teamName)) {
+      teams.set(teamName, { teamName, venue: m.venue, venuePlaats: m.venuePlaats, rows: [] })
+    }
+    teams.get(teamName)!.rows.push({
+      matchCode: m.matchCode,
+      time: m.time,
+      opponent,
+      opponentClubcode,
+      cancelled,
+    })
+  }
+
+  return Array.from(teams.values())
+    .map((t) => ({ ...t, rows: t.rows.sort((a, b) => a.time.localeCompare(b.time)) }))
+    .sort((a, b) => a.teamName.localeCompare(b.teamName, 'nl'))
 }
