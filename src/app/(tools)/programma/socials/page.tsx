@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getWeekMatches, getDayOptions, getScheduleForDay } from './data'
+import { getWeekMatches, getDayOptions, getScheduleForDay, getTournamentTeamsForDay } from './data'
 import { POSTER_DIMENSIONS, paginateTeamGroups, shouldUseBigStyle, type PosterFormat } from './Poster'
 
 const FORMAT_LABELS: Record<PosterFormat, string> = {
@@ -11,10 +11,8 @@ const FORMAT_LABELS: Record<PosterFormat, string> = {
 }
 
 type GalleryImage = {
-  dayKey: string
-  dayLabel: string
-  page: number
-  totalPages: number
+  key: string
+  label: string
   url: string
 }
 
@@ -36,20 +34,33 @@ export default function ProgrammaSocialsPage() {
       const daySchedule = getScheduleForDay(matches, day.dayKey)
       const bigStyle = shouldUseBigStyle(daySchedule.teamGroups)
       const pages = paginateTeamGroups(daySchedule.teamGroups, format, bigStyle)
-      return pages.map((_, i) => ({
-        dayKey: day.dayKey,
-        dayLabel: day.label,
-        page: i + 1,
-        totalPages: pages.length,
+      const dayImages: GalleryImage[] = pages.map((_, i) => ({
+        key: `${day.dayKey}-${i + 1}`,
+        label: pages.length > 1 ? `${day.label} · Deel ${i + 1}` : day.label,
         url: `/programma/socials/image?format=${format}&day=${day.dayKey}&page=${i + 1}&v=${cacheBust}`,
       }))
+
+      // The 18+/35+/45+/VR18+ "Toernooivorm 7x7" evenings get their own
+      // extra image (per own team, round-robin schedule) alongside the
+      // regular thuis/uit poster, not folded into it — shown first since
+      // it's usually the headline programme for that evening.
+      const tournamentTeams = getTournamentTeamsForDay(matches, day.dayKey)
+      if (tournamentTeams.length > 0) {
+        dayImages.unshift({
+          key: `${day.dayKey}-7x7`,
+          label: `${day.label} · 7x7`,
+          url: `/programma/socials/tournament-image?format=${format}&day=${day.dayKey}&v=${cacheBust}`,
+        })
+      }
+
+      return dayImages
     })
   }, [matches, dayOptions, format, cacheBust])
 
   const { width, height } = POSTER_DIMENSIONS[format]
 
   async function handleShare(image: GalleryImage) {
-    const filename = `svv04-programma-${image.dayKey}-deel${image.page}-${format}.png`
+    const filename = `svv04-programma-${image.key}-${format}.png`
 
     try {
       const response = await fetch(image.url)
@@ -75,7 +86,7 @@ export default function ProgrammaSocialsPage() {
   }
 
   return (
-    <main className="page">
+    <main className="page" style={{ paddingTop: 'var(--container-padding)', paddingBottom: 'var(--container-padding)' }}>
       <div className="page-inner">
         {isError && (
           <p className="league-error">Programma kon niet worden geladen. Probeer het later opnieuw.</p>
@@ -124,7 +135,7 @@ export default function ProgrammaSocialsPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
               {images.map((image) => (
                 <div
-                  key={`${image.dayKey}-${image.page}`}
+                  key={image.key}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -141,15 +152,14 @@ export default function ProgrammaSocialsPage() {
                       textTransform: 'uppercase',
                     }}
                   >
-                    {image.dayLabel}
-                    {image.totalPages > 1 ? ` · Deel ${image.page}` : ''}
+                    {image.label}
                   </span>
 
                   <a href={image.url} target="_blank" rel="noopener noreferrer">
                     <img
                       key={image.url}
                       src={image.url}
-                      alt={`Programma ${image.dayLabel} deel ${image.page} - ${FORMAT_LABELS[format]}`}
+                      alt={`Programma ${image.label} - ${FORMAT_LABELS[format]}`}
                       width={width}
                       height={height}
                       style={{
