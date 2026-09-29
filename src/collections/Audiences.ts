@@ -54,7 +54,7 @@ export const Audiences: CollectionConfig = {
       unique: true,
       admin: {
         position: 'sidebar',
-        description: 'URL-deel, bijv. "spelers" → /voor-jou/spelers',
+        description: 'URL-deel, bijv. "spelers" → /spelers',
       },
     },
     {

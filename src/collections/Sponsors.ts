@@ -41,7 +41,7 @@ export const Sponsors: CollectionConfig = {
       defaultValue: false,
       admin: {
         description:
-          'Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /sponsors, ook als ze wel een logo hebben.',
+          'Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /alle-sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /alle-sponsors, ook als ze wel een logo hebben.',
       },
     },
     {

@@ -166,7 +166,7 @@ export const searchEndpoint: Endpoint = {
         items: audiences.docs.map((audience) => ({
           label: audience.cardTitle || audience.name,
           sub: audience.cardDescription ?? undefined,
-          href: `/voor-jou/${audience.slug}`,
+          href: `/${audience.slug}`,
         })),
       },
     ].filter((group) => group.items.length > 0)

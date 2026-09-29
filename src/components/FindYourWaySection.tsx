@@ -5,7 +5,7 @@ import config from '@payload-config'
 
 /**
  * "Vind jouw weg bij SVV'04" — a grid of audience cards on the homepage.
- * Each card links to its audience landing page at /voor-jou/[slug].
+ * Each card links to its audience landing page at /[slug].
  */
 export async function FindYourWaySection() {
   const payload = await getPayload({ config })
@@ -33,7 +33,7 @@ export async function FindYourWaySection() {
           {audiences.map((audience) => (
             <Link
               key={audience.id}
-              href={`/voor-jou/${audience.slug}`}
+              href={`/${audience.slug}`}
               className="findway-card"
             >
               <h3 className="findway-card-title">{audience.cardTitle}</h3>

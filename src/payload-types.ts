@@ -336,7 +336,7 @@ export interface Sponsor {
    */
   url?: string | null;
   /**
-   * Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /sponsors, ook als ze wel een logo hebben.
+   * Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /alle-sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /alle-sponsors, ook als ze wel een logo hebben.
    */
   websiteSponsor?: boolean | null;
   /**
@@ -444,7 +444,7 @@ export interface Audience {
    */
   name: string;
   /**
-   * URL-deel, bijv. "spelers" → /voor-jou/spelers
+   * URL-deel, bijv. "spelers" → /spelers
    */
   slug: string;
   /**
