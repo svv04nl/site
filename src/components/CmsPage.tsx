@@ -34,7 +34,11 @@ function buildNavTree(
     const node = byId.get(String(p.id))!
     const parentRef = p.parent as { id?: string | number } | string | number | null | undefined
     const parentId =
-      parentRef && typeof parentRef === 'object' ? String(parentRef.id) : parentRef ? String(parentRef) : null
+      parentRef && typeof parentRef === 'object'
+        ? String(parentRef.id)
+        : parentRef
+          ? String(parentRef)
+          : null
     const parentNode = parentId ? byId.get(parentId) : undefined
     if (parentNode) {
       parentNode.children.push(node)
@@ -46,7 +50,15 @@ function buildNavTree(
   return topLevel
 }
 
-function NavList({ pages, basePath, activeSlug }: { pages: NavPage[]; basePath: string; activeSlug?: string }) {
+function NavList({
+  pages,
+  basePath,
+  activeSlug,
+}: {
+  pages: NavPage[]
+  basePath: string
+  activeSlug?: string
+}) {
   return (
     <ul className="cms-page-nav-list">
       {pages.map((p) => {
@@ -72,6 +84,7 @@ function NavList({ pages, basePath, activeSlug }: { pages: NavPage[]; basePath: 
 const jsxConverters: JSXConvertersFunction = (args) => ({
   ...defaultJSXConverters(args),
   blocks: {
+    ...defaultJSXConverters(args).blocks,
     ctaBlock: ({ node }: { node: any }) => (
       <CtaBlockComponent buttonLabel={node.fields.buttonLabel} buttonUrl={node.fields.buttonUrl} />
     ),

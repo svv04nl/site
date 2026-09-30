@@ -131,7 +131,7 @@ export default async function FooterServer() {
               <ul className="site-footer-nav">
                 {audiences.map((a) => (
                   <li key={a.id}>
-                    <Link href={`/voor-jou/${a.slug}`}>{capitalise(a.name)}</Link>
+                    <Link href={`/${a.slug}`}>{capitalise(a.name)}</Link>
                   </li>
                 ))}
               </ul>

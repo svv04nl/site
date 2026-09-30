@@ -86,7 +86,7 @@ export async function GET() {
     for (const audience of audiences) {
       const description = audience.cardDescription ? ` — ${audience.cardDescription}` : ''
       lines.push(
-        `- [${capitalise(audience.name)}](https://svv04.nl/voor-jou/${audience.slug})${description}`,
+        `- [${capitalise(audience.name)}](https://svv04.nl/${audience.slug})${description}`,
       )
     }
     lines.push('')

@@ -193,6 +193,14 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     teamCard?: {
       url?: string | null;
       width?: number | null;
@@ -219,7 +227,24 @@ export interface Post {
   id: number;
   title: string;
   slug: string;
+  /**
+   * Afbeelding in nieuwskaarten en bovenaan het bericht (2:1 werkt het best).
+   */
   featuredImage?: (number | null) | Media;
+  /**
+   * Toont dit bericht als hero op de homepage, binnen de gekozen periode. Er kan er maar één tegelijk uitgelicht zijn.
+   */
+  heroFeatured?: boolean | null;
+  heroFrom?: string | null;
+  heroUntil?: string | null;
+  /**
+   * Achtergrond van de hero op de homepage. Leeg = standaard grasachtergrond. Minimaal 2000px breed, verhouding tussen 2:1 en 3:1 (aanbevolen 2400×1000). De tekst staat links, zet wat er te zien is dus rechts.
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * Andere afbeelding voor de hero op telefoon en tablet, als tekstachtergrond. Leeg = de hero-afbeelding wordt onder de tekst getoond (of het gras als er geen hero-afbeelding is). Minimaal 800px breed.
+   */
+  heroImageMobile?: (number | null) | Media;
   /**
    * Hoe de afbeelding in de nieuwskaart wordt weergegeven.
    */
@@ -336,7 +361,7 @@ export interface Sponsor {
    */
   url?: string | null;
   /**
-   * Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /sponsors, ook als ze wel een logo hebben.
+   * Heeft deze sponsor de "Website sponsor" tegenprestatie? Bepaalt of het logo in de ticker en de logo-grid op /alle-sponsors verschijnt. Sponsors zonder dit vinkje (bijv. alleen tenue-sponsor) komen in de tekstlijst op /alle-sponsors, ook als ze wel een logo hebben.
    */
   websiteSponsor?: boolean | null;
   /**
@@ -444,7 +469,7 @@ export interface Audience {
    */
   name: string;
   /**
-   * URL-deel, bijv. "spelers" → /voor-jou/spelers
+   * URL-deel, bijv. "spelers" → /spelers
    */
   slug: string;
   /**
@@ -703,6 +728,16 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        hero?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         teamCard?:
           | T
           | {
@@ -733,6 +768,11 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   featuredImage?: T;
+  heroFeatured?: T;
+  heroFrom?: T;
+  heroUntil?: T;
+  heroImage?: T;
+  heroImageMobile?: T;
   imageFit?: T;
   imageBackground?: T;
   publishedAt?: T;

@@ -17,6 +17,7 @@ import { AddressBlock } from './blocks/AddressBlock/config'
 import { TaskTableBlock } from './blocks/TaskTableBlock/config'
 import { QuoteBlock } from './blocks/QuoteBlock/config'
 import { DocumentDownloadBlock } from './blocks/DocumentDownloadBlock/config'
+import { GalleryBlock } from './blocks/GalleryBlock/config'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
@@ -90,6 +91,7 @@ export default buildConfig({
           TaskTableBlock,
           QuoteBlock,
           DocumentDownloadBlock,
+          GalleryBlock,
         ],
       }),
     ],

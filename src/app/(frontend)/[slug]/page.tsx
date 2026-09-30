@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = audience.metaTitle || `Alles voor ${audience.name} bij SVV'04 Schoonebeek`
   const description =
     audience.metaDescription || audience.intro || audience.cardDescription || undefined
-  const url = `/voor-jou/${audience.slug}`
+  const url = `/${audience.slug}`
 
   return {
     title,

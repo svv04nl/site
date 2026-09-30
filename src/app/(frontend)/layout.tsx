@@ -47,11 +47,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="nl" className={`${rajdhani.variable} ${outfit.variable}`}>
       <body>
-        <BreadcrumbProvider>
-          <Header />
-          <ReactQueryProvider>{children}</ReactQueryProvider>
-        </BreadcrumbProvider>
-        <Footer />
+        <div className="site-shell">
+          <BreadcrumbProvider>
+            <Header />
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </BreadcrumbProvider>
+          <Footer />
+        </div>
         <FeedbackWidget />
         <Analytics />
         <SpeedInsights />

@@ -263,10 +263,6 @@
 .league-week-table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-
-  @media (max-width: $breakpoint-medium) {
-    display: none;
-  }
 }
 
 .schedule--table-on-desktop {
@@ -470,6 +466,13 @@
 .league-day-group {
   & + & {
     margin-top: 2rem;
+  }
+
+  // Wraps a desktop-table day heading + its table — hide the whole group on
+  // mobile, not just the table, otherwise the heading is left behind and
+  // duplicates the one rendered inside .card-match-list below.
+  @media (max-width: $breakpoint-medium) {
+    display: none;
   }
 }
 

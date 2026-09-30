@@ -65,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly',
   }))
 
-  // ── Audience landing pages (voor-jou) ─────────────────────────────────────
+  // ── Audience landing pages ─────────────────────────────────────────────────
   const { docs: audiences } = await payload.find({
     collection: 'audiences',
     limit: 0,
@@ -74,7 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
 
   const audienceRoutes: MetadataRoute.Sitemap = audiences.map((audience) => ({
-    url: `${BASE}/voor-jou/${audience.slug}`,
+    url: `${BASE}/${audience.slug}`,
     changeFrequency: 'monthly',
     priority: 0.8,
   }))
