@@ -7,6 +7,7 @@ const RESULTS_PER_COLLECTION = 5
 // priority sort below always has the full candidate set to work with, then
 // slice down to RESULTS_PER_COLLECTION.
 const TEAM_FETCH_LIMIT = 100
+const PAGE_FETCH_LIMIT = 200
 
 // Matches `field` against any singular/plural variant of the query.
 function matches(field: string, variants: string[]): Where {
@@ -72,6 +73,75 @@ function sortTeamsByPriority<T extends { type?: string | null; order?: number | 
   })
 }
 
+// Collects the plain text of a Lexical document, including the `text` fields
+// of custom blocks (quotes etc.). The `content` column is JSON, so it can't be
+// searched with a `where` clause and is matched in JS instead.
+function extractText(node: unknown, out: string[] = []): string[] {
+  if (Array.isArray(node)) {
+    for (const child of node) extractText(child, out)
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'text' && typeof value === 'string') out.push(value)
+      else if (value && typeof value === 'object') extractText(value, out)
+    }
+  }
+  return out
+}
+
+const SNIPPET_CONTEXT = 50
+
+// A short excerpt around the first match, so a body-text hit shows why it matched.
+function snippetAround(text: string, variants: string[]): string | undefined {
+  const lower = text.toLowerCase()
+  const index = Math.min(
+    ...variants.map((v) => lower.indexOf(v)).filter((i) => i !== -1),
+  )
+  if (!Number.isFinite(index)) return undefined
+  const start = Math.max(0, index - SNIPPET_CONTEXT)
+  const end = Math.min(text.length, index + SNIPPET_CONTEXT * 2)
+  return `${start > 0 ? '…' : ''}${text.slice(start, end).trim()}${end < text.length ? '…' : ''}`
+}
+
+type PageDoc = {
+  title: string
+  slug?: string | null
+  section?: string | null
+  parent?: unknown
+  content?: unknown
+}
+
+// Title matches first, then pages that only mention the query in their body.
+function matchPages(docs: PageDoc[], variants: string[]): SearchResultItem[] {
+  const titleHits: SearchResultItem[] = []
+  const bodyHits: (SearchResultItem & { count: number })[] = []
+
+  for (const page of docs) {
+    const slugs = [page.slug]
+    let parent = page.parent as { slug?: string; parent?: unknown } | null | undefined
+    while (parent && typeof parent === 'object' && parent.slug) {
+      slugs.unshift(parent.slug)
+      parent = parent.parent as typeof parent
+    }
+    const href = `/${page.section}/${slugs.join('/')}`
+
+    if (variants.some((v) => page.title.toLowerCase().includes(v))) {
+      titleHits.push({ label: page.title, href })
+      continue
+    }
+    const body = extractText(page.content).join(' ')
+    const sub = snippetAround(body, variants)
+    if (sub) {
+      const lower = body.toLowerCase()
+      const count = variants.reduce((n, v) => n + lower.split(v).length - 1, 0)
+      bodyHits.push({ label: page.title, sub, href, count })
+    }
+  }
+
+  // Most mentions first: a page about the topic beats one that mentions it in passing.
+  bodyHits.sort((a, b) => b.count - a.count)
+  return [...titleHits, ...bodyHits.map(({ count: _count, ...item }) => item)]
+}
+
 type SearchResultItem = {
   label: string
   sub?: string
@@ -119,12 +189,11 @@ export const searchEndpoint: Endpoint = {
         collection: 'pages',
         // 'meedoen' pages are already covered by the static "Meedoen" quick-link
         // group in the search modal — exclude them here to avoid duplicates.
-        where: {
-          and: [matches('title', variants), { section: { not_equals: 'meedoen' } }],
-        },
-        depth: 0,
-        limit: RESULTS_PER_COLLECTION,
-        select: { title: true, slug: true, section: true },
+        // Small collection (~20 docs): fetch all and match title + body in JS.
+        where: { section: { not_equals: 'meedoen' } },
+        depth: 1, // populates `parent` for nested URLs
+        limit: PAGE_FETCH_LIMIT,
+        select: { title: true, slug: true, section: true, parent: true, content: true },
       }),
       payload.find({
         collection: 'audiences',
@@ -156,10 +225,7 @@ export const searchEndpoint: Endpoint = {
       },
       {
         group: "Pagina's",
-        items: pages.docs.map((page) => ({
-          label: page.title,
-          href: `/${page.section}/${page.slug}`,
-        })),
+        items: matchPages(pages.docs, variants).slice(0, RESULTS_PER_COLLECTION),
       },
       {
         group: 'Voor jou',

@@ -1,0 +1,48 @@
+// ─── Gallery block (richText) ─────────────────────────────────────────────────
+
+.gallery-block {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 1.5rem;
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gallery-block__item {
+  margin: 0;
+}
+
+.gallery-block__button {
+  background: none;
+  border: 0;
+  cursor: zoom-in;
+  display: block;
+  padding: 0;
+  width: 100%;
+}
+
+.gallery-block .gallery-block__img {
+  border-radius: 8px;
+  display: block;
+  height: auto;
+  margin: 0;
+  transition: opacity 0.15s ease;
+  width: 100%;
+
+  .gallery-block__button:hover & {
+    opacity: 0.9;
+  }
+}
+
+.gallery-block__caption {
+  color: #666;
+  font-size: 0.8125rem;
+  margin-top: 0.4rem;
+}

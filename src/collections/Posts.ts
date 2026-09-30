@@ -1,4 +1,78 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Validate } from 'payload'
+
+// Hero image requirements: the hero is a wide banner (2400×1000 is the
+// recommended upload), so reject images that would look soft or get cropped
+// too aggressively.
+const HERO_MIN_WIDTH = 2000
+const HERO_MIN_RATIO = 2
+const HERO_MAX_RATIO = 3
+
+const validateHeroImage: Validate = async (value, { data, req }) => {
+  if (!value || !(data as { heroFeatured?: boolean } | undefined)?.heroFeatured) return true
+
+  const id = typeof value === 'object' ? (value as { id: number | string }).id : value
+  const media = await req.payload.findByID({
+    collection: 'media',
+    id: id as number | string,
+    depth: 0,
+    req,
+  })
+  const { width, height } = media
+  if (!width || !height) return true
+
+  if (width < HERO_MIN_WIDTH) {
+    return `Afbeelding is ${width}px breed, voor de hero is minimaal ${HERO_MIN_WIDTH}px nodig (aanbevolen: 2400×1000).`
+  }
+  const ratio = width / height
+  if (ratio < HERO_MIN_RATIO || ratio > HERO_MAX_RATIO) {
+    return `Afbeelding (${width}×${height}) heeft de verkeerde verhouding. Gebruik een brede afbeelding tussen 2:1 en 3:1 (aanbevolen: 2400×1000).`
+  }
+  return true
+}
+
+const HERO_MOBILE_MIN_WIDTH = 800
+
+const validateHeroImageMobile: Validate = async (value, { data, req }) => {
+  if (!value || !(data as { heroFeatured?: boolean } | undefined)?.heroFeatured) return true
+  const id = typeof value === 'object' ? (value as { id: number | string }).id : value
+  const media = await req.payload.findByID({
+    collection: 'media',
+    id: id as number | string,
+    depth: 0,
+    req,
+  })
+  if (media.width && media.width < HERO_MOBILE_MIN_WIDTH) {
+    return `Afbeelding is ${media.width}px breed, voor de mobiele hero is minimaal ${HERO_MOBILE_MIN_WIDTH}px nodig.`
+  }
+  return true
+}
+
+const validateSingleFeatured: Validate = async (value, { id, siblingData, req }) => {
+  if (!value) return true
+  // A post whose window is already over no longer counts, and doesn't need to
+  // be blocked by the active one either.
+  const now = new Date().toISOString()
+  const until = (siblingData as { heroUntil?: string } | undefined)?.heroUntil
+  if (until && until < now) return true
+
+  const { docs } = await req.payload.find({
+    collection: 'posts',
+    where: {
+      and: [
+        { heroFeatured: { equals: true } },
+        { heroUntil: { greater_than: now } },
+        ...(id ? [{ id: { not_equals: id } }] : []),
+      ],
+    },
+    depth: 0,
+    limit: 1,
+    select: { title: true },
+    req,
+  })
+  return docs[0]
+    ? `Er is al een uitgelicht bericht: "${docs[0].title}". Haal daar eerst de markering weg.`
+    : true
+}
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -8,7 +82,7 @@ export const Posts: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'publishedAt', 'status'],
+    defaultColumns: ['title', 'publishedAt', 'status', 'heroFeatured'],
   },
   access: {
     read: () => true,
@@ -78,6 +152,78 @@ export const Posts: CollectionConfig = {
       relationTo: 'media',
       admin: {
         position: 'sidebar',
+        description: 'Afbeelding in nieuwskaarten en bovenaan het bericht (2:1 werkt het best).',
+      },
+    },
+    {
+      name: 'heroFeatured',
+      type: 'checkbox',
+      label: 'Uitgelicht in de hero',
+      defaultValue: false,
+      validate: validateSingleFeatured,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Toont dit bericht als hero op de homepage, binnen de gekozen periode. Er kan er maar één tegelijk uitgelicht zijn.',
+      },
+    },
+    {
+      name: 'heroFrom',
+      type: 'date',
+      label: 'Hero tonen vanaf',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => Boolean(data.heroFeatured),
+        date: { pickerAppearance: 'dayAndTime' },
+      },
+      validate: (value: unknown, { siblingData }: { siblingData: { heroFeatured?: boolean } }) =>
+        !siblingData?.heroFeatured || value ? true : 'Kies wanneer de hero begint.',
+    },
+    {
+      name: 'heroUntil',
+      type: 'date',
+      label: 'Hero tonen tot',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => Boolean(data.heroFeatured),
+        date: { pickerAppearance: 'dayAndTime' },
+      },
+      validate: (
+        value: unknown,
+        { siblingData }: { siblingData: { heroFeatured?: boolean; heroFrom?: string } },
+      ) => {
+        if (!siblingData?.heroFeatured) return true
+        if (!value) return 'Kies wanneer de hero eindigt.'
+        if (siblingData.heroFrom && new Date(value as string) <= new Date(siblingData.heroFrom)) {
+          return 'De einddatum moet na de startdatum liggen.'
+        }
+        return true
+      },
+    },
+    {
+      name: 'heroImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Hero-afbeelding',
+      validate: validateHeroImage,
+      admin: {
+        position: 'sidebar',
+        condition: (data) => Boolean(data.heroFeatured),
+        description:
+          'Achtergrond van de hero op de homepage. Leeg = standaard grasachtergrond. Minimaal 2000px breed, verhouding tussen 2:1 en 3:1 (aanbevolen 2400×1000). De tekst staat links, zet wat er te zien is dus rechts.',
+      },
+    },
+    {
+      name: 'heroImageMobile',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Hero-afbeelding mobiel (optioneel)',
+      validate: validateHeroImageMobile,
+      admin: {
+        position: 'sidebar',
+        condition: (data) => Boolean(data.heroFeatured),
+        description:
+          'Andere afbeelding voor de hero op telefoon en tablet, als tekstachtergrond. Leeg = de hero-afbeelding wordt onder de tekst getoond (of het gras als er geen hero-afbeelding is). Minimaal 800px breed.',
       },
     },
     {

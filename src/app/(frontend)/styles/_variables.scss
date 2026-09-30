@@ -27,6 +27,8 @@ $content-block-width: 480px;
   --font-body: var(--font-outfit), 'Helvetica Neue', 'Arial', sans-serif;
 
   --grid-base: 1440px;
+  // Outer width of the whole page; on wider screens the site sits centered in it.
+  --site-max-width: 1600px;
   --container-padding: 2rem;
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {

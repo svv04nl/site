@@ -39,6 +39,17 @@ export const Media: CollectionConfig = {
         },
       },
       {
+        // Homepage hero for a featured news post (see Posts.heroFeatured)
+        name: 'hero',
+        width: 2400,
+        height: 1000,
+        position: 'centre',
+        formatOptions: {
+          format: 'webp',
+          options: { quality: 80 },
+        },
+      },
+      {
         // Team listing cards (senioren/jeugd overview pages)
         name: 'teamCard',
         width: 600,

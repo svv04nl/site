@@ -9,6 +9,14 @@
   display: grid;
   gap: 1.75rem;
   grid-template-columns: repeat(3, 1fr);
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .news-secondary-date {
@@ -121,6 +129,14 @@
     font-size: 1.15rem;
     font-weight: 700;
     margin: 1.5rem 0 0.5rem;
+  }
+
+  img {
+    border-radius: 8px;
+    display: block;
+    height: auto;
+    margin: 0 0 1.25rem;
+    width: 100%;
   }
 
   strong {

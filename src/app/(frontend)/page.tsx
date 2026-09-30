@@ -12,15 +12,16 @@ import { SponsorSidebar } from '@/components/SponsorSidebar'
 import { SponsorsTicker } from '@/components/SponsorsTicker'
 import { FindYourWaySection } from '@/components/FindYourWaySection'
 import { WebshopBanner } from '@/components/WebshopBanner'
+import { HeroVideo } from '@/components/HeroVideo'
+import { FeaturedPostHero } from '@/components/FeaturedPostHero'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-o19-1']
 
 export default async function HomePage() {
-  preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
-
   const payload = await getPayload({ config })
+  const now = new Date().toISOString()
 
-  const [{ docs: featuredTeams }, { docs: latestPosts }] = await Promise.all([
+  const [{ docs: featuredTeams }, { docs: latestPosts }, { docs: heroPosts }] = await Promise.all([
     payload.find({
       collection: 'teams',
       where: { slug: { in: FEATURED_TEAM_SLUGS } },
@@ -36,7 +37,25 @@ export default async function HomePage() {
       limit: 4,
       depth: 1,
     }),
+    // At most one post is featured in the hero, and only within its date range.
+    payload.find({
+      collection: 'posts',
+      where: {
+        and: [
+          { status: { equals: 'published' } },
+          { heroFeatured: { equals: true } },
+          { heroFrom: { less_than_equal: now } },
+          { heroUntil: { greater_than_equal: now } },
+        ],
+      },
+      sort: '-heroFrom',
+      limit: 1,
+      depth: 1,
+    }),
   ])
+
+  const heroPost = heroPosts[0]
+  if (!heroPost) preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
 
   // Preserve the intended display order
   const teams = FEATURED_TEAM_SLUGS.map((slug) =>
@@ -46,33 +65,38 @@ export default async function HomePage() {
   return (
     <>
       <main>
-        {/* Hero — centered, with clear actions */}
-        <section className="site-hero site-hero--centered">
-          <div
-            className="site-hero-image"
-            aria-hidden="true"
-            style={{ backgroundImage: 'url(/images/hero-sportpark.webp)' }}
-          >
-            <div className="site-hero-overlay" />
-          </div>
-          <div className="site-hero-inner">
-            <div className="site-hero-content">
-              <p className="site-hero-eyebrow">Schoonebeekse Voetbal Vereniging</p>
-              <h1 className="site-hero-title">
-                Welkom bij <em>SVV&rsquo;04</em>
-              </h1>
-              <p className="site-hero-tagline">
-                Een sterke, gezellige club voor jong en oud. Kom voetballen, supporteren of gewoon
-                een balletje trappen op ons prachtige sportpark.
-              </p>
-              <div className="site-hero-actions">
-                <Link className="btn btn--primary btn--lg" href="/vereniging/lidmaatschap">
-                  Word lid van SVV&rsquo;04 &rarr;
-                </Link>
+        {/* Hero — a featured news post while its date range is active, otherwise the welcome hero */}
+        {heroPost ? (
+          <FeaturedPostHero post={heroPost} />
+        ) : (
+          <section className="site-hero site-hero--centered">
+            <div
+              className="site-hero-image"
+              aria-hidden="true"
+              style={{ backgroundImage: 'url(/images/hero-sportpark.webp)' }}
+            >
+              <HeroVideo src="/videos/hero-sportpark.mp4" poster="/images/hero-sportpark.webp" />
+              <div className="site-hero-overlay" />
+            </div>
+            <div className="site-hero-inner">
+              <div className="site-hero-content">
+                <p className="site-hero-eyebrow">Schoonebeekse Voetbal Vereniging</p>
+                <h1 className="site-hero-title">
+                  Welkom bij <em>SVV&rsquo;04</em>
+                </h1>
+                <p className="site-hero-tagline">
+                  Een sterke, gezellige club voor jong en oud. Kom voetballen, supporteren of gewoon
+                  een balletje trappen op ons prachtige sportpark.
+                </p>
+                <div className="site-hero-actions">
+                  <Link className="btn btn--primary btn--lg" href="/vereniging/lidmaatschap">
+                    Word lid van SVV&rsquo;04 &rarr;
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Fixtures strip — prominent dark band, max 3 upcoming matches */}
         <FixturesStrip
