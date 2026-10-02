@@ -1,17 +1,6 @@
 import Link from 'next/link'
-import type { Media, Post, Team } from '@/payload-types'
+import type { Media, Post } from '@/payload-types'
 import { MoreLink } from './MoreLink'
-
-const CATEGORY_LABELS: Record<string, string> = {
-  club: 'Club',
-  senioren: 'Senioren',
-  junioren: 'Junioren',
-}
-
-function categoryLabel(categories: string[] | null | undefined): string {
-  const first = categories?.[0]
-  return first ? (CATEGORY_LABELS[first] ?? first) : 'Club'
-}
 
 type Props = {
   post: Post
@@ -26,12 +15,6 @@ export function NewsRowCard({ post }: Props) {
   const imageUrl = image?.sizes?.newsCard?.url ?? image?.url ?? null
   const isContain = (post as any).imageFit === 'contain'
   const bgColor = (post as any).imageBackground || '#ffffff'
-  const categories = (post as any).categories as string[] | null | undefined
-  const relatedTeams = (post as any).relatedTeams as Array<Team | string> | null | undefined
-  const teamNames =
-    relatedTeams?.filter((t): t is Team => typeof t === 'object').map((t) => t.name) ?? []
-
-  const allTags = [categoryLabel(categories), ...teamNames]
 
   return (
     <Link href={`/nieuws/${post.slug}`} className="news-row">
@@ -61,13 +44,6 @@ export function NewsRowCard({ post }: Props) {
                 })
               : ''}
           </time>
-          <div className="news-row-tags">
-            {allTags.map((tag) => (
-              <span key={tag} className="card-news-tag">
-                {tag}
-              </span>
-            ))}
-          </div>
         </div>
         <h3 className="news-row-title">{post.title}</h3>
         {post.excerpt && <p className="news-row-excerpt">{post.excerpt}</p>}
