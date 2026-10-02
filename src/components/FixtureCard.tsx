@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import ClubLogo from '@/components/ClubLogo'
 import type { MatchData } from '@/components/NextMatchCard'
 
 type Props = {
@@ -7,27 +8,40 @@ type Props = {
 }
 
 /**
- * Compacte wedstrijdkaart voor de fixtures-strip op de homepage (donkere band).
- * Toont een meta-regel (datum · tijd · thuis/uit) met daaronder de twee teams,
- * waarbij het eigen team rood wordt gemarkeerd. Losse presentational component —
- * de data komt uit de FixturesStrip-container.
+ * Wedstrijdkaart voor de fixtures-strip op de homepage (donkere band). Zelfde opzet
+ * als de MatchCard op de andere pagina's: thuisteam en uitteam links en rechts met
+ * clublogo, datum en tijd in het midden. Het eigen team wordt rood gemarkeerd.
+ * Losse presentational component, de data komt uit de FixturesStrip-container.
  */
 export default function FixtureCard({ match }: Props) {
-  const ownIsHome = match.homeTeam.isOwn
-  const location = ownIsHome ? 'Thuis' : 'Uit'
-  const date = (match.dateShort ?? match.date).toUpperCase()
+  const date = match.dateShort ?? match.date
 
   const inner = (
     <>
-      <div className="fixture-card-meta">
-        {date} · {match.time} · {location}
-      </div>
-      <div className="fixture-card-teams">
+      <div className="fixture-card-club">
+        <ClubLogo
+          clubcode={match.homeTeam.clubRelatiecode}
+          name={match.homeTeam.name}
+          className="fixture-card-logo"
+        />
         <span
           className={`fixture-card-team${match.homeTeam.isOwn ? ' fixture-card-team--own' : ''}`}
         >
           {match.homeTeam.name}
         </span>
+      </div>
+
+      <div className="fixture-card-info">
+        <time className="fixture-card-date">{date}</time>
+        <div className="fixture-card-time">{match.time}</div>
+      </div>
+
+      <div className="fixture-card-club">
+        <ClubLogo
+          clubcode={match.awayTeam.clubRelatiecode}
+          name={match.awayTeam.name}
+          className="fixture-card-logo"
+        />
         <span
           className={`fixture-card-team${match.awayTeam.isOwn ? ' fixture-card-team--own' : ''}`}
         >
