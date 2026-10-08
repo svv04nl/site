@@ -5,6 +5,8 @@ import type { MatchData } from '@/components/NextMatchCard'
 
 type Props = {
   match: MatchData
+  /** Niet van het 1e elftal: wordt op kleine schermen verborgen. */
+  secondary?: boolean
 }
 
 /**
@@ -13,7 +15,8 @@ type Props = {
  * clublogo, datum en tijd in het midden. Het eigen team wordt rood gemarkeerd.
  * Losse presentational component, de data komt uit de FixturesStrip-container.
  */
-export default function FixtureCard({ match }: Props) {
+export default function FixtureCard({ match, secondary }: Props) {
+  const className = `fixture-card${secondary ? ' fixture-card--secondary' : ''}`
   const date = match.dateShort ?? match.date
 
   const inner = (
@@ -53,11 +56,11 @@ export default function FixtureCard({ match }: Props) {
 
   if (match.matchCode) {
     return (
-      <Link href={`/wedstrijd/${match.matchCode}`} className="fixture-card fixture-card--clickable">
+      <Link href={`/wedstrijd/${match.matchCode}`} className={`${className} fixture-card--clickable`}>
         {inner}
       </Link>
     )
   }
 
-  return <div className="fixture-card">{inner}</div>
+  return <div className={className}>{inner}</div>
 }

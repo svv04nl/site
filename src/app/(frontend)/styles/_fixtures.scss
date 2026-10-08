@@ -59,6 +59,20 @@
   text-decoration: none;
 }
 
+// On small screens only the match of the first team is shown. Without one the
+// whole strip is hidden rather than left with just its title.
+.fixture-card--secondary {
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    display: none;
+  }
+}
+
+.fixtures-strip--no-primary {
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    display: none;
+  }
+}
+
 .fixture-card--clickable {
   transition:
     background-color 0.15s ease,

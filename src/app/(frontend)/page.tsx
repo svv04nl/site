@@ -103,6 +103,7 @@ export default async function HomePage() {
           teams={teams.map((team) => ({ teamcode: team.teamcode!, teamName: team.name }))}
           maxDays={31}
           limit={3}
+          primaryTeamcode={featuredTeams.find((t) => t.slug === 'svv04-1')?.teamcode ?? undefined}
         />
 
         <div className="page">
