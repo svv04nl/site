@@ -134,11 +134,11 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Sponsor strip — color, data-driven */}
-        <SponsorsTicker />
-
         {/* Vind jouw weg — audience cards */}
         <FindYourWaySection />
+
+        {/* Sponsor strip — color, data-driven */}
+        <SponsorsTicker />
       </main>
     </>
   )

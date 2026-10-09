@@ -34,12 +34,10 @@ export function FindYourWay({
     <section className="findway-section" aria-labelledby="findway-title">
       <div className="findway-inner">
         <div className="findway-header">
-          <div>
-            <p className="home-eyebrow">Voor jou</p>
-            <h2 className="findway-title" id="findway-title">
-              Vind jouw weg bij <span>SVV&rsquo;04</span>
-            </h2>
-          </div>
+          <p className="home-eyebrow">Voor jou</p>
+          <h2 className="findway-title" id="findway-title">
+            Vind jouw weg bij <span>SVV&rsquo;04</span>
+          </h2>
           <p className="findway-subtitle">
             Kies wie je bent. Je ziet dan meteen de pagina&rsquo;s die voor jou het belangrijkst
             zijn.
