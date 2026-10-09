@@ -32,7 +32,12 @@ const ACTION_LINKS: ActionPage[] = [
 export default async function HeaderServer() {
   const payload = await getPayload({ config })
 
-  const [{ docs: teams }, { docs: verenigingPages }, { docs: commissiesPages }] = await Promise.all([
+  const [
+    { docs: teams },
+    { docs: verenigingPages },
+    { docs: commissiesPages },
+    { docs: audiences },
+  ] = await Promise.all([
     payload.find({ collection: 'teams', limit: 100, sort: 'order' }),
     payload.find({
       collection: 'pages',
@@ -56,6 +61,12 @@ export default async function HeaderServer() {
       limit: 50,
       select: { title: true, slug: true, section: true },
     }),
+    payload.find({
+      collection: 'audiences',
+      sort: 'order',
+      limit: 20,
+      select: { name: true, slug: true },
+    }),
   ])
 
   const seniorTeams = teams.filter((t) => t.type === 'senior')
@@ -68,6 +79,11 @@ export default async function HeaderServer() {
       actiePages={ACTION_LINKS}
       verenigingPages={verenigingPages}
       commissiesPages={commissiesPages}
+      audiencePages={audiences.map((a) => ({
+        id: a.id,
+        title: a.name.charAt(0).toUpperCase() + a.name.slice(1),
+        href: `/${a.slug}`,
+      }))}
     />
   )
 }

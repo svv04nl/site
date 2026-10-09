@@ -1,11 +1,33 @@
 import React from 'react'
-import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import type { Audience } from '@/payload-types'
+import { FindYourWay, type FindYourWayItem } from '@/components/FindYourWay'
+
+const MAX_LINKS = 4
+
+// Takes the first link of every theme, then the second of every theme, and so on,
+// so the panel shows a spread of the audience page instead of one theme only.
+function pickLinks(themes: Audience['themes']): FindYourWayItem['links'] {
+  const lists = (themes ?? []).map((t) => t.links ?? [])
+  const picked: FindYourWayItem['links'] = []
+  for (let i = 0; picked.length < MAX_LINKS; i++) {
+    let found = false
+    for (const list of lists) {
+      if (list[i] && picked.length < MAX_LINKS) {
+        picked.push({ title: list[i].title, description: list[i].description, href: list[i].href })
+        found = true
+      }
+    }
+    if (!found) break
+  }
+  return picked
+}
 
 /**
- * "Vind jouw weg bij SVV'04" — a grid of audience cards on the homepage.
- * Each card links to its audience landing page at /[slug].
+ * "Vind jouw weg bij SVV'04" on the homepage: a role picker fed by the audiences
+ * (Doelgroepen) in the CMS. Chip label, intro and links come from the audience
+ * itself; the CTA leads to its landing page at /[slug].
  */
 export async function FindYourWaySection() {
   const payload = await getPayload({ config })
@@ -20,29 +42,15 @@ export async function FindYourWaySection() {
 
   if (audiences.length === 0) return null
 
-  return (
-    <section className="findway-section">
-      <div className="home-section-inner">
-        <div className="findway-header">
-          <h2 className="findway-title">Vind jouw weg bij SVV&rsquo;04</h2>
-          <p className="findway-subtitle">
-            Kies je rol en spring direct naar wat voor jou relevant is.
-          </p>
-        </div>
-        <div className="findway-grid">
-          {audiences.map((audience) => (
-            <Link
-              key={audience.id}
-              href={`/${audience.slug}`}
-              className="findway-card"
-            >
-              <h3 className="findway-card-title">{audience.cardTitle}</h3>
-              <p className="findway-card-desc">{audience.cardDescription}</p>
-              <span className="findway-card-link">Bekijk pagina &rarr;</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
+  const items: FindYourWayItem[] = audiences.map((a) => ({
+    slug: a.slug,
+    label: a.cardTitle,
+    eyebrow: `Voor ${a.name}`,
+    title: `Alles voor ${a.name}`,
+    intro: a.cardDescription,
+    cta: `Naar de pagina voor ${a.name}`,
+    links: pickLinks(a.themes),
+  }))
+
+  return <FindYourWay items={items} defaultSlug="ouders" />
 }

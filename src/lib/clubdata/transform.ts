@@ -371,6 +371,7 @@ export type ResultMatch = {
   isOwnAway: boolean
   isOwn: boolean
   weekKey: string
+  dayKey: string // "YYYY-MM-DD"
 }
 
 export function transformResults(
@@ -384,6 +385,7 @@ export function transformResults(
 
     const date = parseDateStr(w.datum) ?? parseDateStr(w.wedstrijddatum)
     const weekKey = date ? getMondayKey(date) : 'unknown'
+    const dayKey = date ? format(date, 'yyyy-MM-dd') : 'unknown'
     const displayDate = date ? formatDisplayDate(date) : w.datumopgemaakt || ''
 
     const homeRelatiecode = w.thuisteamclubrelatiecode || undefined
@@ -402,8 +404,27 @@ export function transformResults(
       isOwnAway,
       isOwn,
       weekKey,
+      dayKey,
     }
   })
+}
+
+export function groupResultsByDay(
+  matches: ResultMatch[],
+): { dayKey: string; label: string; matches: ResultMatch[] }[] {
+  const map = new Map<string, ResultMatch[]>()
+  for (const m of matches) {
+    if (!map.has(m.dayKey)) map.set(m.dayKey, [])
+    map.get(m.dayKey)!.push(m)
+  }
+
+  return Array.from(map.entries())
+    .sort(([a], [b]) => b.localeCompare(a)) // newest first
+    .map(([dayKey, dMatches]) => ({
+      dayKey,
+      label: dayKey === 'unknown' ? '' : formatDayLabel(parse(dayKey, 'yyyy-MM-dd', new Date())),
+      matches: dMatches,
+    }))
 }
 
 export function groupResultsByWeek(

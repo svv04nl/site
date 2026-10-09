@@ -1,9 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import ClubLogo from '@/components/ClubLogo'
 
 type Props = {
-  date: string
+  /** Omit when the card sits under a heading that already shows the day. */
+  date?: string
   homeTeam: string
   awayTeam: string
   homeTeamRelatiecode?: string
@@ -15,9 +15,40 @@ type Props = {
   score?: string
   venue?: string
   status?: string
+  /** "Thuis" or "Uit". Derived from isOwnHome/isOwnAway when omitted. */
+  location?: 'Thuis' | 'Uit' | null
   href?: string
 }
 
+// First two letters of the first word, for clubs without a logo.
+function initials(name: string): string {
+  return name.trim().split(/\s+/)[0].slice(0, 2).toUpperCase()
+}
+
+function Club({ name, clubcode, own }: { name: string; clubcode?: string; own?: boolean }) {
+  return (
+    <div className="match-card-club">
+      {clubcode ? (
+        <img
+          src={`https://logoapi.voetbal.nl/logo.php?clubcode=${clubcode}`}
+          alt={name}
+          className="match-card-logo"
+        />
+      ) : (
+        <span className="match-card-logo match-card-logo--initials" aria-hidden="true">
+          {initials(name)}
+        </span>
+      )}
+      <span className={`match-card-team${own ? ' match-card-team--own' : ''}`}>{name}</span>
+    </div>
+  )
+}
+
+/**
+ * The match card used across the site (homepage band, programma, team pages):
+ * home club left, away club right, date, time or score and home/away in the
+ * middle. The own club is marked red; clubs without a logo get their initials.
+ */
 export default function MatchCard({
   date,
   homeTeam,
@@ -26,45 +57,40 @@ export default function MatchCard({
   awayTeamRelatiecode,
   isOwnHome,
   isOwnAway,
-  isOwn,
   time,
   score,
   venue,
   status,
+  location,
   href,
 }: Props) {
   const centerLabel = score ?? time ?? ''
-  const className = `card-match card${href ? ' card-match--clickable' : ''}`
+  const where = location !== undefined ? location : isOwnHome ? 'Thuis' : isOwnAway ? 'Uit' : null
+  const showStatus = status && status !== 'Te spelen' && status !== 'Uitgespeeld'
+  const className = `match-card${href ? ' match-card--clickable' : ''}`
 
   const body = (
-    <div className="card-match-body">
-      <div className="card-match-club">
-        <ClubLogo clubcode={homeTeamRelatiecode} name={homeTeam} className="card-match-logo" />
-        <span className={`card-match-club-name${isOwnHome ? ' card-match-club-name--own' : ''}`}>
-          {homeTeam}
-        </span>
-      </div>
+    <>
+      <Club name={homeTeam} clubcode={homeTeamRelatiecode} own={isOwnHome} />
 
-      <div className="card-match-info">
-        <time className="card-match-date">{date}</time>
+      <div className="match-card-info">
+        {date && <time className="match-card-date">{date}</time>}
         {centerLabel && (
-          <div className={score ? 'card-match-score' : 'card-match-time'}>{centerLabel}</div>
+          <div className={`match-card-time${/\d/.test(centerLabel) ? '' : ' match-card-time--text'}`}>
+            {centerLabel}
+          </div>
         )}
-        {(venue || (status && status !== 'Te spelen' && status !== 'Uitgespeeld')) && (
-          <div className="card-match-meta">
+        {where && <span className="match-card-location">{where}</span>}
+        {(venue || showStatus) && (
+          <div className="match-card-meta">
             {venue && <span>{venue}</span>}
-            {status && status !== 'Te spelen' && status !== 'Uitgespeeld' && <span>{status}</span>}
+            {showStatus && <span>{status}</span>}
           </div>
         )}
       </div>
 
-      <div className="card-match-club">
-        <ClubLogo clubcode={awayTeamRelatiecode} name={awayTeam} className="card-match-logo" />
-        <span className={`card-match-club-name${isOwnAway ? ' card-match-club-name--own' : ''}`}>
-          {awayTeam}
-        </span>
-      </div>
-    </div>
+      <Club name={awayTeam} clubcode={awayTeamRelatiecode} own={isOwnAway} />
+    </>
   )
 
   if (href) {

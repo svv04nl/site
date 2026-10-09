@@ -1,12 +1,14 @@
 import React from 'react'
-import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
-import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
+import { AudienceHero } from '@/components/audience/AudienceHero'
+import { AudienceThemes } from '@/components/audience/AudienceThemes'
+import { AudienceFaq } from '@/components/audience/AudienceFaq'
+import { AudienceClosing } from '@/components/audience/AudienceClosing'
 import type { Audience } from '@/payload-types'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -17,7 +19,8 @@ async function getAudience(slug: string): Promise<Audience | null> {
     collection: 'audiences',
     where: { slug: { equals: slug } },
     limit: 1,
-    depth: 0,
+    // Depth 2: hero image, contact person and the person's photo must be populated.
+    depth: 2,
   })
   return docs[0] ?? null
 }
@@ -56,8 +59,14 @@ export default async function AudiencePage({ params }: Props) {
   const audience = await getAudience(slug)
 
   if (!audience) notFound()
-  const links = audience.links ?? []
-  const cta = audience.cta
+  const themes = audience.themes ?? []
+  const faq = (audience.faq ?? []).map((item) => ({
+    id: item.id ?? item.question,
+    category: item.category,
+    question: item.question,
+    answer: item.answer,
+    links: (item.links ?? []).map((l) => ({ id: l.id ?? l.href, label: l.label, href: l.href })),
+  }))
 
   const capitalisedName = audience.name.charAt(0).toUpperCase() + audience.name.slice(1)
   const crumbs = [
@@ -66,55 +75,64 @@ export default async function AudiencePage({ params }: Props) {
     { label: capitalisedName },
   ]
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  }
+
   return (
-    <main className="page audience-page">
-      <SetBreadcrumb crumbs={crumbs} />
+    <main className="audience-page">
+      {/* The breadcrumb is part of the hero, so the global breadcrumb bar stays off. */}
       <BreadcrumbJsonLd items={crumbs.map((c) => ({ name: c.label, href: c.href }))} />
+      {faq.length > 0 && (
+        <script
+          type="application/ld+json"
+          // Escape "<" so editor content can never close the script tag.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }}
+        />
+      )}
 
-      <div className="page-inner">
-        <header className="audience-header">
-          <h1 className="audience-title">
-            Alles voor <span className="audience-title-accent">{audience.name}</span>{' '}
-            van <span className="audience-title-accent">SVV&rsquo;04</span>
-          </h1>
-          {audience.intro && <p className="audience-intro">{audience.intro}</p>}
-        </header>
+      <AudienceHero audience={audience} crumbs={crumbs} />
 
-        {audience.body && (
+      {audience.body && (
+        <div className="audience-section">
           <div className="audience-body static-page-body">
             <RichText data={audience.body} />
           </div>
-        )}
+        </div>
+      )}
 
-        {links.length > 0 && (
-          <div className="audience-grid">
-            {links.map((link) => (
-              <Link key={link.id} href={link.href} className="audience-link-card">
-                <h2 className="audience-link-title">{link.title}</h2>
-                {link.description && (
-                  <p className="audience-link-desc">{link.description}</p>
-                )}
-                <span className="audience-link-arrow" aria-hidden="true">
-                  &rarr;
-                </span>
-              </Link>
-            ))}
-          </div>
-        )}
+      {themes.length > 0 && (
+        <div className="audience-section">
+          <AudienceThemes themes={themes} />
+        </div>
+      )}
 
-        {cta?.enabled && (
-          <section className="audience-cta">
-            <div className="audience-cta-text">
-              {cta.title && <h2 className="audience-cta-title">{cta.title}</h2>}
-              {cta.text && <p className="audience-cta-desc">{cta.text}</p>}
-            </div>
-            {cta.buttonUrl && cta.buttonLabel && (
-              <Link className="btn btn--light btn--lg" href={cta.buttonUrl}>
-                {cta.buttonLabel} &rarr;
-              </Link>
-            )}
-          </section>
-        )}
+      <AudienceFaq
+        name={audience.name}
+        items={faq}
+        help={
+          audience.faqHelp
+            ? {
+                title: audience.faqHelp.title,
+                text: audience.faqHelp.text,
+                links: (audience.faqHelp.links ?? []).map((l) => ({
+                  id: l.id ?? l.href,
+                  label: l.label,
+                  href: l.href,
+                })),
+              }
+            : undefined
+        }
+      />
+
+      <div className="audience-section audience-section--padded">
+        <AudienceClosing audience={audience} />
       </div>
     </main>
   )

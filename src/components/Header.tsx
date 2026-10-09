@@ -67,12 +67,19 @@ export type NavPage = {
   section: string
 }
 
+export type AudienceNavItem = {
+  id: string | number
+  title: string
+  href: string
+}
+
 type Props = {
   seniorTeams: Team[]
   youthTeams: Team[]
   actiePages: ActionPage[]
   verenigingPages: NavPage[]
   commissiesPages: NavPage[]
+  audiencePages: AudienceNavItem[]
 }
 
 export default function Header({
@@ -81,6 +88,7 @@ export default function Header({
   actiePages,
   verenigingPages,
   commissiesPages,
+  audiencePages,
 }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
@@ -245,6 +253,20 @@ export default function Header({
               {(
                 [
                   {
+                    label: 'Voor jou',
+                    content: (
+                      <div className="sub-menu-grid">
+                        <ul className="sub-menu-list">
+                          {audiencePages.map((item) => (
+                            <li key={item.id}>
+                              <Link href={item.href}>{item.title}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ),
+                  },
+                  {
                     label: 'Teams',
                     content: (
                       <div className="sub-menu-grid">
@@ -363,15 +385,9 @@ export default function Header({
             <li>
               <Link href="/programma">Programma</Link>
             </li>
-            <li>
-              <Link href="/teams">Teams</Link>
-            </li>
             {(
-              [
-                { label: 'Vereniging', pages: verenigingPages },
-                { label: 'Commissies', pages: commissiesPages },
-              ] as const
-            ).map(({ label, pages }) => (
+              [{ label: 'Voor jou', items: audiencePages }] as const
+            ).map(({ label, items }) => (
               <li
                 key={label}
                 className={`mobile-nav-has-children${openSubmenu === label ? ' is-open' : ''}`}
@@ -384,9 +400,52 @@ export default function Header({
                   {label} <MobileNavArrow />
                 </button>
                 <ul className="mobile-nav-sub">
-                  {pages.map((page) => (
-                    <li key={page.id}>
-                      <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                  {items.map((item) => (
+                    <li key={item.id}>
+                      <Link href={item.href}>{item.title}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+            <li>
+              <Link href="/teams">Teams</Link>
+            </li>
+            {(
+              [
+                {
+                  label: 'Vereniging',
+                  items: verenigingPages.map((p) => ({
+                    id: p.id,
+                    title: p.title,
+                    href: `/${p.section}/${p.slug}`,
+                  })),
+                },
+                {
+                  label: 'Commissies',
+                  items: commissiesPages.map((p) => ({
+                    id: p.id,
+                    title: p.title,
+                    href: `/${p.section}/${p.slug}`,
+                  })),
+                },
+              ] as const
+            ).map(({ label, items }) => (
+              <li
+                key={label}
+                className={`mobile-nav-has-children${openSubmenu === label ? ' is-open' : ''}`}
+              >
+                <button
+                  className="mobile-nav-toggle"
+                  aria-expanded={openSubmenu === label}
+                  onClick={() => toggleSubmenu(label)}
+                >
+                  {label} <MobileNavArrow />
+                </button>
+                <ul className="mobile-nav-sub">
+                  {items.map((item) => (
+                    <li key={item.id}>
+                      <Link href={item.href}>{item.title}</Link>
                     </li>
                   ))}
                 </ul>

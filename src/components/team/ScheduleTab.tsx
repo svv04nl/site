@@ -83,12 +83,17 @@ export default function ScheduleTab({ teamcode, poules }: Props) {
 
       {isError && <p className="league-error">Programma kon niet worden geladen.</p>}
 
+      {!isError && !isAll && selectedPoule?.klassepoule && (
+        <p className="league-subtitle">{selectedPoule.klassepoule}</p>
+      )}
+
       {!isError && (
         <ScheduleWeekGroups
           weekGroups={weekGroups}
-          subtitle={!isAll ? selectedPoule?.klassepoule : undefined}
           isLoading={isLoading}
           emptyMessage="Geen wedstrijden gevonden."
+          tableOnDesktop
+          showWeekLabel={false}
         />
       )}
     </div>

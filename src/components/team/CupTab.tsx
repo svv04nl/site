@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import cx from 'classnames'
 import { standingsQuery, cupResultsQuery, pouleScheduleQuery } from '@/lib/clubdata/queries'
-import { groupScheduleByWeek } from '@/lib/clubdata/transform'
-import MatchCard from '@/components/ui/MatchCard'
+import { groupScheduleByWeek, groupResultsByDay } from '@/lib/clubdata/transform'
+import ResultsList from '@/components/ui/ResultsList'
 import ClubLogo from '@/components/ClubLogo'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 import type { PouleInfo } from '@/lib/clubdata/types'
@@ -85,6 +85,8 @@ export default function CupTab({ poules, teamcode }: Props) {
         weekGroups={weekGroups}
         isLoading={scheduleLoading}
         emptyMessage="Geen programma gevonden."
+        tableOnDesktop
+        showWeekLabel={false}
       />
 
       <div style={{ marginBottom: '2rem' }} />
@@ -93,25 +95,12 @@ export default function CupTab({ poules, teamcode }: Props) {
       <h3 className="league-title">Uitslagen</h3>
 
       {filtered.length > 0 ? (
-        <div
-          className="card-match-list"
-          style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}
-        >
-          {filtered.map((m) => (
-            <MatchCard
-              key={m.matchCode}
-              date={m.date}
-              homeTeam={m.homeTeam}
-              awayTeam={m.awayTeam}
-              homeTeamRelatiecode={m.homeTeamRelatiecode}
-              awayTeamRelatiecode={m.awayTeamRelatiecode}
-              isOwnHome={m.isOwnHome}
-              isOwnAway={m.isOwnAway}
-              isOwn={m.isOwn}
-              score={m.score}
-              status={m.status}
-              href={`/wedstrijd/${m.matchCode}`}
-            />
+        <div style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
+          {groupResultsByDay(filtered).map((group) => (
+            <div key={group.dayKey} className="league-results-day">
+              {group.label && <h4 className="league-day-title">{group.label}</h4>}
+              <ResultsList matches={group.matches} />
+            </div>
           ))}
         </div>
       ) : (

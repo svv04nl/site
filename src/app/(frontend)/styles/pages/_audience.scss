@@ -1,135 +1,537 @@
 // ─── Audience landing page (/[slug]) ─────────────────────────────────
 
-.audience-header {
-  margin-bottom: 2.5rem;
-  max-width: 720px;
-}
+// Page-level text settings from the design.
+.audience-page {
+  // As in the design: thinner rendering of light text on dark photos (macOS).
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 
-.audience-title {
-  font-family: var(--font-heading);
-  font-size: 2.25rem;
-  font-weight: 700;
-  line-height: 1.1;
-  margin: 0;
-  text-transform: uppercase;
-
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    font-size: 1.75rem;
+  .btn {
+    font-size: 1.0625rem;
+    letter-spacing: 0.1em;
   }
 }
 
-.audience-title-accent {
-  color: var(--color-primary);
-}
+// Centered content column shared by the sections below the hero.
+.audience-section {
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 0 var(--container-padding);
 
-.audience-intro {
-  color: #555;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  margin: 1rem 0 0;
+  &--padded {
+    padding-bottom: 4.5rem;
+    padding-top: 4.5rem;
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      padding-bottom: 3rem;
+      padding-top: 3rem;
+    }
+  }
 }
 
 .audience-body {
-  margin-bottom: 2.5rem;
   max-width: 760px;
+  padding: 4.5rem 0 0;
 }
 
-.audience-grid {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(3, 1fr);
+// ─── Themed link groups ──────────────────────────────────────────────
 
-  @media screen and (max-width: $breakpoint-tablet) {
-    grid-template-columns: repeat(2, 1fr);
+.audience-themes {
+  display: grid;
+  gap: 0 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.audience-theme {
+  display: flex;
+  flex-direction: column;
+  gap: 1.375rem;
+  padding: 4.5rem 0 4rem;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding: 2.5rem 0 1.5rem;
+  }
+}
+
+.audience-theme-number {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.audience-theme-title {
+  font-family: var(--font-heading);
+  font-size: 2.125rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.audience-theme-intro {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.audience-theme-links {
+  border-top: 2px solid var(--color-primary);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.audience-theme-link {
+  align-items: center;
+  border-bottom: 1px solid #e6e6e6;
+  color: var(--color-dark);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr auto;
+  padding: 0.9375rem 0;
+  text-decoration: none;
+
+  > span:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  &:hover .audience-theme-link-title {
+    color: var(--color-primary);
+  }
+
+  &:hover .audience-theme-link-arrow {
+    transform: translateX(4px);
+  }
+}
+
+.audience-theme-link-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.audience-theme-link-sub {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.audience-theme-link-arrow {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+// ─── FAQ ─────────────────────────────────────────────────────────────
+
+.audience-faq {
+  background: var(--color-light);
+}
+
+.audience-faq-inner {
+  align-items: start;
+  display: grid;
+  gap: 3.5rem;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  margin: 0 auto;
+  max-width: var(--grid-base);
+  padding: 5.5rem var(--container-padding);
+
+  @media screen and (max-width: $breakpoint-medium) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   @media screen and (max-width: $breakpoint-mobile-lg) {
-    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-bottom: 3.5rem;
+    padding-top: 3.5rem;
   }
 }
 
-.audience-link-card {
-  background: var(--color-white);
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  color: var(--color-dark);
+.audience-faq-intro {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 1.5rem 1.5rem;
-  position: relative;
+  gap: 1.5rem;
+}
+
+.audience-faq-eyebrow {
+  align-items: center;
+  color: var(--color-dark);
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  letter-spacing: 0.16em;
+  margin: 0;
+  text-transform: uppercase;
+
+  &::before {
+    background: var(--color-primary);
+    content: '';
+    display: block;
+    height: 3px;
+    width: 2.5rem;
+  }
+}
+
+.audience-faq-title {
+  font-family: var(--font-heading);
+  font-size: 3.25rem;
+  font-weight: 800;
+  line-height: 0.95;
+  margin: 0;
+  text-transform: uppercase;
+
+  span {
+    color: var(--color-primary);
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    font-size: 2.5rem;
+  }
+}
+
+.audience-faq-text {
+  color: #444;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.audience-faq-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.audience-faq-chip {
+  background: var(--color-white);
+  border: 1.5px solid #d6d6d6;
+  border-radius: 999px;
+  color: var(--color-dark);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0.5625rem 1rem;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    border-color: var(--color-dark);
+  }
+
+  &.is-active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+  }
+}
+
+.audience-faq-help {
+  background: #1c1c1c;
+  border-radius: 12px;
+  color: var(--color-white);
+  padding: 1.75rem;
+}
+
+.audience-faq-help-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.audience-faq-help-text {
+  color: #cfcfcf;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.audience-faq-help-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 1rem;
+
+  a {
+    color: #ff4a40;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover {
+      color: var(--color-white);
+    }
+  }
+}
+
+.audience-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.audience-faq-item {
+  background: var(--color-white);
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+}
+
+.audience-faq-question {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--color-dark);
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: 1rem;
+  grid-template-columns: 1fr 36px;
+  padding: 1.375rem 1.625rem;
+  text-align: left;
+  width: 100%;
+
+  > span:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &:hover .audience-faq-question-text {
+    color: var(--color-primary);
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding: 1.125rem 1.125rem;
+  }
+}
+
+.audience-faq-category {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.audience-faq-question-text {
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: color 0.15s ease;
+}
+
+.audience-faq-toggle {
+  align-items: center;
+  background: var(--color-light);
+  border-radius: 50%;
+  color: var(--color-primary);
+  display: flex;
+  font-size: 1.375rem;
+  font-weight: 600;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+// Closed panels collapse to zero height and are hidden from keyboard and
+// screen readers, but stay in the DOM.
+.audience-faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows 0.2s ease-out,
+    visibility 0s linear 0.2s;
+  visibility: hidden;
+
+  .is-open > & {
+    grid-template-rows: 1fr;
+    transition-delay: 0s;
+    visibility: visible;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.audience-faq-panel-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 1.625rem;
+
+  .is-open & {
+    padding-bottom: 1.625rem;
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding-left: 1.125rem;
+    padding-right: 1.125rem;
+  }
+}
+
+.audience-faq-answer {
+  color: #333;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 620px;
+}
+
+.audience-faq-answer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1rem;
+}
+
+.audience-faq-answer-link {
+  background: var(--color-primary);
+  border-radius: 6px;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.6875rem 1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: #a80000;
+  }
+}
+
+// ─── Closing row: contact person + CTA ───────────────────────────────
+
+.audience-closing {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+}
+
+.audience-contact {
+  align-items: center;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem 2.25rem;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding: 1.5rem;
+  }
+}
+
+// Whole card is a mailto link.
+.audience-contact--link {
+  color: inherit;
   text-decoration: none;
   transition:
+    border-color 0.15s ease,
     box-shadow 0.2s ease,
     transform 0.2s ease;
 
   &:hover {
-    box-shadow: 0 14px 32px rgba(0 0 0 / 0.12);
+    border-color: var(--color-primary);
+    box-shadow: 0 14px 32px rgba(0 0 0 / 0.1);
     transform: translateY(-3px);
 
-    .audience-link-title {
+    .audience-contact-mail {
       color: var(--color-primary);
-    }
-
-    .audience-link-arrow {
-      transform: translateX(4px);
     }
   }
 }
 
-.audience-link-title {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin: 0;
-  padding-right: 1.5rem;
-  transition: color 0.2s ease;
+.audience-contact-photo {
+  border-radius: 50%;
+  flex-shrink: 0;
+  height: 96px;
+  object-fit: cover;
+  width: 96px;
 }
 
-.audience-link-desc {
-  color: #666;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin: 0.5rem 0 0;
-}
-
-.audience-link-arrow {
+.audience-contact-initials {
+  align-items: center;
+  background: var(--color-light);
   color: var(--color-primary);
-  font-size: 1.25rem;
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  justify-content: center;
+}
+
+.audience-contact-label {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
   font-weight: 700;
-  position: absolute;
-  right: 1.5rem;
-  top: 1.5rem;
-  transition: transform 0.2s ease;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.audience-contact-name {
+  font-family: var(--font-heading);
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0.25rem 0 0;
+  text-transform: uppercase;
+}
+
+.audience-contact-mail {
+  color: #444;
+  font-size: 0.9375rem;
+  margin: 0.375rem 0 0;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  transition: color 0.15s ease;
 }
 
 // Red CTA banner
 .audience-cta {
   align-items: center;
   background: var(--color-primary);
-  border-radius: 14px;
+  border-radius: 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   justify-content: space-between;
-  margin-top: 3rem;
-  padding: 2.5rem;
+  padding: 2rem 2.25rem;
 
   @media screen and (max-width: $breakpoint-mobile-lg) {
-    padding: 1.75rem;
+    padding: 1.5rem;
   }
 }
 
 .audience-cta-title {
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: 2.125rem;
+  font-weight: 800;
+  line-height: 1;
   margin: 0;
   text-transform: uppercase;
 }
 
 .audience-cta-desc {
-  color: rgba(255 255 255 / 0.9);
+  color: #ffe3e1;
   font-size: 1rem;
-  margin: 0.4rem 0 0;
+  margin: 0.5rem 0 0;
 }

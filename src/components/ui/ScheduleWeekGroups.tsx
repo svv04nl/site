@@ -41,7 +41,6 @@ function TableHead() {
           </span>
         </th>
         <th>Accommodatie</th>
-        <th>Status</th>
       </tr>
     </thead>
   )
@@ -91,9 +90,6 @@ function MatchRow({ m, onNavigate }: { m: ScheduleMatch; onNavigate: (href: stri
       </td>
       <td className="league-schedule-location" data-label="Locatie">
         {m.venue}
-      </td>
-      <td className="league-schedule-status" data-label="Status">
-        {m.status}
       </td>
     </tr>
   )
@@ -148,7 +144,6 @@ export default function ScheduleWeekGroups({
                   <col className="col-home" />
                   <col className="col-away" />
                   <col className="col-venue" />
-                  <col className="col-status" />
                 </colgroup>
                 <TableHead />
                 <tbody>
@@ -156,7 +151,7 @@ export default function ScheduleWeekGroups({
                     <React.Fragment key={day.dayKey}>
                       {day.label && (
                         <tr className="league-schedule-day-row">
-                          <td colSpan={5}>{day.label}</td>
+                          <td colSpan={4}>{day.label}</td>
                         </tr>
                       )}
                       {day.matches.map((m) => (
@@ -181,8 +176,7 @@ export default function ScheduleWeekGroups({
                         <col className="col-home" />
                         <col className="col-away" />
                         <col className="col-venue" />
-                        <col className="col-status" />
-                      </colgroup>
+                            </colgroup>
                       <TableHead />
                       <tbody>
                         {day.matches.map((m) => (
@@ -203,7 +197,7 @@ export default function ScheduleWeekGroups({
                 {day.matches.map((m) => (
                   <MatchCard
                     key={m.matchCode}
-                    date={m.date}
+                    date={day.label ? undefined : m.date}
                     homeTeam={m.homeTeam}
                     awayTeam={m.awayTeam}
                     homeTeamRelatiecode={m.homeTeamRelatiecode}

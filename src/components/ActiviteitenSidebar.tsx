@@ -3,7 +3,7 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { activiteitenQuery } from '@/lib/clubdata/queries'
-import { MoreLink } from '@/components/ui/MoreLink'
+import Link from 'next/link'
 
 export function ActiviteitenSidebar() {
   const { data: activiteiten = [], isLoading } = useQuery(activiteitenQuery(100))
@@ -13,9 +13,14 @@ export function ActiviteitenSidebar() {
 
   return (
     <div className="sidebar-section">
-      <h2 className="sidebar-section-title">Agenda</h2>
+      <div className="sidebar-head">
+        <h2 className="sidebar-head-title">Agenda</h2>
+        <Link href="/agenda" className="home-text-link">
+          Volledige agenda &rarr;
+        </Link>
+      </div>
       <ul className="sidebar-agenda-list">
-        {activiteiten.slice(0, 4).map((item, i) => {
+        {activiteiten.slice(0, 3).map((item, i) => {
           const date = new Date(item.datumvan)
           const isAllDay = item.heledag === 'true'
           const time = isAllDay
@@ -47,11 +52,15 @@ export function ActiviteitenSidebar() {
                   <span className="sidebar-agenda-meta">{metaParts.join(' · ')}</span>
                 )}
               </div>
+              {item.url && (
+                <span className="sidebar-agenda-arrow" aria-hidden="true">
+                  &rarr;
+                </span>
+              )}
             </li>
           )
         })}
       </ul>
-      <MoreLink href="/agenda" text="Volledige agenda" />
     </div>
   )
 }

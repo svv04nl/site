@@ -1,14 +1,13 @@
 import Link from 'next/link'
 import type { Media, Post } from '@/payload-types'
-import { MoreLink } from './MoreLink'
 
 type Props = {
   post: Post
 }
 
 /**
- * Horizontale nieuwskaart voor de homepage-stapel: afbeelding links,
- * meta + titel + excerpt + "Lees meer" rechts.
+ * Nieuwsitem voor de homepage-lijst: afbeelding links (3:2), datum, titel,
+ * excerpt en "Lees meer" rechts.
  */
 export function NewsRowCard({ post }: Props) {
   const image = post.featuredImage as Media | null | undefined
@@ -34,20 +33,18 @@ export function NewsRowCard({ post }: Props) {
         )}
       </div>
       <div className="news-row-body">
-        <div className="news-row-meta">
-          <time className="news-row-date">
-            {post.publishedAt
-              ? new Date(post.publishedAt).toLocaleDateString('nl-NL', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })
-              : ''}
+        {post.publishedAt && (
+          <time className="news-row-date" dateTime={post.publishedAt}>
+            {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
           </time>
-        </div>
+        )}
         <h3 className="news-row-title">{post.title}</h3>
         {post.excerpt && <p className="news-row-excerpt">{post.excerpt}</p>}
-        <MoreLink text="Lees meer" />
+        <span className="news-row-more">Lees meer &rarr;</span>
       </div>
     </Link>
   )

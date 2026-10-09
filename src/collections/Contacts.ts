@@ -94,6 +94,15 @@ export const Contacts: CollectionConfig = {
       label: 'Telefoon (06-nummer)',
     },
     {
+      name: 'photo',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Foto',
+      admin: {
+        description: 'Optioneel. Wordt getoond als aanspreekpunt op de doelgroeppagina\'s.',
+      },
+    },
+    {
       name: 'group',
       type: 'text',
       label: 'Groep',

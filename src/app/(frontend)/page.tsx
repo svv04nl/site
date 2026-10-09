@@ -6,7 +6,6 @@ import config from '@payload-config'
 import FixturesStrip from '@/components/FixturesStrip'
 import type { Post } from '@/payload-types'
 import { NewsRowCard } from '@/components/ui/NewsRowCard'
-import { SectionHeader } from '@/components/ui/SectionHeader'
 import { ActiviteitenSidebar } from '@/components/ActiviteitenSidebar'
 import { SponsorSidebar } from '@/components/SponsorSidebar'
 import { SponsorsTicker } from '@/components/SponsorsTicker'
@@ -55,6 +54,7 @@ export default async function HomePage() {
   ])
 
   const heroPost = heroPosts[0]
+  const newsPosts = latestPosts.filter((post) => post.id !== heroPost?.id).slice(0, 3)
   if (!heroPost) preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
 
   // Preserve the intended display order
@@ -105,30 +105,32 @@ export default async function HomePage() {
           limit={3}
         />
 
-        <div className="page">
-          {/* Latest news + sidebar (sponsors + agenda) */}
-          <div className="section-with-sidebar">
-            {/* Left: news */}
-            <div className="sidebar-content-col sidebar-content-col--no-gap">
-              <SectionHeader
-                title="Laatste Nieuws"
-                link={{ href: '/nieuws', label: 'Bekijk alle nieuws' }}
-              />
-              <div className="home-news-layout">
-                {latestPosts.slice(0, 3).map((post) => (
-                  <NewsRowCard key={post.id} post={post as Post} />
-                ))}
+        <div className="home-main">
+          {/* Latest news; the post shown in the hero is skipped here */}
+          <div className="home-main-news">
+            <div className="home-news-head">
+              <div>
+                <p className="home-eyebrow">Nieuws</p>
+                <h2 className="home-h2">
+                  Laatste <span>nieuws</span>
+                </h2>
               </div>
+              <Link href="/nieuws" className="home-text-link">
+                Bekijk alle nieuws &rarr;
+              </Link>
             </div>
+            <div className="home-news-list">
+              {newsPosts.map((post) => (
+                <NewsRowCard key={post.id} post={post as Post} />
+              ))}
+            </div>
+          </div>
 
-            {/* Right: sidebar */}
-            <div className="sidebar-col sidebar-col--plain">
-              <div className="sidebar-col__inner">
-                <WebshopBanner />
-                <SponsorSidebar />
-                <ActiviteitenSidebar />
-              </div>
-            </div>
+          {/* Sidebar: webshop, main sponsors, agenda */}
+          <div className="home-main-side">
+            <WebshopBanner />
+            <SponsorSidebar />
+            <ActiviteitenSidebar />
           </div>
         </div>
 
