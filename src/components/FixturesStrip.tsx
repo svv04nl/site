@@ -3,7 +3,7 @@
 import React from 'react'
 import { useQueries } from '@tanstack/react-query'
 import FixtureCard from '@/components/FixtureCard'
-import { MoreLink } from '@/components/ui/MoreLink'
+import Link from 'next/link'
 import { nextMatchQuery } from '@/lib/clubdata/queries'
 
 export type FixtureTeam = {
@@ -40,17 +40,21 @@ export default function FixturesStrip({ teams, maxDays = 31, limit = 3 }: Props)
   return (
     <section className="fixtures-strip">
       <div className="fixtures-strip-inner">
-        <h2 className="fixtures-strip-title">
-          Komende
-          <br />
-          wedstrijden
-        </h2>
+        <div className="fixtures-strip-head">
+          <p className="home-eyebrow home-eyebrow--sm">Programma</p>
+          <h2 className="fixtures-strip-title">Komende wedstrijden</h2>
+          <Link href="/programma" className="fixtures-strip-link">
+            Volledig programma &rarr;
+          </Link>
+        </div>
         <div className="fixtures-strip-list">
           {matches.map((match) => (
-            <FixtureCard key={match.matchCode ?? `${match.dateISO}-${match.homeTeam.name}`} match={match} />
+            <FixtureCard
+              key={match.matchCode ?? `${match.dateISO}-${match.homeTeam.name}`}
+              match={match}
+            />
           ))}
         </div>
-        <MoreLink href="/programma" text="Volledig programma" className="fixtures-strip-link" />
       </div>
     </section>
   )

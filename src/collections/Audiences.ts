@@ -3,9 +3,9 @@ import type { CollectionConfig } from 'payload'
 const isAdmin = ({ req: { user } }: { req: { user: any } }) => user?.role === 'admin'
 
 /**
- * Audience landing pages ("Vind jouw weg"): one per target group (player,
- * parent, volunteer, ...). Each shows an intro plus a grid of link cards that
- * point to the relevant information pages, and an optional CTA banner.
+ * Audience landing pages ("Voor jou"): one per target group (player, parent,
+ * volunteer, ...). Each has a hero, themed link groups, a FAQ, a contact person
+ * and an optional CTA banner.
  */
 export const Audiences: CollectionConfig = {
   slug: 'audiences',
@@ -124,19 +124,149 @@ export const Audiences: CollectionConfig = {
       },
     },
     {
-      name: 'links',
+      name: 'heroImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Hero-afbeelding',
+      admin: {
+        description:
+          'Achtergrondfoto van de hero. Het focuspunt van de afbeelding bepaalt welk deel zichtbaar blijft. Leeg = standaard grasachtergrond.',
+      },
+    },
+    {
+      name: 'heroActions',
       type: 'array',
-      label: 'Informatielinks',
-      labels: { singular: 'Link', plural: 'Links' },
+      label: 'Hero-knoppen',
+      labels: { singular: 'Knop', plural: 'Knoppen' },
+      maxRows: 3,
+      admin: { description: 'Rode actieknoppen onder de introtekst in de hero (maximaal 3).' },
       fields: [
-        { name: 'title', type: 'text', label: 'Titel', required: true },
-        { name: 'description', type: 'text', label: 'Omschrijving' },
+        { name: 'label', type: 'text', label: 'Knoptekst', required: true },
         {
           name: 'href',
           type: 'text',
           label: 'Link (URL of pad)',
           required: true,
-          admin: { description: 'Bijv. /programma of https://…' },
+          admin: { description: 'Bijv. /programma' },
+        },
+      ],
+    },
+    {
+      name: 'themes',
+      type: 'array',
+      label: 'Themablokken',
+      labels: { singular: 'Thema', plural: "Thema's" },
+      admin: {
+        description:
+          'Gegroepeerde links onder de hero, bij voorkeur drie.',
+      },
+      fields: [
+        { name: 'title', type: 'text', label: 'Titel', required: true },
+        { name: 'intro', type: 'textarea', label: 'Korte intro' },
+        {
+          name: 'links',
+          type: 'array',
+          label: 'Links',
+          labels: { singular: 'Link', plural: 'Links' },
+          fields: [
+            { name: 'title', type: 'text', label: 'Titel', required: true },
+            { name: 'description', type: 'text', label: 'Subregel' },
+            {
+              name: 'href',
+              type: 'text',
+              label: 'Link (URL of pad)',
+              required: true,
+              admin: { description: 'Bijv. /vereniging/lidmaatschap' },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'faq',
+      type: 'array',
+      label: 'Veelgestelde vragen',
+      labels: { singular: 'Vraag', plural: 'Vragen' },
+      admin: {
+        description:
+          'Uitklapbare vragen met filter op categorie. Ze worden ook als FAQ-gegevens voor Google meegestuurd.',
+      },
+      fields: [
+        {
+          name: 'category',
+          type: 'text',
+          label: 'Categorie',
+          required: true,
+          admin: {
+            description:
+              'Bijv. "Wedstrijden". Per unieke categorie verschijnt een filterknop; de volgorde volgt de eerste vraag per categorie.',
+          },
+        },
+        { name: 'question', type: 'text', label: 'Vraag', required: true },
+        {
+          name: 'answer',
+          type: 'textarea',
+          label: 'Antwoord',
+          required: true,
+          admin: { description: 'Platte tekst, geen opmaak.' },
+        },
+        {
+          name: 'links',
+          type: 'array',
+          label: 'Doorklikknoppen',
+          labels: { singular: 'Knop', plural: 'Knoppen' },
+          fields: [
+            { name: 'label', type: 'text', label: 'Knoptekst', required: true },
+            {
+              name: 'href',
+              type: 'text',
+              label: 'Link (URL of pad)',
+              required: true,
+              admin: { description: 'Bijv. /programma' },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'faqHelp',
+      type: 'group',
+      label: 'Kaart "Andere vraag?" (naast de FAQ)',
+      fields: [
+        { name: 'title', type: 'text', label: 'Titel', admin: { description: 'Bijv. "Andere vraag?"' } },
+        { name: 'text', type: 'textarea', label: 'Tekst' },
+        {
+          name: 'links',
+          type: 'array',
+          label: 'Links',
+          labels: { singular: 'Link', plural: 'Links' },
+          fields: [
+            { name: 'label', type: 'text', label: 'Linktekst', required: true },
+            { name: 'href', type: 'text', label: 'Link (URL of pad)', required: true },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'contact',
+      type: 'group',
+      label: 'Aanspreekpunt',
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          label: 'Label',
+          admin: { description: 'Bijv. "Aanspreekpunt jeugd".' },
+        },
+        {
+          name: 'person',
+          type: 'relationship',
+          relationTo: 'contacts',
+          label: 'Contactpersoon',
+          admin: {
+            description:
+              'Naam, foto en e-mailadres komen uit de contactpersoon. Leeg = geen aanspreekpunt tonen.',
+          },
         },
       ],
     },

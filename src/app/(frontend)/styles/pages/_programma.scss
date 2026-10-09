@@ -273,6 +273,13 @@
       display: flex;
     }
   }
+
+  // Below the breakpoint the matches are shown as cards instead of the table.
+  .league-week-table-wrap {
+    @media (max-width: $breakpoint-medium) {
+      display: none;
+    }
+  }
 }
 
 .league-fase-select {
@@ -365,8 +372,10 @@
   width: 100%;
 
   col.col-time { width: 90px; }
-  col.col-home { width: 30%; }
-  col.col-away { width: 30%; }
+  col.col-date { width: 140px; }
+  col.col-score { width: 110px; }
+  col.col-home { width: 26%; }
+  col.col-away { width: 26%; }
   col.col-venue { width: auto; }
   col.col-status { width: 100px; }
 
@@ -433,9 +442,28 @@
   color: #666;
 }
 
-.league-schedule-status {
-  color: #555;
+.league-schedule-th-score,
+.league-schedule-score {
+  text-align: center !important;
+}
+
+// Results: home team right-aligned, so both logos sit next to the score.
+.league-results-th-home,
+.league-results-home {
+  text-align: right !important;
+}
+
+.league-schedule-score {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 1.0625rem;
+  font-weight: 800;
   white-space: nowrap;
+}
+
+.league-schedule-score--text {
+  color: #666;
+  font-size: 0.875rem;
 }
 
 .league-schedule-day-row td {
@@ -460,6 +488,13 @@
 
   &:first-child {
     margin-top: 0;
+  }
+}
+
+// One day of results (heading + table, or cards on small screens).
+.league-results-day {
+  & + & {
+    margin-top: 2rem;
   }
 }
 

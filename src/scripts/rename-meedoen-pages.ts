@@ -52,20 +52,11 @@ async function main() {
         changed = true
       }
     }
-    const links = (audience.links ?? []).map((link) => {
-      const match = urlReplacements.find(([from]) => from === link.href)
-      if (match) {
-        changed = true
-        return { ...link, href: match[1] }
-      }
-      return link
-    })
-
     if (changed) {
       await payload.update({
         collection: 'audiences',
         id: audience.id,
-        data: { cta, links },
+        data: { cta },
       })
       console.log(`Updated: audiences/${audience.slug}`)
     } else {

@@ -1,6 +1,9 @@
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
 .site-hero {
+  // Thinner rendering of light text on dark photos (macOS), as in the design.
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   background-color: var(--color-dark);
   min-height: 22vh;
   overflow: hidden;
@@ -74,31 +77,33 @@
 }
 
 .site-hero-tagline {
-  color: rgba(255 255 255 / 0.75);
+  color: #eee;
   font-family: var(--font-body);
-  font-size: clamp(0.875rem, 1.2vw, 1rem);
-  font-weight: 300;
-  line-height: 1.5;
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.55;
   margin-top: 0.75rem;
+  max-width: 560px;
+  // The shadow of the hero copy makes thin text look bolder.
+  text-shadow: none;
 
   @media screen and (max-width: $breakpoint-tablet) {
-    font-size: 0.9375rem;
-
     .site-hero-tagline-br {
       display: none;
     }
   }
 }
 
+// The red label gets lost on a photo; keep the accent line, make the label white.
 .site-hero-eyebrow {
   align-items: center;
-  color: var(--color-primary);
+  color: var(--color-white);
   display: flex;
   font-family: var(--font-heading);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 700;
   gap: 0.75rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.16em;
   margin-bottom: 1.25rem;
   text-transform: uppercase;
 
@@ -107,7 +112,7 @@
     content: '';
     display: block;
     flex-shrink: 0;
-    height: 2px;
+    height: 3px;
     width: 2.5rem;
   }
 }
@@ -115,12 +120,12 @@
 .site-hero-title {
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: clamp(1.75rem, 3.5vw, 3rem);
-  white-space: nowrap;
-  font-weight: 700;
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 800;
   letter-spacing: 0.01em;
   line-height: 0.95;
   text-transform: uppercase;
+  white-space: normal;
 
   em {
     color: var(--color-primary);
@@ -146,7 +151,13 @@
 
   .site-hero-content {
     margin: 0 auto;
-    max-width: 720px;
+    max-width: 760px;
+  }
+
+  .site-hero-tagline {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 640px;
   }
 
   // Symmetric flanking lines around the eyebrow when centered.
@@ -158,18 +169,13 @@
       content: '';
       display: block;
       flex-shrink: 0;
-      height: 2px;
+      height: 3px;
       width: 2.5rem;
     }
   }
-
-  .site-hero-title {
-    font-size: clamp(2.25rem, 5vw, 4.125rem);
-    white-space: normal;
-  }
 }
 
-// ─── Featured news post hero ──────────────────────────────────────────────────
+// ─── Photo hero (featured news post, audience pages) ──────────────────────────
 
 .site-hero--post {
   .site-hero-inner {
@@ -187,27 +193,25 @@
   }
 
   .site-hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     margin: 0;
-    max-width: 640px;
-  }
-
-  .site-hero-title {
-    font-size: clamp(2rem, 4.5vw, 3.75rem);
-    line-height: 1;
-    white-space: normal;
+    max-width: 760px;
   }
 
   .site-hero-tagline {
-    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    margin: 0;
   }
 
-  // The red eyebrow gets lost on a photo; keep the accent line, make the label white.
   .site-hero-eyebrow {
-    color: var(--color-white);
+    margin-bottom: 0;
   }
 
   .site-hero-actions {
+    gap: 0.75rem;
     justify-content: flex-start;
+    margin-top: 0.5rem;
   }
 
   // Narrow screens: copy on top, the photo (with the devices) as a strip below it
@@ -254,13 +258,13 @@
   width: 100%;
 }
 
-// Only a soft shade behind the copy (left); the photo stays bright on the right.
+// Dark shade behind the copy (left); the photo stays visible on the right.
 .site-hero-overlay--side {
   background: linear-gradient(
     90deg,
-    rgba(0 0 0 / 0.5) 0%,
-    rgba(0 0 0 / 0.25) 40%,
-    rgba(0 0 0 / 0) 65%
+    rgba(20 20 20 / 0.82) 0%,
+    rgba(20 20 20 / 0.55) 45%,
+    rgba(20 20 20 / 0.1) 100%
   );
 }
 
@@ -281,12 +285,65 @@
   gap: 0.875rem;
   justify-content: center;
   margin-top: 1.75rem;
+
+  .btn {
+    font-size: 1.0625rem;
+    letter-spacing: 0.1em;
+    // The copy has a text shadow for legibility on the photo; buttons don't need it.
+    text-shadow: none;
+  }
 }
 
-// Mobile hero overrides (within main mobile nav media query)
-@media screen and (max-width: $breakpoint-nav) {
+// ─── Large hero (audience pages): bigger copy, as in the design handoff ───────
+
+.site-hero--lg {
   .site-hero-title {
-    font-size: 10vw;
-    white-space: normal;
+    font-size: clamp(3rem, 6vw, 5rem);
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      font-size: 2.75rem;
+    }
+  }
+
+  .site-hero-tagline {
+    font-size: 1.25rem;
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      font-size: 1.0625rem;
+    }
+  }
+}
+
+.site-hero-crumbs {
+  align-items: center;
+  color: #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  gap: 0.75rem;
+  text-shadow: 0 1px 6px rgba(0 0 0 / 0.35);
+
+  &::before {
+    background: var(--color-primary);
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    height: 3px;
+    width: 3rem;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-white);
+    }
+  }
+
+  [aria-current='page'] {
+    color: var(--color-white);
   }
 }

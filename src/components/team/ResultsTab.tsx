@@ -3,9 +3,9 @@
 import React, { useState } from 'react'
 import { useQueries } from '@tanstack/react-query'
 import cx from 'classnames'
-import { groupResultsByWeek } from '@/lib/clubdata/transform'
+import { groupResultsByDay } from '@/lib/clubdata/transform'
 import { resultsQuery } from '@/lib/clubdata/queries'
-import MatchCard from '@/components/ui/MatchCard'
+import ResultsList from '@/components/ui/ResultsList'
 import type { PouleInfo } from '@/lib/clubdata/types'
 
 type Props = {
@@ -40,7 +40,7 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
   }
 
   const filtered = filterOwn ? (allMatches ?? []).filter((m) => m.isOwn) : (allMatches ?? [])
-  const weekGroups = groupResultsByWeek(filtered)
+  const dayGroups = groupResultsByDay(filtered)
 
   return (
     <div>
@@ -82,39 +82,23 @@ export default function ResultsTab({ poules, initialIndex = 0 }: Props) {
 
       {isError && <p className="league-error">Gegevens konden niet worden geladen.</p>}
 
+      {!isError && selectedPoule?.klassepoule && (
+        <p className="league-subtitle">{selectedPoule.klassepoule}</p>
+      )}
+
       {!isError &&
-        (isLoading && weekGroups.length === 0 ? (
+        (isLoading && dayGroups.length === 0 ? (
           <div className="schedule-loading" aria-label="Laden…">
             <span className="schedule-spinner" />
           </div>
-        ) : weekGroups.length === 0 ? (
+        ) : dayGroups.length === 0 ? (
           <p className="league-empty">Geen uitslagen gevonden.</p>
         ) : (
           <div style={{ opacity: isLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
-            {weekGroups.map((group) => (
-              <div key={group.weekKey} className="league-week-group">
-                <h2 className="league-week-title">{group.label}</h2>
-                {selectedPoule?.klassepoule && (
-                  <p className="league-subtitle">{selectedPoule.klassepoule}</p>
-                )}
-                <div className="card-match-list">
-                  {group.matches.map((m) => (
-                    <MatchCard
-                      key={m.matchCode}
-                      date={m.date}
-                      homeTeam={m.homeTeam}
-                      awayTeam={m.awayTeam}
-                      homeTeamRelatiecode={m.homeTeamRelatiecode}
-                      awayTeamRelatiecode={m.awayTeamRelatiecode}
-                      isOwnHome={m.isOwnHome}
-                      isOwnAway={m.isOwnAway}
-                      isOwn={m.isOwn}
-                      score={m.score}
-                      status={m.status}
-                      href={`/wedstrijd/${m.matchCode}`}
-                    />
-                  ))}
-                </div>
+            {dayGroups.map((group) => (
+              <div key={group.dayKey} className="league-results-day">
+                {group.label && <h4 className="league-day-title">{group.label}</h4>}
+                <ResultsList matches={group.matches} />
               </div>
             ))}
           </div>

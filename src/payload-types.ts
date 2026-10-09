@@ -440,6 +440,10 @@ export interface Contact {
   email?: string | null;
   phone?: string | null;
   /**
+   * Optioneel. Wordt getoond als aanspreekpunt op de doelgroeppagina's.
+   */
+  photo?: (number | null) | Media;
+  /**
    * Kopje waaronder dit contact op de contactpagina valt, bijv. "Secretariaat".
    */
   group?: string | null;
@@ -515,17 +519,95 @@ export interface Audience {
    * Omschrijving onder de titel in Google (± 155 tekens). Leeg = de introtekst of kaartomschrijving wordt gebruikt.
    */
   metaDescription?: string | null;
-  links?:
+  /**
+   * Achtergrondfoto van de hero. Het focuspunt van de afbeelding bepaalt welk deel zichtbaar blijft. Leeg = standaard grasachtergrond.
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * Rode actieknoppen onder de introtekst in de hero (maximaal 3).
+   */
+  heroActions?:
     | {
-        title: string;
-        description?: string | null;
+        label: string;
         /**
-         * Bijv. /programma of https://…
+         * Bijv. /programma
          */
         href: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Gegroepeerde links onder de hero, bij voorkeur drie.
+   */
+  themes?:
+    | {
+        title: string;
+        intro?: string | null;
+        links?:
+          | {
+              title: string;
+              description?: string | null;
+              /**
+               * Bijv. /vereniging/lidmaatschap
+               */
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Uitklapbare vragen met filter op categorie. Ze worden ook als FAQ-gegevens voor Google meegestuurd.
+   */
+  faq?:
+    | {
+        /**
+         * Bijv. "Wedstrijden". Per unieke categorie verschijnt een filterknop; de volgorde volgt de eerste vraag per categorie.
+         */
+        category: string;
+        question: string;
+        /**
+         * Platte tekst, geen opmaak.
+         */
+        answer: string;
+        links?:
+          | {
+              label: string;
+              /**
+               * Bijv. /programma
+               */
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  faqHelp?: {
+    /**
+     * Bijv. "Andere vraag?"
+     */
+    title?: string | null;
+    text?: string | null;
+    links?:
+      | {
+          label: string;
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  contact?: {
+    /**
+     * Bijv. "Aanspreekpunt jeugd".
+     */
+    label?: string | null;
+    /**
+     * Naam, foto en e-mailadres komen uit de contactpersoon. Leeg = geen aanspreekpunt tonen.
+     */
+    person?: (number | null) | Contact;
+  };
   cta?: {
     enabled?: boolean | null;
     title?: string | null;
@@ -845,6 +927,7 @@ export interface ContactsSelect<T extends boolean = true> {
       };
   email?: T;
   phone?: T;
+  photo?: T;
   group?: T;
   order?: T;
   showInContactForm?: T;
@@ -867,13 +950,62 @@ export interface AudiencesSelect<T extends boolean = true> {
   body?: T;
   metaTitle?: T;
   metaDescription?: T;
-  links?:
+  heroImage?: T;
+  heroActions?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  themes?:
     | T
     | {
         title?: T;
-        description?: T;
-        href?: T;
+        intro?: T;
+        links?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              href?: T;
+              id?: T;
+            };
         id?: T;
+      };
+  faq?:
+    | T
+    | {
+        category?: T;
+        question?: T;
+        answer?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  faqHelp?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+      };
+  contact?:
+    | T
+    | {
+        label?: T;
+        person?: T;
       };
   cta?:
     | T

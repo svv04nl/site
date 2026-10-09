@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import React from 'react'
-import { Rajdhani, Outfit } from 'next/font/google'
+import { Saira_Condensed, Outfit } from 'next/font/google'
 import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
 import FeedbackWidget from '@/components/FeedbackWidget'
@@ -11,10 +11,10 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.scss'
 
-const rajdhani = Rajdhani({
+const sairaCondensed = Saira_Condensed({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-rajdhani',
+  weight: ['600', '700', '800', '900'],
+  variable: '--font-saira-condensed',
   display: 'swap',
 })
 
@@ -45,7 +45,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${rajdhani.variable} ${outfit.variable}`}>
+    <html lang="nl" className={`${sairaCondensed.variable} ${outfit.variable}`}>
       <body>
         <div className="site-shell">
           <BreadcrumbProvider>

@@ -20,12 +20,6 @@
   @media screen and (max-width: $breakpoint-sidebar) {
     background: none;
   }
-
-  // Homepage: no grey panel, content sits directly on the page.
-  &--plain {
-    background: none;
-    border-radius: 0;
-  }
 }
 
 .sidebar-col__inner {
@@ -36,36 +30,6 @@
 
   @media screen and (max-width: $breakpoint-sidebar) {
     padding: 0;
-  }
-
-  .sidebar-col--plain & {
-    padding: 0;
-  }
-}
-
-// On tablets the sidebar drops below the news column and would otherwise
-// stack full-width — making the square webshop banner huge. Lay the banner
-// and sponsor tiers out side by side, with the agenda full-width beneath.
-@media screen and (min-width: ($breakpoint-mobile-lg + 1)) and (max-width: $breakpoint-sidebar) {
-  .sidebar-col--plain .sidebar-col__inner {
-    align-items: start;
-    column-gap: 2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 3rem;
-
-    .webshop-banner {
-      grid-column: 1;
-    }
-
-    .sponsor-sidebar {
-      grid-column: 2;
-    }
-
-    // The agenda spans both columns on its own row.
-    .sidebar-section:not(.sponsor-sidebar) {
-      grid-column: 1 / -1;
-    }
   }
 }
 
@@ -89,37 +53,50 @@
   margin-bottom: 1rem;
 }
 
-// Agenda
+// Agenda (homepage sidebar)
+
+.sidebar-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.sidebar-head-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 2.125rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
 
 .sidebar-agenda-list {
-  background: var(--color-white);
-  border: 1px solid #ececec;
-  border-radius: 12px;
+  border-top: 2px solid var(--color-primary);
   display: flex;
   flex-direction: column;
   list-style: none;
-  margin: 0 0 1rem;
-  overflow: hidden;
+  margin: 0;
   padding: 0;
 }
 
 .sidebar-agenda-item {
   align-items: center;
+  border-bottom: 1px solid #e6e6e6;
   display: grid;
   gap: 1rem;
-  grid-template-columns: 56px 1fr;
-  padding: 1rem 1.25rem;
-
-  & + & {
-    border-top: 1px solid #ececec;
-  }
+  grid-template-columns: 56px 1fr auto;
+  padding: 0.875rem 0;
 }
 
 .sidebar-agenda-date-box {
   align-items: center;
   aspect-ratio: 1;
-  background: var(--color-dark);
-  border-radius: 10px;
+  background: #1c1c1c;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -129,17 +106,17 @@
 .sidebar-agenda-day {
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   line-height: 1;
 }
 
 .sidebar-agenda-month {
-  color: var(--color-primary);
+  color: #ff4a40;
   font-family: var(--font-heading);
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   margin-top: 0.15rem;
   text-transform: uppercase;
 }
@@ -147,19 +124,28 @@
 .sidebar-agenda-content {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.125rem;
   min-width: 0;
 }
 
 .sidebar-agenda-name {
   color: var(--color-dark);
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.0625rem;
+  font-weight: 600;
   line-height: 1.25;
+  text-decoration: none;
+
+  @at-root a#{&}:hover {
+    color: var(--color-primary);
+  }
 }
 
 .sidebar-agenda-meta {
-  color: #8a8a8a;
-  font-size: 0.85rem;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.sidebar-agenda-arrow {
+  color: var(--color-primary);
+  font-size: 1.25rem;
 }
