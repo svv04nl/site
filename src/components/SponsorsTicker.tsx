@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Media } from '@/payload-types'
@@ -19,5 +20,15 @@ export async function SponsorsTicker() {
 
   if (logos.length === 0) return null
 
-  return <SponsorsTickerTrack logos={logos} />
+  return (
+    <section className="sponsors-section" aria-label="Onze sponsoren">
+      <div className="sponsors-section-head">
+        <p className="home-eyebrow">Onze sponsoren</p>
+        <Link href="/sponsoring" className="home-text-link">
+          Sponsor worden &rarr;
+        </Link>
+      </div>
+      <SponsorsTickerTrack logos={logos} />
+    </section>
+  )
 }
