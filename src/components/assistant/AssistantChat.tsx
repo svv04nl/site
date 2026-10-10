@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { useChat } from '@ai-sdk/react'
-import type { UIMessage } from 'ai'
+import { DefaultChatTransport, type UIMessage } from 'ai'
 import MatchCard from '@/components/ui/MatchCard'
 import { ContactPerson } from '@/components/ui/ContactPerson'
 import StandingsCard from '@/components/assistant/StandingsCard'
@@ -40,6 +40,17 @@ const TOOL_LABELS: Record<string, string> = {
   getMatchDetails: 'Zoekt de wedstrijdgegevens',
   getClubActivities: 'Zoekt de activiteiten',
 }
+
+// The SDK only passes the response text on, so a 429 (rate limit) is turned into a marker error here.
+const RATE_LIMITED = 'rate-limited'
+const transport = new DefaultChatTransport({
+  api: '/api/chat',
+  fetch: async (input, init) => {
+    const response = await fetch(input, init)
+    if (response.status === 429) throw new Error(RATE_LIMITED)
+    return response
+  },
+})
 
 type ChatMessage = UIMessage<AssistantMetadata>
 type ToolPart = { type: string; state: string; input?: unknown; output?: unknown }
@@ -152,6 +163,7 @@ function logAnswer(message: ChatMessage) {
 export default function AssistantChat() {
   const [input, setInput] = useState('')
   const { messages, sendMessage, setMessages, status, error, stop } = useChat<ChatMessage>({
+    transport,
     onFinish: ({ message }) => logAnswer(message),
   })
   const busy = status === 'submitted' || status === 'streaming'
@@ -256,7 +268,9 @@ export default function AssistantChat() {
           {statusText && <p className="assistant-status">{statusText}</p>}
           {error && (
             <p className="assistant-error" role="alert">
-              Er ging iets mis. Probeer het zo nog een keer.
+              {error.message === RATE_LIMITED
+                ? 'Je stelt veel vragen achter elkaar. Wacht een minuutje en probeer het dan opnieuw.'
+                : 'Er ging iets mis. Probeer het zo nog een keer.'}
             </p>
           )}
           <div ref={endRef} />
