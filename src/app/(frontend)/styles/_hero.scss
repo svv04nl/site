@@ -243,7 +243,12 @@
       }
 
       .site-hero-overlay--side {
-        background: rgba(0 0 0 / 0.3);
+        background: rgba(0 0 0 / 0.42);
+      }
+
+      // The club red disappears against grass; use the lighter red of the dark bands.
+      .site-hero-title em {
+        color: #ff4a40;
       }
     }
   }

@@ -9,6 +9,7 @@ const DEFAULT_BACKDROP = '/images/hero-gras.webp'
 
 // Hero of an audience landing page. Uses the same markup and styles as the
 // homepage hero for a featured news post (FeaturedPostHero), so both stay uniform.
+// On narrow screens the copy sits on the grass backdrop instead of above a photo strip.
 export function AudienceHero({ audience, crumbs }: { audience: Audience; crumbs: Crumb[] }) {
   const image = audience.heroImage as Media | null | undefined
   const imageUrl = image ? (image.sizes?.hero?.url ?? image.url ?? null) : null
@@ -17,15 +18,19 @@ export function AudienceHero({ audience, crumbs }: { audience: Audience; crumbs:
   const actions = audience.heroActions ?? []
 
   return (
-    <section className="site-hero site-hero--post site-hero--lg">
+    <section className="site-hero site-hero--post site-hero--post-backdrop site-hero--lg">
       <div className="site-hero-image" aria-hidden="true">
-        <img
-          src={imageUrl ?? DEFAULT_BACKDROP}
-          alt=""
-          className="site-hero-photo"
-          fetchPriority="high"
-          style={{ objectPosition: `${focalX}% ${focalY}%` }}
-        />
+        <picture>
+          {/* Narrow screens: always the grass behind the copy. Matches $breakpoint-nav */}
+          <source media="(max-width: 1030px)" srcSet={DEFAULT_BACKDROP} />
+          <img
+            src={imageUrl ?? DEFAULT_BACKDROP}
+            alt=""
+            className="site-hero-photo"
+            fetchPriority="high"
+            style={{ objectPosition: `${focalX}% ${focalY}%` }}
+          />
+        </picture>
         <div className="site-hero-overlay site-hero-overlay--side" />
       </div>
       <div className="site-hero-inner">
