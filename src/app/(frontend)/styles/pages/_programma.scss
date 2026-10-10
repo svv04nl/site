@@ -16,6 +16,8 @@
 // League section shell
 
 .league-section {
+  // Room for the sticky header when scrolled into view (e.g. via ?tab= from the assistant).
+  scroll-margin-top: 8rem;
   background: var(--color-white);
   border: 1px solid #e8e8e8;
   border-radius: 8px;
