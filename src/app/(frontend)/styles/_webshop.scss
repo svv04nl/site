@@ -57,6 +57,45 @@
   }
 }
 
+// Sidebar wrapped under the news: the stage is a wide photo with the button as a
+// slim bar under it, so the banner is not a full-width square and the button does
+// not cover the product.
+@media screen and (max-width: $breakpoint-home-side) {
+  .webshop-banner {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .webshop-banner-stage {
+    aspect-ratio: 16 / 9;
+    inset: auto;
+    position: relative;
+  }
+
+  .webshop-banner-button {
+    border-radius: 0;
+    bottom: auto;
+    box-shadow: none;
+    font-size: 0.8125rem;
+    left: auto;
+    padding: 0.6rem 1rem;
+    position: static;
+    text-align: center;
+
+    &:hover {
+      box-shadow: none;
+      transform: none;
+    }
+  }
+}
+
+@media screen and (max-width: $breakpoint-mobile) {
+  .webshop-banner-stage {
+    aspect-ratio: 4 / 3;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .webshop-banner-slide {
     transition: none;
