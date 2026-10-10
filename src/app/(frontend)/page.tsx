@@ -136,6 +136,9 @@ export default async function HomePage() {
         {/* Vind jouw weg — audience cards */}
         <FindYourWaySection />
 
+        {/* Main sponsors: above the ticker on narrow screens (hidden next to the news on desktop) */}
+        <SponsorSidebar variant="stacked" />
+
         {/* Sponsor strip — color, data-driven */}
         <SponsorsTicker />
       </main>

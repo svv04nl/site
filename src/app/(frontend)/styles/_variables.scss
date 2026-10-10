@@ -7,6 +7,9 @@ $breakpoint-tablet: 768px;
 $breakpoint-tablet-landscape: 1024px;
 $breakpoint-nav: 1030px;
 $breakpoint-sidebar: 1100px;
+// Below this the homepage sidebar (webshop, sponsors, agenda) wraps under the news:
+// news min 560px + side min 320px + gap 3.5rem + 2 * container padding.
+$breakpoint-home-side: 999px;
 
 // ─── Shared widths ────────────────────────────────────────────────────────────
 

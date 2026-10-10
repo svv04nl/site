@@ -99,6 +99,39 @@
   gap: 0.75rem;
 }
 
+// On narrow screens the sponsors leave the sidebar and sit above the ticker instead.
+.sponsor-sidebar--side {
+  @media screen and (max-width: $breakpoint-home-side) {
+    display: none;
+  }
+}
+
+.home-sponsor-tiers {
+  background: var(--color-white);
+  border-top: 1px solid #ececec;
+  display: none;
+  padding: 2.5rem 0 0;
+
+  @media screen and (max-width: $breakpoint-home-side) {
+    display: block;
+  }
+
+  // Cards side by side when there is room, one per row on a phone.
+  .sponsor-sidebar {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    margin: 0 auto;
+    max-width: var(--grid-base);
+    padding: 0 var(--container-padding);
+  }
+
+  + .sponsors-section {
+    border-top: 0;
+    padding-top: 2rem;
+  }
+}
+
 .sponsor-tier-card {
   background: var(--color-white);
   border: 1px solid #e6e6e6;

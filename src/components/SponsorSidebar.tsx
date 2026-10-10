@@ -10,7 +10,15 @@ const TIERS = [
   { value: 'youth', label: 'Hoofdsponsor jeugd' },
 ] as const
 
-export async function SponsorSidebar() {
+type Props = {
+  /**
+   * 'side' sits in the homepage sidebar; 'stacked' is the copy above the sponsor ticker
+   * that replaces it once the sidebar wraps below the news (see _sponsors.scss).
+   */
+  variant?: 'side' | 'stacked'
+}
+
+export async function SponsorSidebar({ variant = 'side' }: Props) {
   const payload = await getPayload({ config })
 
   const { docs: sponsors } = await payload.find({
@@ -29,8 +37,8 @@ export async function SponsorSidebar() {
 
   if (items.length === 0) return null
 
-  return (
-    <div className="sidebar-section sponsor-sidebar">
+  const content = (
+    <div className={`sidebar-section sponsor-sidebar sponsor-sidebar--${variant}`}>
       {items.map(({ value, label, sponsor }) => {
         const logo = sponsor.logo as Media | undefined
         const href = (sponsor as { url?: string | null }).url || undefined
@@ -62,4 +70,6 @@ export async function SponsorSidebar() {
       })}
     </div>
   )
+
+  return variant === 'stacked' ? <div className="home-sponsor-tiers">{content}</div> : content
 }
