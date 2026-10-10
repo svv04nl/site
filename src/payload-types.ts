@@ -76,6 +76,7 @@ export interface Config {
     contacts: Contact;
     audiences: Audience;
     messages: Message;
+    'team-staff': TeamStaff;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     audiences: AudiencesSelect<false> | AudiencesSelect<true>;
     messages: MessagesSelect<false> | MessagesSelect<true>;
+    'team-staff': TeamStaffSelect<false> | TeamStaffSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -645,6 +647,20 @@ export interface Message {
   createdAt: string;
 }
 /**
+ * Wordt automatisch gesynchroniseerd vanuit Club.Dataservice (Sportlink). Wijzigingen hier worden bij de volgende sync overschreven.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-staff".
+ */
+export interface TeamStaff {
+  id: number;
+  name: string;
+  role: string;
+  team: number | Team;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -703,6 +719,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'messages';
         value: number | Message;
+      } | null)
+    | ({
+        relationTo: 'team-staff';
+        value: number | TeamStaff;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1030,6 +1050,17 @@ export interface MessagesSelect<T extends boolean = true> {
   afdeling?: T;
   onderwerp?: T;
   pageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-staff_select".
+ */
+export interface TeamStaffSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  team?: T;
   updatedAt?: T;
   createdAt?: T;
 }

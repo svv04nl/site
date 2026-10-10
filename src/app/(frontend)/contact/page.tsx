@@ -7,21 +7,9 @@ import { SectionHeader } from '@/components/ui/SectionHeader'
 import { ContactPerson } from '@/components/ui/ContactPerson'
 import { PhoneIcon, AddressIcon, BankIcon } from '@/components/ui/ContactIcons'
 import type { Contact } from '@/payload-types'
+import { ACCOMMODATIE, BANKRELATIE } from '@/lib/club-info'
 
 export const metadata = { title: "SVV'04 - Contact" }
-
-const ACCOMMODATIE = {
-  title: 'Accommodatie',
-  items: [
-    { type: 'address' as const, value: 'De Kampen 18, 7761 CK Schoonebeek' },
-    { type: 'phone' as const, value: '0524-531656' },
-  ],
-}
-
-const BANKRELATIE = {
-  title: 'Bankrelatie',
-  items: [{ type: 'bank' as const, value: 'Rabobank: NL02 RABO 0358304342' }],
-}
 
 type Props = {
   searchParams: Promise<{ afdeling?: string }>
@@ -78,8 +66,8 @@ export default async function ContactPage({ searchParams }: Props) {
         <div className="sidebar-content-col sidebar-content-col--no-gap">
           <SectionHeader as="h1" title="Contact" />
           <p className="contact-intro">
-            Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je
-            snel te helpen.
+            Heb je een vraag of opmerking? Neem gerust contact met ons op. We staan klaar om je snel
+            te helpen.
           </p>
           <ContactForm afdelingen={afdelingen} defaultAfdeling={defaultAfdeling} />
         </div>

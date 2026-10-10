@@ -1,0 +1,221 @@
+// ─── AI assistant (/assistent) ───────────────────────────────────────
+
+.assistant-page {
+  max-width: 52rem;
+}
+
+.assistant-intro {
+  color: #555;
+  font-size: 1rem;
+  margin: -0.75rem 0 1.75rem;
+}
+
+.assistant {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.assistant-examples {
+  &__label {
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0 0 0.6rem;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    background: var(--color-white);
+    border-radius: 999px;
+    border: 1px solid rgb(0 0 0 / 15%);
+    color: var(--color-dark);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    padding: 0.5rem 0.95rem;
+    text-align: left;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+  }
+}
+
+.assistant-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.assistant-message {
+  background: var(--color-light);
+  border-radius: 10px;
+  line-height: 1.5;
+  max-width: 88%;
+  padding: 0.85rem 1.1rem;
+
+  &--user {
+    align-self: flex-end;
+    background: var(--color-dark);
+    color: var(--color-white);
+  }
+
+  p,
+  ul,
+  ol {
+    margin: 0 0 0.6rem;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.25rem;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  &--user a {
+    color: inherit;
+  }
+}
+
+.assistant-status {
+  color: #777;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.assistant-error {
+  color: #b00020;
+  margin: 0;
+}
+
+.assistant-form {
+  display: flex;
+  gap: 0.6rem;
+
+  input {
+    background: #f7f7f7;
+    border-radius: 6px;
+    border: 1px solid rgb(0 0 0 / 12%);
+    color: var(--color-dark);
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    min-width: 0;
+    outline: none;
+    padding: 0.7rem 0.9rem;
+    transition: border-color 0.15s ease;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+.assistant-footer {
+  align-items: baseline;
+  color: #777;
+  display: flex;
+  font-size: 0.8125rem;
+  gap: 1rem;
+  justify-content: space-between;
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.assistant-reset {
+  background: none;
+  border: 0;
+  color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  padding: 0;
+  text-decoration: underline;
+
+  &:disabled {
+    opacity: 0.4;
+  }
+}
+
+// Cards and buttons from tool results, below the answer text.
+.assistant-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.assistant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  .btn {
+    font-size: 0.9375rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// League table in a chat answer.
+.assistant-standings {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 0.5rem 0.25rem;
+
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.25rem 0.5rem;
+  }
+
+  &__scroll {
+    overflow-x: auto;
+  }
+
+  .league-table td {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

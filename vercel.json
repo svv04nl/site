@@ -1,3 +1,9 @@
 {
-  "buildCommand": "bash scripts/vercel-build.sh"
+  "buildCommand": "bash scripts/vercel-build.sh",
+  "crons": [
+    {
+      "path": "/api/cron/sync-staff",
+      "schedule": "0 4 * * *"
+    }
+  ]
 }
