@@ -33,7 +33,7 @@ export default async function HomePage() {
         and: [{ status: { equals: 'published' } }],
       },
       sort: '-publishedAt',
-      limit: 4,
+      limit: 3,
       depth: 1,
     }),
     // At most one post is featured in the hero, and only within its date range.
@@ -54,7 +54,6 @@ export default async function HomePage() {
   ])
 
   const heroPost = heroPosts[0]
-  const newsPosts = latestPosts.filter((post) => post.id !== heroPost?.id).slice(0, 3)
   if (!heroPost) preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
 
   // Preserve the intended display order
@@ -106,7 +105,7 @@ export default async function HomePage() {
         />
 
         <div className="home-main">
-          {/* Latest news; the post shown in the hero is skipped here */}
+          {/* Latest news; a featured post stays in the list, also after its hero period */}
           <div className="home-main-news">
             <div className="home-news-head">
               <div>
@@ -120,7 +119,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="home-news-list">
-              {newsPosts.map((post) => (
+              {latestPosts.map((post) => (
                 <NewsRowCard key={post.id} post={post as Post} />
               ))}
             </div>
