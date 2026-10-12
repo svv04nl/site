@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BreadcrumbBar } from './BreadcrumbContext'
 import SearchModal from './SearchModal'
+import { useAssistant } from '@/components/assistant/AssistantProvider'
+import { SparkleIcon } from '@/components/assistant/icons'
 
 const NavArrow = () => (
   <svg
@@ -94,6 +96,7 @@ export default function Header({
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const pathname = usePathname()
+  const assistant = useAssistant()
 
   // Close mobile menu on navigation
   useEffect(() => {
@@ -101,8 +104,10 @@ export default function Header({
     setOpenSubmenu(null)
   }, [pathname])
 
-  // Cmd/Ctrl+K opens search from anywhere; Escape closes it
+  // Cmd/Ctrl+K opens search from anywhere; Escape closes it. With the assistant on, the
+  // assistant takes over both (see AssistantProvider).
   useEffect(() => {
+    if (assistant.enabled) return
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault()
@@ -113,11 +118,12 @@ export default function Header({
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [])
+  }, [assistant.enabled])
 
-  const openSearch = () => {
+  const openFinder = () => {
     setMobileOpen(false)
-    setSearchOpen(true)
+    if (assistant.enabled) assistant.openAssistant()
+    else setSearchOpen(true)
   }
 
   const toggleSubmenu = (name: string) => setOpenSubmenu((prev) => (prev === name ? null : name))
@@ -153,27 +159,39 @@ export default function Header({
                 </ul>
               </nav>
             )}
-            <button
-              type="button"
-              className="search-trigger"
-              aria-label="Zoeken"
-              onClick={openSearch}
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                aria-hidden="true"
+            {assistant.enabled ? (
+              <button
+                type="button"
+                className="assistant-trigger"
+                aria-label="Vraag het de assistent"
+                onClick={openFinder}
               >
-                <circle cx="11" cy="11" r="7" />
-                <path d="M21 21l-4.3-4.3" />
-              </svg>
-              Zoeken
-            </button>
+                <SparkleIcon />
+                Vraag het de assistent
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="search-trigger"
+                aria-label="Zoeken"
+                onClick={openFinder}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" />
+                </svg>
+                Zoeken
+              </button>
+            )}
             <div className="site-header-topbar-social">
               <a
                 href="https://www.facebook.com/svv04"
@@ -372,8 +390,8 @@ export default function Header({
         >
           <ul className="mobile-nav-list">
             <li>
-              <button type="button" className="mobile-nav-search" onClick={openSearch}>
-                Zoeken
+              <button type="button" className="mobile-nav-search" onClick={openFinder}>
+                {assistant.enabled ? 'Vraag het de assistent' : 'Zoeken'}
               </button>
             </li>
             <li>
@@ -478,11 +496,13 @@ export default function Header({
           </ul>
         </div>
       </nav>
-      <SearchModal
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        actiePages={actiePages}
-      />
+      {!assistant.enabled && (
+        <SearchModal
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          actiePages={actiePages}
+        />
+      )}
       <BreadcrumbBar />
     </header>
   )

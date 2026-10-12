@@ -13,6 +13,7 @@ import { FindYourWaySection } from '@/components/FindYourWaySection'
 import { WebshopBanner } from '@/components/WebshopBanner'
 import { HeroVideo } from '@/components/HeroVideo'
 import { FeaturedPostHero } from '@/components/FeaturedPostHero'
+import { AssistantBar } from '@/components/assistant/AssistantBar'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-o19-1']
 
@@ -96,6 +97,9 @@ export default async function HomePage() {
             </div>
           </section>
         )}
+
+        {/* Ask the assistant; only shown while the assistant is switched on */}
+        <AssistantBar />
 
         {/* Fixtures strip — prominent dark band, max 3 upcoming matches */}
         <FixturesStrip

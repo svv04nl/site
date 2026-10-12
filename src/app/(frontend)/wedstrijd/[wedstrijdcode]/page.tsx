@@ -7,7 +7,7 @@ import { useQueries } from '@tanstack/react-query'
 import { format, parseISO, isValid } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
-import ClubLogo from '@/components/ClubLogo'
+import MatchCard from '@/components/ui/MatchCard'
 import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
@@ -57,12 +57,11 @@ export default function WedstrijdDetailPage() {
 
   const date = info ? parseDateStr(info.wedstrijddatetime) : null
   const displayDate = date
-    ? format(date, 'EEEE d MMMM yyyy', { locale: nl })
+    ? format(date, 'EEE d MMM yyyy', { locale: nl })
     : info?.wedstrijddatumopgemaakt
 
   const isOwnHome = thuisteamData?.code === CLUB_RELATIECODE
   const isOwnAway = uitteamData?.code === CLUB_RELATIECODE
-  const isOwn = isOwnHome || isOwnAway
 
   const hasScore = info?.thuisscore !== null && info?.uitscore !== null
 
@@ -109,80 +108,26 @@ export default function WedstrijdDetailPage() {
 
         {info && (
           <>
-            {/* Match header */}
-            <div className="wedstrijd-header card">
+            {/* Match header: the shared match card, with what only this page knows around it */}
+            <div className="wedstrijd-header">
               {info.klasse && <div className="wedstrijd-header-meta">{info.klasse}</div>}
 
-              <div className="wedstrijd-header-teams">
-                <div className="wedstrijd-header-club">
-                  <ClubLogo
-                    clubcode={thuisteamData?.code}
-                    name={info.thuisteam}
-                    className="wedstrijd-header-logo"
-                  />
-                  <span
-                    className={`wedstrijd-header-name${isOwnHome ? ' wedstrijd-header-name--own' : ''}`}
-                  >
-                    {info.thuisteam}
-                  </span>
-                </div>
+              <MatchCard
+                date={displayDate}
+                homeTeam={info.thuisteam}
+                awayTeam={info.uitteam}
+                homeTeamRelatiecode={thuisteamData?.code}
+                awayTeamRelatiecode={uitteamData?.code}
+                isOwnHome={isOwnHome}
+                isOwnAway={isOwnAway}
+                time={info.aanvangstijdopgemaakt}
+                score={hasScore ? `${info.thuisscore} – ${info.uitscore}` : undefined}
+                venue={info.veldnaam}
+                homeNote={kleedkamers?.thuis ? `Kleedkamer ${kleedkamers.thuis}` : undefined}
+                awayNote={kleedkamers?.uit ? `Kleedkamer ${kleedkamers.uit}` : undefined}
+              />
 
-                <div className="wedstrijd-header-center">
-                  {displayDate && <time className="wedstrijd-header-date">{displayDate}</time>}
-                  {hasScore ? (
-                    <div className="wedstrijd-header-score">
-                      <span>{info.thuisscore}</span>
-                      <span className="wedstrijd-score-sep">–</span>
-                      <span>{info.uitscore}</span>
-                    </div>
-                  ) : (
-                    <div className="wedstrijd-header-time">{info.aanvangstijdopgemaakt}</div>
-                  )}
-                  {info.veldnaam && <div className="wedstrijd-header-field">{info.veldnaam}</div>}
-                </div>
-
-                <div className="wedstrijd-header-club">
-                  <ClubLogo
-                    clubcode={uitteamData?.code}
-                    name={info.uitteam}
-                    className="wedstrijd-header-logo"
-                  />
-                  <span
-                    className={`wedstrijd-header-name${isOwnAway ? ' wedstrijd-header-name--own' : ''}`}
-                  >
-                    {info.uitteam}
-                  </span>
-                </div>
-
-                {(kleedkamers?.thuis || kleedkamers?.uit) && (
-                  <>
-                    <div className="wedstrijd-header-divider" />
-                    <div className="wedstrijd-header-kleedkamer">
-                      {kleedkamers?.thuis && (
-                        <>
-                          <span className="wedstrijd-header-kleedkamer-label">Kleedkamer</span>
-                          <span className="wedstrijd-header-kleedkamer-value">
-                            {kleedkamers.thuis}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                    <div />
-                    <div className="wedstrijd-header-kleedkamer">
-                      {kleedkamers?.uit && (
-                        <>
-                          <span className="wedstrijd-header-kleedkamer-label">Kleedkamer</span>
-                          <span className="wedstrijd-header-kleedkamer-value">
-                            {kleedkamers.uit}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-
-              <div className="wedstrijd-header-info">
+              <div className="wedstrijd-header-details">
                 {accommodatie?.naam &&
                   (accommodatie.routeplanner ? (
                     <a href={accommodatie.routeplanner} target="_blank" rel="noopener noreferrer">
