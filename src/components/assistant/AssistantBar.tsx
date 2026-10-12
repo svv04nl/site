@@ -23,12 +23,12 @@ export function AssistantBar() {
   return (
     <section className="assistant-bar" aria-labelledby="assistant-bar-title">
       <div className="assistant-bar__inner">
-        <p className="home-eyebrow">Assistent</p>
+        <p className="home-eyebrow">Direct antwoord</p>
         <h2 className="home-h2" id="assistant-bar-title">
-          Vraag het de <span>assistent</span>
+          Stel je <span>vraag</span>
         </h2>
         <p className="assistant-bar__intro">
-          Programma, uitslagen, lidmaatschap, vrijwilligerswerk: stel je vraag en je krijgt direct
+          Over het programma, de uitslagen, het lidmaatschap of vrijwilligerswerk: je krijgt meteen
           antwoord.
         </p>
         <form
@@ -42,9 +42,9 @@ export function AssistantBar() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Stel een vraag over SVV'04"
+            placeholder="Wat wil je weten over SVV'04?"
             maxLength={MAX_USER_MESSAGE_CHARS}
-            aria-label="Je vraag aan de assistent"
+            aria-label="Je vraag"
             autoComplete="off"
           />
           <button type="submit" className="btn btn--primary" disabled={!input.trim()}>

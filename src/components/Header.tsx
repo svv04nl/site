@@ -163,11 +163,11 @@ export default function Header({
               <button
                 type="button"
                 className="assistant-trigger"
-                aria-label="Vraag het de assistent"
+                aria-label="Stel je vraag"
                 onClick={openFinder}
               >
                 <SparkleIcon />
-                Vraag het de assistent
+                Stel je vraag
               </button>
             ) : (
               <button
@@ -246,15 +246,27 @@ export default function Header({
             <img src="/logo.webp" alt="SVV'04" className="site-header-mobile-logo-img" width="278" height="336" />
           </Link>
 
-          {/* Mobile: webshop */}
-          <a
-            className="site-header-mobile-cta"
-            href="https://clubs.deventrade.com/nl/svv-04/clubcollectie"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Webshop
-          </a>
+          {/* Mobile: assistant (webshop stays in the menu), or the webshop while the assistant is off */}
+          {assistant.enabled ? (
+            <button
+              type="button"
+              className="site-header-mobile-cta"
+              aria-label="Stel je vraag"
+              onClick={openFinder}
+            >
+              <SparkleIcon size={13} />
+              Stel je vraag
+            </button>
+          ) : (
+            <a
+              className="site-header-mobile-cta"
+              href="https://clubs.deventrade.com/nl/svv-04/clubcollectie"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Webshop
+            </a>
+          )}
 
           {/* Desktop nav */}
           <div className="site-header-nav-right">
@@ -391,7 +403,7 @@ export default function Header({
           <ul className="mobile-nav-list">
             <li>
               <button type="button" className="mobile-nav-search" onClick={openFinder}>
-                {assistant.enabled ? 'Vraag het de assistent' : 'Zoeken'}
+                {assistant.enabled ? 'Stel je vraag' : 'Zoeken'}
               </button>
             </li>
             <li>

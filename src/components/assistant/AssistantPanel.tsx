@@ -33,15 +33,10 @@ export default function AssistantPanel({ open, onClose, question, onQuestionSent
   return (
     <>
       <div className="assistant-panel-backdrop" hidden={!open} onClick={onClose} />
-      <section
-        className="assistant-panel"
-        role="dialog"
-        aria-label="Vraag het de assistent"
-        hidden={!open}
-      >
+      <section className="assistant-panel" role="dialog" aria-label="Stel je vraag" hidden={!open}>
         <header className="assistant-panel__header">
           <SparkleIcon size={18} />
-          <h2>Vraag het de assistent</h2>
+          <h2>Stel je vraag</h2>
           <button
             type="button"
             className="assistant-panel__close"

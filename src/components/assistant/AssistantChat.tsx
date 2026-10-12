@@ -191,10 +191,11 @@ export default function AssistantChat({
 }: ChatProps) {
   const isPanel = variant === 'panel'
   const [input, setInput] = useState('')
-  const { messages, sendMessage, setMessages, status, error, stop, clearError } = useChat<ChatMessage>({
-    transport,
-    onFinish: ({ message }) => logAnswer(message),
-  })
+  const { messages, sendMessage, setMessages, status, error, stop, clearError } =
+    useChat<ChatMessage>({
+      transport,
+      onFinish: ({ message }) => logAnswer(message),
+    })
   const busy = status === 'submitted' || status === 'streaming'
   const endRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -365,7 +366,7 @@ export default function AssistantChat({
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={full ? 'Dit gesprek is vol' : "Stel een vraag over SVV'04"}
+          placeholder={full ? 'Dit gesprek is vol' : "Wat wil je weten over SVV'04?"}
           disabled={full}
           maxLength={MAX_USER_MESSAGE_CHARS}
           aria-label="Je vraag"
@@ -386,8 +387,8 @@ export default function AssistantChat({
 
       <div className="assistant-footer">
         <p>
-          De assistent is een AI en kan fouten maken. Controleer belangrijke zaken bij de club,
-          bijvoorbeeld via het <Link href="/contact">contactformulier</Link>.
+          Antwoorden komen van een AI en kunnen fouten bevatten. Controleer belangrijke zaken bij de
+          club, bijvoorbeeld via het <Link href="/contact">contactformulier</Link>.
         </p>
         {messages.length > 0 && (
           <button
