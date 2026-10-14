@@ -3,7 +3,12 @@ import { checkBotId } from 'botid/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { createPayment } from '@/lib/mollie'
-import { FUNDRAISER_SLUG, parseDonationInput, donationTotal } from '@/lib/fundraiser'
+import {
+  FUNDRAISER_SLUG,
+  parseDonationInput,
+  donationTotal,
+  paymentTotal,
+} from '@/lib/fundraiser'
 
 export async function POST(request: Request) {
   const verification = await checkBotId()
@@ -36,6 +41,7 @@ export async function POST(request: Request) {
   }
   const input = parsed.data
   const amount = donationTotal(input.seats, input.freeAmount, fundraiser.seatPrice)
+  const fee = input.coverFee ? (fundraiser.transactionFee ?? 0) : 0
   const donation = await payload.create({
     collection: 'donations',
     data: {
@@ -49,6 +55,7 @@ export async function POST(request: Request) {
       seats: input.seats,
       freeAmount: input.freeAmount,
       amount,
+      fee,
       status: 'open',
       publicToken: randomUUID(),
     },
@@ -61,7 +68,7 @@ export async function POST(request: Request) {
 
   try {
     const payment = await createPayment({
-      amount,
+      amount: paymentTotal(amount, fee),
       description: "Donatie tribune SVV'04",
       redirectUrl: `${origin}/tribune/bedankt?t=${donation.publicToken}`,
       webhookUrl: isLocal ? undefined : `${origin}/api/mollie-webhook`,

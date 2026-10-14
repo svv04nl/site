@@ -672,6 +672,10 @@ export interface Fundraiser {
    */
   goalAmount?: number | null;
   /**
+   * Optionele bijdrage die de donateur kan meebetalen, zodat het volledige bedrag naar de club gaat. Zet op 0 om de optie te verbergen. Controleer het actuele tarief bij Mollie.
+   */
+  transactionFee?: number | null;
+  /**
    * Hele euro’s. Een wijziging geldt voor nieuwe donaties, al betaalde donaties blijven staan.
    */
   seatPrice: number;
@@ -702,6 +706,10 @@ export interface Donation {
   seats: number;
   freeAmount: number;
   amount: number;
+  /**
+   * Meebetaald bovenop de donatie. Telt niet mee in het opgehaalde bedrag.
+   */
+  fee?: number | null;
   status: 'open' | 'betaald' | 'geannuleerd' | 'verlopen' | 'mislukt';
   paidAt?: string | null;
   method?: string | null;
@@ -1137,6 +1145,7 @@ export interface FundraisersSelect<T extends boolean = true> {
   slug?: T;
   active?: T;
   goalAmount?: T;
+  transactionFee?: T;
   seatPrice?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1156,6 +1165,7 @@ export interface DonationsSelect<T extends boolean = true> {
   seats?: T;
   freeAmount?: T;
   amount?: T;
+  fee?: T;
   status?: T;
   paidAt?: T;
   method?: T;

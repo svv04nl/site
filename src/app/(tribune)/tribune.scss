@@ -423,6 +423,32 @@ body {
   }
 }
 
+.fr-summary {
+  background: #f7f7f7;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.9rem 1rem;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  dt,
+  dd {
+    margin: 0;
+  }
+}
+
+.fr-summary-total {
+  border-top: 1px solid rgba(0 0 0 / 0.12);
+  font-weight: 700;
+  padding-top: 0.4rem;
+}
+
 .fr-hp {
   height: 0;
   left: -9999px;

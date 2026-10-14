@@ -26,7 +26,7 @@ export default async function TribunePage() {
   const fundraiser = docs[0]
   if (!fundraiser) notFound()
 
-  const { seatPrice, goalAmount, active } = fundraiser
+  const { seatPrice, goalAmount, active, transactionFee } = fundraiser
   const stats = await getFundraiserStats(fundraiser.id)
   const progress = goalAmount ? Math.min(100, Math.round((stats.totalAmount / goalAmount) * 100)) : null
 
@@ -121,7 +121,7 @@ export default async function TribunePage() {
                 alleen of samen met een of meer stoeltjes.
               </p>
               <div className="fr-card">
-                <DonationForm seatPrice={seatPrice} />
+                <DonationForm seatPrice={seatPrice} transactionFee={transactionFee ?? 0} />
               </div>
             </>
           ) : (

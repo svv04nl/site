@@ -55,6 +55,18 @@ export const Fundraisers: CollectionConfig = {
       },
     },
     {
+      name: 'transactionFee',
+      type: 'number',
+      label: 'Transactiekosten (€)',
+      min: 0,
+      defaultValue: 0.29,
+      admin: {
+        step: 0.01,
+        description:
+          'Optionele bijdrage die de donateur kan meebetalen, zodat het volledige bedrag naar de club gaat. Zet op 0 om de optie te verbergen. Controleer het actuele tarief bij Mollie.',
+      },
+    },
+    {
       name: 'seatPrice',
       type: 'number',
       label: 'Prijs per stoeltje (€)',

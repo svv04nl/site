@@ -2,7 +2,7 @@ import { getPayload, type Payload } from 'payload'
 import config from '@payload-config'
 import type { Donation } from '@/payload-types'
 import { getPayment, type MolliePaymentStatus } from '@/lib/mollie'
-import { formatEuro } from '@/lib/fundraiser'
+import { formatEuro, paymentTotal } from '@/lib/fundraiser'
 
 type DonationStatus = Donation['status']
 
@@ -52,7 +52,7 @@ async function sendPaidEmails(payload: Payload, donation: Donation) {
       to: donation.email,
       subject: "Bedankt voor je donatie aan de tribune van SVV'04",
       html: `<p>Hoi ${escapeHtml(donation.name)},</p>
-<p>Bedankt voor je donatie aan de renovatie van de tribune van SVV'04. We hebben je betaling van ${formatEuro(donation.amount)} ontvangen, voor ${escapeHtml(describe(donation))}.</p>
+<p>Bedankt voor je donatie aan de renovatie van de tribune van SVV'04. We hebben je betaling van ${formatEuro(paymentTotal(donation.amount, donation.fee ?? 0))} ontvangen, voor ${escapeHtml(describe(donation))}${donation.fee ? ` en ${formatEuro(donation.fee)} transactiekosten` : ''}.</p>
 <p>Heb je een vraag of een speciale wens? Neem dan contact op met de sponsorgroep via <a href="https://svv04.nl/contact?afdeling=${SPONSOR_ROLE_SLUG}">svv04.nl/contact</a>.</p>
 <p>Sportieve groet,<br />SVV'04</p>`,
     })
@@ -80,7 +80,8 @@ ${donation.isCompany ? `<tr><td>Bedrijf</td><td>${escapeHtml(donation.companyNam
 <tr><td>E-mail</td><td>${escapeHtml(donation.email)}</td></tr>
 <tr><td>Stoeltjes</td><td>${donation.seats}</td></tr>
 <tr><td>Vrije donatie</td><td>${formatEuro(donation.freeAmount)}</td></tr>
-<tr><td>Totaal</td><td>${formatEuro(donation.amount)}</td></tr>
+<tr><td>Donatie</td><td>${formatEuro(donation.amount)}</td></tr>
+<tr><td>Transactiekosten meebetaald</td><td>${formatEuro(donation.fee ?? 0)}</td></tr>
 <tr><td>Naam op de website</td><td>${donation.showOnList ? 'ja' : 'nee'}</td></tr>
 <tr><td>Naam op de tribune</td><td>${donation.nameOnTribune ? 'ja' : 'nee'}</td></tr>
 </table>`,

@@ -1,17 +1,29 @@
 'use client'
 
 import React, { useState } from 'react'
-import { MAX_SEATS, MAX_TOTAL, MIN_FREE_AMOUNT, donationTotal, formatEuro } from '@/lib/fundraiser'
+import {
+  MAX_SEATS,
+  MAX_TOTAL,
+  MIN_FREE_AMOUNT,
+  donationTotal,
+  formatEuro,
+  paymentTotal,
+} from '@/lib/fundraiser'
 
-export default function DonationForm({ seatPrice }: { seatPrice: number }) {
+type Props = { seatPrice: number; transactionFee: number }
+
+export default function DonationForm({ seatPrice, transactionFee }: Props) {
   const [seats, setSeats] = useState(1)
   const [freeAmount, setFreeAmount] = useState('')
   const [isCompany, setIsCompany] = useState(false)
+  const [coverFee, setCoverFee] = useState(true)
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle')
   const [error, setError] = useState('')
 
   const free = Number(freeAmount.replace(',', '.')) || 0
   const total = donationTotal(seats, free, seatPrice)
+  const fee = coverFee ? transactionFee : 0
+  const toPay = paymentTotal(total, fee)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -29,6 +41,7 @@ export default function DonationForm({ seatPrice }: { seatPrice: number }) {
           companyName: data.get('companyName') || undefined,
           showOnList: data.get('showOnList') === 'on',
           nameOnTribune: data.get('nameOnTribune') === 'on',
+          coverFee: transactionFee > 0 && coverFee,
           seats,
           freeAmount,
           website: data.get('website'),
@@ -135,6 +148,39 @@ export default function DonationForm({ seatPrice }: { seatPrice: number }) {
         </label>
       </div>
 
+      {transactionFee > 0 && (
+        <label className="fr-check">
+          <input
+            type="checkbox"
+            checked={coverFee}
+            onChange={(e) => setCoverFee(e.target.checked)}
+          />
+          <span>
+            Ik betaal de transactiekosten ({formatEuro(transactionFee)}) ook, zodat het hele bedrag
+            naar de club gaat.
+          </span>
+        </label>
+      )}
+
+      {total > 0 && (
+        <dl className="fr-summary">
+          <div>
+            <dt>Donatie</dt>
+            <dd>{formatEuro(total)}</dd>
+          </div>
+          {fee > 0 && (
+            <div>
+              <dt>Transactiekosten</dt>
+              <dd>{formatEuro(fee)}</dd>
+            </div>
+          )}
+          <div className="fr-summary-total">
+            <dt>Totaal</dt>
+            <dd>{formatEuro(toPay)}</dd>
+          </div>
+        </dl>
+      )}
+
       {total > MAX_TOTAL && (
         <p className="fr-error">
           Online doneren kan tot {formatEuro(MAX_TOTAL)}. Neem voor meer contact op met de
@@ -148,7 +194,7 @@ export default function DonationForm({ seatPrice }: { seatPrice: number }) {
         type="submit"
         disabled={status === 'sending' || total <= 0 || total > MAX_TOTAL}
       >
-        {status === 'sending' ? 'Even geduld…' : `Doneer ${formatEuro(total)}`}
+        {status === 'sending' ? 'Even geduld…' : `Doneer ${formatEuro(toPay)}`}
       </button>
       <p className="fr-note">
         Je betaalt veilig via Mollie. Met doneren ga je akkoord met onze{' '}

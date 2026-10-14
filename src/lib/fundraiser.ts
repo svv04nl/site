@@ -13,6 +13,7 @@ export type DonationInput = {
   companyName?: string
   showOnList: boolean
   nameOnTribune: boolean
+  coverFee: boolean
   seats: number
   freeAmount: number
 }
@@ -29,8 +30,15 @@ export function donationTotal(seats: number, freeAmount: number, seatPrice: numb
   return seats * seatPrice + freeAmount
 }
 
+// Wat de donateur afrekent: de donatie plus eventuele transactiekosten, in centen
+// afgerond zodat 30 + 0,29 geen 30,290000000000004 wordt.
+export function paymentTotal(amount: number, fee: number): number {
+  return Math.round(amount * 100 + fee * 100) / 100
+}
+
 export function formatEuro(amount: number): string {
-  return `€ ${amount.toLocaleString('nl-NL')}`
+  const digits = Number.isInteger(amount) ? 0 : 2
+  return `€ ${amount.toLocaleString('nl-NL', { minimumFractionDigits: digits })}`
 }
 
 export function parseDonationInput(body: unknown, seatPrice: number): ParseResult {
@@ -42,6 +50,7 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
   const companyName = typeof input.companyName === 'string' ? input.companyName.trim() : ''
   const showOnList = input.showOnList === true
   const nameOnTribune = input.nameOnTribune === true
+  const coverFee = input.coverFee === true
   const seats = toWholeNumber(input.seats)
   const freeAmount = toWholeNumber(input.freeAmount)
 
@@ -80,6 +89,7 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
       companyName: isCompany ? companyName : undefined,
       showOnList,
       nameOnTribune,
+      coverFee,
       seats,
       freeAmount,
     },

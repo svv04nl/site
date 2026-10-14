@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_TOTAL, donationTotal, parseDonationInput } from '@/lib/fundraiser'
+import { MAX_TOTAL, donationTotal, parseDonationInput, paymentTotal } from '@/lib/fundraiser'
 
 const base = { name: 'Jan Jansen', email: 'jan@example.nl', seats: 1 }
 
@@ -57,6 +57,19 @@ describe('parseDonationInput', () => {
     const result = parseDonationInput({ ...base, showOnList: true, nameOnTribune: 'true' }, 30)
     expect(result.ok && result.data.showOnList).toBe(true)
     expect(result.ok && result.data.nameOnTribune).toBe(false)
+  })
+
+  it('neemt coverFee alleen over bij een echte true', () => {
+    const yes = parseDonationInput({ ...base, coverFee: true }, 30)
+    expect(yes.ok && yes.data.coverFee).toBe(true)
+    const no = parseDonationInput({ ...base, coverFee: 'true' }, 30)
+    expect(no.ok && no.data.coverFee).toBe(false)
+  })
+
+  it('telt transactiekosten zonder afrondingsfouten op', () => {
+    expect(paymentTotal(30, 0.29)).toBe(30.29)
+    expect(paymentTotal(65, 0.29)).toBe(65.29)
+    expect(paymentTotal(30, 0)).toBe(30)
   })
 
   it('rekent met de stoeltjesprijs uit de fundraiser', () => {

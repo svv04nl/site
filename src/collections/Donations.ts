@@ -70,7 +70,17 @@ export const Donations: CollectionConfig = {
           required: true,
           admin: readOnly,
         },
-        { name: 'amount', type: 'number', label: 'Totaal (€)', required: true, admin: readOnly },
+        { name: 'amount', type: 'number', label: 'Donatie (€)', required: true, admin: readOnly },
+        {
+          name: 'fee',
+          type: 'number',
+          label: 'Transactiekosten (€)',
+          defaultValue: 0,
+          admin: {
+            ...readOnly,
+            description: 'Meebetaald bovenop de donatie. Telt niet mee in het opgehaalde bedrag.',
+          },
+        },
       ],
     },
     {
