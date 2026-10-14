@@ -27,6 +27,8 @@ import { Pages } from './collections/Pages'
 import { Contacts } from './collections/Contacts'
 import { Audiences } from './collections/Audiences'
 import { Messages } from './collections/Messages'
+import { Donations } from './collections/Donations'
+import { Fundraisers } from './collections/Fundraisers'
 import { TeamStaff } from './collections/TeamStaff'
 import { searchEndpoint } from './endpoints/search'
 import { messageSubmitEndpoint } from './endpoints/message-submit'
@@ -53,7 +55,7 @@ export default buildConfig({
     supportedLanguages: { nl },
     fallbackLanguage: 'nl',
   },
-  collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences, Messages, TeamStaff],
+  collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences, Messages, Fundraisers, Donations, TeamStaff],
   endpoints: [searchEndpoint, messageSubmitEndpoint],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
