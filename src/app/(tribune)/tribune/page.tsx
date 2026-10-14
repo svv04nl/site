@@ -45,8 +45,10 @@ export default async function TribunePage() {
             <p className="fr-lead">
               Onze tribune gaat al een tijdje mee en is toe aan een renovatie. We willen nieuwe
               gevel- en dakbeplating aanbrengen, de tribune schilderen, nieuwe dugouts neerzetten en
-              hem voorzien van nieuwe zwart-witte stoeltjes. Een stoeltje doneer je voor{' '}
-              {formatEuro(seatPrice)}, een vrij bedrag geven kan ook.
+              hem voorzien van nieuwe zwart-witte stoeltjes.
+              <span className="fr-lead-price">
+                Een stoeltje doneer je voor {formatEuro(seatPrice)}, een vrij bedrag geven kan ook.
+              </span>
             </p>
             {active && (
               <a className="fr-cta" href="#doneer">

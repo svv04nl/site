@@ -172,6 +172,12 @@ body {
   max-width: 34rem;
 }
 
+// De prijsregel staat onder de uitleg, op een eigen regel.
+.fr-lead-price {
+  display: block;
+  margin-top: 0.6rem;
+}
+
 .fr-cta {
   background: var(--color-primary);
   border-radius: 5px;
