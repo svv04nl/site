@@ -111,6 +111,27 @@ body {
   }
 }
 
+// Rechtsboven, even groot als in de header van de gewone site (--logo-height).
+.fr-logo {
+  align-self: flex-end;
+  display: block;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.88;
+  }
+
+  img {
+    filter: drop-shadow(0 2px 8px rgba(0 0 0 / 0.35));
+    height: 5.5rem;
+    width: auto;
+
+    @media screen and (min-width: $breakpoint-mobile-lg) {
+      height: var(--logo-height);
+    }
+  }
+}
+
 .fr-hero-copy {
   max-width: 40rem;
 

@@ -36,9 +36,8 @@ export default async function TribunePage() {
         <img className="fr-hero-img" src="/tribune/hero.jpg" alt="De tribune van SVV'04 vanaf het middenveld" />
         <div className="fr-hero-shade" />
         <div className="fr-hero-inner">
-          <a className="fr-brand" href="https://svv04.nl">
-            <img src="/logo.webp" alt="" width={44} height={44} />
-            <span>SVV&apos;04 Schoonebeek</span>
+          <a className="fr-logo" href="https://svv04.nl" aria-label="SVV'04 Schoonebeek, naar svv04.nl">
+            <img src="/logo.webp" alt="SVV'04 Schoonebeek" width={278} height={336} />
           </a>
           <div className="fr-hero-copy">
             <p className="fr-eyebrow">Fundraiser</p>
