@@ -2,8 +2,7 @@
 
 // De stoeltjesprijs en het doelbedrag staan in de collectie `fundraisers`.
 export const FUNDRAISER_SLUG = 'tribune'
-export const MIN_FREE_AMOUNT = 5
-export const MAX_SEATS = 100
+export const MIN_AMOUNT = 5
 export const MAX_TOTAL = 10_000
 
 export type DonationInput = {
@@ -14,6 +13,9 @@ export type DonationInput = {
   showOnList: boolean
   nameOnTribune: boolean
   coverFee: boolean
+  // Het gekozen bedrag, en hoe dat uitvalt: elke volle stoeltjesprijs is een stoeltje,
+  // de rest telt als extra.
+  amount: number
   seats: number
   freeAmount: number
 }
@@ -26,8 +28,8 @@ function toWholeNumber(value: unknown): number {
   return Number.isFinite(parsed) ? parsed : NaN
 }
 
-export function donationTotal(seats: number, freeAmount: number, seatPrice: number): number {
-  return seats * seatPrice + freeAmount
+export function splitAmount(amount: number, seatPrice: number) {
+  return { seats: Math.floor(amount / seatPrice), freeAmount: amount % seatPrice }
 }
 
 // Wat de donateur afrekent: de donatie plus eventuele transactiekosten, in centen
@@ -51,8 +53,7 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
   const showOnList = input.showOnList === true
   const nameOnTribune = input.nameOnTribune === true
   const coverFee = input.coverFee === true
-  const seats = toWholeNumber(input.seats)
-  const freeAmount = toWholeNumber(input.freeAmount)
+  const amount = toWholeNumber(input.amount)
 
   if (!name || name.length > 100) return { ok: false, error: 'Vul je naam in.' }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
@@ -61,19 +62,13 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
   if (isCompany && (!companyName || companyName.length > 100)) {
     return { ok: false, error: 'Vul de bedrijfsnaam in.' }
   }
-  if (!Number.isInteger(seats) || seats < 0 || seats > MAX_SEATS) {
-    return { ok: false, error: `Kies tussen 0 en ${MAX_SEATS} stoeltjes.` }
+  if (!Number.isInteger(amount)) {
+    return { ok: false, error: 'Vul het bedrag in hele euro’s in.' }
   }
-  if (!Number.isInteger(freeAmount) || freeAmount < 0) {
-    return { ok: false, error: 'Vul het extra bedrag in hele euro’s in.' }
+  if (amount < MIN_AMOUNT) {
+    return { ok: false, error: `Een donatie is minimaal ${formatEuro(MIN_AMOUNT)}.` }
   }
-  if (freeAmount > 0 && freeAmount < MIN_FREE_AMOUNT) {
-    return { ok: false, error: `Een vrije donatie is minimaal ${formatEuro(MIN_FREE_AMOUNT)}.` }
-  }
-
-  const total = donationTotal(seats, freeAmount, seatPrice)
-  if (total <= 0) return { ok: false, error: 'Kies een stoeltje of vul een bedrag in.' }
-  if (total > MAX_TOTAL) {
+  if (amount > MAX_TOTAL) {
     return {
       ok: false,
       error: `Online doneren kan tot ${formatEuro(MAX_TOTAL)}. Neem voor meer contact op met de sponsorgroep.`,
@@ -90,8 +85,8 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
       showOnList,
       nameOnTribune,
       coverFee,
-      seats,
-      freeAmount,
+      amount,
+      ...splitAmount(amount, seatPrice),
     },
   }
 }

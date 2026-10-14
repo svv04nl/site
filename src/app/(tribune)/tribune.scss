@@ -465,6 +465,10 @@ body {
     text-align: center;
     width: 100%;
   }
+
+  small {
+    text-align: center;
+  }
 }
 
 .fr-stepper {
@@ -521,6 +525,24 @@ body {
   input {
     background: transparent !important;
     border: none !important;
+  }
+}
+
+.fr-money--amount {
+  max-width: 12rem;
+  width: 100%;
+
+  span {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  input {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    padding-left: 0.4rem;
+    text-align: center;
   }
 }
 

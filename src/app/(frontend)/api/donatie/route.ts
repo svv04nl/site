@@ -3,12 +3,7 @@ import { checkBotId } from 'botid/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { createPayment } from '@/lib/mollie'
-import {
-  FUNDRAISER_SLUG,
-  parseDonationInput,
-  donationTotal,
-  paymentTotal,
-} from '@/lib/fundraiser'
+import { FUNDRAISER_SLUG, parseDonationInput, paymentTotal } from '@/lib/fundraiser'
 
 export async function POST(request: Request) {
   const verification = await checkBotId()
@@ -40,7 +35,7 @@ export async function POST(request: Request) {
     return Response.json({ error: parsed.error }, { status: 400 })
   }
   const input = parsed.data
-  const amount = donationTotal(input.seats, input.freeAmount, fundraiser.seatPrice)
+  const { amount } = input
   const fee = input.coverFee ? (fundraiser.transactionFee ?? 0) : 0
   const donation = await payload.create({
     collection: 'donations',

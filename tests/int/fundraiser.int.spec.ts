@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_TOTAL, donationTotal, parseDonationInput, paymentTotal } from '@/lib/fundraiser'
+import { MAX_TOTAL, MIN_AMOUNT, parseDonationInput, paymentTotal, splitAmount } from '@/lib/fundraiser'
 
-const base = { name: 'Jan Jansen', email: 'jan@example.nl', seats: 1 }
+const base = { name: 'Jan Jansen', email: 'jan@example.nl', amount: 30 }
 
 describe('parseDonationInput', () => {
-  it('accepteert één stoeltje', () => {
+  it('accepteert een bedrag van één stoeltje', () => {
     const result = parseDonationInput(base, 30)
     expect(result.ok).toBe(true)
     if (result.ok) {
+      expect(result.data.amount).toBe(30)
       expect(result.data.seats).toBe(1)
       expect(result.data.freeAmount).toBe(0)
       expect(result.data.showOnList).toBe(false)
@@ -15,29 +16,31 @@ describe('parseDonationInput', () => {
     }
   })
 
-  it('accepteert een vrije donatie zonder stoeltjes, maar geen halve euro', () => {
-    const result = parseDonationInput({ ...base, seats: 0, freeAmount: '25' }, 30)
-    expect(result.ok).toBe(true)
-    expect(parseDonationInput({ ...base, seats: 0, freeAmount: '12,5' }, 30).ok).toBe(false)
+  it('accepteert een bedrag als tekst', () => {
+    const result = parseDonationInput({ ...base, amount: '60' }, 30)
+    expect(result.ok && result.data.seats).toBe(2)
   })
 
-  it('weigert een donatie van nul', () => {
-    expect(parseDonationInput({ ...base, seats: 0 }, 30).ok).toBe(false)
+  it('weigert een halve euro', () => {
+    expect(parseDonationInput({ ...base, amount: '12,5' }, 30).ok).toBe(false)
+    expect(parseDonationInput({ ...base, amount: 12.5 }, 30).ok).toBe(false)
   })
 
-  it('weigert een vrij bedrag onder het minimum', () => {
-    expect(parseDonationInput({ ...base, freeAmount: 3 }, 30).ok).toBe(false)
+  it('weigert een bedrag onder het minimum, nul of niets', () => {
+    expect(parseDonationInput({ ...base, amount: MIN_AMOUNT - 1 }, 30).ok).toBe(false)
+    expect(parseDonationInput({ ...base, amount: 0 }, 30).ok).toBe(false)
+    expect(parseDonationInput({ name: base.name, email: base.email }, 30).ok).toBe(false)
+    expect(parseDonationInput({ ...base, amount: MIN_AMOUNT }, 30).ok).toBe(true)
   })
 
-  it('weigert negatieve en gebroken aantallen', () => {
-    expect(parseDonationInput({ ...base, seats: -1 }, 30).ok).toBe(false)
-    expect(parseDonationInput({ ...base, seats: 1.5 }, 30).ok).toBe(false)
-    expect(parseDonationInput({ ...base, seats: 'abc' }, 30).ok).toBe(false)
+  it('weigert negatieve en onleesbare bedragen', () => {
+    expect(parseDonationInput({ ...base, amount: -30 }, 30).ok).toBe(false)
+    expect(parseDonationInput({ ...base, amount: 'abc' }, 30).ok).toBe(false)
   })
 
-  it('weigert een totaal boven het maximum', () => {
-    expect(parseDonationInput({ ...base, seats: 0, freeAmount: MAX_TOTAL + 1 }, 30).ok).toBe(false)
-    expect(parseDonationInput({ ...base, seats: 0, freeAmount: MAX_TOTAL }, 30).ok).toBe(true)
+  it('weigert een bedrag boven het maximum', () => {
+    expect(parseDonationInput({ ...base, amount: MAX_TOTAL + 1 }, 30).ok).toBe(false)
+    expect(parseDonationInput({ ...base, amount: MAX_TOTAL }, 30).ok).toBe(true)
   })
 
   it('vereist naam en een geldig e-mailadres', () => {
@@ -65,15 +68,24 @@ describe('parseDonationInput', () => {
     const no = parseDonationInput({ ...base, coverFee: 'true' }, 30)
     expect(no.ok && no.data.coverFee).toBe(false)
   })
+})
 
+describe('splitAmount', () => {
+  it('telt elke volle stoeltjesprijs als stoeltje en de rest als extra', () => {
+    expect(splitAmount(30, 30)).toEqual({ seats: 1, freeAmount: 0 })
+    expect(splitAmount(65, 30)).toEqual({ seats: 2, freeAmount: 5 })
+    expect(splitAmount(25, 30)).toEqual({ seats: 0, freeAmount: 25 })
+  })
+
+  it('volgt de stoeltjesprijs van de fundraiser', () => {
+    expect(splitAmount(65, 25)).toEqual({ seats: 2, freeAmount: 15 })
+  })
+})
+
+describe('paymentTotal', () => {
   it('telt transactiekosten zonder afrondingsfouten op', () => {
     expect(paymentTotal(30, 0.29)).toBe(30.29)
     expect(paymentTotal(65, 0.29)).toBe(65.29)
     expect(paymentTotal(30, 0)).toBe(30)
-  })
-
-  it('rekent met de stoeltjesprijs uit de fundraiser', () => {
-    expect(donationTotal(2, 10, 30)).toBe(70)
-    expect(donationTotal(2, 10, 25)).toBe(60)
   })
 })

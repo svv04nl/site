@@ -1,27 +1,23 @@
 'use client'
 
 import React, { useState } from 'react'
-import {
-  MAX_SEATS,
-  MAX_TOTAL,
-  MIN_FREE_AMOUNT,
-  donationTotal,
-  formatEuro,
-  paymentTotal,
-} from '@/lib/fundraiser'
+import { MAX_TOTAL, MIN_AMOUNT, formatEuro, paymentTotal, splitAmount } from '@/lib/fundraiser'
 
 type Props = { seatPrice: number; transactionFee: number }
 
 export default function DonationForm({ seatPrice, transactionFee }: Props) {
-  const [seats, setSeats] = useState(1)
-  const [freeAmount, setFreeAmount] = useState('')
+  // Eén bedrag: de knoppen zetten het op een veelvoud van de stoeltjesprijs en je kunt het
+  // daarna zelf aanpassen.
+  const [amountText, setAmountText] = useState(String(seatPrice))
   const [isCompany, setIsCompany] = useState(false)
   const [coverFee, setCoverFee] = useState(true)
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle')
   const [error, setError] = useState('')
 
-  const free = Number(freeAmount.replace(',', '.')) || 0
-  const total = donationTotal(seats, free, seatPrice)
+  const total = Number(amountText) || 0
+  const { seats, freeAmount: extra } = splitAmount(total, seatPrice)
+  const canAddSeat = (seats + 1) * seatPrice <= MAX_TOTAL
+  const setSeatCount = (n: number) => setAmountText(String(Math.max(0, n) * seatPrice))
   const fee = coverFee ? transactionFee : 0
   const toPay = paymentTotal(total, fee)
 
@@ -42,8 +38,7 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
           showOnList: data.get('showOnList') === 'on',
           nameOnTribune: data.get('nameOnTribune') === 'on',
           coverFee: transactionFee > 0 && coverFee,
-          seats,
-          freeAmount,
+          amount: total,
           website: data.get('website'),
         }),
       })
@@ -65,8 +60,8 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
         <div className="fr-stepper">
           <button
             type="button"
-            onClick={() => setSeats((s) => Math.max(0, s - 1))}
-            disabled={seats === 0}
+            onClick={() => setSeatCount(extra > 0 ? seats : seats - 1)}
+            disabled={total <= 0}
             aria-label="Eén stoeltje minder"
           >
             −
@@ -76,8 +71,8 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
           </output>
           <button
             type="button"
-            onClick={() => setSeats((s) => Math.min(MAX_SEATS, s + 1))}
-            disabled={seats === MAX_SEATS}
+            onClick={() => setSeatCount(seats + 1)}
+            disabled={!canAddSeat}
             aria-label="Eén stoeltje meer"
           >
             +
@@ -85,19 +80,25 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
         </div>
       </fieldset>
 
-      <div className="fr-field">
-        <label htmlFor="fr-free">Extra bedrag (optioneel)</label>
-        <div className="fr-money">
+      <div className="fr-field fr-field--center">
+        <label htmlFor="fr-amount">Jouw donatie</label>
+        <div className="fr-money fr-money--amount">
           <span aria-hidden="true">€</span>
           <input
-            id="fr-free"
+            id="fr-amount"
             inputMode="numeric"
             placeholder="0"
-            value={freeAmount}
-            onChange={(e) => setFreeAmount(e.target.value.replace(/[^\d]/g, ''))}
+            value={amountText}
+            onChange={(e) => setAmountText(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
           />
         </div>
-        <small>Hele euro&apos;s, minimaal {formatEuro(MIN_FREE_AMOUNT)}.</small>
+        <small aria-live="polite">
+          {total <= 0
+            ? `Hele euro's, minimaal ${formatEuro(MIN_AMOUNT)}. Je kunt het bedrag zelf aanpassen.`
+            : seats === 0
+              ? 'Een vrije donatie.'
+              : `${seats} ${seats === 1 ? 'stoeltje' : 'stoeltjes'}${extra > 0 ? ` en ${formatEuro(extra)} extra` : ''}. Je kunt het bedrag zelf aanpassen.`}
+        </small>
       </div>
 
       <div className="fr-field">
@@ -192,7 +193,7 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
       <button
         className="fr-submit"
         type="submit"
-        disabled={status === 'sending' || total <= 0 || total > MAX_TOTAL}
+        disabled={status === 'sending' || total < MIN_AMOUNT || total > MAX_TOTAL}
       >
         {status === 'sending' ? 'Even geduld…' : `Doneer ${formatEuro(toPay)}`}
       </button>
