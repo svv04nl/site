@@ -41,7 +41,7 @@ export default async function TribunePage() {
           </a>
           <div className="fr-hero-copy">
             <p className="fr-eyebrow">Fundraiser</p>
-            <h1>Steun de renovatie van onze tribune</h1>
+            <h1>Steun de renovatie van onze tribune!</h1>
             <p className="fr-lead">
               Onze tribune gaat al een tijdje mee en is toe aan een renovatie. Hij krijgt nieuwe
               gevel- en dakbeplating, een nieuwe verflaag, nieuwe dugouts en nieuwe zwart-witte
