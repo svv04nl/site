@@ -43,7 +43,7 @@ const WORK = [
   },
   {
     title: 'Nieuwe dugouts',
-    text: 'Het metselwerk van de dugouts is geschuurd. We willen de dugouts vervangen door nieuwe betonnen wanden.',
+    text: 'Het metselwerk van de dugouts is gescheurd en er is lekkage. We willen de dugouts vervangen door nieuwe betonnen wanden.',
     photos: [
       {
         src: '/tribune/dugout-links.jpg',
