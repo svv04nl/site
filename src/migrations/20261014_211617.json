@@ -2820,12 +2820,33 @@
           "notNull": false,
           "default": 0.29
         },
-        "seat_price": {
-          "name": "seat_price",
+        "unit_price": {
+          "name": "unit_price",
           "type": "numeric",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": 30
+        },
+        "unit_name": {
+          "name": "unit_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'stoeltje'"
+        },
+        "unit_name_plural": {
+          "name": "unit_name_plural",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'stoeltjes'"
+        },
+        "name_on_object_label": {
+          "name": "name_on_object_label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Mijn naam mag op de tribune zelf geplaatst worden.'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -2944,15 +2965,15 @@
           "notNull": false,
           "default": false
         },
-        "name_on_tribune": {
-          "name": "name_on_tribune",
+        "name_on_object": {
+          "name": "name_on_object",
           "type": "boolean",
           "primaryKey": false,
           "notNull": false,
           "default": false
         },
-        "seats": {
-          "name": "seats",
+        "units": {
+          "name": "units",
           "type": "numeric",
           "primaryKey": false,
           "notNull": true
@@ -3039,11 +3060,11 @@
           "method": "btree",
           "with": {}
         },
-        "donations_name_on_tribune_idx": {
-          "name": "donations_name_on_tribune_idx",
+        "donations_name_on_object_idx": {
+          "name": "donations_name_on_object_idx",
           "columns": [
             {
-              "expression": "name_on_tribune",
+              "expression": "name_on_object",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -4322,6 +4343,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "cfcf9a72-fed4-4cba-b67b-20ee67bf681c",
+  "id": "4af32498-3c8d-4ed9-88c7-e992e3ccd591",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

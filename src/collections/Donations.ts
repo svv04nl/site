@@ -12,9 +12,9 @@ export const Donations: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'fundraiser', 'companyName', 'amount', 'seats', 'status', 'nameOnTribune', 'createdAt'],
+    defaultColumns: ['name', 'fundraiser', 'companyName', 'amount', 'units', 'status', 'nameOnObject', 'createdAt'],
     description:
-      'Donaties voor de tribune-actie. Ze worden alleen aangemaakt via /api/donatie en bijgewerkt door de Mollie-webhook, niet rechtstreeks via de API of het adminscherm.',
+      'Donaties voor een fundraiser. Ze worden alleen aangemaakt via /api/donatie en bijgewerkt door de Mollie-webhook, niet rechtstreeks via de API of het adminscherm.',
   },
   access: {
     read: isAdmin,
@@ -44,25 +44,25 @@ export const Donations: CollectionConfig = {
       admin: {
         ...readOnly,
         description:
-          'Toestemming om de naam (of bedrijfsnaam), het aantal stoeltjes en het bedrag in de donateurslijst op svv04.nl/tribune te tonen. Zonder vinkje blijft de donatie anoniem.',
+          'Toestemming om de naam (of bedrijfsnaam), het aantal eenheden en het bedrag in de donateurslijst op de pagina van de fundraiser te tonen. Zonder vinkje blijft de donatie anoniem.',
       },
     },
     {
-      name: 'nameOnTribune',
+      name: 'nameOnObject',
       type: 'checkbox',
-      label: 'Naam op de tribune',
+      label: 'Naam fysiek plaatsen',
       defaultValue: false,
       index: true,
       admin: {
         ...readOnly,
         description:
-          'Toestemming om de naam (of bedrijfsnaam) op de tribune zelf te plaatsen. Filter op dit vinkje en status "Betaald" voor de lijst naar de maker.',
+          'Toestemming om de naam (of bedrijfsnaam) fysiek te plaatsen, bijvoorbeeld op de tribune. Filter op dit vinkje en status "Betaald" voor de lijst naar de maker.',
       },
     },
     {
       type: 'row',
       fields: [
-        { name: 'seats', type: 'number', label: 'Stoeltjes', required: true, admin: readOnly },
+        { name: 'units', type: 'number', label: 'Aantal eenheden', required: true, admin: readOnly },
         {
           name: 'freeAmount',
           type: 'number',

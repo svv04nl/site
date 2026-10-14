@@ -1,23 +1,39 @@
 'use client'
 
 import React, { useState } from 'react'
-import { MAX_TOTAL, MIN_AMOUNT, formatEuro, paymentTotal, splitAmount } from '@/lib/fundraiser'
+import {
+  MAX_TOTAL,
+  MIN_AMOUNT,
+  formatEuro,
+  formatUnits,
+  paymentTotal,
+  splitAmount,
+  type FundraiserUnit,
+} from '@/lib/fundraiser'
 
-type Props = { seatPrice: number; transactionFee: number }
+type Props = {
+  // Een vaste eenheid met prijs (bijvoorbeeld een stoeltje), of null voor alleen een vrij bedrag.
+  unit: FundraiserUnit | null
+  transactionFee: number
+  // Tekst van de tweede toestemming; leeg betekent dat die optie niet getoond wordt.
+  nameOnObjectLabel: string
+}
 
-export default function DonationForm({ seatPrice, transactionFee }: Props) {
-  // Eén bedrag: de knoppen zetten het op een veelvoud van de stoeltjesprijs en je kunt het
+export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }: Props) {
+  // Eén bedrag: de knoppen zetten het op een veelvoud van de eenheidsprijs en je kunt het
   // daarna zelf aanpassen.
-  const [amountText, setAmountText] = useState(String(seatPrice))
+  const [amountText, setAmountText] = useState(String(unit?.price ?? 25))
   const [isCompany, setIsCompany] = useState(false)
   const [coverFee, setCoverFee] = useState(true)
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle')
   const [error, setError] = useState('')
 
   const total = Number(amountText) || 0
-  const { seats, freeAmount: extra } = splitAmount(total, seatPrice)
-  const canAddSeat = (seats + 1) * seatPrice <= MAX_TOTAL
-  const setSeatCount = (n: number) => setAmountText(String(Math.max(0, n) * seatPrice))
+  const { units, freeAmount: extra } = splitAmount(total, unit?.price)
+  const canAddUnit = unit ? (units + 1) * unit.price <= MAX_TOTAL : false
+  const setUnitCount = (n: number) => {
+    if (unit) setAmountText(String(Math.max(0, n) * unit.price))
+  }
   const fee = coverFee ? transactionFee : 0
   const toPay = paymentTotal(total, fee)
 
@@ -36,7 +52,7 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
           isCompany,
           companyName: data.get('companyName') || undefined,
           showOnList: data.get('showOnList') === 'on',
-          nameOnTribune: data.get('nameOnTribune') === 'on',
+          nameOnObject: data.get('nameOnObject') === 'on',
           coverFee: transactionFee > 0 && coverFee,
           amount: total,
           website: data.get('website'),
@@ -55,30 +71,34 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
 
   return (
     <form className="fr-form" onSubmit={handleSubmit} noValidate>
+      {unit && (
       <fieldset className="fr-field fr-field--center">
-        <legend>Nieuwe stoeltjes ({formatEuro(seatPrice)} per stoeltje)</legend>
+        <legend>
+          Aantal {unit.namePlural} ({formatEuro(unit.price)} per {unit.name})
+        </legend>
         <div className="fr-stepper">
           <button
             type="button"
-            onClick={() => setSeatCount(extra > 0 ? seats : seats - 1)}
+            onClick={() => setUnitCount(extra > 0 ? units : units - 1)}
             disabled={total <= 0}
-            aria-label="Eén stoeltje minder"
+            aria-label={`Eén ${unit.name} minder`}
           >
             −
           </button>
           <output aria-live="polite">
-            <strong>{seats}</strong> {seats === 1 ? 'stoeltje' : 'stoeltjes'}
+            <strong>{units}</strong> {units === 1 ? unit.name : unit.namePlural}
           </output>
           <button
             type="button"
-            onClick={() => setSeatCount(seats + 1)}
-            disabled={!canAddSeat}
-            aria-label="Eén stoeltje meer"
+            onClick={() => setUnitCount(units + 1)}
+            disabled={!canAddUnit}
+            aria-label={`Eén ${unit.name} meer`}
           >
             +
           </button>
         </div>
       </fieldset>
+      )}
 
       <div className="fr-field fr-field--center">
         <label htmlFor="fr-amount">Jouw donatie</label>
@@ -93,11 +113,11 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
           />
         </div>
         <small aria-live="polite">
-          {total <= 0
-            ? `Hele euro's, minimaal ${formatEuro(MIN_AMOUNT)}. Je kunt het bedrag zelf aanpassen.`
-            : seats === 0
+          {total <= 0 || !unit
+            ? `Hele euro's, minimaal ${formatEuro(MIN_AMOUNT)}.`
+            : units === 0
               ? 'Een vrije donatie.'
-              : `${seats} ${seats === 1 ? 'stoeltje' : 'stoeltjes'}${extra > 0 ? ` en ${formatEuro(extra)} extra` : ''}. Je kunt het bedrag zelf aanpassen.`}
+              : `${formatUnits(units, unit)}${extra > 0 ? ` en ${formatEuro(extra)} extra` : ''}. Je kunt het bedrag zelf aanpassen.`}
         </small>
       </div>
 
@@ -132,12 +152,18 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
         <legend>Wat mag er met {isCompany ? 'de bedrijfsnaam' : 'je naam'} gebeuren?</legend>
         <label className="fr-check">
           <input type="checkbox" name="showOnList" />
-          <span>Mijn naam, het aantal stoeltjes en het bedrag mogen op de website komen.</span>
+          <span>
+            {unit
+              ? `Mijn naam, het aantal ${unit.namePlural} en het bedrag mogen op de website komen.`
+              : 'Mijn naam en het bedrag mogen op de website komen.'}
+          </span>
         </label>
-        <label className="fr-check">
-          <input type="checkbox" name="nameOnTribune" />
-          <span>Mijn naam mag op de tribune zelf geplaatst worden.</span>
-        </label>
+        {nameOnObjectLabel && (
+          <label className="fr-check">
+            <input type="checkbox" name="nameOnObject" />
+            <span>{nameOnObjectLabel}</span>
+          </label>
+        )}
         <small>Zonder vinkje blijft je donatie anoniem.</small>
       </fieldset>
 

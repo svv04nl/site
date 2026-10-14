@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Deze actie is gesloten.' }, { status: 410 })
   }
 
-  const parsed = parseDonationInput(body, fundraiser.seatPrice)
+  const parsed = parseDonationInput(body, fundraiser.unitPrice)
   if (!parsed.ok) {
     return Response.json({ error: parsed.error }, { status: 400 })
   }
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
       isCompany: input.isCompany,
       companyName: input.companyName,
       showOnList: input.showOnList,
-      nameOnTribune: input.nameOnTribune,
-      seats: input.seats,
+      nameOnObject: input.nameOnObject,
+      units: input.units,
       freeAmount: input.freeAmount,
       amount,
       fee,
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
   try {
     const payment = await createPayment({
       amount: paymentTotal(amount, fee),
-      description: "Donatie tribune SVV'04",
+      description: `Donatie ${fundraiser.title}`,
       redirectUrl: `${origin}/tribune/bedankt?t=${donation.publicToken}`,
       webhookUrl: isLocal ? undefined : `${origin}/api/mollie-webhook`,
       metadata: { donationId: donation.id },

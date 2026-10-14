@@ -9,16 +9,16 @@ describe('parseDonationInput', () => {
     expect(result.ok).toBe(true)
     if (result.ok) {
       expect(result.data.amount).toBe(30)
-      expect(result.data.seats).toBe(1)
+      expect(result.data.units).toBe(1)
       expect(result.data.freeAmount).toBe(0)
       expect(result.data.showOnList).toBe(false)
-      expect(result.data.nameOnTribune).toBe(false)
+      expect(result.data.nameOnObject).toBe(false)
     }
   })
 
   it('accepteert een bedrag als tekst', () => {
     const result = parseDonationInput({ ...base, amount: '60' }, 30)
-    expect(result.ok && result.data.seats).toBe(2)
+    expect(result.ok && result.data.units).toBe(2)
   })
 
   it('weigert een halve euro', () => {
@@ -57,9 +57,9 @@ describe('parseDonationInput', () => {
   })
 
   it('neemt toestemmingen alleen over bij een echte true', () => {
-    const result = parseDonationInput({ ...base, showOnList: true, nameOnTribune: 'true' }, 30)
+    const result = parseDonationInput({ ...base, showOnList: true, nameOnObject: 'true' }, 30)
     expect(result.ok && result.data.showOnList).toBe(true)
-    expect(result.ok && result.data.nameOnTribune).toBe(false)
+    expect(result.ok && result.data.nameOnObject).toBe(false)
   })
 
   it('neemt coverFee alleen over bij een echte true', () => {
@@ -72,13 +72,21 @@ describe('parseDonationInput', () => {
 
 describe('splitAmount', () => {
   it('telt elke volle stoeltjesprijs als stoeltje en de rest als extra', () => {
-    expect(splitAmount(30, 30)).toEqual({ seats: 1, freeAmount: 0 })
-    expect(splitAmount(65, 30)).toEqual({ seats: 2, freeAmount: 5 })
-    expect(splitAmount(25, 30)).toEqual({ seats: 0, freeAmount: 25 })
+    expect(splitAmount(30, 30)).toEqual({ units: 1, freeAmount: 0 })
+    expect(splitAmount(65, 30)).toEqual({ units: 2, freeAmount: 5 })
+    expect(splitAmount(25, 30)).toEqual({ units: 0, freeAmount: 25 })
   })
 
-  it('volgt de stoeltjesprijs van de fundraiser', () => {
-    expect(splitAmount(65, 25)).toEqual({ seats: 2, freeAmount: 15 })
+  it('volgt de eenheidsprijs van de fundraiser', () => {
+    expect(splitAmount(65, 25)).toEqual({ units: 2, freeAmount: 15 })
+  })
+
+  it('maakt van alles een vrij bedrag als de fundraiser geen eenheid heeft', () => {
+    expect(splitAmount(65, null)).toEqual({ units: 0, freeAmount: 65 })
+    expect(splitAmount(65, undefined)).toEqual({ units: 0, freeAmount: 65 })
+    const result = parseDonationInput({ ...base, amount: 65 }, null)
+    expect(result.ok && result.data.units).toBe(0)
+    expect(result.ok && result.data.freeAmount).toBe(65)
   })
 })
 

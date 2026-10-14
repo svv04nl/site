@@ -1,8 +1,8 @@
 import { getPayload, type Payload } from 'payload'
 import config from '@payload-config'
-import type { Donation } from '@/payload-types'
+import type { Donation, Fundraiser } from '@/payload-types'
 import { getPayment, type MolliePaymentStatus } from '@/lib/mollie'
-import { formatEuro, paymentTotal } from '@/lib/fundraiser'
+import { formatEuro, formatUnits, getUnit, paymentTotal } from '@/lib/fundraiser'
 
 type DonationStatus = Donation['status']
 
@@ -32,13 +32,12 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function describe(donation: Donation): string {
+function describe(donation: Donation, fundraiser: Fundraiser): string {
+  const unit = getUnit(fundraiser)
   const parts: string[] = []
-  if (donation.seats > 0) {
-    const seatsAmount = donation.amount - donation.freeAmount
-    parts.push(
-      `${donation.seats} ${donation.seats === 1 ? 'stoeltje' : 'stoeltjes'} (${formatEuro(seatsAmount)})`,
-    )
+  if (unit && donation.units > 0) {
+    const unitsAmount = donation.amount - donation.freeAmount
+    parts.push(`${formatUnits(donation.units, unit)} (${formatEuro(unitsAmount)})`)
   }
   if (donation.freeAmount > 0) parts.push(`een vrije donatie van ${formatEuro(donation.freeAmount)}`)
   return parts.join(' en ')
@@ -46,13 +45,19 @@ function describe(donation: Donation): string {
 
 async function sendPaidEmails(payload: Payload, donation: Donation) {
   const who = donation.isCompany && donation.companyName ? donation.companyName : donation.name
+  const fundraiser = await payload.findByID({
+    collection: 'fundraisers',
+    id: typeof donation.fundraiser === 'object' ? donation.fundraiser.id : donation.fundraiser,
+    depth: 0,
+  })
+  const unit = getUnit(fundraiser)
 
   try {
     await payload.sendEmail({
       to: donation.email,
-      subject: "Bedankt voor je donatie aan de tribune van SVV'04",
+      subject: "Bedankt voor je donatie aan SVV'04",
       html: `<p>Hoi ${escapeHtml(donation.name)},</p>
-<p>Bedankt voor je donatie aan de renovatie van de tribune van SVV'04. We hebben je betaling van ${formatEuro(paymentTotal(donation.amount, donation.fee ?? 0))} ontvangen, voor ${escapeHtml(describe(donation))}${donation.fee ? ` en ${formatEuro(donation.fee)} transactiekosten` : ''}.</p>
+<p>Bedankt voor je donatie voor &ldquo;${escapeHtml(fundraiser.title)}&rdquo;. We hebben je betaling van ${formatEuro(paymentTotal(donation.amount, donation.fee ?? 0))} ontvangen, voor ${escapeHtml(describe(donation, fundraiser))}${donation.fee ? ` en ${formatEuro(donation.fee)} transactiekosten` : ''}.</p>
 <p>Heb je een vraag of een speciale wens? Neem dan contact op met de sponsorgroep via <a href="https://svv04.nl/contact?afdeling=${SPONSOR_ROLE_SLUG}">svv04.nl/contact</a>.</p>
 <p>Sportieve groet,<br />SVV'04</p>`,
     })
@@ -72,18 +77,17 @@ async function sendPaidEmails(payload: Payload, donation: Donation) {
 
     await payload.sendEmail({
       to,
-      subject: `Nieuwe donatie tribune: ${formatEuro(donation.amount)} van ${who}`,
-      html: `<p>Er is een donatie betaald voor de tribune-actie.</p>
+      subject: `Nieuwe donatie ${fundraiser.title}: ${formatEuro(donation.amount)} van ${who}`,
+      html: `<p>Er is een donatie betaald voor &ldquo;${escapeHtml(fundraiser.title)}&rdquo;.</p>
 <table cellpadding="4">
 <tr><td>Naam</td><td>${escapeHtml(donation.name)}</td></tr>
 ${donation.isCompany ? `<tr><td>Bedrijf</td><td>${escapeHtml(donation.companyName ?? '')}</td></tr>` : ''}
 <tr><td>E-mail</td><td>${escapeHtml(donation.email)}</td></tr>
-<tr><td>Stoeltjes</td><td>${donation.seats}</td></tr>
-<tr><td>Vrije donatie</td><td>${formatEuro(donation.freeAmount)}</td></tr>
+${unit ? `<tr><td>${escapeHtml(unit.namePlural)}</td><td>${donation.units}</td></tr>\n` : ''}<tr><td>Vrije donatie</td><td>${formatEuro(donation.freeAmount)}</td></tr>
 <tr><td>Donatie</td><td>${formatEuro(donation.amount)}</td></tr>
 <tr><td>Transactiekosten meebetaald</td><td>${formatEuro(donation.fee ?? 0)}</td></tr>
 <tr><td>Naam op de website</td><td>${donation.showOnList ? 'ja' : 'nee'}</td></tr>
-<tr><td>Naam op de tribune</td><td>${donation.nameOnTribune ? 'ja' : 'nee'}</td></tr>
+<tr><td>Naam fysiek plaatsen</td><td>${donation.nameOnObject ? 'ja' : 'nee'}</td></tr>
 </table>`,
     })
   } catch (err) {

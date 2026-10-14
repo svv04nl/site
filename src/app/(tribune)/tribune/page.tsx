@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import DonationForm from '@/components/tribune/DonationForm'
 import { getFundraiserStats } from '@/lib/fundraiser-stats'
-import { FUNDRAISER_SLUG, formatEuro } from '@/lib/fundraiser'
+import { FUNDRAISER_SLUG, formatEuro, formatUnits, getUnit } from '@/lib/fundraiser'
 
 export const revalidate = 60
 
@@ -86,7 +86,8 @@ export default async function TribunePage() {
   const fundraiser = docs[0]
   if (!fundraiser) notFound()
 
-  const { seatPrice, goalAmount, active, transactionFee } = fundraiser
+  const { goalAmount, active, transactionFee, nameOnObjectLabel } = fundraiser
+  const unit = getUnit(fundraiser)
   const stats = await getFundraiserStats(fundraiser.id)
   const progress = goalAmount ? Math.min(100, Math.round((stats.totalAmount / goalAmount) * 100)) : null
 
@@ -105,8 +106,14 @@ export default async function TribunePage() {
             <p className="fr-lead">
               Onze tribune gaat al een tijdje mee en is toe aan een renovatie.
               <span className="fr-lead-price">
-                Help mee en doneer een stoeltje voor{' '}
-                {formatEuro(seatPrice)}. Een vrij bedrag geven kan ook!
+                {unit ? (
+                  <>
+                    Help mee en doneer een {unit.name} voor{' '}
+                    {formatEuro(unit.price)}. Een vrij bedrag geven kan ook!
+                  </>
+                ) : (
+                  'Help mee en doneer een bedrag naar keuze!'
+                )}
               </span>
             </p>
             {active && (
@@ -127,10 +134,14 @@ export default async function TribunePage() {
                 <strong>{formatEuro(stats.totalAmount)}</strong>
                 <span>{goalAmount ? `van ${formatEuro(goalAmount)} opgehaald` : 'opgehaald'}</span>
               </div>
-              <div>
-                <strong>{stats.totalSeats}</strong>
-                <span>{stats.totalSeats === 1 ? 'stoeltje gedoneerd' : 'stoeltjes gedoneerd'}</span>
-              </div>
+              {unit && (
+                <div>
+                  <strong>{stats.totalUnits}</strong>
+                  <span>
+                    {stats.totalUnits === 1 ? unit.name : unit.namePlural} gedoneerd
+                  </span>
+                </div>
+              )}
               <div>
                 <strong>{stats.donorCount}</strong>
                 <span>{stats.donorCount === 1 ? 'donateur' : 'donateurs'}</span>
@@ -204,11 +215,16 @@ export default async function TribunePage() {
           {active ? (
             <>
               <p className="fr-section-lead">
-                Eén nieuw stoeltje kost {formatEuro(seatPrice)}. Kies het aantal stoeltjes of vul zelf
-                een bedrag in.
+                {unit
+                  ? `Eén ${unit.name} kost ${formatEuro(unit.price)}. Kies het aantal ${unit.namePlural} of vul zelf een bedrag in.`
+                  : 'Vul het bedrag in dat je wilt doneren.'}
               </p>
               <div className="fr-card">
-                <DonationForm seatPrice={seatPrice} transactionFee={transactionFee ?? 0} />
+                <DonationForm
+                  unit={unit}
+                  transactionFee={transactionFee ?? 0}
+                  nameOnObjectLabel={nameOnObjectLabel ?? ''}
+                />
               </div>
             </>
           ) : (
@@ -233,8 +249,7 @@ export default async function TribunePage() {
                 <li key={`${donor.name}-${i}`}>
                   <span className="fr-donor-name">{donor.name}</span>
                   <span className="fr-donor-gift">
-                    {donor.seats > 0 &&
-                      `${donor.seats} ${donor.seats === 1 ? 'stoeltje' : 'stoeltjes'} \u00b7 `}
+                    {unit && donor.units > 0 && `${formatUnits(donor.units, unit)} \u00b7 `}
                     {formatEuro(donor.amount)}
                   </span>
                 </li>

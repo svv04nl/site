@@ -651,7 +651,7 @@ export interface Message {
   createdAt: string;
 }
 /**
- * Een inzamelactie met doelbedrag en prijs per stoeltje. De tribune-actie staat op svv04.nl/tribune en gebruikt de fundraiser met slug "tribune".
+ * Een inzamelactie met een optioneel doelbedrag en een optionele vaste eenheid (bijvoorbeeld een stoeltje voor een vast bedrag). De pagina op svv04.nl/tribune gebruikt de fundraiser met slug "tribune".
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "fundraisers".
@@ -660,7 +660,7 @@ export interface Fundraiser {
   id: number;
   title: string;
   /**
-   * Koppelt de fundraiser aan zijn pagina. Voor de tribune-actie moet dit "tribune" zijn.
+   * Koppelt de fundraiser aan zijn pagina. Voor svv04.nl/tribune is dit "tribune".
    */
   slug: string;
   /**
@@ -676,14 +676,20 @@ export interface Fundraiser {
    */
   transactionFee?: number | null;
   /**
-   * Hele euro’s. Een wijziging geldt voor nieuwe donaties, al betaalde donaties blijven staan.
+   * Hele euro’s. Leeg laten voor een fundraiser zonder vaste eenheid: dan is een donatie altijd een vrij bedrag. Een wijziging geldt voor nieuwe donaties, al betaalde donaties blijven staan.
    */
-  seatPrice: number;
+  unitPrice?: number | null;
+  unitName?: string | null;
+  unitNamePlural?: string | null;
+  /**
+   * Zo staat de tweede toestemming in het formulier, voor een naam die fysiek wordt geplaatst. Leeg laten om de optie niet te tonen.
+   */
+  nameOnObjectLabel?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Donaties voor de tribune-actie. Ze worden alleen aangemaakt via /api/donatie en bijgewerkt door de Mollie-webhook, niet rechtstreeks via de API of het adminscherm.
+ * Donaties voor een fundraiser. Ze worden alleen aangemaakt via /api/donatie en bijgewerkt door de Mollie-webhook, niet rechtstreeks via de API of het adminscherm.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "donations".
@@ -696,14 +702,14 @@ export interface Donation {
   isCompany?: boolean | null;
   companyName?: string | null;
   /**
-   * Toestemming om de naam (of bedrijfsnaam), het aantal stoeltjes en het bedrag in de donateurslijst op svv04.nl/tribune te tonen. Zonder vinkje blijft de donatie anoniem.
+   * Toestemming om de naam (of bedrijfsnaam), het aantal eenheden en het bedrag in de donateurslijst op de pagina van de fundraiser te tonen. Zonder vinkje blijft de donatie anoniem.
    */
   showOnList?: boolean | null;
   /**
-   * Toestemming om de naam (of bedrijfsnaam) op de tribune zelf te plaatsen. Filter op dit vinkje en status "Betaald" voor de lijst naar de maker.
+   * Toestemming om de naam (of bedrijfsnaam) fysiek te plaatsen, bijvoorbeeld op de tribune. Filter op dit vinkje en status "Betaald" voor de lijst naar de maker.
    */
-  nameOnTribune?: boolean | null;
-  seats: number;
+  nameOnObject?: boolean | null;
+  units: number;
   freeAmount: number;
   amount: number;
   /**
@@ -1146,7 +1152,10 @@ export interface FundraisersSelect<T extends boolean = true> {
   active?: T;
   goalAmount?: T;
   transactionFee?: T;
-  seatPrice?: T;
+  unitPrice?: T;
+  unitName?: T;
+  unitNamePlural?: T;
+  nameOnObjectLabel?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1161,8 +1170,8 @@ export interface DonationsSelect<T extends boolean = true> {
   isCompany?: T;
   companyName?: T;
   showOnList?: T;
-  nameOnTribune?: T;
-  seats?: T;
+  nameOnObject?: T;
+  units?: T;
   freeAmount?: T;
   amount?: T;
   fee?: T;

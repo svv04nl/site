@@ -1,9 +1,30 @@
-// Instellingen en validatie voor de tribune-actie. Bedragen zijn hele euro's.
+// Instellingen en validatie voor fundraisers. Bedragen zijn hele euro's.
 
-// De stoeltjesprijs en het doelbedrag staan in de collectie `fundraisers`.
+// De pagina op /tribune hoort bij de fundraiser met deze slug. Wat de actie inhoudt (eenheid en
+// prijs, doelbedrag, transactiekosten) staat in de collectie `fundraisers`.
 export const FUNDRAISER_SLUG = 'tribune'
 export const MIN_AMOUNT = 5
 export const MAX_TOTAL = 10_000
+
+// Een vaste eenheid van een fundraiser, bijvoorbeeld een stoeltje van 30 euro.
+export type FundraiserUnit = { name: string; namePlural: string; price: number }
+
+export function getUnit(fundraiser: {
+  unitPrice?: number | null
+  unitName?: string | null
+  unitNamePlural?: string | null
+}): FundraiserUnit | null {
+  if (!fundraiser.unitPrice) return null
+  return {
+    name: fundraiser.unitName || 'eenheid',
+    namePlural: fundraiser.unitNamePlural || 'eenheden',
+    price: fundraiser.unitPrice,
+  }
+}
+
+export function formatUnits(count: number, unit: Pick<FundraiserUnit, 'name' | 'namePlural'>) {
+  return `${count} ${count === 1 ? unit.name : unit.namePlural}`
+}
 
 export type DonationInput = {
   name: string
@@ -11,12 +32,12 @@ export type DonationInput = {
   isCompany: boolean
   companyName?: string
   showOnList: boolean
-  nameOnTribune: boolean
+  nameOnObject: boolean
   coverFee: boolean
-  // Het gekozen bedrag, en hoe dat uitvalt: elke volle stoeltjesprijs is een stoeltje,
-  // de rest telt als extra.
+  // Het gekozen bedrag, en hoe dat uitvalt: elke volle eenheidsprijs is een eenheid, de rest
+  // telt als extra. Zonder eenheidsprijs is alles een vrij bedrag.
   amount: number
-  seats: number
+  units: number
   freeAmount: number
 }
 
@@ -28,8 +49,9 @@ function toWholeNumber(value: unknown): number {
   return Number.isFinite(parsed) ? parsed : NaN
 }
 
-export function splitAmount(amount: number, seatPrice: number) {
-  return { seats: Math.floor(amount / seatPrice), freeAmount: amount % seatPrice }
+export function splitAmount(amount: number, unitPrice?: number | null) {
+  if (!unitPrice) return { units: 0, freeAmount: amount }
+  return { units: Math.floor(amount / unitPrice), freeAmount: amount % unitPrice }
 }
 
 // Wat de donateur afrekent: de donatie plus eventuele transactiekosten, in centen
@@ -43,7 +65,7 @@ export function formatEuro(amount: number): string {
   return `€ ${amount.toLocaleString('nl-NL', { minimumFractionDigits: digits })}`
 }
 
-export function parseDonationInput(body: unknown, seatPrice: number): ParseResult {
+export function parseDonationInput(body: unknown, unitPrice?: number | null): ParseResult {
   const input = (body && typeof body === 'object' ? body : {}) as Record<string, unknown>
 
   const name = typeof input.name === 'string' ? input.name.trim() : ''
@@ -51,7 +73,7 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
   const isCompany = input.isCompany === true
   const companyName = typeof input.companyName === 'string' ? input.companyName.trim() : ''
   const showOnList = input.showOnList === true
-  const nameOnTribune = input.nameOnTribune === true
+  const nameOnObject = input.nameOnObject === true
   const coverFee = input.coverFee === true
   const amount = toWholeNumber(input.amount)
 
@@ -83,10 +105,10 @@ export function parseDonationInput(body: unknown, seatPrice: number): ParseResul
       isCompany,
       companyName: isCompany ? companyName : undefined,
       showOnList,
-      nameOnTribune,
+      nameOnObject,
       coverFee,
       amount,
-      ...splitAmount(amount, seatPrice),
+      ...splitAmount(amount, unitPrice),
     },
   }
 }

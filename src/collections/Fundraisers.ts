@@ -11,9 +11,9 @@ export const Fundraisers: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'active', 'goalAmount', 'seatPrice'],
+    defaultColumns: ['title', 'slug', 'active', 'goalAmount', 'unitPrice'],
     description:
-      'Een inzamelactie met doelbedrag en prijs per stoeltje. De tribune-actie staat op svv04.nl/tribune en gebruikt de fundraiser met slug "tribune".',
+      'Een inzamelactie met een optioneel doelbedrag en een optionele vaste eenheid (bijvoorbeeld een stoeltje voor een vast bedrag). De pagina op svv04.nl/tribune gebruikt de fundraiser met slug "tribune".',
   },
   access: {
     read: () => true,
@@ -31,8 +31,7 @@ export const Fundraisers: CollectionConfig = {
       unique: true,
       index: true,
       admin: {
-        description:
-          'Koppelt de fundraiser aan zijn pagina. Voor de tribune-actie moet dit "tribune" zijn.',
+        description: 'Koppelt de fundraiser aan zijn pagina. Voor svv04.nl/tribune is dit "tribune".',
       },
     },
     {
@@ -67,16 +66,49 @@ export const Fundraisers: CollectionConfig = {
       },
     },
     {
-      name: 'seatPrice',
-      type: 'number',
-      label: 'Prijs per stoeltje (€)',
-      required: true,
-      defaultValue: 30,
-      min: 1,
+      type: 'collapsible',
+      label: 'Vaste eenheid (optioneel)',
+      admin: { initCollapsed: false },
+      fields: [
+        {
+          name: 'unitPrice',
+          type: 'number',
+          label: 'Prijs per eenheid (€)',
+          defaultValue: 30,
+          min: 1,
+          admin: {
+            step: 1,
+            description:
+              'Hele euro’s. Leeg laten voor een fundraiser zonder vaste eenheid: dan is een donatie altijd een vrij bedrag. Een wijziging geldt voor nieuwe donaties, al betaalde donaties blijven staan.',
+          },
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'unitName',
+              type: 'text',
+              label: 'Naam eenheid (enkelvoud)',
+              defaultValue: 'stoeltje',
+            },
+            {
+              name: 'unitNamePlural',
+              type: 'text',
+              label: 'Naam eenheid (meervoud)',
+              defaultValue: 'stoeltjes',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'nameOnObjectLabel',
+      type: 'text',
+      label: 'Tekst bij de optie "naam plaatsen"',
+      defaultValue: 'Mijn naam mag op de tribune zelf geplaatst worden.',
       admin: {
-        step: 1,
         description:
-          'Hele euro’s. Een wijziging geldt voor nieuwe donaties, al betaalde donaties blijven staan.',
+          'Zo staat de tweede toestemming in het formulier, voor een naam die fysiek wordt geplaatst. Leeg laten om de optie niet te tonen.',
       },
     },
   ],
@@ -84,9 +116,8 @@ export const Fundraisers: CollectionConfig = {
     // Prijs, doelbedrag of sluiten moet direct op de pagina zichtbaar zijn.
     afterChange: [
       ({ doc }) => {
-        if (doc.slug !== 'tribune') return
         try {
-          revalidatePath('/tribune')
+          revalidatePath(`/${doc.slug}`)
         } catch {
           // Buiten een Next-request (bijvoorbeeld een script) is er niets te verversen.
         }
