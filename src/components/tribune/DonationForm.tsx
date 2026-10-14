@@ -60,7 +60,7 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
 
   return (
     <form className="fr-form" onSubmit={handleSubmit} noValidate>
-      <fieldset className="fr-field">
+      <fieldset className="fr-field fr-field--center">
         <legend>Nieuwe stoeltjes ({formatEuro(seatPrice)} per stoeltje)</legend>
         <div className="fr-stepper">
           <button

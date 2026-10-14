@@ -275,36 +275,38 @@ body {
   margin: -0.5rem 0 1.75rem;
 }
 
-.fr-work {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: 1fr;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.fr-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-  @media screen and (min-width: $breakpoint-tablet) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.fr-item {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 1.5rem;
 
-  li {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 8px;
-    display: flex;
-    gap: 1rem;
-    padding: 1.25rem;
+  @media screen and (min-width: $breakpoint-mobile-lg) {
+    padding: 2rem;
   }
+}
+
+.fr-item-head {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 
   h3 {
-    font-size: 1.35rem;
+    font-size: 1.6rem;
     font-weight: 800;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
   }
 
   p {
     color: #555;
     margin: 0;
+    max-width: 46rem;
   }
 }
 
@@ -323,21 +325,39 @@ body {
   width: 2.25rem;
 }
 
-.fr-photos {
+.fr-item-label {
+  color: #777;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+
+.fr-item-photos {
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
 
+  @media screen and (min-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  figure {
+    margin: 0;
+  }
+
   img {
-    border-radius: 8px;
-    height: 100%;
-    max-height: 28rem;
+    aspect-ratio: 3 / 2;
+    border-radius: 6px;
     object-fit: cover;
     width: 100%;
   }
 
-  @media screen and (min-width: $breakpoint-medium) {
-    grid-template-columns: 1fr 1.6fr;
+  figcaption {
+    color: #555;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
   }
 }
 
@@ -438,10 +458,20 @@ body {
   }
 }
 
+.fr-field--center {
+  align-items: center;
+
+  legend {
+    text-align: center;
+    width: 100%;
+  }
+}
+
 .fr-stepper {
   align-items: center;
   display: flex;
   gap: 1rem;
+  justify-content: center;
 
   button {
     background: var(--color-dark);

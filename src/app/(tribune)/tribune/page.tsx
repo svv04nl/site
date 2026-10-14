@@ -11,19 +11,67 @@ export const revalidate = 60
 const WORK = [
   {
     title: 'Nieuwe gevel- en dakbeplating',
-    text: 'Er zijn heel wat ballen tegen de achterbeplating aangeschoten door onze jeugdspelers. Dat is natuurlijk mooi, maar daardoor heeft deze wel zijn beste tijd gehad. We willen deze vervangen door nieuwe, strakke platen, zodat de tribune er weer fris uitziet.',
+    text: "Onze jeugdspelers hebben heel wat ballen tegen de achterbeplating geschoten. Dat is natuurlijk mooi, maar de beplating heeft daardoor zijn beste tijd gehad. We willen de gevel- en dakbeplating vervangen door nieuwe, strakke platen, zodat de tribune er weer fris uitziet.",
+    photos: [
+      {
+        src: '/tribune/gevel-achterwand.jpg',
+        alt: 'De grijze achterwand van de tribune boven de stoeltjes',
+        caption: 'De achterwand van de tribune',
+      },
+      {
+        src: '/tribune/gevel-dak.jpg',
+        alt: 'Het golfplaten dak van de tribune gezien van bovenaf',
+        caption: 'Het dak van bovenaf',
+      },
+    ],
   },
   {
     title: 'Schilderwerk',
     text: 'De tribune gaat in de verf, zodat hij er weer fris uitziet en dezelfde kleur heeft als de overige gebouwen.',
+    photos: [
+      {
+        src: '/tribune/schilder-tribune.jpg',
+        alt: "De tribune van SVV'04 met de overige gebouwen op de achtergrond",
+        caption: 'De tribune met de overige gebouwen erachter',
+      },
+      {
+        src: '/tribune/schilder-gebouwen.jpg',
+        alt: "De overige gebouwen op het sportcomplex van SVV'04",
+        caption: 'De overige gebouwen op het complex',
+      },
+    ],
   },
   {
     title: 'Nieuwe dugouts',
-    text: 'Het metselwerk van de dugouts is geschuurd. We willen deze vervangen door nieuwe betonnen wanden.',
+    text: 'Het metselwerk van de dugouts is geschuurd. We willen de dugouts vervangen door nieuwe betonnen wanden.',
+    photos: [
+      {
+        src: '/tribune/dugout-links.jpg',
+        alt: 'De dugout aan de linkerkant met een bakstenen wand en roze stoeltjes',
+        caption: 'De dugout aan de linkerkant',
+      },
+      {
+        src: '/tribune/dugout-rechts.jpg',
+        alt: 'De dugout aan de rechterkant met een bakstenen wand en roze stoeltjes',
+        caption: 'De dugout aan de rechterkant',
+      },
+    ],
   },
   {
     title: 'Nieuwe stoeltjes',
-    text: 'De huidige rode stoeltjes zijn out en verweerd. We willen deze voorzien van nieuwe stoeltjes in de clubkleuren van SVV\'04.',
+    text: "De huidige rode stoeltjes zijn verouderd en verweerd. We willen de tribune voorzien van nieuwe stoeltjes in de clubkleuren van SVV'04.",
+    photos: [
+      {
+        src: '/tribune/stoeltjes-links.jpg',
+        alt: 'De rode stoeltjes in het linkerdeel van de tribune',
+        caption: 'Het linkerdeel van de tribune',
+      },
+      {
+        src: '/tribune/stoeltjes-rechts.jpg',
+        alt: 'De rode stoeltjes in het rechterdeel van de tribune',
+        caption: 'Het rechterdeel van de tribune',
+      },
+    ],
   },
 ]
 
@@ -107,31 +155,32 @@ export default async function TribunePage() {
       <section className="fr-section">
         <div className="fr-wrap">
           <h2>Wat gaan we doen?</h2>
-          <ul className="fr-work">
+          <div className="fr-items">
             {WORK.map((item, i) => (
-              <li key={item.title}>
-                <span className="fr-work-nr">{i + 1}</span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
+              <article key={item.title} className="fr-item">
+                <div className="fr-item-head">
+                  <span className="fr-work-nr">{i + 1}</span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
                 </div>
-              </li>
+                <p className="fr-item-label">Huidige staat</p>
+                <div className="fr-item-photos">
+                  {item.photos.map((photo) => (
+                    <figure key={photo.src}>
+                      <img src={photo.src} alt={photo.alt} loading="lazy" />
+                      <figcaption>{photo.caption}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </article>
             ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="fr-section fr-section--alt">
-        <div className="fr-wrap">
-          <h2>Zo ziet de tribune er nu uit</h2>
-          <div className="fr-photos">
-            <img src="/tribune/tribune-voorkant.jpg" alt="De tribune van voren gezien" loading="lazy" />
-            <img src="/tribune/veld.jpg" alt="De tribune vanuit de lucht" loading="lazy" />
           </div>
         </div>
       </section>
 
-      <section className="fr-section">
+      <section className="fr-section fr-section--alt">
         <div className="fr-wrap">
           <h2>Zo kan de tribune eruitzien</h2>
           <figure className="fr-impression">
@@ -149,7 +198,7 @@ export default async function TribunePage() {
         </div>
       </section>
 
-      <section className="fr-section fr-section--alt" id="doneer">
+      <section className="fr-section" id="doneer">
         <div className="fr-wrap fr-wrap--narrow">
           <h2>Doneer</h2>
           {active ? (
@@ -174,7 +223,7 @@ export default async function TribunePage() {
       </section>
 
       {stats.publicDonors.length > 0 && (
-        <section className="fr-section">
+        <section className="fr-section fr-section--alt">
           <div className="fr-wrap fr-wrap--narrow">
             <h2>Dank aan onze donateurs</h2>
             <ul className="fr-donors">
