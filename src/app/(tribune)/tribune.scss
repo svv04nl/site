@@ -3,6 +3,15 @@
 @import '../(frontend)/styles/variables';
 @import '../(frontend)/styles/reset';
 
+// Vloeiend naar #doneer scrollen vanaf "Doneer nu", behalve bij "minder beweging".
+html {
+  scroll-behavior: smooth;
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   background: var(--color-white);
   color: var(--color-dark);
@@ -285,6 +294,39 @@ body {
   @media screen and (min-width: $breakpoint-medium) {
     grid-template-columns: 1fr 1.6fr;
   }
+}
+
+.fr-impression {
+  margin: 0;
+  position: relative;
+
+  img {
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  figcaption {
+    color: #555;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+  }
+}
+
+// Staat op de afbeelding zelf, zodat het label ook zichtbaar blijft als de foto elders
+// wordt gedeeld of uitgesneden.
+.fr-ai-badge {
+  background: rgba(17 17 17 / 0.85);
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  left: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.7rem;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0.75rem;
 }
 
 // ─── Donation form ────────────────────────────────────────────────────────────

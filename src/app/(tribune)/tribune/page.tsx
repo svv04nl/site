@@ -111,7 +111,25 @@ export default async function TribunePage() {
         </div>
       </section>
 
-      <section className="fr-section" id="doneer">
+      <section className="fr-section">
+        <div className="fr-wrap">
+          <h2>Zo kan de tribune eruitzien</h2>
+          <figure className="fr-impression">
+            <img
+              src="/tribune/impressie.jpg"
+              alt="AI-impressie van de gerenoveerde tribune met zwart-witte stoeltjes"
+              loading="lazy"
+            />
+            <span className="fr-ai-badge">AI-impressie</span>
+            <figcaption>
+              Dit is een AI-impressie van de nieuwe tribune, geen foto. Het echte resultaat kan
+              afwijken.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section className="fr-section fr-section--alt" id="doneer">
         <div className="fr-wrap fr-wrap--narrow">
           <h2>Doneer</h2>
           {active ? (
@@ -136,7 +154,7 @@ export default async function TribunePage() {
       </section>
 
       {stats.publicDonors.length > 0 && (
-        <section className="fr-section fr-section--alt">
+        <section className="fr-section">
           <div className="fr-wrap fr-wrap--narrow">
             <h2>Dank aan onze donateurs</h2>
             <ul className="fr-donors">

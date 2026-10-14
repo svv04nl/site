@@ -36,7 +36,11 @@ export const metadata = {
 // Losse campagnepagina: bewust zonder de header en footer van de hoofdsite.
 export default function TribuneLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${sairaCondensed.variable} ${outfit.variable}`}>
+    <html
+      lang="nl"
+      data-scroll-behavior="smooth"
+      className={`${sairaCondensed.variable} ${outfit.variable}`}
+    >
       <body>
         {children}
         <Analytics />
