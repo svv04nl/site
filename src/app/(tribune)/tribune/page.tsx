@@ -32,8 +32,6 @@ export default async function TribunePage() {
 
   return (
     <main className="fr">
-      {/* Hero en voortgangsbalk samen vullen het eerste scherm. */}
-      <div className="fr-first-screen">
       <header className="fr-hero">
         <img className="fr-hero-img" src="/tribune/hero.jpg" alt="De tribune van SVV'04 vanaf het middenveld" />
         <div className="fr-hero-shade" />
@@ -45,10 +43,10 @@ export default async function TribunePage() {
             <p className="fr-eyebrow">Fundraiser</p>
             <h1>Steun de renovatie van onze tribune!</h1>
             <p className="fr-lead">
-              Onze tribune gaat al een tijdje mee en is toe aan een renovatie. Hij krijgt nieuwe
-              gevel- en dakbeplating, een nieuwe verflaag, nieuwe dugouts en nieuwe zwart-witte
-              stoeltjes. Een stoeltje doneer je voor {formatEuro(seatPrice)}, een vrij bedrag geven kan
-              ook.
+              Onze tribune gaat al een tijdje mee en is toe aan een renovatie. We willen nieuwe
+              gevel- en dakbeplating aanbrengen, de tribune schilderen, nieuwe dugouts neerzetten en
+              hem voorzien van nieuwe zwart-witte stoeltjes. Een stoeltje doneer je voor{' '}
+              {formatEuro(seatPrice)}, een vrij bedrag geven kan ook.
             </p>
             {active && (
               <a className="fr-cta" href="#doneer">
@@ -58,35 +56,6 @@ export default async function TribunePage() {
           </div>
         </div>
       </header>
-
-      {stats.donorCount > 0 && (
-        <section className="fr-stats" aria-label="Voortgang">
-          <div>
-            <strong>{formatEuro(stats.totalAmount)}</strong>
-            <span>{goalAmount ? `van ${formatEuro(goalAmount)} opgehaald` : 'opgehaald'}</span>
-          </div>
-          <div>
-            <strong>{stats.totalSeats}</strong>
-            <span>{stats.totalSeats === 1 ? 'stoeltje gedoneerd' : 'stoeltjes gedoneerd'}</span>
-          </div>
-          <div>
-            <strong>{stats.donorCount}</strong>
-            <span>{stats.donorCount === 1 ? 'donateur' : 'donateurs'}</span>
-          </div>
-          {progress !== null && (
-            <div
-              className="fr-progress"
-              role="progressbar"
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <span style={{ width: `${progress}%` }} />
-            </div>
-          )}
-        </section>
-      )}
-      </div>
 
       <section className="fr-section">
         <div className="fr-wrap">
@@ -104,6 +73,39 @@ export default async function TribunePage() {
           </ul>
         </div>
       </section>
+
+      {stats.donorCount > 0 && (
+        <section className="fr-section fr-section--dark" aria-label="Voortgang">
+          <div className="fr-wrap">
+            <h2>Tot nu toe</h2>
+            <div className="fr-stats">
+              <div>
+                <strong>{formatEuro(stats.totalAmount)}</strong>
+                <span>{goalAmount ? `van ${formatEuro(goalAmount)} opgehaald` : 'opgehaald'}</span>
+              </div>
+              <div>
+                <strong>{stats.totalSeats}</strong>
+                <span>{stats.totalSeats === 1 ? 'stoeltje gedoneerd' : 'stoeltjes gedoneerd'}</span>
+              </div>
+              <div>
+                <strong>{stats.donorCount}</strong>
+                <span>{stats.donorCount === 1 ? 'donateur' : 'donateurs'}</span>
+              </div>
+            </div>
+            {progress !== null && (
+              <div
+                className="fr-progress"
+                role="progressbar"
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <span style={{ width: `${progress}%` }} />
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="fr-section fr-section--alt">
         <div className="fr-wrap">
