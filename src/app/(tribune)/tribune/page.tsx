@@ -192,8 +192,7 @@ export default async function TribunePage() {
             />
             <span className="fr-ai-badge">AI-impressie</span>
             <figcaption>
-              Dit is een AI-impressie van de nieuwe tribune, geen foto. Het echte resultaat kan
-              afwijken.
+              Dit is een AI-impressie van na de renovatie. Het echte resultaat kan afwijken.
             </figcaption>
           </figure>
         </div>
