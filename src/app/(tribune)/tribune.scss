@@ -86,7 +86,8 @@ body {
   flex: 1;
   justify-content: flex-end;
   margin: 0 auto;
-  max-width: 72rem;
+  // Zelfde tekstbreedte als .fr-wrap, zodat hero en secties op één lijn staan.
+  max-width: calc(72rem + 2 * var(--container-padding));
   padding: 8rem var(--container-padding) 2.5rem;
   position: relative;
   width: 100%;

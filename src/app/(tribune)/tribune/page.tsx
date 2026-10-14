@@ -71,23 +71,6 @@ export default async function TribunePage() {
         </div>
       </header>
 
-      <section className="fr-section">
-        <div className="fr-wrap">
-          <h2>Wat gaan we doen?</h2>
-          <ul className="fr-work">
-            {WORK.map((item, i) => (
-              <li key={item.title}>
-                <span className="fr-work-nr">{i + 1}</span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       {stats.donorCount > 0 && (
         <section className="fr-section fr-section--dark" aria-label="Voortgang">
           <div className="fr-wrap">
@@ -120,6 +103,23 @@ export default async function TribunePage() {
           </div>
         </section>
       )}
+
+      <section className="fr-section">
+        <div className="fr-wrap">
+          <h2>Wat gaan we doen?</h2>
+          <ul className="fr-work">
+            {WORK.map((item, i) => (
+              <li key={item.title}>
+                <span className="fr-work-nr">{i + 1}</span>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
       <section className="fr-section fr-section--alt">
         <div className="fr-wrap">
