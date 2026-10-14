@@ -278,35 +278,41 @@ body {
 .fr-items {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
+// Tekst links, twee kleine foto's van de huidige staat rechts. Op een smal scherm staan
+// de foto's onder de tekst.
 .fr-item {
   background: #fff;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
-  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  padding: 1.25rem;
 
-  @media screen and (min-width: $breakpoint-mobile-lg) {
-    padding: 2rem;
+  @media screen and (min-width: $breakpoint-tablet) {
+    align-items: center;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    padding: 1.5rem;
   }
 }
 
 .fr-item-head {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
 
   h3 {
-    font-size: 1.6rem;
+    font-size: 1.45rem;
     font-weight: 800;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.35rem;
   }
 
   p {
     color: #555;
     margin: 0;
-    max-width: 46rem;
   }
 }
 
@@ -327,21 +333,17 @@ body {
 
 .fr-item-label {
   color: #777;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.4rem;
   text-transform: uppercase;
 }
 
 .fr-item-photos {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
-
-  @media screen and (min-width: $breakpoint-mobile-lg) {
-    grid-template-columns: 1fr 1fr;
-  }
+  gap: 0.5rem;
+  grid-template-columns: 1fr 1fr;
 
   figure {
     margin: 0;
@@ -356,8 +358,9 @@ body {
 
   figcaption {
     color: #555;
-    font-size: 0.85rem;
-    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    margin-top: 0.3rem;
   }
 }
 
@@ -528,20 +531,33 @@ body {
   }
 }
 
+// Het bedrag staat precies in het midden van het vak; het €-teken staat los links, zodat het
+// de tekst niet opzij duwt.
 .fr-money--amount {
   max-width: 12rem;
+  padding-left: 0;
+  position: relative;
   width: 100%;
 
   span {
     font-size: 1.5rem;
     font-weight: 600;
+    left: 0.9rem;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
+  // Dezelfde ruimte links en rechts. Dit selectorpad weegt even zwaar als de algemene
+  // veldstijl hierboven en staat er later in, dus het wint.
+  .fr-field & input,
   input {
     font-family: var(--font-heading);
     font-size: 2rem;
     font-weight: 800;
-    padding-left: 0.4rem;
+    padding-left: 2.6rem;
+    padding-right: 2.6rem;
     text-align: center;
   }
 }

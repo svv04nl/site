@@ -165,14 +165,16 @@ export default async function TribunePage() {
                     <p>{item.text}</p>
                   </div>
                 </div>
-                <p className="fr-item-label">Huidige staat</p>
-                <div className="fr-item-photos">
-                  {item.photos.map((photo) => (
-                    <figure key={photo.src}>
-                      <img src={photo.src} alt={photo.alt} loading="lazy" />
-                      <figcaption>{photo.caption}</figcaption>
-                    </figure>
-                  ))}
+                <div className="fr-item-media">
+                  <p className="fr-item-label">Huidige staat</p>
+                  <div className="fr-item-photos">
+                    {item.photos.map((photo) => (
+                      <figure key={photo.src}>
+                        <img src={photo.src} alt={photo.alt} loading="lazy" />
+                        <figcaption>{photo.caption}</figcaption>
+                      </figure>
+                    ))}
+                  </div>
                 </div>
               </article>
             ))}
@@ -204,8 +206,8 @@ export default async function TribunePage() {
           {active ? (
             <>
               <p className="fr-section-lead">
-                Eén nieuw stoeltje kost {formatEuro(seatPrice)}. Je kunt ook een vrij bedrag geven,
-                alleen of samen met een of meer stoeltjes.
+                Eén nieuw stoeltje kost {formatEuro(seatPrice)}. Kies het aantal stoeltjes of vul zelf
+                een bedrag in.
               </p>
               <div className="fr-card">
                 <DonationForm seatPrice={seatPrice} transactionFee={transactionFee ?? 0} />
