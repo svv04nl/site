@@ -107,7 +107,8 @@ export default async function TribunePage() {
               gevel- en dakbeplating aanbrengen, de tribune schilderen, nieuwe dugouts neerzetten en
               hem voorzien van nieuwe zwart-witte stoeltjes.
               <span className="fr-lead-price">
-                Een stoeltje doneer je voor {formatEuro(seatPrice)}, een vrij bedrag geven kan ook.
+                Help mee en doneer een stoeltje voor{' '}
+                {formatEuro(seatPrice)}. Een vrij bedrag geven kan ook!
               </span>
             </p>
             {active && (
