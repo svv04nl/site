@@ -103,9 +103,7 @@ export default async function TribunePage() {
             <p className="fr-eyebrow">Fundraiser</p>
             <h1>Steun de renovatie van onze tribune!</h1>
             <p className="fr-lead">
-              Onze tribune gaat al een tijdje mee en is toe aan een renovatie. We willen nieuwe
-              gevel- en dakbeplating aanbrengen, de tribune schilderen, nieuwe dugouts neerzetten en
-              hem voorzien van nieuwe zwart-witte stoeltjes.
+              Onze tribune gaat al een tijdje mee en is toe aan een renovatie.
               <span className="fr-lead-price">
                 Help mee en doneer een stoeltje voor{' '}
                 {formatEuro(seatPrice)}. Een vrij bedrag geven kan ook!
