@@ -12,7 +12,7 @@ const WORK = [
   { title: 'Nieuwe gevel- en dakbeplating', text: 'De beplating van gevel en dak wordt vervangen.' },
   { title: 'Schilderwerk', text: 'De tribune gaat in de verf.' },
   { title: 'Nieuwe dugouts', text: 'De dugouts worden vervangen.' },
-  { title: 'Nieuwe stoeltjes', text: 'Alle stoeltjes worden vervangen door zwart-witte stoeltjes.' },
+  { title: 'Nieuwe stoeltjes', text: 'De tribune krijgt nieuwe zwart-witte stoeltjes.' },
 ]
 
 export default async function TribunePage() {
@@ -43,8 +43,10 @@ export default async function TribunePage() {
             <p className="fr-eyebrow">Fundraiser</p>
             <h1>Steun de renovatie van onze tribune</h1>
             <p className="fr-lead">
-              De tribune van SVV&apos;04 krijgt nieuwe beplating, een nieuwe verflaag, nieuwe dugouts en
-              nieuwe stoeltjes. Een stoeltje doneer je voor {formatEuro(seatPrice)}.
+              Onze tribune gaat al een tijdje mee en is toe aan een renovatie. Hij krijgt nieuwe
+              gevel- en dakbeplating, een nieuwe verflaag, nieuwe dugouts en nieuwe zwart-witte
+              stoeltjes. Een stoeltje doneer je voor {formatEuro(seatPrice)}, een vrij bedrag geven kan
+              ook.
             </p>
             {active && (
               <a className="fr-cta" href="#doneer">
