@@ -32,6 +32,8 @@ export default async function TribunePage() {
 
   return (
     <main className="fr">
+      {/* Hero en voortgangsbalk samen vullen het eerste scherm. */}
+      <div className="fr-first-screen">
       <header className="fr-hero">
         <img className="fr-hero-img" src="/tribune/hero.jpg" alt="De tribune van SVV'04 vanaf het middenveld" />
         <div className="fr-hero-shade" />
@@ -84,6 +86,7 @@ export default async function TribunePage() {
           )}
         </section>
       )}
+      </div>
 
       <section className="fr-section">
         <div className="fr-wrap">

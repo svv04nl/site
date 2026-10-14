@@ -43,10 +43,20 @@ body {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
+// Hero en voortgangsbalk samen vullen het eerste scherm, zodat het opgehaalde bedrag
+// meteen zichtbaar is.
+.fr-first-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: min(100svh, 60rem);
+}
+
 .fr-hero {
   background: #111;
   color: #fff;
-  min-height: min(92vh, 56rem);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   overflow: hidden;
   position: relative;
 }
@@ -76,21 +86,23 @@ body {
   .fr-hero-shade {
     background: linear-gradient(180deg, rgba(0 0 0 / 0.5) 0%, rgba(17 17 17 / 0) 25%, #111 62%);
   }
-
-  .fr-hero {
-    min-height: 100svh;
-  }
 }
 
 .fr-hero-inner {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  flex: 1;
+  justify-content: flex-end;
   margin: 0 auto;
   max-width: 72rem;
-  min-height: inherit;
-  padding: 1.5rem var(--container-padding) 3.5rem;
+  padding: 8rem var(--container-padding) 2.5rem;
   position: relative;
+  width: 100%;
+
+  // Breed scherm: het logo staat naast de kop, dus er is minder ruimte erboven nodig.
+  @media screen and (min-width: $breakpoint-medium) {
+    padding-top: 4rem;
+  }
 }
 
 .fr-brand {
@@ -113,8 +125,10 @@ body {
 
 // Rechtsboven, even groot als in de header van de gewone site (--logo-height).
 .fr-logo {
-  align-self: flex-end;
   display: block;
+  position: absolute;
+  right: var(--container-padding);
+  top: 1.5rem;
   transition: opacity 0.2s ease;
 
   &:hover {
@@ -136,7 +150,8 @@ body {
   max-width: 40rem;
 
   h1 {
-    font-size: clamp(3rem, 9vw, 6rem);
+    // Schaalt ook mee met de hoogte, zodat de voortgangsbalk op lage schermen in beeld blijft.
+    font-size: clamp(3rem, min(8vw, 10vh), 5.25rem);
     font-weight: 900;
   }
 }
@@ -215,6 +230,21 @@ body {
   span {
     color: rgba(255 255 255 / 0.7);
     font-size: 0.9rem;
+  }
+
+  // Smal scherm: drie waarden naast elkaar, zodat de balk laag blijft en de hero ruimte houdt.
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    gap: 1rem 1.25rem;
+    padding: 1rem var(--container-padding);
+
+    strong {
+      font-size: 1.6rem;
+    }
+
+    span {
+      font-size: 0.75rem;
+      line-height: 1.3;
+    }
   }
 }
 
