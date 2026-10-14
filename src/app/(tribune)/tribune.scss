@@ -277,10 +277,14 @@ body {
 .fr-work {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: 1fr;
   list-style: none;
   margin: 0;
   padding: 0;
+
+  @media screen and (min-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   li {
     background: #fff;

@@ -9,10 +9,22 @@ import { FUNDRAISER_SLUG, formatEuro } from '@/lib/fundraiser'
 export const revalidate = 60
 
 const WORK = [
-  { title: 'Nieuwe gevel- en dakbeplating', text: 'De beplating van gevel en dak wordt vervangen.' },
-  { title: 'Schilderwerk', text: 'De tribune gaat in de verf.' },
-  { title: 'Nieuwe dugouts', text: 'De dugouts worden vervangen.' },
-  { title: 'Nieuwe stoeltjes', text: 'De tribune krijgt nieuwe zwart-witte stoeltjes.' },
+  {
+    title: 'Nieuwe gevel- en dakbeplating',
+    text: 'Er zijn heel wat ballen tegen de achterbeplating aangeschoten door onze jeugdspelers. Dat is natuurlijk mooi, maar daardoor heeft deze wel zijn beste tijd gehad. We willen deze vervangen door nieuwe, strakke platen, zodat de tribune er weer fris uitziet.',
+  },
+  {
+    title: 'Schilderwerk',
+    text: 'De tribune gaat in de verf, zodat hij er weer fris uitziet en dezelfde kleur heeft als de overige gebouwen.',
+  },
+  {
+    title: 'Nieuwe dugouts',
+    text: 'Het metselwerk van de dugouts is geschuurd. We willen deze vervangen door nieuwe betonnen wanden.',
+  },
+  {
+    title: 'Nieuwe stoeltjes',
+    text: 'De huidige rode stoeltjes zijn out en verweerd. We willen deze voorzien van nieuwe stoeltjes in de clubkleuren van SVV\'04.',
+  },
 ]
 
 export default async function TribunePage() {
