@@ -4,6 +4,10 @@
     {
       "path": "/api/cron/sync-staff",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/reconcile-donations",
+      "schedule": "30 4 * * *"
     }
   ]
 }

@@ -118,3 +118,43 @@ export async function syncDonation(donation: Donation): Promise<Donation> {
   await sendPaidEmails(payload, paid)
   return paid
 }
+
+// Vangnet voor als de webhook en de terugkeerpagina allebei gemist zijn (bijvoorbeeld
+// een donateur die na het betalen de browser sluit terwijl de webhook faalt): loopt de
+// donaties langs die nog "open" staan en vraagt de status opnieuw bij Mollie op. Recente
+// donaties laten we met rust, want die zijn mogelijk nog bezig met betalen.
+export async function reconcileOpenDonations(
+  payload: Payload,
+  { minAgeMinutes = 15, maxAgeDays = 30, limit = 100 } = {},
+) {
+  const now = Date.now()
+  const { docs } = await payload.find({
+    collection: 'donations',
+    where: {
+      and: [
+        { status: { equals: 'open' } },
+        { mollieId: { exists: true } },
+        { createdAt: { less_than: new Date(now - minAgeMinutes * 60_000).toISOString() } },
+        { createdAt: { greater_than: new Date(now - maxAgeDays * 86_400_000).toISOString() } },
+      ],
+    },
+    sort: 'createdAt',
+    limit,
+    depth: 0,
+  })
+
+  const result = { checked: docs.length, paid: 0, otherChange: 0, unchanged: 0, failed: 0 }
+  for (const donation of docs) {
+    try {
+      const updated = await syncDonation(donation)
+      if (updated.status === 'betaald') result.paid++
+      else if (updated.status !== donation.status) result.otherChange++
+      else result.unchanged++
+    } catch (err) {
+      // Eén mislukte controle mag de rest niet tegenhouden.
+      result.failed++
+      payload.logger.error(`Reconciling donation ${donation.id} failed: ${err}`)
+    }
+  }
+  return result
+}
