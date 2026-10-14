@@ -217,7 +217,9 @@ export default async function TribunePage() {
             </p>
           )}
           <p className="fr-contact">
-            Speciale wensen? <a href="/contact?afdeling=sponsorgroep">Neem contact op met de sponsorgroep</a>.
+            Heb je vragen of goede ideeën? Wil je sponsoring op maat?
+            <br />
+            <a href="/contact?afdeling=sponsorgroep">Neem contact op met de sponsorgroep.</a>
           </p>
         </div>
       </section>
