@@ -166,8 +166,15 @@ export default async function TribunePage() {
           <div className="fr-wrap fr-wrap--narrow">
             <h2>Dank aan onze donateurs</h2>
             <ul className="fr-donors">
-              {stats.publicDonors.map((name, i) => (
-                <li key={`${name}-${i}`}>{name}</li>
+              {stats.publicDonors.map((donor, i) => (
+                <li key={`${donor.name}-${i}`}>
+                  <span className="fr-donor-name">{donor.name}</span>
+                  <span className="fr-donor-gift">
+                    {donor.seats > 0 &&
+                      `${donor.seats} ${donor.seats === 1 ? 'stoeltje' : 'stoeltjes'} \u00b7 `}
+                    {formatEuro(donor.amount)}
+                  </span>
+                </li>
               ))}
             </ul>
           </div>

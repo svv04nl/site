@@ -28,11 +28,11 @@ SVV'04 verwerkt persoonsgegevens voor de volgende doeleinden:
 
 ### Donaties voor de tribune
 
-- **Gegevens:** Naam, e-mailadres, bedrijfsnaam (als u namens een bedrijf doneert), het bedrag en het aantal stoeltjes, de betaalstatus, en uw keuze of uw naam op de website en op de tribune mag komen
+- **Gegevens:** Naam, e-mailadres, bedrijfsnaam (als u namens een bedrijf doneert), het bedrag en het aantal stoeltjes, de betaalstatus, en uw keuze of uw naam (met het aantal stoeltjes en het bedrag) op de website en uw naam op de tribune mag komen
 - **Grondslag:** Uitvoering van de overeenkomst (de donatie) en uw toestemming voor het noemen van uw naam
 - **Betaling:** De betaling loopt via Mollie. Mollie verwerkt uw betaalgegevens volgens eigen voorwaarden. SVV'04 ziet en bewaart uw bankgegevens niet.
 - **Bewaartermijn:** 7 jaar, in verband met de financiële administratie
-- **Ontvangers:** De sponsorgroep en beheerders van de website. Uw naam is alleen op de website te zien, of op de tribune te lezen, als u daar toestemming voor gaf. U kunt die toestemming altijd intrekken via [secretaris@svv04.nl](mailto:secretaris@svv04.nl).
+- **Ontvangers:** De sponsorgroep en beheerders van de website. Uw naam, het aantal stoeltjes en het bedrag zijn alleen op de website te zien, en uw naam alleen op de tribune te lezen, als u daar toestemming voor gaf. U kunt die toestemming altijd intrekken via [secretaris@svv04.nl](mailto:secretaris@svv04.nl).
 
 ## Assistent op de website
 

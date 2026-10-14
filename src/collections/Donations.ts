@@ -44,7 +44,7 @@ export const Donations: CollectionConfig = {
       admin: {
         ...readOnly,
         description:
-          'Toestemming om de naam (of bedrijfsnaam) in de donateurslijst op svv04.nl/tribune te tonen. Zonder vinkje blijft de donatie anoniem.',
+          'Toestemming om de naam (of bedrijfsnaam), het aantal stoeltjes en het bedrag in de donateurslijst op svv04.nl/tribune te tonen. Zonder vinkje blijft de donatie anoniem.',
       },
     },
     {

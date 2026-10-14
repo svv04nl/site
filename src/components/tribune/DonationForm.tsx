@@ -131,7 +131,7 @@ export default function DonationForm({ seatPrice, transactionFee }: Props) {
         <legend>Wat mag er met {isCompany ? 'de bedrijfsnaam' : 'je naam'} gebeuren?</legend>
         <label className="fr-check">
           <input type="checkbox" name="showOnList" />
-          <span>Mijn naam mag op de website komen.</span>
+          <span>Mijn naam, het aantal stoeltjes en het bedrag mogen op de website komen.</span>
         </label>
         <label className="fr-check">
           <input type="checkbox" name="nameOnTribune" />

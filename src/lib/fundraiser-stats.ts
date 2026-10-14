@@ -1,12 +1,15 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+export type PublicDonor = { name: string; seats: number; amount: number }
+
 export type FundraiserStats = {
   totalAmount: number
   totalSeats: number
   donorCount: number
-  // Alleen donateurs die toestemming gaven voor vermelding op de website.
-  publicDonors: string[]
+  // Alleen donateurs die toestemming gaven voor vermelding op de website, met het
+  // aantal stoeltjes en het donatiebedrag (zonder transactiekosten).
+  publicDonors: PublicDonor[]
 }
 
 export async function getFundraiserStats(fundraiserId: number): Promise<FundraiserStats> {
@@ -33,6 +36,10 @@ export async function getFundraiserStats(fundraiserId: number): Promise<Fundrais
     donorCount: docs.length,
     publicDonors: docs
       .filter((d) => d.showOnList)
-      .map((d) => (d.isCompany && d.companyName ? d.companyName : d.name)),
+      .map((d) => ({
+        name: d.isCompany && d.companyName ? d.companyName : d.name,
+        seats: d.seats,
+        amount: d.amount,
+      })),
   }
 }
