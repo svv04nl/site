@@ -10,10 +10,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"active" boolean DEFAULT true,
   	"goal_amount" numeric,
   	"transaction_fee" numeric DEFAULT 0.29,
-  	"unit_price" numeric DEFAULT 30,
-  	"unit_name" varchar DEFAULT 'stoeltje',
-  	"unit_name_plural" varchar DEFAULT 'stoeltjes',
-  	"name_on_object_label" varchar DEFAULT 'Mijn naam mag op de tribune zelf geplaatst worden.',
+  	"seat_price" numeric DEFAULT 30 NOT NULL,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -26,8 +23,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"is_company" boolean DEFAULT false,
   	"company_name" varchar,
   	"show_on_list" boolean DEFAULT false,
-  	"name_on_object" boolean DEFAULT false,
-  	"units" numeric NOT NULL,
+  	"name_on_tribune" boolean DEFAULT false,
+  	"seats" numeric NOT NULL,
   	"free_amount" numeric NOT NULL,
   	"amount" numeric NOT NULL,
   	"fee" numeric DEFAULT 0,
@@ -47,7 +44,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "fundraisers_updated_at_idx" ON "fundraisers" USING btree ("updated_at");
   CREATE INDEX "fundraisers_created_at_idx" ON "fundraisers" USING btree ("created_at");
   CREATE INDEX "donations_fundraiser_idx" ON "donations" USING btree ("fundraiser_id");
-  CREATE INDEX "donations_name_on_object_idx" ON "donations" USING btree ("name_on_object");
+  CREATE INDEX "donations_name_on_tribune_idx" ON "donations" USING btree ("name_on_tribune");
   CREATE INDEX "donations_status_idx" ON "donations" USING btree ("status");
   CREATE INDEX "donations_mollie_id_idx" ON "donations" USING btree ("mollie_id");
   CREATE UNIQUE INDEX "donations_public_token_idx" ON "donations" USING btree ("public_token");
