@@ -7,8 +7,25 @@ import type { Team } from '@/payload-types'
 import { searchQueryVariants } from '@/lib/search-query'
 import { teamHref } from '@/lib/ai/hrefs'
 import { findTeams } from '@/lib/ai/tools/site'
+import { stripUi } from '@/lib/ai/tools/ui'
+import type { ToolUi } from '@/lib/ai/card-types'
 
 const MAX_RESULTS = 25
+/** Staff of more teams than this gets no team page buttons: they would not help the visitor. */
+const MAX_TEAM_LINKS = 3
+
+/** The team page lists the staff, so it is the source behind the answer. */
+function teamLinks(staff: { team: string; teamUrl: string }[]): ToolUi {
+  const teams = [...new Map(staff.map((s) => [s.teamUrl, s.team])).entries()]
+  if (teams.length === 1) {
+    const [[url, name]] = teams
+    return { link: { label: `Bekijk de teampagina van ${name}`, url } }
+  }
+  if (teams.length > MAX_TEAM_LINKS) return {}
+  return {
+    links: teams.map(([url, name]) => ({ title: name, url, kind: 'page' as const })),
+  }
+}
 
 export const findStaff = tool({
   description:
@@ -47,6 +64,9 @@ export const findStaff = tool({
       const t = s.team as Team
       return { name: s.name, role: s.role, team: t.name, teamUrl: teamHref(t) }
     })
-    return staff.length ? { staff } : { staff: [], note: 'Geen staflid gevonden.' }
+    return staff.length
+      ? { staff, ui: teamLinks(staff) }
+      : { staff: [], note: 'Geen staflid gevonden.' }
   },
+  toModelOutput: stripUi,
 })

@@ -15,13 +15,23 @@ import type { AssistantMetadata } from '@/lib/ai/types'
 // Kept in this tab only (cleared when it closes) and never sent anywhere but the chat route.
 const STORAGE_KEY = 'svv04-assistant-conversation'
 
-const EXAMPLES = [
+export const EXAMPLES = [
   "Wanneer speelt SVV'04 1 de volgende wedstrijd?",
   'Wat is er dit weekend thuis?',
   'Wat is de stand van de O11-1?',
   'Wie is de trainer van de O13-1?',
   'Hoe word ik lid?',
   'Wat kost de contributie voor een jeugdlid?',
+]
+
+// Direct routes for visitors who do not want to type a question (panel only).
+const QUICK_LINKS = [
+  { label: 'Teams', href: '/teams' },
+  { label: 'Programma & uitslagen', href: '/programma' },
+  { label: 'Nieuws', href: '/nieuws' },
+  { label: 'Agenda', href: '/agenda' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Lid worden', href: '/vereniging/lidmaatschap' },
 ]
 
 // Shown while a tool runs, so visitors see what the assistant is doing.
@@ -160,34 +170,70 @@ function logAnswer(message: ChatMessage) {
   console.groupEnd()
 }
 
-export default function AssistantChat() {
+type ChatProps = {
+  /** `panel` is the popup: fills its container, scrolls inside it and shows quick links. */
+  variant?: 'page' | 'panel'
+  /** Panel only: true while it is visible, so the input can take focus. */
+  active?: boolean
+  /** Panel only: a question to send as soon as the chat is ready. */
+  question?: string | null
+  onQuestionSent?: () => void
+  /** Panel only: called when a link inside the chat is followed, so the popup can close. */
+  onNavigate?: () => void
+}
+
+export default function AssistantChat({
+  variant = 'page',
+  active = true,
+  question = null,
+  onQuestionSent,
+  onNavigate,
+}: ChatProps) {
+  const isPanel = variant === 'panel'
   const [input, setInput] = useState('')
-  const { messages, sendMessage, setMessages, status, error, stop } = useChat<ChatMessage>({
-    transport,
-    onFinish: ({ message }) => logAnswer(message),
-  })
+  const { messages, sendMessage, setMessages, status, error, stop, clearError } =
+    useChat<ChatMessage>({
+      transport,
+      onFinish: ({ message }) => logAnswer(message),
+    })
   const busy = status === 'submitted' || status === 'streaming'
   const endRef = useRef<HTMLDivElement>(null)
-  const restored = useRef(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [restored, setRestored] = useState(false)
   const full = messages.length >= MAX_MESSAGES
 
-  // Restore the conversation after a reload or navigation.
+  // The page keeps its conversation across a reload or navigation. The popup does not:
+  // it starts empty every time it is opened (see the reset on close below).
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem(STORAGE_KEY)
-      if (saved) setMessages(JSON.parse(saved) as ChatMessage[])
-    } catch {
-      sessionStorage.removeItem(STORAGE_KEY)
+    if (!isPanel) {
+      try {
+        const saved = sessionStorage.getItem(STORAGE_KEY)
+        if (saved) setMessages(JSON.parse(saved) as ChatMessage[])
+      } catch {
+        sessionStorage.removeItem(STORAGE_KEY)
+      }
     }
-    restored.current = true
-  }, [setMessages])
+    setRestored(true)
+  }, [isPanel, setMessages])
 
   // Save once an answer is complete (not on every streamed token).
   useEffect(() => {
-    if (!restored.current || status !== 'ready') return
+    if (isPanel || !restored || status !== 'ready') return
     if (messages.length) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
     else sessionStorage.removeItem(STORAGE_KEY)
-  }, [messages, status])
+  }, [isPanel, messages, status, restored])
+
+  // Closing the popup ends the conversation, also an answer that is still coming in.
+  const wasActive = useRef(active)
+  useEffect(() => {
+    if (isPanel && wasActive.current && !active) {
+      stop()
+      setMessages([])
+      clearError()
+      setInput('')
+    }
+    wasActive.current = active
+  }, [isPanel, active, stop, setMessages, clearError])
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -200,10 +246,22 @@ export default function AssistantChat() {
     setInput('')
   }
 
+  // A question handed over by the homepage bar or Cmd+K: send it once, after the restore.
+  useEffect(() => {
+    if (!question || !restored) return
+    submit(question)
+    onQuestionSent?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question, restored])
+
+  useEffect(() => {
+    if (isPanel && active) inputRef.current?.focus()
+  }, [isPanel, active])
+
   // The page is long after a few answers; after clearing it, start at the top again.
   const resetConversation = () => {
     setMessages([])
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (!isPanel) window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // What the assistant is doing right now, taken from the latest unfinished tool call.
@@ -224,7 +282,7 @@ export default function AssistantChat() {
       : ''
 
   return (
-    <div className="assistant">
+    <div className={`assistant${isPanel ? ' assistant--panel' : ''}`}>
       {messages.length === 0 ? (
         <div className="assistant-examples">
           <p className="assistant-examples__label">Probeer bijvoorbeeld:</p>
@@ -237,6 +295,20 @@ export default function AssistantChat() {
               </li>
             ))}
           </ul>
+          {isPanel && (
+            <>
+              <p className="assistant-examples__label">Of ga direct naar:</p>
+              <ul className="assistant-quicklinks">
+                {QUICK_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} onClick={onNavigate}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       ) : (
         <div className="assistant-messages" aria-live="polite">
@@ -291,9 +363,10 @@ export default function AssistantChat() {
         }}
       >
         <input
+          ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={full ? 'Dit gesprek is vol' : "Stel een vraag over SVV'04"}
+          placeholder={full ? 'Dit gesprek is vol' : "Wat wil je weten over SVV'04?"}
           disabled={full}
           maxLength={MAX_USER_MESSAGE_CHARS}
           aria-label="Je vraag"
@@ -314,8 +387,8 @@ export default function AssistantChat() {
 
       <div className="assistant-footer">
         <p>
-          De assistent is een AI en kan fouten maken. Controleer belangrijke zaken bij de club,
-          bijvoorbeeld via het <Link href="/contact">contactformulier</Link>.
+          Antwoorden komen van een AI en kunnen fouten bevatten. Controleer belangrijke zaken bij de
+          club, bijvoorbeeld via het <Link href="/contact">contactformulier</Link>.
         </p>
         {messages.length > 0 && (
           <button

@@ -79,13 +79,16 @@
     width: auto;
   }
 
-  // Webshop CTA on the right
+  // CTA on the right: the assistant button, or the webshop link while the assistant is off
   .site-header-mobile-cta {
     align-items: center;
     background-color: var(--color-primary);
+    border: 0;
     border-radius: 3px;
     color: var(--color-white);
+    cursor: pointer;
     display: flex;
+    gap: 0.4rem;
     font-family: var(--font-heading);
     font-size: 0.75rem;
     font-weight: 700;

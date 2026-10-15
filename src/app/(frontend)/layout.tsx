@@ -6,6 +6,8 @@ import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
+import { AssistantProvider } from '@/components/assistant/AssistantProvider'
+import { isAssistantEnabled } from '@/lib/ai/agent'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.scss'
@@ -47,11 +49,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="nl" className={`${sairaCondensed.variable} ${outfit.variable}`}>
       <body>
         <div className="site-shell">
-          <BreadcrumbProvider>
-            <Header />
-            <ReactQueryProvider>{children}</ReactQueryProvider>
-          </BreadcrumbProvider>
-          <Footer />
+          <AssistantProvider enabled={isAssistantEnabled()}>
+            <BreadcrumbProvider>
+              <Header />
+              <ReactQueryProvider>{children}</ReactQueryProvider>
+            </BreadcrumbProvider>
+            <Footer />
+          </AssistantProvider>
         </div>
         <Analytics />
         <SpeedInsights />

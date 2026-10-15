@@ -32,6 +32,33 @@
   }
 }
 
+// Topbar button that opens the assistant (replaces .search-trigger while the assistant is on).
+.assistant-trigger {
+  align-items: center;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 15px;
+  color: var(--color-white);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  height: 30px;
+  letter-spacing: 0.08em;
+  padding: 0 0.875rem 0 0.75rem;
+  text-transform: uppercase;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+}
+
 .mobile-nav-search {
   background: none;
   border: none;

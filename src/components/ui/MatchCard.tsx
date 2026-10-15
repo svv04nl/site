@@ -15,6 +15,9 @@ type Props = {
   score?: string
   venue?: string
   status?: string
+  /** Small line under the home / away club, e.g. "Kleedkamer 3". */
+  homeNote?: string
+  awayNote?: string
   /** "Thuis" or "Uit". Derived from isOwnHome/isOwnAway when omitted. */
   location?: 'Thuis' | 'Uit' | null
   href?: string
@@ -25,7 +28,17 @@ function initials(name: string): string {
   return name.trim().split(/\s+/)[0].slice(0, 2).toUpperCase()
 }
 
-function Club({ name, clubcode, own }: { name: string; clubcode?: string; own?: boolean }) {
+function Club({
+  name,
+  clubcode,
+  own,
+  note,
+}: {
+  name: string
+  clubcode?: string
+  own?: boolean
+  note?: string
+}) {
   return (
     <div className="match-card-club">
       {clubcode ? (
@@ -40,6 +53,7 @@ function Club({ name, clubcode, own }: { name: string; clubcode?: string; own?: 
         </span>
       )}
       <span className={`match-card-team${own ? ' match-card-team--own' : ''}`}>{name}</span>
+      {note && <span className="match-card-note">{note}</span>}
     </div>
   )
 }
@@ -61,6 +75,8 @@ export default function MatchCard({
   score,
   venue,
   status,
+  homeNote,
+  awayNote,
   location,
   href,
 }: Props) {
@@ -71,12 +87,14 @@ export default function MatchCard({
 
   const body = (
     <>
-      <Club name={homeTeam} clubcode={homeTeamRelatiecode} own={isOwnHome} />
+      <Club name={homeTeam} clubcode={homeTeamRelatiecode} own={isOwnHome} note={homeNote} />
 
       <div className="match-card-info">
         {date && <time className="match-card-date">{date}</time>}
         {centerLabel && (
-          <div className={`match-card-time${/\d/.test(centerLabel) ? '' : ' match-card-time--text'}`}>
+          <div
+            className={`match-card-time${/\d/.test(centerLabel) ? '' : ' match-card-time--text'}`}
+          >
             {centerLabel}
           </div>
         )}
@@ -89,7 +107,7 @@ export default function MatchCard({
         )}
       </div>
 
-      <Club name={awayTeam} clubcode={awayTeamRelatiecode} own={isOwnAway} />
+      <Club name={awayTeam} clubcode={awayTeamRelatiecode} own={isOwnAway} note={awayNote} />
     </>
   )
 

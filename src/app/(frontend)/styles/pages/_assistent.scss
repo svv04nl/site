@@ -95,7 +95,9 @@
     margin-bottom: 0;
   }
 
-  a {
+  // Links in the answer text only, not the cards below it.
+  p a,
+  li a {
     color: var(--color-primary);
     text-decoration: underline;
   }
@@ -217,5 +219,236 @@
   .league-table td {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+  }
+}
+
+// ─── Assistant popup (centered modal, full screen on mobile) ─────────
+
+html.assistant-panel-open {
+  overflow: hidden;
+}
+
+.assistant-panel-backdrop {
+  background: rgb(15 15 15 / 55%);
+  backdrop-filter: blur(4px);
+  inset: 0;
+  position: fixed;
+  z-index: 1000;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.assistant-panel {
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 35%);
+  display: flex;
+  flex-direction: column;
+  height: min(46rem, calc(100dvh - 4rem));
+  left: 50%;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(40rem, calc(100vw - 2rem));
+  z-index: 1001;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    border-radius: 0;
+    height: 100dvh;
+    left: 0;
+    top: 0;
+    transform: none;
+    width: 100vw;
+  }
+
+  &__header {
+    align-items: center;
+    background: var(--color-white);
+    border-bottom: 3px solid var(--color-primary);
+    color: var(--color-dark);
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem 0.85rem 1.25rem;
+
+    svg {
+      color: var(--color-primary);
+    }
+
+    h2 {
+      flex: 1;
+      font-family: var(--font-heading);
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin: 0;
+      text-transform: uppercase;
+    }
+  }
+
+  &__close {
+    align-items: center;
+    background: none;
+    border: 0;
+    border-radius: 6px;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    padding: 0.4rem;
+
+    &:hover {
+      background: var(--color-light);
+    }
+  }
+
+  .assistant--panel {
+    flex: 1;
+    gap: 0.9rem;
+    min-height: 0;
+    padding: 1.1rem 1.25rem 1rem;
+
+    .assistant-examples,
+    .assistant-messages {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .assistant-examples ul + .assistant-examples__label {
+      margin-top: 1.25rem;
+    }
+
+    .assistant-form,
+    .assistant-footer,
+    .assistant-status {
+      flex-shrink: 0;
+    }
+  }
+}
+
+.assistant-quicklinks a {
+  border-radius: 999px;
+  border: 1px solid rgb(0 0 0 / 15%);
+  color: var(--color-dark);
+  display: block;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.95rem;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+// ─── Homepage "ask" band ─────────────────────────────────────────────
+
+.assistant-bar {
+  background: var(--color-light);
+
+  &__inner {
+    margin: 0 auto;
+    max-width: var(--grid-base);
+    padding: 3.5rem var(--container-padding);
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      padding-bottom: 2.25rem;
+      padding-top: 2.25rem;
+    }
+  }
+
+  .home-h2 {
+    margin-top: 0.75rem;
+  }
+
+  &__intro {
+    color: #555;
+    font-size: 1.0625rem;
+    margin: 0.9rem 0 1.5rem;
+  }
+
+  &__form {
+    align-items: center;
+    background: var(--color-white);
+    border-radius: 999px;
+    border: 1px solid rgb(0 0 0 / 12%);
+    box-shadow: 0 4px 18px rgb(0 0 0 / 6%);
+    display: flex;
+    gap: 0.75rem;
+    max-width: 44rem;
+    padding: 0.4rem 0.4rem 0.4rem 1.25rem;
+    transition: border-color 0.15s ease;
+
+    &:focus-within {
+      border-color: var(--color-primary);
+    }
+
+    svg {
+      color: var(--color-primary);
+    }
+
+    input {
+      background: none;
+      border: 0;
+      color: var(--color-dark);
+      flex: 1;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      min-width: 0;
+      outline: none;
+      padding: 0.5rem 0;
+    }
+
+    .btn {
+      border-radius: 999px;
+      flex-shrink: 0;
+      padding: 0.7rem 1.5rem;
+
+      &:disabled {
+        box-shadow: none;
+        cursor: default;
+        opacity: 0.45;
+        transform: none;
+      }
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+
+    button {
+      background: var(--color-white);
+      border-radius: 999px;
+      border: 1px solid rgb(0 0 0 / 15%);
+      color: var(--color-dark);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.5rem 0.95rem;
+      text-align: left;
+      transition:
+        border-color 0.15s ease,
+        color 0.15s ease;
+
+      &:hover {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+      }
+    }
   }
 }
