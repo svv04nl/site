@@ -10,16 +10,7 @@ import {
   splitAmount,
   type FundraiserUnit,
 } from '@/lib/fundraiser'
-
-// Dit is een donatieformulier en geen inlogformulier. Wachtwoordmanagers bieden bij een
-// e-mailveld op svv04.nl anders de admin-login aan. Deze attributen zetten dat voorstel uit
-// (1Password, LastPass, Bitwarden, Dashlane); het autofill van de browser zelf blijft werken.
-const noPasswordManager = {
-  'data-1p-ignore': true,
-  'data-lpignore': 'true',
-  'data-bwignore': 'true',
-  'data-form-type': 'other',
-} as const
+import { noPasswordManager } from '@/lib/no-password-manager'
 
 type Props = {
   // Een vaste eenheid met prijs (bijvoorbeeld een stoeltje), of null voor alleen een vrij bedrag.
