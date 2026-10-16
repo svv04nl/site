@@ -1,0 +1,112 @@
+// ─── Toegangspagina (zonder site-header en -footer) ──────────────────────────
+
+@import '../(frontend)/styles/variables';
+@import '../(frontend)/styles/reset';
+
+body {
+  background: var(--color-dark);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+}
+
+.gate {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 1.5rem var(--container-padding);
+}
+
+.gate-card {
+  background: var(--color-white);
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0 0 0 / 0.35);
+  max-width: 26rem;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+
+  img {
+    display: block;
+    height: 6rem;
+    margin: 0 auto 1.25rem;
+    width: auto;
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+  }
+
+  p {
+    color: #555;
+    margin: 0 0 1.5rem;
+  }
+}
+
+.gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input[type='text'] {
+    background: #f7f7f7;
+    border: 1px solid rgba(0 0 0 / 0.12);
+    border-radius: 6px;
+    color: var(--color-dark);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    outline: none;
+    padding: 0.75rem 0.9rem;
+    width: 100%;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--color-primary);
+    }
+  }
+
+  button {
+    background: var(--color-primary);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+    padding: 0.85rem 1.5rem;
+    text-transform: uppercase;
+
+    &:hover:not(:disabled) {
+      background: #a80000;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+  }
+}
+
+.gate-error {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  margin: 0;
+  text-align: left;
+}
