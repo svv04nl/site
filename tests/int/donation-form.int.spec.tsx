@@ -161,6 +161,30 @@ describe('DonationForm: fundraiser zonder eenheid of toestemmingsoptie', () => {
   })
 })
 
+describe('DonationForm: wachtwoordmanagers', () => {
+  it('zet het inlogvoorstel van wachtwoordmanagers uit op de tekstvelden', () => {
+    renderForm()
+    fireEvent.click(screen.getByLabelText('Ik doneer namens een bedrijf'))
+
+    for (const field of [
+      screen.getByLabelText('Naam'),
+      screen.getByLabelText('E-mailadres'),
+      screen.getByLabelText('Bedrijfsnaam'),
+    ]) {
+      expect(field.getAttribute('data-1p-ignore')).not.toBeNull()
+      expect(field.getAttribute('data-lpignore')).toBe('true')
+      expect(field.getAttribute('data-bwignore')).toBe('true')
+    }
+  })
+
+  it('laat het autofill van de browser voor naam en e-mail wel werken', () => {
+    renderForm()
+
+    expect(screen.getByLabelText('Naam').getAttribute('autocomplete')).toBe('name')
+    expect(screen.getByLabelText('E-mailadres').getAttribute('autocomplete')).toBe('email')
+  })
+})
+
 describe('DonationForm: versturen', () => {
   const fillIn = () => {
     fireEvent.change(screen.getByLabelText('Naam'), { target: { value: 'Jan Jansen' } })

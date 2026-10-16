@@ -11,6 +11,16 @@ import {
   type FundraiserUnit,
 } from '@/lib/fundraiser'
 
+// Dit is een donatieformulier en geen inlogformulier. Wachtwoordmanagers bieden bij een
+// e-mailveld op svv04.nl anders de admin-login aan. Deze attributen zetten dat voorstel uit
+// (1Password, LastPass, Bitwarden, Dashlane); het autofill van de browser zelf blijft werken.
+const noPasswordManager = {
+  'data-1p-ignore': true,
+  'data-lpignore': 'true',
+  'data-bwignore': 'true',
+  'data-form-type': 'other',
+} as const
+
 type Props = {
   // Een vaste eenheid met prijs (bijvoorbeeld een stoeltje), of null voor alleen een vrij bedrag.
   unit: FundraiserUnit | null
@@ -123,12 +133,26 @@ export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }
 
       <div className="fr-field">
         <label htmlFor="fr-name">Naam</label>
-        <input id="fr-name" name="name" type="text" autoComplete="name" required />
+        <input
+          id="fr-name"
+          name="name"
+          type="text"
+          autoComplete="name"
+          required
+          {...noPasswordManager}
+        />
       </div>
 
       <div className="fr-field">
         <label htmlFor="fr-email">E-mailadres</label>
-        <input id="fr-email" name="email" type="email" autoComplete="email" required />
+        <input
+          id="fr-email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          {...noPasswordManager}
+        />
         <small>Hier sturen we de bevestiging naartoe.</small>
       </div>
 
@@ -144,7 +168,13 @@ export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }
       {isCompany && (
         <div className="fr-field">
           <label htmlFor="fr-company">Bedrijfsnaam</label>
-          <input id="fr-company" name="companyName" type="text" autoComplete="organization" />
+          <input
+            id="fr-company"
+            name="companyName"
+            type="text"
+            autoComplete="organization"
+            {...noPasswordManager}
+          />
         </div>
       )}
 
