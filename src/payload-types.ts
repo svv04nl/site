@@ -76,6 +76,8 @@ export interface Config {
     contacts: Contact;
     audiences: Audience;
     messages: Message;
+    fundraisers: Fundraiser;
+    donations: Donation;
     'team-staff': TeamStaff;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -93,6 +95,8 @@ export interface Config {
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     audiences: AudiencesSelect<false> | AudiencesSelect<true>;
     messages: MessagesSelect<false> | MessagesSelect<true>;
+    fundraisers: FundraisersSelect<false> | FundraisersSelect<true>;
+    donations: DonationsSelect<false> | DonationsSelect<true>;
     'team-staff': TeamStaffSelect<false> | TeamStaffSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -647,6 +651,83 @@ export interface Message {
   createdAt: string;
 }
 /**
+ * Een inzamelactie met een optioneel doelbedrag en een optionele vaste eenheid (bijvoorbeeld een stoeltje voor een vast bedrag). De pagina op svv04.nl/tribune gebruikt de fundraiser met slug "tribune".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fundraisers".
+ */
+export interface Fundraiser {
+  id: number;
+  title: string;
+  /**
+   * Koppelt de fundraiser aan zijn pagina. Voor svv04.nl/tribune is dit "tribune".
+   */
+  slug: string;
+  /**
+   * Uitvinken sluit de actie: de pagina blijft zichtbaar, maar het formulier verdwijnt en er worden geen nieuwe donaties meer aangenomen.
+   */
+  active?: boolean | null;
+  /**
+   * Leeg laten om geen voortgangsbalk te tonen, alleen het opgehaalde bedrag.
+   */
+  goalAmount?: number | null;
+  /**
+   * Optionele bijdrage die de donateur kan meebetalen, zodat het volledige bedrag naar de club gaat. Zet op 0 om de optie te verbergen. Controleer het actuele tarief bij Mollie.
+   */
+  transactionFee?: number | null;
+  /**
+   * Hele euro’s. Leeg laten voor een fundraiser zonder vaste eenheid: dan is een donatie altijd een vrij bedrag. Een wijziging geldt voor nieuwe donaties, al betaalde donaties blijven staan.
+   */
+  unitPrice?: number | null;
+  unitName?: string | null;
+  unitNamePlural?: string | null;
+  /**
+   * Zo staat de tweede toestemming in het formulier, voor een naam die fysiek wordt geplaatst. Leeg laten om de optie niet te tonen.
+   */
+  nameOnObjectLabel?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Donaties voor een fundraiser. Ze worden alleen aangemaakt via /api/donatie en bijgewerkt door de Mollie-webhook, niet rechtstreeks via de API of het adminscherm.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "donations".
+ */
+export interface Donation {
+  id: number;
+  fundraiser: number | Fundraiser;
+  name: string;
+  email: string;
+  isCompany?: boolean | null;
+  companyName?: string | null;
+  /**
+   * Toestemming om de naam (of bedrijfsnaam), het aantal eenheden en het bedrag in de donateurslijst op de pagina van de fundraiser te tonen. Zonder vinkje blijft de donatie anoniem.
+   */
+  showOnList?: boolean | null;
+  /**
+   * Toestemming om de naam (of bedrijfsnaam) fysiek te plaatsen, bijvoorbeeld op de tribune. Filter op dit vinkje en status "Betaald" voor de lijst naar de maker.
+   */
+  nameOnObject?: boolean | null;
+  units: number;
+  freeAmount: number;
+  amount: number;
+  /**
+   * Meebetaald bovenop de donatie. Telt niet mee in het opgehaalde bedrag.
+   */
+  fee?: number | null;
+  status: 'open' | 'betaald' | 'geannuleerd' | 'verlopen' | 'mislukt';
+  paidAt?: string | null;
+  method?: string | null;
+  mollieId?: string | null;
+  /**
+   * Staat in de terugkeer-URL van de donateur, zodat die alleen de eigen donatie ziet.
+   */
+  publicToken: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Wordt automatisch gesynchroniseerd vanuit Club.Dataservice (Sportlink). Wijzigingen hier worden bij de volgende sync overschreven.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -719,6 +800,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'messages';
         value: number | Message;
+      } | null)
+    | ({
+        relationTo: 'fundraisers';
+        value: number | Fundraiser;
+      } | null)
+    | ({
+        relationTo: 'donations';
+        value: number | Donation;
       } | null)
     | ({
         relationTo: 'team-staff';
@@ -1050,6 +1139,47 @@ export interface MessagesSelect<T extends boolean = true> {
   afdeling?: T;
   onderwerp?: T;
   pageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fundraisers_select".
+ */
+export interface FundraisersSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  active?: T;
+  goalAmount?: T;
+  transactionFee?: T;
+  unitPrice?: T;
+  unitName?: T;
+  unitNamePlural?: T;
+  nameOnObjectLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "donations_select".
+ */
+export interface DonationsSelect<T extends boolean = true> {
+  fundraiser?: T;
+  name?: T;
+  email?: T;
+  isCompany?: T;
+  companyName?: T;
+  showOnList?: T;
+  nameOnObject?: T;
+  units?: T;
+  freeAmount?: T;
+  amount?: T;
+  fee?: T;
+  status?: T;
+  paidAt?: T;
+  method?: T;
+  mollieId?: T;
+  publicToken?: T;
   updatedAt?: T;
   createdAt?: T;
 }

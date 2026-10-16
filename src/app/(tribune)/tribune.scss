@@ -1,0 +1,735 @@
+// ─── Tribune fundraiser (losse pagina, zonder site-header en -footer) ────────
+
+@import '../(frontend)/styles/variables';
+@import '../(frontend)/styles/reset';
+
+// Vloeiend naar #doneer scrollen vanaf "Doneer nu", behalve bij "minder beweging".
+html {
+  scroll-behavior: smooth;
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-white);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
+.fr {
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    line-height: 1.05;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
+.fr-hero {
+  background: #111;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: min(92svh, 56rem);
+  overflow: hidden;
+  position: relative;
+}
+
+.fr-hero-img {
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: 50% 40%;
+  position: absolute;
+  width: 100%;
+}
+
+.fr-hero-shade {
+  background: linear-gradient(180deg, rgba(0 0 0 / 0.55) 0%, rgba(0 0 0 / 0.25) 35%, rgba(0 0 0 / 0.8) 100%);
+  inset: 0;
+  position: absolute;
+}
+
+@media screen and (max-width: #{$breakpoint-medium}) {
+  // Smal scherm: foto bovenin, tekst op een donkere ondergrond eronder.
+  .fr-hero-img {
+    height: 60%;
+    object-position: 45% 50%;
+  }
+
+  .fr-hero-shade {
+    background: linear-gradient(180deg, rgba(0 0 0 / 0.5) 0%, rgba(17 17 17 / 0) 25%, #111 62%);
+  }
+}
+
+.fr-hero-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: flex-end;
+  margin: 0 auto;
+  // Zelfde tekstbreedte als .fr-wrap, zodat hero en secties op één lijn staan.
+  max-width: calc(72rem + 2 * var(--container-padding));
+  padding: 8rem var(--container-padding) 2.5rem;
+  position: relative;
+  width: 100%;
+
+  // Breed scherm: het logo staat naast de kop, dus er is minder ruimte erboven nodig.
+  @media screen and (min-width: $breakpoint-medium) {
+    padding-top: 4rem;
+  }
+}
+
+.fr-brand {
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &--dark {
+    color: var(--color-dark);
+    margin-bottom: 2rem;
+  }
+}
+
+// Rechtsboven, even groot als in de header van de gewone site (--logo-height).
+.fr-logo {
+  display: block;
+  position: absolute;
+  right: var(--container-padding);
+  top: 1.5rem;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.88;
+  }
+
+  img {
+    filter: drop-shadow(0 2px 8px rgba(0 0 0 / 0.35));
+    height: 5.5rem;
+    width: auto;
+
+    @media screen and (min-width: $breakpoint-mobile-lg) {
+      height: var(--logo-height);
+    }
+  }
+}
+
+.fr-hero-copy {
+  max-width: 40rem;
+
+  h1 {
+    font-size: clamp(3rem, 9vw, 6rem);
+    font-weight: 900;
+  }
+}
+
+.fr-eyebrow {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+
+  &::before {
+    background: var(--color-primary);
+    content: '';
+    display: inline-block;
+    height: 0.7rem;
+    margin-right: 0.6rem;
+    width: 2rem;
+  }
+}
+
+.fr-lead {
+  font-size: 1.15rem;
+  margin: 1.25rem 0 1.75rem;
+  max-width: 40rem;
+}
+
+// De prijsregel staat onder de uitleg, op een eigen regel.
+.fr-lead-price {
+  display: block;
+  margin-top: 0.6rem;
+  text-wrap: balance;
+}
+
+.fr-cta {
+  background: var(--color-primary);
+  border-radius: 5px;
+  box-shadow: 0 6px 18px rgba(204 0 0 / 0.35);
+  color: #fff;
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.95rem 2rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color 0.15s ease,
+    transform 0.12s ease;
+
+  &:hover {
+    background: #a80000;
+    transform: translateY(-2px);
+  }
+}
+
+// ─── Stats ────────────────────────────────────────────────────────────────────
+
+.fr-stats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+
+  div {
+    background: rgba(255 255 255 / 0.06);
+    border: 1px solid rgba(255 255 255 / 0.12);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.5rem 0.75rem;
+    text-align: center;
+  }
+
+  strong {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 6vw, 3.5rem);
+    line-height: 1;
+  }
+
+  span {
+    color: rgba(255 255 255 / 0.7);
+    font-size: clamp(0.75rem, 2.4vw, 0.95rem);
+    line-height: 1.3;
+  }
+}
+
+.fr-progress {
+  background: rgba(255 255 255 / 0.18);
+  border-radius: 999px;
+  height: 0.6rem;
+  margin-top: 1.5rem;
+  overflow: hidden;
+
+  span {
+    background: var(--color-primary);
+    display: block;
+    height: 100%;
+  }
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+
+.fr-section {
+  padding: 4.5rem var(--container-padding);
+
+  &--alt {
+    background: var(--color-light);
+  }
+
+  &--dark {
+    background: var(--color-dark);
+    color: #fff;
+  }
+}
+
+.fr-wrap {
+  margin: 0 auto;
+  max-width: 72rem;
+
+  &--narrow {
+    max-width: 36rem;
+  }
+}
+
+.fr-section-lead {
+  margin: -0.5rem 0 1.75rem;
+}
+
+.fr-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Tekst links, twee kleine foto's van de huidige staat rechts. Op een smal scherm staan
+// de foto's onder de tekst.
+.fr-item {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  padding: 1.25rem;
+
+  @media screen and (min-width: $breakpoint-tablet) {
+    align-items: center;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    padding: 1.5rem;
+  }
+}
+
+.fr-item-head {
+  display: flex;
+  gap: 1rem;
+
+  h3 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+  }
+
+  p {
+    color: #555;
+    margin: 0;
+  }
+}
+
+.fr-work-nr {
+  align-items: center;
+  background: var(--color-primary);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+}
+
+.fr-item-label {
+  color: #777;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+}
+
+.fr-item-photos {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr 1fr;
+
+  figure {
+    margin: 0;
+  }
+
+  img {
+    aspect-ratio: 3 / 2;
+    border-radius: 6px;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  figcaption {
+    color: #555;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    margin-top: 0.3rem;
+  }
+}
+
+.fr-impression {
+  margin: 0;
+  position: relative;
+
+  img {
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  figcaption {
+    color: #555;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+  }
+}
+
+// Staat op de afbeelding zelf, zodat het label ook zichtbaar blijft als de foto elders
+// wordt gedeeld of uitgesneden.
+.fr-ai-badge {
+  background: rgba(17 17 17 / 0.85);
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  left: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.7rem;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0.75rem;
+}
+
+// ─── Donation form ────────────────────────────────────────────────────────────
+
+.fr-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0 0 0 / 0.08);
+  padding: 1.5rem;
+
+  @media screen and (min-width: $breakpoint-mobile-lg) {
+    padding: 2rem;
+  }
+}
+
+.fr-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fr-field {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+
+  label,
+  legend {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0;
+  }
+
+  legend {
+    margin-bottom: 0.5rem;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input:not([type]) {
+    background: #f7f7f7;
+    border: 1px solid rgba(0 0 0 / 0.12);
+    border-radius: 6px;
+    color: var(--color-dark);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+    padding: 0.7rem 0.9rem;
+    width: 100%;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  small {
+    color: #777;
+    font-size: 0.8rem;
+  }
+}
+
+.fr-field--center {
+  align-items: center;
+
+  legend {
+    text-align: center;
+    width: 100%;
+  }
+
+  small {
+    text-align: center;
+  }
+}
+
+.fr-stepper {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+
+  button {
+    background: var(--color-dark);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5rem;
+    height: 3rem;
+    line-height: 1;
+    width: 3rem;
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  }
+
+  output {
+    font-size: 1.1rem;
+    min-width: 8rem;
+    text-align: center;
+
+    strong {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+    }
+  }
+}
+
+.fr-money {
+  align-items: center;
+  background: #f7f7f7;
+  border: 1px solid rgba(0 0 0 / 0.12);
+  border-radius: 6px;
+  display: flex;
+  padding-left: 0.9rem;
+
+  &:focus-within {
+    border-color: var(--color-primary);
+  }
+
+  input {
+    background: transparent !important;
+    border: none !important;
+  }
+}
+
+// Het bedrag staat precies in het midden van het vak; het €-teken staat los links, zodat het
+// de tekst niet opzij duwt.
+.fr-money--amount {
+  max-width: 12rem;
+  padding-left: 0;
+  position: relative;
+  width: 100%;
+
+  span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    left: 0.9rem;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  // Dezelfde ruimte links en rechts. Dit selectorpad weegt even zwaar als de algemene
+  // veldstijl hierboven en staat er later in, dus het wint.
+  .fr-field & input,
+  input {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    padding-left: 2.6rem;
+    padding-right: 2.6rem;
+    text-align: center;
+  }
+}
+
+.fr-check {
+  align-items: flex-start;
+  cursor: pointer;
+  display: flex;
+  font-size: 0.95rem;
+  gap: 0.6rem;
+
+  input {
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+    height: 1.15rem;
+    margin-top: 0.2rem;
+    width: 1.15rem;
+  }
+}
+
+.fr-summary {
+  background: #f7f7f7;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.9rem 1rem;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  dt,
+  dd {
+    margin: 0;
+  }
+}
+
+.fr-summary-total {
+  border-top: 1px solid rgba(0 0 0 / 0.12);
+  font-weight: 700;
+  padding-top: 0.4rem;
+}
+
+.fr-hp {
+  height: 0;
+  left: -9999px;
+  overflow: hidden;
+  position: absolute;
+  width: 0;
+}
+
+.fr-error {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.fr-submit {
+  background: var(--color-primary);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem;
+  text-transform: uppercase;
+
+  &:hover:not(:disabled) {
+    background: #a80000;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+.fr-note {
+  color: #777;
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: center;
+
+  a {
+    color: inherit;
+  }
+}
+
+.fr-contact {
+  margin: 1.5rem 0 0;
+  text-align: center;
+
+  a {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+}
+
+// ─── Donors, footer, thanks ───────────────────────────────────────────────────
+
+.fr-donors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    align-items: baseline;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 1rem;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+  }
+}
+
+.fr-donor-name {
+  font-weight: 600;
+}
+
+.fr-donor-gift {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.fr-footer {
+  background: var(--color-dark);
+  color: rgba(255 255 255 / 0.75);
+  font-size: 0.85rem;
+  padding: 2rem var(--container-padding);
+  text-align: center;
+
+  p {
+    margin: 0.25rem 0;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+.fr-thanks {
+  align-items: center;
+  background: var(--color-light);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem var(--container-padding);
+}
+
+.fr-thanks-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0 0 0 / 0.08);
+  max-width: 34rem;
+  padding: 2rem;
+  width: 100%;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0 0 1.5rem;
+  }
+}
