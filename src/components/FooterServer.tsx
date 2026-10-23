@@ -12,6 +12,8 @@ export default async function FooterServer() {
   const [{ docs: pages }, { docs: audiences }] = await Promise.all([
     payload.find({
       collection: 'pages',
+      // Pages hidden from the menus (detail pages, pages that moved) stay out of the footer too.
+      where: { hideFromNav: { not_equals: true } },
       limit: 100,
       sort: 'title',
       select: { title: true, section: true, slug: true },

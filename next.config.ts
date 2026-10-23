@@ -57,6 +57,8 @@ const nextConfig: NextConfig = {
     return [
       { source: '/senioren', destination: '/teams', permanent: true },
       { source: '/jeugd', destination: '/teams', permanent: true },
+      // The sponsor options moved to the "Voor jou" page for sponsors.
+      { source: '/vereniging/sponsoring', destination: '/sponsoring', permanent: true },
     ]
   },
   async headers() {

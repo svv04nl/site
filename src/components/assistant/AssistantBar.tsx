@@ -9,9 +9,24 @@ import { MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 const CHIPS = EXAMPLES.slice(0, 4)
 
 /**
+ * On a "Voor jou" page: makes the assistant answer from the visitor's perspective (parent,
+ * player, ...) and use that page's example questions, wherever the assistant is opened on the
+ * page. Renders nothing, so it also works on a page without the "Stel je vraag" band.
+ */
+export function AssistantAudienceContext({ audience }: { audience: AssistantAudience }) {
+  const { setAudience } = useAssistant()
+  const { slug } = audience
+  const questionsKey = audience.questions.join('\n')
+  useEffect(() => {
+    setAudience({ slug, questions: questionsKey ? questionsKey.split('\n') : [] })
+    return () => setAudience(null)
+  }, [slug, questionsKey, setAudience])
+  return null
+}
+
+/**
  * "Stel je vraag" band: a question typed here opens the assistant popup. On a "Voor jou" page
- * `audience` makes the assistant answer from the visitor's perspective (parent, player, ...),
- * also when it is opened from elsewhere on that page, and supplies the example questions.
+ * `audience` supplies the example questions under the field.
  */
 export function AssistantBar({
   audience,
@@ -21,16 +36,8 @@ export function AssistantBar({
   /** Replaces the default line under the heading, e.g. a line that fits the audience. */
   intro?: string | null
 }) {
-  const { enabled, openAssistant, setAudience } = useAssistant()
+  const { enabled, openAssistant } = useAssistant()
   const [input, setInput] = useState('')
-
-  const slug = audience?.slug
-  const questionsKey = audience?.questions.join('\n') ?? ''
-  useEffect(() => {
-    if (!slug) return
-    setAudience({ slug, questions: questionsKey ? questionsKey.split('\n') : [] })
-    return () => setAudience(null)
-  }, [slug, questionsKey, setAudience])
 
   const chips = audience?.questions.length ? audience.questions.slice(0, 4) : CHIPS
 

@@ -801,6 +801,13 @@ Project-specific patterns for this club website, on top of the generic Payload r
 - Set `hideFromNav: true` on a page to keep it out of both the sidebar and the topbar dropdowns while still being reachable via a direct link/button from another page (e.g. a detail page meant to be opened from a CTA rather than browsed).
 - **Depth pitfall**: page content queries must not use `depth: 0` if the richText can contain `upload` nodes (images) or internal `link` nodes — those need the related doc populated to render. Omit `depth` (defaults to 2) or set it explicitly ≥1. This was a real bug once (routes rewritten with `depth: 0` for the nesting feature silently broke every image on those pages).
 
+### "Voor jou" (audience) pages
+
+- `audiences` collection, rendered by `src/app/(frontend)/[slug]/page.tsx`. The hero is fixed; everything below it comes from the `layout` blocks field, in the order the editor picks: `content` (a richText with the same custom blocks as normal pages, rendered with `cmsJsxConverters` from `src/lib/cms-richtext.tsx`), `themes` (the link groups from `themes`), `contact` (contact person card + optional CTA bar) and `assistant` (the "Stel je vraag" band). An empty `layout` falls back to the old order: `body`, themes, assistant, contact.
+- The assistant gets the page's perspective through `AssistantAudienceContext`; the example questions come from the page's `faq` questions. The FAQ is no longer shown, it only feeds those examples.
+- The contact card links to `/contact?afdeling=<role slug>` (first role with a topic); the function shown on it is that contact's first role title, `contact.label` only overrides it.
+- The sponsor options live on `/sponsoring` (a content layout), not on `/vereniging/sponsoring` (hidden from navigation and redirected in `next.config.ts`; its child page `advertenties-aanleveren` stays under the old path).
+
 ### Custom richText blocks (`src/blocks/`)
 
 Each block is a `config.ts` (Payload `Block` definition) + `Component.tsx` (renderer), registered in `payload.config.ts`'s `BlocksFeature` and in the JSX converter map in `src/components/CmsPage.tsx`. Current blocks and when to reach for them:

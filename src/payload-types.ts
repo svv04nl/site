@@ -500,7 +500,7 @@ export interface Audience {
    */
   intro?: string | null;
   /**
-   * Uitgebreide, unieke tekst voor deze doelgroep. Belangrijk voor SEO: hoe meer relevante, unieke inhoud, hoe beter deze pagina vindbaar is in Google.
+   * Alleen zichtbaar in de standaardindeling, als de indeling hierboven leeg is. Gebruik anders een Contentblok in de indeling.
    */
   body?: {
     root: {
@@ -543,7 +543,52 @@ export interface Audience {
       }[]
     | null;
   /**
-   * Gegroepeerde links onder de hero, bij voorkeur drie.
+   * Kies welke onderdelen onder de hero komen en in welke volgorde. Sleep om te verplaatsen. Leeg = standaardindeling: paginatekst, linkblokken, "Stel je vraag", contact en actie.
+   */
+  layout?:
+    | (
+        | {
+            /**
+             * Vrije tekst met dezelfde blokken als de gewone pagina's (kaarten, pakketten, feiten, ...).
+             */
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'themes';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contact';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'assistant';
+          }
+      )[]
+    | null;
+  /**
+   * Gegroepeerde links, bij voorkeur drie. Ze verschijnen waar het onderdeel "Linkblokken" in de indeling staat.
    */
   themes?:
     | {
@@ -1070,6 +1115,35 @@ export interface AudiencesSelect<T extends boolean = true> {
         label?: T;
         href?: T;
         id?: T;
+      };
+  layout?:
+    | T
+    | {
+        content?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        themes?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
+        contact?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
+        assistant?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
       };
   themes?:
     | T

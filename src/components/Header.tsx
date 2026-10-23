@@ -60,6 +60,8 @@ export type ActionPage = {
   actionLabel?: string | null
   slug: string
   section: string
+  /** Overrides the default /section/slug, e.g. for an action that lives on a "Voor jou" page. */
+  href?: string
 }
 
 export type NavPage = {
@@ -149,7 +151,7 @@ export default function Header({
                 <ul className="site-header-topbar-list">
                   {actiePages.map((page) => (
                     <li key={page.id}>
-                      <Link href={`/${page.section}/${page.slug}`}>
+                      <Link href={page.href ?? `/${page.section}/${page.slug}`}>
                         {page.actionLabel || page.title}
                       </Link>
                     </li>
@@ -464,7 +466,7 @@ export default function Header({
                 <li className="mobile-nav-divider" />
                 {actiePages.map((page) => (
                   <li key={page.id}>
-                    <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                    <Link href={page.href ?? `/${page.section}/${page.slug}`}>{page.title}</Link>
                   </li>
                 ))}
               </>

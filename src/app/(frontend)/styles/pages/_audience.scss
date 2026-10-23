@@ -29,9 +29,28 @@
   }
 }
 
+// Content block: text stays at a readable width, cards and tables use the full column.
 .audience-body {
-  max-width: 760px;
   padding: 4.5rem 0 0;
+
+  > p,
+  > ul,
+  > ol {
+    max-width: 760px;
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding-top: 3rem;
+  }
+}
+
+// A content block at the very end of the page needs room above the footer.
+.audience-page > .audience-section:last-child .audience-body {
+  padding-bottom: 4.5rem;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    padding-bottom: 3rem;
+  }
 }
 
 // ─── Themed link groups ──────────────────────────────────────────────

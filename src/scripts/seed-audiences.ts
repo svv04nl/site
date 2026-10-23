@@ -40,7 +40,7 @@ type AudienceSeed = {
   assistantIntro: string
   faqHelp: { title: string }
   contact: { roleSlug: string }
-  cta: { title: string; text: string; buttonLabel: string; buttonUrl: string }
+  cta: { enabled?: boolean; title: string; text: string; buttonLabel: string; buttonUrl: string }
 }
 
 const HERO_IMAGE_FILENAME = 'sportpark-hoofdveld'
@@ -519,10 +519,7 @@ const AUDIENCES: AudienceSeed[] = [
     cardDescription: 'Sponsormogelijkheden en de voordelen van samenwerken.',
     intro:
       "Verbind jouw onderneming aan een bruisende club. Ontdek de sponsormogelijkheden van SVV'04 en wat we samen kunnen bereiken.",
-    heroActions: [
-      { label: 'Onze sponsoren', href: '/alle-sponsors' },
-      { label: 'Contact opnemen', href: '/contact?afdeling=sponsorgroep' },
-    ],
+    heroActions: [{ label: 'Word sponsor', href: '/contact?afdeling=sponsorgroep' }],
     themes: [
       {
         title: 'De club',
@@ -564,7 +561,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Waar gaat de sponsorinkomst naartoe?',
         answer:
           "Sponsorinkomsten zorgen dat SVV'04 financieel gezond blijft en genoeg middelen heeft voor de accommodatie, materialen en activiteiten.",
-        links: [{ label: 'Sponsormogelijkheden', href: '/vereniging/sponsoring' }],
+        links: [{ label: 'Sponsormogelijkheden', href: '/sponsoring' }],
       },
       {
         category: 'Sponsor worden',
@@ -598,10 +595,12 @@ const AUDIENCES: AudienceSeed[] = [
     faqHelp: { title: 'Neem contact op' },
     contact: { roleSlug: 'sponsorgroep' },
     cta: {
+      // The sponsor page has its own "Word sponsor" button in the hero and the contact card.
+      enabled: false,
       title: 'Interesse?',
       text: 'Ontdek wat we voor elkaar kunnen betekenen.',
       buttonLabel: 'Bekijk de mogelijkheden',
-      buttonUrl: '/vereniging/sponsoring',
+      buttonUrl: '/sponsoring',
     },
   },
 ]

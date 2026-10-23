@@ -26,6 +26,8 @@ const ACTION_LINKS: ActionPage[] = [
     actionLabel: 'Sponsor worden',
     slug: 'sponsoring',
     section: 'vereniging',
+    // The sponsor options live on the "Voor jou" page for sponsors.
+    href: '/sponsoring',
   },
 ]
 
