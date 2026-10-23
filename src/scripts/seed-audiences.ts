@@ -599,9 +599,9 @@ const AUDIENCES: AudienceSeed[] = [
     contact: { roleSlug: 'sponsorgroep' },
     cta: {
       title: 'Interesse?',
-      text: 'Neem contact op en ontdek wat we voor elkaar kunnen betekenen.',
-      buttonLabel: 'Neem contact op',
-      buttonUrl: '/contact?afdeling=sponsorgroep',
+      text: 'Ontdek wat we voor elkaar kunnen betekenen.',
+      buttonLabel: 'Bekijk de mogelijkheden',
+      buttonUrl: '/vereniging/sponsoring',
     },
   },
 ]
