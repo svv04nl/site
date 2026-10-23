@@ -143,6 +143,15 @@ export const Audiences: CollectionConfig = {
       admin: { description: 'Bijv. "Trainingstijden, teamindeling, programma en meer."' },
     },
     {
+      name: 'heroTitle',
+      type: 'text',
+      label: 'Titel in de hero (optioneel)',
+      admin: {
+        description:
+          'Zet woorden tussen *sterretjes* om ze in de clubkleur te tonen, bijv. "Word *sponsor* van SVV\'04". Leeg = "Alles voor <naam> van SVV\'04".',
+      },
+    },
+    {
       name: 'intro',
       type: 'textarea',
       label: 'Introtekst',

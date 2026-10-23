@@ -496,6 +496,10 @@ export interface Audience {
    */
   cardDescription: string;
   /**
+   * Zet woorden tussen *sterretjes* om ze in de clubkleur te tonen, bijv. "Word *sponsor* van SVV'04". Leeg = "Alles voor <naam> van SVV'04".
+   */
+  heroTitle?: string | null;
+  /**
    * Inleidende alinea bovenaan de doelgroeppagina.
    */
   intro?: string | null;
@@ -1108,6 +1112,7 @@ export interface AudiencesSelect<T extends boolean = true> {
   showOnHome?: T;
   cardTitle?: T;
   cardDescription?: T;
+  heroTitle?: T;
   intro?: T;
   body?: T;
   metaTitle?: T;

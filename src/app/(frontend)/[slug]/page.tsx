@@ -81,11 +81,7 @@ export default async function AudiencePage({ params }: Props) {
     questions: (audience.faq ?? []).map((item) => item.question),
   }
   const capitalisedName = audience.name.charAt(0).toUpperCase() + audience.name.slice(1)
-  const crumbs = [
-    { label: 'Home', href: '/' },
-    { label: 'Voor jou' },
-    { label: capitalisedName },
-  ]
+  const crumbs = [{ label: 'Home', href: '/' }, { label: capitalisedName }]
 
   return (
     <main className="audience-page">
