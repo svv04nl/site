@@ -99,7 +99,10 @@ export default function OptionCardsBlockComponent({ cards, variant }: Props) {
   if (resolved.length === 0) return null
 
   return (
-    <ul className={`option-cards${compact ? ' option-cards--compact' : ''}`}>
+    <ul
+      className={`option-cards${compact ? ' option-cards--compact' : ''}`}
+      data-count={resolved.length}
+    >
       {resolved.map((card, i) => {
         const details = (card.details ?? []).filter((d) => d.text)
         return (

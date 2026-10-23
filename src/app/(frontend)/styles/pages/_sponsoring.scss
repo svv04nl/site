@@ -153,12 +153,28 @@ $ad-format-stage-mm: 210;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     margin: 0 0 1rem;
 
-    @media screen and (max-width: 1099px) {
+    // A row of three or two fills the full width instead of leaving an empty column.
+    &[data-count='3'] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &[data-count='2'] {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    @media screen and (max-width: 1099px) {
+      &,
+      &[data-count='3'] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media screen and (max-width: $breakpoint-mobile-lg) {
-      grid-template-columns: 1fr;
+      &,
+      &[data-count='3'],
+      &[data-count='2'] {
+        grid-template-columns: 1fr;
+      }
     }
 
     .option-card {
@@ -216,9 +232,13 @@ $ad-format-stage-mm: 210;
       margin-top: 0.5rem;
     }
 
-    .option-card-details li {
-      background: var(--color-white);
-      border: 0;
+    // The compact variant is only icon, title and one line; the chips stay in the detailed variant.
+    .option-card-details {
+      display: none;
+    }
+
+    + p {
+      margin-top: 1.5rem;
     }
   }
 
