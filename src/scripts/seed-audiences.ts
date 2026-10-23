@@ -37,6 +37,7 @@ type AudienceSeed = {
     answer: string
     links: { label: string; href: string }[]
   }[]
+  assistantIntro: string
   faqHelp: { title: string }
   contact: { roleSlug: string }
   cta: { title: string; text: string; buttonLabel: string; buttonUrl: string }
@@ -156,6 +157,7 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
       },
     ],
+    assistantIntro: 'Over wedstrijden, meedoen, kleding en de club: je krijgt meteen antwoord.',
     faqHelp: { title: 'Neem contact op' },
     contact: { roleSlug: 'voetbaltechnische-zaken' },
     cta: {
@@ -271,6 +273,7 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Vrijwilligerswerk', href: '/vereniging/vrijwilligerswerk' }],
       },
     ],
+    assistantIntro: 'Over wedstrijden, kosten, meedoen en veiligheid: je krijgt meteen antwoord.',
     faqHelp: { title: 'Neem contact op' },
     contact: { roleSlug: 'coordinator-jeugd' },
     cta: {
@@ -386,6 +389,7 @@ const AUDIENCES: AudienceSeed[] = [
         ],
       },
     ],
+    assistantIntro: 'Over je team, materiaal en afspraken: je krijgt meteen antwoord.',
     faqHelp: { title: 'Neem contact op' },
     contact: { roleSlug: 'voetbaltechnische-zaken' },
     cta: {
@@ -497,6 +501,7 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Contact', href: '/contact?afdeling=vrijwilligerscordinator' }],
       },
     ],
+    assistantIntro: 'Over de vrijwilligersverplichting, taken en meedoen: je krijgt meteen antwoord.',
     faqHelp: { title: 'Neem contact op' },
     contact: { roleSlug: 'vrijwilligerscordinator' },
     cta: {
@@ -589,6 +594,7 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Nieuws', href: '/nieuws' }],
       },
     ],
+    assistantIntro: 'Over sponsor worden en de club: je krijgt meteen antwoord.',
     faqHelp: { title: 'Neem contact op' },
     contact: { roleSlug: 'sponsorgroep' },
     cta: {
@@ -636,6 +642,7 @@ async function main() {
         links: t.links,
       })),
       faq: audience.faq,
+      assistantIntro: audience.assistantIntro,
       faqHelp: audience.faqHelp,
       contact: { person },
       cta: { enabled: true, ...audience.cta },

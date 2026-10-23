@@ -590,6 +590,10 @@ export interface Audience {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Zin onder de kop "Stel je vraag", bijv. "Over wedstrijden, kosten en meedoen: je krijgt meteen antwoord." Leeg = de standaardtekst van de homepage.
+   */
+  assistantIntro?: string | null;
   faqHelp?: {
     /**
      * Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.
@@ -1097,6 +1101,7 @@ export interface AudiencesSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  assistantIntro?: T;
   faqHelp?:
     | T
     | {

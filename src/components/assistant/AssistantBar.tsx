@@ -13,7 +13,14 @@ const CHIPS = EXAMPLES.slice(0, 4)
  * `audience` makes the assistant answer from the visitor's perspective (parent, player, ...),
  * also when it is opened from elsewhere on that page, and supplies the example questions.
  */
-export function AssistantBar({ audience }: { audience?: AssistantAudience }) {
+export function AssistantBar({
+  audience,
+  intro,
+}: {
+  audience?: AssistantAudience
+  /** Replaces the default line under the heading, e.g. a line that fits the audience. */
+  intro?: string | null
+}) {
   const { enabled, openAssistant, setAudience } = useAssistant()
   const [input, setInput] = useState('')
 
@@ -43,8 +50,8 @@ export function AssistantBar({ audience }: { audience?: AssistantAudience }) {
           Stel je <span>vraag</span>
         </h2>
         <p className="assistant-bar__intro">
-          Over het programma, de uitslagen, het lidmaatschap of vrijwilligerswerk: je krijgt meteen
-          antwoord.
+          {intro ||
+            'Over het programma, de uitslagen, het lidmaatschap of vrijwilligerswerk: je krijgt meteen antwoord.'}
         </p>
         <form
           className="assistant-bar__form"

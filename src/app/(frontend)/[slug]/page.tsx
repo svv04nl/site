@@ -90,6 +90,7 @@ export default async function AudiencePage({ params }: Props) {
 
       {/* Replaces the old FAQ: visitors ask the assistant (only shown while it is switched on). */}
       <AssistantBar
+        intro={audience.assistantIntro}
         audience={{ slug: audience.slug, questions: (audience.faq ?? []).map((item) => item.question) }}
       />
 

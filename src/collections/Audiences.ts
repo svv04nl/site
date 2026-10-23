@@ -229,6 +229,15 @@ export const Audiences: CollectionConfig = {
       ],
     },
     {
+      name: 'assistantIntro',
+      type: 'textarea',
+      label: 'Tekst onder "Stel je vraag"',
+      admin: {
+        description:
+          'Zin onder de kop "Stel je vraag", bijv. "Over wedstrijden, kosten en meedoen: je krijgt meteen antwoord." Leeg = de standaardtekst van de homepage.',
+      },
+    },
+    {
       name: 'faqHelp',
       type: 'group',
       label: 'Kop boven het aanspreekpunt',
