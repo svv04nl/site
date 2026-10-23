@@ -22,7 +22,7 @@
 .site-footer-nav-grid {
   display: grid;
   gap: 2.5rem;
-  grid-template-columns: 1.6fr repeat(4, 1fr);
+  grid-template-columns: 1.6fr repeat(3, 1fr);
 
   @media screen and (max-width: $breakpoint-tablet-landscape) {
     grid-template-columns: repeat(2, 1fr);

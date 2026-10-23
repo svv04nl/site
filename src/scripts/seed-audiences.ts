@@ -85,7 +85,7 @@ const AUDIENCES: AudienceSeed[] = [
         links: [
           { title: 'Clubkleding', description: 'Wedstrijdtenue, webshop en bedrukken', href: '/vereniging/clubkleding' },
           { title: 'Vrijwilligerswerk', description: 'Taken voor spelende leden', href: '/vereniging/vrijwilligerswerk' },
-          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/commissies/vertrouwenspersoon' },
+          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/vereniging/vertrouwenspersoon' },
           { title: 'Lidmaatschap', description: 'Contributie en opzeggen', href: '/vereniging/lidmaatschap' },
         ],
       },
@@ -154,7 +154,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Bij wie kan ik terecht als er iets niet goed voelt?',
         answer:
           'Bij de vertrouwenspersoon van de club. Alle gesprekken zijn strikt vertrouwelijk.',
-        links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
+        links: [{ label: 'Vertrouwenspersoon', href: '/vereniging/vertrouwenspersoon' }],
       },
     ],
     assistantIntro: 'Over wedstrijden, meedoen, kleding en de club: je krijgt meteen antwoord.',
@@ -205,7 +205,7 @@ const AUDIENCES: AudienceSeed[] = [
         intro: 'Contributie en afspraken binnen de club.',
         links: [
           { title: 'Contributie', description: 'Tarieven en betaling', href: '/vereniging/lidmaatschap' },
-          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/commissies/vertrouwenspersoon' },
+          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/vereniging/vertrouwenspersoon' },
           { title: 'Meehelpen', description: 'Vrijwilligerswerk voor ouders', href: '/vereniging/vrijwilligerswerk' },
         ],
       },
@@ -264,7 +264,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Bij wie kan ik terecht als er iets niet goed voelt?',
         answer:
           'Je kunt contact opnemen met de vertrouwenspersoon van de club. Het gesprek blijft vertrouwelijk.',
-        links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
+        links: [{ label: 'Vertrouwenspersoon', href: '/vereniging/vertrouwenspersoon' }],
       },
       {
         category: 'Meedoen',
@@ -312,17 +312,14 @@ const AUDIENCES: AudienceSeed[] = [
         intro: 'Waar je terecht kunt voor kleding, ballen en begeleiding.',
         links: [
           { title: 'Clubkleding', description: 'Tenues en presentatiekleding', href: '/vereniging/clubkleding' },
-          { title: 'Kleding & materiaal', description: 'Ballen en trainingsmateriaal aanvragen', href: '/commissies/kleding-en-materiaal' },
-          { title: 'Technische Commissie', description: 'Voetbaltechnisch beleid en trainers', href: '/commissies/technische-commissie' },
         ],
       },
       {
         title: 'Afspraken en hulp',
         intro: 'Als je er niet uitkomt of hulp nodig hebt.',
         links: [
-          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/commissies/vertrouwenspersoon' },
+          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/vereniging/vertrouwenspersoon' },
           { title: 'WhatsApp-community', description: 'Teamgroep en oudergroep', href: '/vereniging/whatsapp-community' },
-          { title: 'Scheidsrechterscommissie', description: 'Opleiding en begeleiding van scheidsrechters', href: '/commissies/scheidsrechterscommissie' },
           { title: 'Vrijwilligerswerk', description: 'Taken en functies binnen de club', href: '/vereniging/vrijwilligerswerk' },
         ],
       },
@@ -356,7 +353,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Waar vraag ik ballen en trainingsmateriaal aan?',
         answer:
           'Bij de commissie Kleding & Materiaal. Je bereikt hen via kleding@svv04.nl.',
-        links: [{ label: 'Kleding & materiaal', href: '/commissies/kleding-en-materiaal' }],
+        links: [],
       },
       {
         category: 'Materiaal',
@@ -370,14 +367,14 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Wie stelt trainers aan en begeleidt ze?',
         answer:
           'De Technische Commissie. Zij stelt trainers aan, begeleidt teams en werkt aan de ontwikkeling van spelers. Vragen kun je mailen naar tc@svv04.nl.',
-        links: [{ label: 'Technische Commissie', href: '/commissies/technische-commissie' }],
+        links: [],
       },
       {
         category: 'Afspraken',
         question: 'Wat doe ik bij een probleem in het team, zoals pesten?',
         answer:
           'Neem contact op met de vertrouwenspersoon van de club. Alle gesprekken zijn strikt vertrouwelijk.',
-        links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
+        links: [{ label: 'Vertrouwenspersoon', href: '/vereniging/vertrouwenspersoon' }],
       },
       {
         category: 'Afspraken',
@@ -385,7 +382,6 @@ const AUDIENCES: AudienceSeed[] = [
         answer:
           'De KNVB biedt regelmatig opleidingen aan. Neem contact op met de scheidsrechterscommissie via scheidsrechters@svv04.nl voor meer informatie.',
         links: [
-          { label: 'Scheidsrechterscommissie', href: '/commissies/scheidsrechterscommissie' },
         ],
       },
     ],
@@ -422,21 +418,10 @@ const AUDIENCES: AudienceSeed[] = [
         ],
       },
       {
-        title: 'Commissies',
-        intro: 'Een vaste plek binnen de club.',
-        links: [
-          { title: 'Kantinecommissie', description: 'Kantinediensten en beheer', href: '/commissies/kantinecommissie' },
-          { title: 'Activiteitencommissie', description: 'Feestavond, sinterklaasviering en meer', href: '/commissies/activiteitencommissie' },
-          { title: 'Communicatiecommissie', description: 'Website, social media en clubblad', href: '/commissies/communicatie-commissie' },
-        ],
-      },
-      {
         title: 'Meer weten',
         intro: 'Interesse in een grotere rol of een vraag vooraf?',
         links: [
           { title: 'Bestuur', description: 'Interesse om mee te besturen', href: '/vereniging/bestuur' },
-          { title: 'Technische Commissie', description: 'Trainers en voetbaltechnisch werk', href: '/commissies/technische-commissie' },
-          { title: 'Scheidsrechterscommissie', description: 'Wedstrijden leiden', href: '/commissies/scheidsrechterscommissie' },
           { title: 'Contact', description: 'Vragen aan de vrijwilligerscoördinator', href: '/contact?afdeling=vrijwilligerscordinator' },
         ],
       },
@@ -491,7 +476,6 @@ const AUDIENCES: AudienceSeed[] = [
           'Ja. Er zijn commissies voor onder meer activiteiten, communicatie en de kantine. Je kunt ook scheidsrechter worden.',
         links: [
           { label: 'Taken en functies', href: '/vereniging/vrijwilligerswerk/taken' },
-          { label: 'Scheidsrechterscommissie', href: '/commissies/scheidsrechterscommissie' },
         ],
       },
       {
@@ -581,7 +565,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Welke evenementen organiseert de club?',
         answer:
           'Onder meer het jaarlijkse zomertoernooi, waar tientallen teams uit en buiten de gemeente aan meedoen. Daarnaast zijn er een feestavond en een sinterklaasviering voor de jeugd.',
-        links: [{ label: 'Activiteitencommissie', href: '/commissies/activiteitencommissie' }],
+        links: [],
       },
       {
         category: 'De club',
