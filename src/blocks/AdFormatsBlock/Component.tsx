@@ -20,6 +20,8 @@ function formatMm(value: number) {
 export default function AdFormatsBlockComponent({ heading, description, formats }: Props) {
   const resolved = (formats ?? []).filter((f) => f.label && f.width && f.height)
   if (!heading || resolved.length === 0) return null
+  // The shapes share a baseline: the tallest format sets the height of the stage.
+  const stage = Math.max(...resolved.map((f) => f.height!))
 
   return (
     <figure className="ad-formats">
@@ -27,7 +29,7 @@ export default function AdFormatsBlockComponent({ heading, description, formats 
         <span className="ad-formats-heading">{heading}</span>
         {description && <span className="ad-formats-description">{description}</span>}
       </figcaption>
-      <ul className="ad-formats-list">
+      <ul className="ad-formats-list" style={{ '--stage': stage } as React.CSSProperties}>
         {resolved.map((format, i) => (
           <li className="ad-format" key={i}>
             <span

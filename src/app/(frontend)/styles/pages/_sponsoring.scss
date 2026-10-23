@@ -3,7 +3,6 @@
 
 // Millimetres to pixels for the ad format previews (1 mm = 0.5 px).
 $ad-format-scale: 0.5px;
-$ad-format-stage-mm: 210;
 
 .static-page-body {
   // ── Key facts ──────────────────────────────────────────────
@@ -400,7 +399,7 @@ $ad-format-stage-mm: 210;
     box-sizing: border-box;
     display: block;
     height: calc(var(--h) * #{$ad-format-scale});
-    margin-top: max(0px, calc((#{$ad-format-stage-mm} - var(--h)) * #{$ad-format-scale}));
+    margin-top: calc((var(--stage) - var(--h)) * #{$ad-format-scale});
     min-width: 6px;
     width: calc(var(--w) * #{$ad-format-scale});
   }
