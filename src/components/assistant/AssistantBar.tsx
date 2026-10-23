@@ -1,17 +1,32 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { EXAMPLES } from '@/components/assistant/AssistantChat'
-import { useAssistant } from '@/components/assistant/AssistantProvider'
+import { useAssistant, type AssistantAudience } from '@/components/assistant/AssistantProvider'
 import { SparkleIcon } from '@/components/assistant/icons'
 import { MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 
 const CHIPS = EXAMPLES.slice(0, 4)
 
-/** "Stel je vraag" band on the homepage: a question typed here opens the assistant popup. */
-export function AssistantBar() {
-  const { enabled, openAssistant } = useAssistant()
+/**
+ * "Stel je vraag" band: a question typed here opens the assistant popup. On a "Voor jou" page
+ * `audience` makes the assistant answer from the visitor's perspective (parent, player, ...),
+ * also when it is opened from elsewhere on that page, and supplies the example questions.
+ */
+export function AssistantBar({ audience }: { audience?: AssistantAudience }) {
+  const { enabled, openAssistant, setAudience } = useAssistant()
   const [input, setInput] = useState('')
+
+  const slug = audience?.slug
+  const questionsKey = audience?.questions.join('\n') ?? ''
+  useEffect(() => {
+    if (!slug) return
+    setAudience({ slug, questions: questionsKey ? questionsKey.split('\n') : [] })
+    return () => setAudience(null)
+  }, [slug, questionsKey, setAudience])
+
+  const chips = audience?.questions.length ? audience.questions.slice(0, 4) : CHIPS
+
   if (!enabled) return null
 
   const ask = (text: string) => {
@@ -52,7 +67,7 @@ export function AssistantBar() {
           </button>
         </form>
         <ul className="assistant-bar__chips">
-          {CHIPS.map((chip) => (
+          {chips.map((chip) => (
             <li key={chip}>
               <button type="button" onClick={() => ask(chip)}>
                 {chip}

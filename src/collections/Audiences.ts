@@ -231,15 +231,16 @@ export const Audiences: CollectionConfig = {
     {
       name: 'faqHelp',
       type: 'group',
-      label: 'Kaart "Andere vraag?" (naast de FAQ)',
+      label: 'Kop boven het aanspreekpunt',
       fields: [
-        { name: 'title', type: 'text', label: 'Titel', admin: { description: 'Bijv. "Andere vraag?"' } },
-        { name: 'text', type: 'textarea', label: 'Tekst' },
+        { name: 'title', type: 'text', label: 'Titel', admin: { description: 'Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.' } },
+        { name: 'text', type: 'textarea', label: 'Tekst', admin: { hidden: true } },
         {
           name: 'links',
           type: 'array',
           label: 'Links',
           labels: { singular: 'Link', plural: 'Links' },
+          admin: { hidden: true },
           fields: [
             { name: 'label', type: 'text', label: 'Linktekst', required: true },
             { name: 'href', type: 'text', label: 'Link (URL of pad)', required: true },

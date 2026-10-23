@@ -1,4 +1,6 @@
 import { createAgentUIStreamResponse } from 'ai'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { checkBotId } from 'botid/server'
 import { createAssistantAgent, isAssistantDebug, isAssistantEnabled } from '@/lib/ai/agent'
 import { MAX_MESSAGES, MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
@@ -19,13 +21,29 @@ function textOf(message: IncomingMessage): string {
     .join('')
 }
 
+async function findAudienceName(slug: string): Promise<string | null> {
+  if (!slug || slug.length > 60) return null
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'audiences',
+    where: { slug: { equals: slug } },
+    select: { name: true },
+    limit: 1,
+    depth: 0,
+  })
+  return docs[0]?.name ?? null
+}
+
 export async function POST(request: Request) {
   if (!isAssistantEnabled()) return new Response('Not found', { status: 404 })
 
   const verification = await checkBotId()
   if (verification.isBot) return Response.json({ error: 'Access denied' }, { status: 403 })
 
-  const body = (await request.json().catch(() => null)) as { messages?: IncomingMessage[] } | null
+  const body = (await request.json().catch(() => null)) as {
+    messages?: IncomingMessage[]
+    audience?: unknown
+  } | null
   const messages = body?.messages
   if (!Array.isArray(messages) || messages.length === 0 || messages.length > MAX_MESSAGES) {
     return Response.json({ error: 'Ongeldig verzoek.' }, { status: 400 })
@@ -37,8 +55,12 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Ongeldig verzoek.' }, { status: 400 })
   }
 
+  // The visitor's perspective comes from a "Voor jou" page. Only the slug is accepted; the name that
+  // reaches the prompt is read from the database, so client input never ends up in the instructions.
+  const audience = typeof body?.audience === 'string' ? await findAudienceName(body.audience) : null
+
   return createAgentUIStreamResponse({
-    agent: await createAssistantAgent(),
+    agent: await createAssistantAgent({ audience }),
     uiMessages: messages,
     abortSignal: request.signal,
     messageMetadata: ({ part }): AssistantMetadata | undefined => {

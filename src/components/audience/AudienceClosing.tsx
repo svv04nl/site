@@ -30,7 +30,7 @@ function ContactCard({
   )
 }
 
-// Closing row: the contact person for this audience next to the red CTA banner.
+// Closing row: the contact person (with a heading above) next to the red CTA banner.
 export function AudienceClosing({ audience }: { audience: Audience }) {
   const person =
     typeof audience.contact?.person === 'object' ? (audience.contact.person as Contact) : null
@@ -38,6 +38,7 @@ export function AudienceClosing({ audience }: { audience: Audience }) {
   if (!person && !cta) return null
 
   const photo = person?.photo as Media | null | undefined
+  const heading = audience.faqHelp?.title
 
   return (
     <div className="audience-closing">
@@ -46,19 +47,26 @@ export function AudienceClosing({ audience }: { audience: Audience }) {
           email={person.email}
           className={`audience-contact${person.email ? ' audience-contact--link' : ''}`}
         >
-          {photo?.url ? (
-            <img src={photo.url} alt="" className="audience-contact-photo" />
-          ) : (
-            <span className="audience-contact-photo audience-contact-initials" aria-hidden="true">
-              {initials(person.name)}
-            </span>
-          )}
-          <div>
-            {audience.contact?.label && (
-              <p className="audience-contact-label">{audience.contact.label}</p>
+          {heading && <p className="audience-contact-heading">{heading}</p>}
+          <div className="audience-contact-person">
+            {photo?.url ? (
+              <img src={photo.url} alt="" className="audience-contact-photo" />
+            ) : (
+              <span className="audience-contact-photo audience-contact-initials" aria-hidden="true">
+                {initials(person.name)}
+              </span>
             )}
-            <p className="audience-contact-name">{person.name}</p>
-            {person.email && <p className="audience-contact-mail">Mail naar {person.email}</p>}
+            <div className="audience-contact-info">
+              {audience.contact?.label && (
+                <p className="audience-contact-label">{audience.contact.label}</p>
+              )}
+              <p className="audience-contact-name">{person.name}</p>
+            </div>
+            {person.email && (
+              <span className="audience-contact-arrow" aria-hidden="true">
+                &rarr;
+              </span>
+            )}
           </div>
         </ContactCard>
       )}
