@@ -1995,6 +1995,14 @@
           "primaryKey": true,
           "notNull": true
         },
+        "background": {
+          "name": "background",
+          "type": "enum_audiences_blocks_content_background",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'white'"
+        },
         "content": {
           "name": "content",
           "type": "jsonb",
@@ -4745,6 +4753,15 @@
         "meedoen"
       ]
     },
+    "public.enum_audiences_blocks_content_background": {
+      "name": "enum_audiences_blocks_content_background",
+      "schema": "public",
+      "values": [
+        "white",
+        "light",
+        "dark"
+      ]
+    },
     "public.enum_donations_status": {
       "name": "enum_donations_status",
       "schema": "public",
@@ -4767,6 +4784,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "55ec797e-fd0e-45eb-8cb4-1f6452c5c78c",
+  "id": "b41c7c49-3578-417b-a135-eb076fbced75",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

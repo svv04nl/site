@@ -549,6 +549,10 @@ export interface Audience {
     | (
         | {
             /**
+             * Het blok loopt over de volle breedte; wissel af voor ritme.
+             */
+            background?: ('white' | 'light' | 'dark') | null;
+            /**
              * Vrije tekst met dezelfde blokken als de gewone pagina's (kaarten, pakketten, feiten, ...).
              */
             content?: {
@@ -1122,6 +1126,7 @@ export interface AudiencesSelect<T extends boolean = true> {
         content?:
           | T
           | {
+              background?: T;
               content?: T;
               id?: T;
               blockName?: T;

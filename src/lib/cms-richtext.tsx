@@ -14,6 +14,7 @@ import PackageTiersBlockComponent from '@/blocks/PackageTiersBlock/Component'
 import AdFormatsBlockComponent from '@/blocks/AdFormatsBlock/Component'
 import BoardMembersBlockComponent from '@/blocks/BoardMembersBlock/Component'
 import TeamDirectoryBlockComponent from '@/blocks/TeamDirectoryBlock/Component'
+import SectionHeaderBlockComponent from '@/blocks/SectionHeaderBlock/Component'
 import { defaultJSXConverters } from '@/lib/richtext'
 import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 
@@ -55,7 +56,14 @@ export const cmsJsxConverters: JSXConvertersFunction = (args) => ({
     quoteBlock: ({ node }: { node: any }) => <QuoteBlockComponent text={node.fields.text} />,
     factsBlock: ({ node }: { node: any }) => <FactsBlockComponent items={node.fields.items} />,
     optionCardsBlock: ({ node }: { node: any }) => (
-      <OptionCardsBlockComponent cards={node.fields.cards} />
+      <OptionCardsBlockComponent cards={node.fields.cards} variant={node.fields.variant} />
+    ),
+    sectionHeaderBlock: ({ node }: { node: any }) => (
+      <SectionHeaderBlockComponent
+        eyebrow={node.fields.eyebrow}
+        title={node.fields.title}
+        intro={node.fields.intro}
+      />
     ),
     packageTiersBlock: ({ node }: { node: any }) => (
       <PackageTiersBlockComponent tiers={node.fields.tiers} />

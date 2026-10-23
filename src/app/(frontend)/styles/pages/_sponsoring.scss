@@ -147,6 +147,81 @@ $ad-format-stage-mm: 210;
     }
   }
 
+  // Compact variant: icon, title and one line, four in a row on a wide screen.
+  .option-cards--compact {
+    gap: 1rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0 0 1rem;
+
+    @media screen and (max-width: 1099px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      grid-template-columns: 1fr;
+    }
+
+    .option-card {
+      background: var(--color-light);
+      border: 0;
+      border-radius: 12px;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem 1.5rem 1.6rem;
+      position: relative;
+
+      &:last-child:nth-child(odd) {
+        grid-column: auto;
+      }
+    }
+
+    .option-card-icon {
+      align-items: center;
+      background: var(--color-primary);
+      border-radius: 50%;
+      color: var(--color-white);
+      display: flex;
+      height: 3rem;
+      justify-content: center;
+      margin: 0;
+      width: 3rem;
+    }
+
+    .option-card-head {
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .option-card-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    // Status label (e.g. "Op maat") sits in the corner so the title keeps its width.
+    .option-card-badge {
+      background: var(--color-dark);
+      color: var(--color-white);
+      position: absolute;
+      right: 1.1rem;
+      top: 1.1rem;
+    }
+
+    .option-card-text {
+      color: #555;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      margin-top: 0.5rem;
+    }
+
+    .option-card-details li {
+      background: var(--color-white);
+      border: 0;
+    }
+  }
+
   // ── Package tiers ──────────────────────────────────────────
 
   .package-tiers {
@@ -161,80 +236,93 @@ $ad-format-stage-mm: 210;
   }
 
   .package-tier {
-    --tier-bg: #3d3d3d;
+    --tier-from: #3d3d3d;
+    --tier-to: #1a1a1a;
     --tier-fg: #fff;
+    --tier-chip: rgb(255 255 255 / 16%);
 
     background: var(--color-white);
-    border: 1px solid #e8e8e8;
-    border-radius: 8px;
+    border-radius: 14px;
+    box-shadow: 0 14px 34px rgb(0 0 0 / 8%);
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
   .package-tier--brons {
-    --tier-bg: #9c6b43;
+    --tier-from: #b9834f;
+    --tier-to: #8a5a33;
   }
 
   .package-tier--zilver {
-    --tier-bg: #c4c8cc;
+    --tier-from: #dfe2e6;
+    --tier-to: #b3b8be;
     --tier-fg: var(--color-dark);
+    --tier-chip: rgb(0 0 0 / 12%);
   }
 
   .package-tier--goud {
-    --tier-bg: #e0ab2f;
+    --tier-from: #f3c653;
+    --tier-to: #d79a1a;
     --tier-fg: var(--color-dark);
+    --tier-chip: rgb(0 0 0 / 12%);
   }
 
   .package-tier-head {
-    background: var(--tier-bg);
+    background: linear-gradient(155deg, var(--tier-from), var(--tier-to));
     color: var(--tier-fg);
-    padding: 0.85rem 1.15rem 0.8rem;
+    padding: 1.75rem 1.5rem 1.5rem;
   }
 
   .package-tier-name {
     color: inherit;
     font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.1;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 0.95;
     margin: 0;
+    text-transform: uppercase;
   }
 
   .package-tier-duration {
+    background: var(--tier-chip);
+    border-radius: 999px;
     color: inherit;
-    font-size: 0.82rem;
-    margin: 0.2rem 0 0;
-    opacity: 0.85;
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin: 0.9rem 0 0;
+    padding: 0.3rem 0.8rem;
   }
 
   .package-tier-items {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    gap: 0.45rem;
+    gap: 0.65rem;
     list-style: none;
     margin: 0;
-    padding: 1rem 1.15rem 1.15rem;
+    padding: 1.5rem 1.5rem 1.75rem;
 
     li {
       color: #333;
-      font-size: 0.9rem;
-      line-height: 1.45;
+      font-size: 0.9375rem;
+      line-height: 1.4;
       margin: 0;
-      padding-left: 1.5rem;
+      padding-left: 1.6rem;
       position: relative;
 
-      // Checkmark drawn with borders so it follows the tier colour.
+      // Checkmark drawn with borders.
       &::before {
         border-bottom: 2px solid var(--color-primary);
         border-right: 2px solid var(--color-primary);
         content: '';
-        height: 0.62rem;
-        left: 0.25rem;
+        height: 0.7rem;
+        left: 0.3rem;
         position: absolute;
-        top: 0.3em;
+        top: 0.2em;
         transform: rotate(45deg);
-        width: 0.32rem;
+        width: 0.38rem;
       }
     }
   }

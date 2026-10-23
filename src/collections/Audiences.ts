@@ -14,6 +14,18 @@ const layoutBlocks: Block[] = [
     labels: { singular: 'Contentblok', plural: 'Contentblokken' },
     fields: [
       {
+        name: 'background',
+        type: 'select',
+        label: 'Achtergrond',
+        defaultValue: 'white',
+        options: [
+          { label: 'Wit', value: 'white' },
+          { label: 'Lichtgrijs', value: 'light' },
+          { label: 'Donker', value: 'dark' },
+        ],
+        admin: { description: 'Het blok loopt over de volle breedte; wissel af voor ritme.' },
+      },
+      {
         name: 'content',
         type: 'richText',
         label: 'Inhoud',

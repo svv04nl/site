@@ -100,9 +100,11 @@ export default async function AudiencePage({ params }: Props) {
         switch (block.blockType) {
           case 'content':
             return block.content ? (
-              <div key={block.id} className="audience-section">
-                <div className="audience-body static-page-body">
-                  <RichText data={block.content} converters={cmsJsxConverters} />
+              <div key={block.id} className={`audience-band audience-band--${block.background ?? 'white'}`}>
+                <div className="audience-section">
+                  <div className="audience-body static-page-body">
+                    <RichText data={block.content} converters={cmsJsxConverters} />
+                  </div>
                 </div>
               </div>
             ) : null

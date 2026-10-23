@@ -8,6 +8,16 @@ export const OptionCardsBlock: Block = {
   },
   fields: [
     {
+      name: 'variant',
+      type: 'select',
+      label: 'Weergave',
+      defaultValue: 'detailed',
+      options: [
+        { label: 'Uitgebreid (tekst per kaart)', value: 'detailed' },
+        { label: 'Compact (korte tekst, vier naast elkaar)', value: 'compact' },
+      ],
+    },
+    {
       name: 'cards',
       type: 'array',
       label: 'Kaarten',
@@ -34,6 +44,12 @@ export const OptionCardsBlock: Block = {
         },
         { name: 'title', type: 'text', label: 'Titel', required: true },
         { name: 'description', type: 'textarea', label: 'Omschrijving', required: true },
+        {
+          name: 'summary',
+          type: 'text',
+          label: 'Korte tekst (compacte weergave)',
+          admin: { description: 'Eén regel. Leeg = de omschrijving wordt getoond.' },
+        },
         {
           name: 'details',
           type: 'array',

@@ -2,11 +2,13 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
-   CREATE TABLE "audiences_blocks_content" (
+   CREATE TYPE "public"."enum_audiences_blocks_content_background" AS ENUM('white', 'light', 'dark');
+  CREATE TABLE "audiences_blocks_content" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
+  	"background" "enum_audiences_blocks_content_background" DEFAULT 'white',
   	"content" jsonb,
   	"block_name" varchar
   );
@@ -58,5 +60,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
    DROP TABLE "audiences_blocks_content" CASCADE;
   DROP TABLE "audiences_blocks_themes" CASCADE;
   DROP TABLE "audiences_blocks_contact" CASCADE;
-  DROP TABLE "audiences_blocks_assistant" CASCADE;`)
+  DROP TABLE "audiences_blocks_assistant" CASCADE;
+  DROP TYPE "public"."enum_audiences_blocks_content_background";`)
 }

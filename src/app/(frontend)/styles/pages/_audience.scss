@@ -29,27 +29,206 @@
   }
 }
 
-// Content block: text stays at a readable width, cards and tables use the full column.
-.audience-body {
-  padding: 4.5rem 0 0;
+// ─── Content bands ───────────────────────────────────────────────────
+// A content block runs edge to edge in white, light grey or dark, like the bands on the homepage.
 
+.audience-band {
+  &--white {
+    background: var(--color-white);
+  }
+
+  &--light {
+    background: var(--color-light);
+  }
+
+  &--dark {
+    background: var(--color-dark);
+    color: #d4d4d4;
+  }
+
+  > .audience-section {
+    padding-bottom: 5rem;
+    padding-top: 5rem;
+
+    @media screen and (max-width: $breakpoint-medium) {
+      padding-bottom: 3.5rem;
+      padding-top: 3.5rem;
+    }
+  }
+}
+
+// Text stays at a readable width, cards and tables use the full column.
+.audience-body .payload-richtext {
   > p,
   > ul,
   > ol {
     max-width: 760px;
   }
+}
 
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    padding-top: 3rem;
+.audience-band .audience-body {
+  // Subheadings inside a band: a small label with a red line, like the homepage eyebrows.
+  h3 {
+    align-items: center;
+    color: var(--color-dark);
+    display: flex;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    gap: 0.75rem;
+    letter-spacing: 0.08em;
+    margin: 3rem 0 1.25rem;
+    text-transform: uppercase;
+
+    &::before {
+      background: var(--color-primary);
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      height: 3px;
+      width: 2rem;
+    }
+  }
+
+  // Section header (eyebrow + big title), the same look as "Stel je vraag" and "Laatste nieuws".
+  .section-header-block {
+    margin: 0 0 2.5rem;
+  }
+
+  .section-header-block-eyebrow {
+    align-items: center;
+    color: var(--color-dark);
+    display: flex;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+    gap: 0.75rem;
+    letter-spacing: 0.16em;
+    margin: 0 0 0.75rem;
+    text-transform: uppercase;
+
+    &::before {
+      background: var(--color-primary);
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      height: 3px;
+      width: 2.5rem;
+    }
+  }
+
+  .section-header-block-title {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    font-weight: 800;
+    line-height: 0.92;
+    margin: 0;
+    text-transform: uppercase;
+
+    span {
+      color: var(--color-primary);
+    }
+  }
+
+  .section-header-block-intro {
+    color: #555;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    margin: 1.1rem 0 0;
+    max-width: 640px;
   }
 }
 
-// A content block at the very end of the page needs room above the footer.
-.audience-page > .audience-section:last-child .audience-body {
-  padding-bottom: 4.5rem;
+.audience-band--dark .audience-body {
+  color: #d4d4d4;
+
+  h3,
+  .section-header-block-eyebrow,
+  .section-header-block-title {
+    color: var(--color-white);
+  }
+
+  .section-header-block-title span {
+    color: var(--color-accent);
+  }
+
+  .section-header-block-intro {
+    color: #bbb;
+  }
+
+  // The pitch under the facts: one sentence block, set large.
+  .payload-richtext > p {
+    color: #d4d4d4;
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  .facts-block {
+    border-bottom: 0;
+    border-top: 3px solid var(--color-primary);
+    margin: 0 0 3rem;
+  }
+
+  .facts-block-item {
+    border-color: rgb(255 255 255 / 14%);
+    padding-bottom: 1.75rem;
+    padding-top: 1.5rem;
+  }
+
+  .facts-block-value {
+    color: var(--color-accent);
+    font-size: clamp(3.75rem, 8vw, 6.5rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .facts-block-label {
+    color: #bbb;
+    font-size: 0.9375rem;
+    margin-top: 0.6rem;
+    max-width: 16ch;
+  }
+
+  .quote-block {
+    margin: 3.5rem 0 0;
+    max-width: 820px;
+    text-align: left;
+
+    &::before {
+      color: var(--color-accent);
+    }
+  }
+
+  .quote-block-text {
+    color: var(--color-white);
+    font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .quote-block-highlight {
+    color: var(--color-accent);
+  }
+
+  .quote-block-rule {
+    margin-left: 0;
+  }
+}
+
+// Four packages next to each other on a wide screen.
+.audience-band .audience-body .package-tiers {
+  gap: 1.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 1rem;
+
+  @media screen and (max-width: 1099px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
   @media screen and (max-width: $breakpoint-mobile-lg) {
-    padding-bottom: 3rem;
+    grid-template-columns: 1fr;
   }
 }
 

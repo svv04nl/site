@@ -24,6 +24,7 @@ import { PackageTiersBlock } from './blocks/PackageTiersBlock/config'
 import { AdFormatsBlock } from './blocks/AdFormatsBlock/config'
 import { BoardMembersBlock } from './blocks/BoardMembersBlock/config'
 import { TeamDirectoryBlock } from './blocks/TeamDirectoryBlock/config'
+import { SectionHeaderBlock } from './blocks/SectionHeaderBlock/config'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
@@ -107,6 +108,7 @@ export default buildConfig({
           AdFormatsBlock,
           BoardMembersBlock,
           TeamDirectoryBlock,
+          SectionHeaderBlock,
         ],
       }),
     ],

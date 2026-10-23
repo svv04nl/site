@@ -4,12 +4,15 @@ type Card = {
   icon?: string | null
   title?: string | null
   description?: string | null
+  summary?: string | null
   details?: { text?: string | null }[] | null
   badge?: string | null
 }
 
 type Props = {
   cards?: Card[] | null
+  /** `compact` shows the short text and fits four cards in a row. */
+  variant?: 'detailed' | 'compact' | null
 }
 
 // Lucide-style 24x24 stroke icons, drawn inline so the block has no icon dependency.
@@ -90,12 +93,13 @@ const ICONS: Record<string, React.ReactNode> = {
   ),
 }
 
-export default function OptionCardsBlockComponent({ cards }: Props) {
+export default function OptionCardsBlockComponent({ cards, variant }: Props) {
+  const compact = variant === 'compact'
   const resolved = (cards ?? []).filter((c) => c.title && c.description)
   if (resolved.length === 0) return null
 
   return (
-    <ul className="option-cards">
+    <ul className={`option-cards${compact ? ' option-cards--compact' : ''}`}>
       {resolved.map((card, i) => {
         const details = (card.details ?? []).filter((d) => d.text)
         return (
@@ -119,7 +123,9 @@ export default function OptionCardsBlockComponent({ cards }: Props) {
                 <h4 className="option-card-title">{card.title}</h4>
                 {card.badge && <span className="option-card-badge">{card.badge}</span>}
               </div>
-              <p className="option-card-text">{card.description}</p>
+              <p className="option-card-text">
+                {compact && card.summary ? card.summary : card.description}
+              </p>
               {details.length > 0 && (
                 <ul className="option-card-details">
                   {details.map((d, j) => (
