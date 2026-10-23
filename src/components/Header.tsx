@@ -80,7 +80,6 @@ type Props = {
   youthTeams: Team[]
   actiePages: ActionPage[]
   verenigingPages: NavPage[]
-  commissiesPages: NavPage[]
   audiencePages: AudienceNavItem[]
 }
 
@@ -89,7 +88,6 @@ export default function Header({
   youthTeams,
   actiePages,
   verenigingPages,
-  commissiesPages,
   audiencePages,
 }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -347,22 +345,6 @@ export default function Header({
                       </div>
                     ),
                   },
-                  {
-                    label: 'Commissies',
-                    content: (
-                      <div className="sub-menu-grid">
-                        {chunk(commissiesPages, 4).map((col, i) => (
-                          <ul key={i} className="sub-menu-list">
-                            {col.map((page) => (
-                              <li key={page.id}>
-                                <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
-                              </li>
-                            ))}
-                          </ul>
-                        ))}
-                      </div>
-                    ),
-                  },
                 ] as const
               ).map(({ label, content }) => (
                 <li
@@ -446,14 +428,6 @@ export default function Header({
                 {
                   label: 'Vereniging',
                   items: verenigingPages.map((p) => ({
-                    id: p.id,
-                    title: p.title,
-                    href: `/${p.section}/${p.slug}`,
-                  })),
-                },
-                {
-                  label: 'Commissies',
-                  items: commissiesPages.map((p) => ({
                     id: p.id,
                     title: p.title,
                     href: `/${p.section}/${p.slug}`,

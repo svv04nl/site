@@ -438,7 +438,6 @@ const AUDIENCES: AudienceSeed[] = [
         links: [
           { title: 'Kantinecommissie', description: 'Kantinediensten en beheer', href: '/commissies/kantinecommissie' },
           { title: 'Activiteitencommissie', description: 'Feestavond, sinterklaasviering en meer', href: '/commissies/activiteitencommissie' },
-          { title: 'Toernooicommissie', description: 'Het zomertoernooi en andere toernooien', href: '/commissies/toernooicommissie' },
           { title: 'Communicatiecommissie', description: 'Website, social media en clubblad', href: '/commissies/communicatie-commissie' },
         ],
       },
@@ -500,7 +499,7 @@ const AUDIENCES: AudienceSeed[] = [
         category: 'Meedoen',
         question: 'Kan ik ook iets anders doen dan een kantinedienst?',
         answer:
-          'Ja. Er zijn commissies voor onder meer activiteiten, toernooien, communicatie en de kantine. Je kunt ook scheidsrechter worden.',
+          'Ja. Er zijn commissies voor onder meer activiteiten, communicatie en de kantine. Je kunt ook scheidsrechter worden.',
         links: [
           { label: 'Taken en functies', href: '/vereniging/vrijwilligerswerk/taken' },
           { label: 'Scheidsrechterscommissie', href: '/commissies/scheidsrechterscommissie' },
@@ -543,7 +542,7 @@ const AUDIENCES: AudienceSeed[] = [
         title: 'De club',
         intro: "Waar je aan verbonden raakt.",
         links: [
-          { title: "Over SVV'04", description: 'Opgericht in 1904, thuis op Sportpark De Kampen', href: '/vereniging/algemeen' },
+          { title: "Over SVV'04", description: 'Opgericht in 2004, thuis op Sportpark De Kampen', href: '/vereniging/algemeen' },
           { title: 'Teams', description: 'Senioren en jeugd', href: '/teams' },
           { title: 'Programma & uitslagen', description: 'Wat er elke week gespeeld wordt', href: '/programma' },
           { title: 'Nieuws', description: 'Het laatste clubnieuws', href: '/nieuws' },
@@ -554,7 +553,6 @@ const AUDIENCES: AudienceSeed[] = [
         intro: 'Sponsoren en evenementen.',
         links: [
           { title: 'Onze sponsoren', description: "De bedrijven die SVV'04 steunen", href: '/alle-sponsors' },
-          { title: 'Toernooicommissie', description: 'Het zomertoernooi en andere toernooien', href: '/commissies/toernooicommissie' },
           { title: 'Agenda', description: 'Activiteiten en evenementen', href: '/agenda' },
         ],
       },
@@ -562,7 +560,6 @@ const AUDIENCES: AudienceSeed[] = [
         title: 'Contact',
         intro: 'Direct een gesprek over sponsoring.',
         links: [
-          { title: 'Commerciële commissie', description: 'Sponsorvoorstellen en samenwerkingen', href: '/commissies/commerciele-commissie' },
           { title: 'Contact', description: 'Direct naar de sponsorgroep', href: '/contact?afdeling=sponsorgroep' },
           { title: 'Bestuur', description: 'De mensen achter de club', href: '/vereniging/bestuur' },
         ],
@@ -573,18 +570,15 @@ const AUDIENCES: AudienceSeed[] = [
         category: 'Sponsor worden',
         question: "Hoe word ik sponsor van SVV'04?",
         answer:
-          'Neem contact op met de sponsorgroep of de commerciële commissie via sponsor@svv04.nl. Zij bespreken met je wat bij jouw bedrijf past.',
-        links: [
-          { label: 'Commerciële commissie', href: '/commissies/commerciele-commissie' },
-          { label: 'Contact', href: '/contact?afdeling=sponsorgroep' },
-        ],
+          'Neem contact op met de sponsorgroep. Zij bespreken met je wat bij jouw bedrijf past.',
+        links: [{ label: 'Contact', href: '/contact?afdeling=sponsorgroep' }],
       },
       {
         category: 'Sponsor worden',
         question: 'Waar gaat de sponsorinkomst naartoe?',
         answer:
-          "De commerciële commissie zorgt dat SVV'04 financieel gezond blijft en genoeg middelen heeft voor de accommodatie, materialen en activiteiten.",
-        links: [{ label: 'Commerciële commissie', href: '/commissies/commerciele-commissie' }],
+          "Sponsorinkomsten zorgen dat SVV'04 financieel gezond blijft en genoeg middelen heeft voor de accommodatie, materialen en activiteiten.",
+        links: [{ label: 'Sponsormogelijkheden', href: '/vereniging/sponsoring' }],
       },
       {
         category: 'Sponsor worden',
@@ -594,9 +588,9 @@ const AUDIENCES: AudienceSeed[] = [
       },
       {
         category: 'De club',
-        question: 'Hoe groot is de club?',
+        question: "Wat voor club is SVV'04?",
         answer:
-          "SVV'04 is opgericht in 1904 en heeft ruim 400 leden, verdeeld over senioren- en jeugdteams. De club speelt op Sportpark De Kampen in Schoonebeek.",
+          "SVV'04 is in 2004 opgericht door een fusie van v.v. Minjak en Sc. Oranje en is de enige voetbalvereniging in Schoonebeek. De club speelt op Sportpark De Kampen.",
         links: [{ label: 'Over SVV’04', href: '/vereniging/algemeen' }],
       },
       {
@@ -604,10 +598,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Welke evenementen organiseert de club?',
         answer:
           'Onder meer het jaarlijkse zomertoernooi, waar tientallen teams uit en buiten de gemeente aan meedoen. Daarnaast zijn er een feestavond en een sinterklaasviering voor de jeugd.',
-        links: [
-          { label: 'Toernooicommissie', href: '/commissies/toernooicommissie' },
-          { label: 'Activiteitencommissie', href: '/commissies/activiteitencommissie' },
-        ],
+        links: [{ label: 'Activiteitencommissie', href: '/commissies/activiteitencommissie' }],
       },
       {
         category: 'De club',

@@ -1,0 +1,316 @@
+// ─── Sponsoring blocks (facts, option cards, package tiers, ad formats) ───────
+// Scoped under .static-page-body so they win over its generic ul/h4/p rules.
+
+// Millimetres to pixels for the ad format previews (1 mm = 0.5 px).
+$ad-format-scale: 0.5px;
+$ad-format-stage-mm: 210;
+
+.static-page-body {
+  // ── Key facts ──────────────────────────────────────────────
+
+  .facts-block {
+    border-bottom: 1px solid #e8e8e8;
+    border-top: 3px solid var(--color-primary);
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    margin: 2rem 0;
+  }
+
+  .facts-block-item {
+    border-left: 1px solid #e8e8e8;
+    padding: 1.1rem 1rem 1.1rem 1.25rem;
+
+    &:first-child {
+      border-left: none;
+      padding-left: 0;
+    }
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      &:nth-child(odd) {
+        border-left: none;
+        padding-left: 0;
+      }
+
+      &:nth-child(n + 3) {
+        border-top: 1px solid #e8e8e8;
+      }
+    }
+  }
+
+  .facts-block-value {
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .facts-block-label {
+    color: #555;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin: 0.4rem 0 0;
+  }
+
+  // ── Option cards ───────────────────────────────────────────
+
+  .option-cards {
+    display: grid;
+    gap: 0.875rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+    margin: 1rem 0 2rem;
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .option-card {
+    background: var(--color-white);
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 1.1rem 1.15rem 1.15rem;
+
+    // An odd card at the end takes the full row instead of leaving a gap.
+    &:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .option-card-icon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .option-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .option-card-head {
+    align-items: flex-start;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+  }
+
+  .option-card-title {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 0.3rem;
+  }
+
+  .option-card-badge {
+    background: var(--color-light);
+    border-radius: 4px;
+    color: #555;
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 0.3rem 0.45rem;
+  }
+
+  .option-card-text {
+    color: #444;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .option-card-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin: 0.8rem 0 0;
+
+    li {
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      color: #555;
+      font-size: 0.78rem;
+      line-height: 1;
+      margin: 0;
+      padding: 0.32rem 0.5rem;
+    }
+  }
+
+  // ── Package tiers ──────────────────────────────────────────
+
+  .package-tiers {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 1rem 0 2rem;
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .package-tier {
+    --tier-bg: #3d3d3d;
+    --tier-fg: #fff;
+
+    background: var(--color-white);
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .package-tier--brons {
+    --tier-bg: #9c6b43;
+  }
+
+  .package-tier--zilver {
+    --tier-bg: #c4c8cc;
+    --tier-fg: var(--color-dark);
+  }
+
+  .package-tier--goud {
+    --tier-bg: #e0ab2f;
+    --tier-fg: var(--color-dark);
+  }
+
+  .package-tier-head {
+    background: var(--tier-bg);
+    color: var(--tier-fg);
+    padding: 0.85rem 1.15rem 0.8rem;
+  }
+
+  .package-tier-name {
+    color: inherit;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .package-tier-duration {
+    color: inherit;
+    font-size: 0.82rem;
+    margin: 0.2rem 0 0;
+    opacity: 0.85;
+  }
+
+  .package-tier-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    list-style: none;
+    margin: 0;
+    padding: 1rem 1.15rem 1.15rem;
+
+    li {
+      color: #333;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      margin: 0;
+      padding-left: 1.5rem;
+      position: relative;
+
+      // Checkmark drawn with borders so it follows the tier colour.
+      &::before {
+        border-bottom: 2px solid var(--color-primary);
+        border-right: 2px solid var(--color-primary);
+        content: '';
+        height: 0.62rem;
+        left: 0.25rem;
+        position: absolute;
+        top: 0.3em;
+        transform: rotate(45deg);
+        width: 0.32rem;
+      }
+    }
+  }
+
+  // ── Ad formats ─────────────────────────────────────────────
+
+  .ad-formats {
+    background: #f7f7f7;
+    border-radius: 8px;
+    margin: 1.25rem 0 1.75rem;
+    padding: 1.1rem 1.25rem 1.35rem;
+  }
+
+  .ad-formats-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .ad-formats-heading {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .ad-formats-description {
+    color: #666;
+    font-size: 0.85rem;
+  }
+
+  .ad-formats-list {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 1.5rem;
+    list-style: none;
+    margin: 0;
+  }
+
+  .ad-format {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-width: 4.5rem;
+    text-align: center;
+  }
+
+  // Shapes share a baseline, so the sizes read as one row of cut-outs.
+  .ad-format-shape {
+    background: rgba(204, 0, 0, 0.09);
+    border: 1.5px solid var(--color-primary);
+    box-sizing: border-box;
+    display: block;
+    height: calc(var(--h) * #{$ad-format-scale});
+    margin-top: max(0px, calc((#{$ad-format-stage-mm} - var(--h)) * #{$ad-format-scale}));
+    min-width: 6px;
+    width: calc(var(--w) * #{$ad-format-scale});
+  }
+
+  .ad-format-label {
+    color: var(--color-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  .ad-format-size {
+    color: #666;
+    font-size: 0.78rem;
+  }
+
+  .ad-format-note {
+    color: #888;
+    font-size: 0.75rem;
+  }
+}

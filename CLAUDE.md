@@ -812,6 +812,13 @@ Each block is a `config.ts` (Payload `Block` definition) + `Component.tsx` (rend
 - `addressBlock` — address card with an embedded Google Maps card.
 - `pricingTableBlock`, `taskTableBlock` — tabular data (pricing tiers, volunteer tasks).
 - `qrCodeBlock`, `appStoreButtonsBlock` — small utility blocks for the app pages.
+- `factsBlock` — a row of 2–4 key figures (value + label). Only use real numbers from club sources.
+- `optionCardsBlock` — a grid of icon cards (title, text, optional detail chips and corner badge). Used for the sponsor options; styles in `styles/pages/_sponsoring.scss`.
+- `packageTiersBlock` — tier cards (basis/brons/zilver/goud) with a duration and a checklist. Deliberately has no price field: prices are discussed with the sponsorgroep.
+- `adFormatsBlock` — ad sizes drawn to scale (mm in, 1 mm = 0.5 px) with label and dimensions.
+- `boardMembersBlock` — board member rows (round portrait, name, role, responsibility chips, phone/email). Name, photo, phone and email come from the linked `contacts` doc (fetched in the component, since the portrait is two relationships deep); only the role override and responsibility areas live in the block. Styles in `styles/pages/_board.scss`.
+
+- `teamDirectoryBlock` — "wie is wie" cards per function or commission (title, names, optional linked `contacts` doc or role email). A linked contact supplies phone and email; people without a contact record only get a name (no private phone numbers on the site). Styles in `styles/pages/_board.scss`; the email link rule is shared in `src/lib/contact-links.ts`.
 
 All the centered "card" blocks (`quoteBlock`, `documentDownloadBlock`, `addressBlock`, `contact-person-card`) share one width via `$content-block-width` in `src/app/(frontend)/styles/_variables.scss` — change that one variable rather than each block's own `max-width`.
 

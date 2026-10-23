@@ -44,8 +44,8 @@ const PAGES = [
     slug: 'algemeen',
     title: 'Algemeen',
     content: richText([
-      "SVV'04 Schoonebeek is een amateurvoetbalvereniging uit Schoonebeek, opgericht in 1904. De club heeft een rijke geschiedenis en is een begrip in de regio Emmen.",
-      "Met ruim 400 leden, verdeeld over senioren- en jeugdteams, is SVV'04 een van de grotere voetbalclubs in Drenthe. De club speelt haar thuiswedstrijden op Sportpark De Kampen.",
+      "SVV'04 Schoonebeek is de voetbalvereniging van Schoonebeek, opgericht in 2004. De club is ontstaan uit een fusie van de zaterdagvereniging v.v. Minjak en de zondagvereniging Sc. Oranje. Daarvoor werkten die twee al samen in de jeugdcombinatie Oranje-Minjak, in de bekende rood-wit-blauw gestreepte shirts.",
+      "SVV'04 is de enige voetbalvereniging in het dorp. De club speelt haar thuiswedstrijden op Sportpark De Kampen, een moderne accommodatie die een groot aantal vrijwilligers heeft gerealiseerd.",
       'Wij staan voor goed voetbal, maar ook voor gezelligheid, respect en een veilige sportomgeving voor iedereen.',
     ]),
   },
@@ -157,24 +157,6 @@ const PAGES = [
     content: richText([
       "De kantinecommissie beheert de kantine van SVV'04 en zorgt ervoor dat bezoekers en leden worden voorzien van drank en etenswaren tijdens thuiswedstrijden en trainingsavonden.",
       'De kantine is de sociale spil van de vereniging. De commissie werkt met een rooster van vrijwilligers en regelt de inkoop, het beheer en de schoonmaak. Voor vragen of om je aan te melden als vrijwilliger: kantine@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'toernooicommissie',
-    title: 'Toernooicommissie',
-    content: richText([
-      "De toernooicommissie organiseert jaarlijks het bekende SVV'04-zomertoernooi, een van de grootste voetbalevenementen in de regio. Tientallen teams van binnen en buiten de gemeente nemen hieraan deel.",
-      'Naast het zomertoernooi organiseert de commissie ook indoor toernooien en andere wedstrijdgerelateerde evenementen. Wil je meehelpen? Neem contact op via toernooi@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'commerciele-commissie',
-    title: 'Commerciële commissie',
-    content: richText([
-      "De commerciële commissie is verantwoordelijk voor het werven en onderhouden van sponsorrelaties. Zij zorgen ervoor dat SVV'04 financieel gezond blijft en voldoende middelen heeft voor accommodatie, materialen en activiteiten.",
-      'Voor sponsorvoorstellen en samenwerkingen kun je terecht bij de commerciële commissie via sponsor@svv04.nl.',
     ]),
   },
   {

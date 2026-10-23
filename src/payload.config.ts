@@ -18,6 +18,12 @@ import { TaskTableBlock } from './blocks/TaskTableBlock/config'
 import { QuoteBlock } from './blocks/QuoteBlock/config'
 import { DocumentDownloadBlock } from './blocks/DocumentDownloadBlock/config'
 import { GalleryBlock } from './blocks/GalleryBlock/config'
+import { FactsBlock } from './blocks/FactsBlock/config'
+import { OptionCardsBlock } from './blocks/OptionCardsBlock/config'
+import { PackageTiersBlock } from './blocks/PackageTiersBlock/config'
+import { AdFormatsBlock } from './blocks/AdFormatsBlock/config'
+import { BoardMembersBlock } from './blocks/BoardMembersBlock/config'
+import { TeamDirectoryBlock } from './blocks/TeamDirectoryBlock/config'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
@@ -95,6 +101,12 @@ export default buildConfig({
           QuoteBlock,
           DocumentDownloadBlock,
           GalleryBlock,
+          FactsBlock,
+          OptionCardsBlock,
+          PackageTiersBlock,
+          AdFormatsBlock,
+          BoardMembersBlock,
+          TeamDirectoryBlock,
         ],
       }),
     ],
