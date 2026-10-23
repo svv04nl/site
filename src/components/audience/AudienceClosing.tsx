@@ -39,6 +39,8 @@ export function AudienceClosing({ audience }: { audience: Audience }) {
 
   const photo = person?.photo as Media | null | undefined
   const heading = audience.faqHelp?.title
+  // The person's function (e.g. "Coördinator jeugd"); the audience label only overrides it.
+  const role = audience.contact?.label || person?.roles?.[0]?.title
 
   return (
     <div className="audience-closing">
@@ -57,9 +59,7 @@ export function AudienceClosing({ audience }: { audience: Audience }) {
               </span>
             )}
             <div className="audience-contact-info">
-              {audience.contact?.label && (
-                <p className="audience-contact-label">{audience.contact.label}</p>
-              )}
+              {role && <p className="audience-contact-label">{role}</p>}
               <p className="audience-contact-name">{person.name}</p>
             </div>
             {person.email && (

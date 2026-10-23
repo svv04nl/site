@@ -37,8 +37,8 @@ type AudienceSeed = {
     answer: string
     links: { label: string; href: string }[]
   }[]
-  faqHelp: { title: string; text: string; links: { label: string; href: string }[] }
-  contact: { label: string; roleSlug: string }
+  faqHelp: { title: string }
+  contact: { roleSlug: string }
   cta: { title: string; text: string; buttonLabel: string; buttonUrl: string }
 }
 
@@ -156,12 +156,8 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met voetbalzaken.',
-      links: [{ label: 'Contact', href: '/contact' }],
-    },
-    contact: { label: 'Aanspreekpunt voetbalzaken', roleSlug: 'voetbaltechnische-zaken' },
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'voetbaltechnische-zaken' },
     cta: {
       title: 'Nog geen lid?',
       text: 'Je mag eerst gratis meetrainen.',
@@ -275,12 +271,8 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Vrijwilligerswerk', href: '/vereniging/vrijwilligerswerk' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met de jeugdcoördinator.',
-      links: [{ label: 'Contact', href: '/contact' }],
-    },
-    contact: { label: 'Aanspreekpunt jeugd', roleSlug: 'coordinator-jeugd' },
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'coordinator-jeugd' },
     cta: {
       title: 'Kind aanmelden?',
       text: 'Je kind mag eerst gratis meetrainen.',
@@ -394,15 +386,8 @@ const AUDIENCES: AudienceSeed[] = [
         ],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met voetbalzaken of de Technische Commissie.',
-      links: [
-        { label: 'Contact', href: '/contact' },
-        { label: 'Technische Commissie', href: '/commissies/technische-commissie' },
-      ],
-    },
-    contact: { label: 'Aanspreekpunt voetbalzaken', roleSlug: 'voetbaltechnische-zaken' },
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'voetbaltechnische-zaken' },
     cta: {
       title: 'Wil je meehelpen?',
       text: 'We kunnen altijd extra trainers en leiders gebruiken.',
@@ -512,12 +497,8 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Contact', href: '/contact?afdeling=vrijwilligerscordinator' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met de vrijwilligerscoördinator.',
-      links: [{ label: 'Contact', href: '/contact?afdeling=vrijwilligerscordinator' }],
-    },
-    contact: { label: 'Vrijwilligerscoördinator', roleSlug: 'vrijwilligerscordinator' },
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'vrijwilligerscordinator' },
     cta: {
       title: 'Wil je meehelpen?',
       text: 'Bekijk alle taken en kies wat bij je past.',
@@ -608,12 +589,8 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Nieuws', href: '/nieuws' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met de sponsorgroep.',
-      links: [{ label: 'Contact', href: '/contact?afdeling=sponsorgroep' }],
-    },
-    contact: { label: 'Aanspreekpunt sponsoring', roleSlug: 'sponsorgroep' },
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'sponsorgroep' },
     cta: {
       title: 'Interesse?',
       text: 'Neem contact op en ontdek wat we voor elkaar kunnen betekenen.',
@@ -660,7 +637,7 @@ async function main() {
       })),
       faq: audience.faq,
       faqHelp: audience.faqHelp,
-      contact: { label: audience.contact.label, person },
+      contact: { person },
       cta: { enabled: true, ...audience.cta },
     }
 

@@ -592,7 +592,7 @@ export interface Audience {
     | null;
   faqHelp?: {
     /**
-     * Bijv. "Andere vraag?"
+     * Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.
      */
     title?: string | null;
     text?: string | null;
@@ -606,7 +606,7 @@ export interface Audience {
   };
   contact?: {
     /**
-     * Bijv. "Aanspreekpunt jeugd".
+     * Leeg = de eerste functie van de contactpersoon (bijv. "Coördinator jeugd"). Alleen invullen om die te overschrijven.
      */
     label?: string | null;
     /**

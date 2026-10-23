@@ -256,8 +256,11 @@ export const Audiences: CollectionConfig = {
         {
           name: 'label',
           type: 'text',
-          label: 'Label',
-          admin: { description: 'Bijv. "Aanspreekpunt jeugd".' },
+          label: 'Functie (optioneel)',
+          admin: {
+            description:
+              'Leeg = de eerste functie van de contactpersoon (bijv. "Coördinator jeugd"). Alleen invullen om die te overschrijven.',
+          },
         },
         {
           name: 'person',
