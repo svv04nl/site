@@ -27,7 +27,6 @@ export default async function FooterServer() {
   ])
 
   const verenigingPages = pages.filter((p) => p.section === 'vereniging')
-  const commissiesPages = pages.filter((p) => p.section === 'commissies')
 
   return (
     <footer className="site-footer">
@@ -109,18 +108,6 @@ export default async function FooterServer() {
               {verenigingPages.map((p) => (
                 <li key={p.id}>
                   <Link href={`/vereniging/${p.slug}`}>{p.title}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Commissies */}
-          <div className="site-footer-col">
-            <h3 className="site-footer-col-title">Commissies</h3>
-            <ul className="site-footer-nav">
-              {commissiesPages.map((p) => (
-                <li key={p.id}>
-                  <Link href={`/commissies/${p.slug}`}>{p.title}</Link>
                 </li>
               ))}
             </ul>
