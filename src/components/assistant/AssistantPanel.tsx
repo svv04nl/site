@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react'
 import AssistantChat from '@/components/assistant/AssistantChat'
+import type { AssistantAudience } from '@/components/assistant/AssistantProvider'
 import { SparkleIcon } from '@/components/assistant/icons'
 
 type Props = {
@@ -9,11 +10,13 @@ type Props = {
   onClose: () => void
   /** A question to send as soon as the chat is ready (from the homepage bar or an example). */
   question: string | null
+  /** The "Voor jou" page the visitor is on, if any. */
+  audience: AssistantAudience | null
   onQuestionSent: () => void
 }
 
 /** The assistant as a panel at the bottom right (a full-screen sheet on mobile). */
-export default function AssistantPanel({ open, onClose, question, onQuestionSent }: Props) {
+export default function AssistantPanel({ open, onClose, question, audience, onQuestionSent }: Props) {
   useEffect(() => {
     if (!open) return
     const onKeyDown = (e: KeyboardEvent) => {
@@ -61,6 +64,7 @@ export default function AssistantPanel({ open, onClose, question, onQuestionSent
           variant="panel"
           active={open}
           question={question}
+          audience={audience}
           onQuestionSent={onQuestionSent}
           onNavigate={onClose}
         />

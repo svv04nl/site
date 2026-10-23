@@ -7,7 +7,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
 import { AudienceHero } from '@/components/audience/AudienceHero'
 import { AudienceThemes } from '@/components/audience/AudienceThemes'
-import { AudienceFaq } from '@/components/audience/AudienceFaq'
+import { AssistantBar } from '@/components/assistant/AssistantBar'
 import { AudienceClosing } from '@/components/audience/AudienceClosing'
 import type { Audience } from '@/payload-types'
 
@@ -60,14 +60,6 @@ export default async function AudiencePage({ params }: Props) {
 
   if (!audience) notFound()
   const themes = audience.themes ?? []
-  const faq = (audience.faq ?? []).map((item) => ({
-    id: item.id ?? item.question,
-    category: item.category,
-    question: item.question,
-    answer: item.answer,
-    links: (item.links ?? []).map((l) => ({ id: l.id ?? l.href, label: l.label, href: l.href })),
-  }))
-
   const capitalisedName = audience.name.charAt(0).toUpperCase() + audience.name.slice(1)
   const crumbs = [
     { label: 'Home', href: '/' },
@@ -75,27 +67,10 @@ export default async function AudiencePage({ params }: Props) {
     { label: capitalisedName },
   ]
 
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faq.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: { '@type': 'Answer', text: item.answer },
-    })),
-  }
-
   return (
     <main className="audience-page">
       {/* The breadcrumb is part of the hero, so the global breadcrumb bar stays off. */}
       <BreadcrumbJsonLd items={crumbs.map((c) => ({ name: c.label, href: c.href }))} />
-      {faq.length > 0 && (
-        <script
-          type="application/ld+json"
-          // Escape "<" so editor content can never close the script tag.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }}
-        />
-      )}
 
       <AudienceHero audience={audience} crumbs={crumbs} />
 
@@ -113,22 +88,9 @@ export default async function AudiencePage({ params }: Props) {
         </div>
       )}
 
-      <AudienceFaq
-        name={audience.name}
-        items={faq}
-        help={
-          audience.faqHelp
-            ? {
-                title: audience.faqHelp.title,
-                text: audience.faqHelp.text,
-                links: (audience.faqHelp.links ?? []).map((l) => ({
-                  id: l.id ?? l.href,
-                  label: l.label,
-                  href: l.href,
-                })),
-              }
-            : undefined
-        }
+      {/* Replaces the old FAQ: visitors ask the assistant (only shown while it is switched on). */}
+      <AssistantBar
+        audience={{ slug: audience.slug, questions: (audience.faq ?? []).map((item) => item.question) }}
       />
 
       <div className="audience-section audience-section--padded">

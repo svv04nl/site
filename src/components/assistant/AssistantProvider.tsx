@@ -7,6 +7,9 @@ import { usePathname } from 'next/navigation'
 // The chat (AI SDK, markdown) only loads when a visitor first opens the assistant.
 const AssistantPanel = dynamic(() => import('./AssistantPanel'), { ssr: false })
 
+/** The "Voor jou" page the visitor is on: its slug and the example questions for that group. */
+export type AssistantAudience = { slug: string; questions: string[] }
+
 type AssistantContextValue = {
   /** False when the assistant is switched off; the site search is shown instead. */
   enabled: boolean
@@ -14,6 +17,9 @@ type AssistantContextValue = {
   /** Opens the panel; with a question it is sent straight away. */
   openAssistant: (question?: string) => void
   closeAssistant: () => void
+  /** Set by a "Voor jou" page: sent along so the assistant knows the perspective, and used for the examples. */
+  audience: AssistantAudience | null
+  setAudience: (audience: AssistantAudience | null) => void
 }
 
 const AssistantContext = createContext<AssistantContextValue>({
@@ -21,6 +27,8 @@ const AssistantContext = createContext<AssistantContextValue>({
   open: false,
   openAssistant: () => {},
   closeAssistant: () => {},
+  audience: null,
+  setAudience: () => {},
 })
 
 export const useAssistant = () => useContext(AssistantContext)
@@ -36,6 +44,7 @@ export function AssistantProvider({
   // Once opened the panel stays mounted (hidden), so a running answer and the conversation survive closing.
   const [mounted, setMounted] = useState(false)
   const [question, setQuestion] = useState<string | null>(null)
+  const [audience, setAudience] = useState<AssistantAudience | null>(null)
   const pathname = usePathname()
 
   const openAssistant = useCallback((text?: string) => {
@@ -65,8 +74,8 @@ export function AssistantProvider({
   }, [enabled, openAssistant])
 
   const value = useMemo(
-    () => ({ enabled, open, openAssistant, closeAssistant }),
-    [enabled, open, openAssistant, closeAssistant],
+    () => ({ enabled, open, openAssistant, closeAssistant, audience, setAudience }),
+    [enabled, open, openAssistant, closeAssistant, audience],
   )
 
   return (
@@ -77,6 +86,7 @@ export function AssistantProvider({
           open={open}
           onClose={closeAssistant}
           question={question}
+          audience={audience}
           onQuestionSent={() => setQuestion(null)}
         />
       )}
