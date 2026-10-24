@@ -801,6 +801,13 @@ Project-specific patterns for this club website, on top of the generic Payload r
 - Set `hideFromNav: true` on a page to keep it out of both the sidebar and the topbar dropdowns while still being reachable via a direct link/button from another page (e.g. a detail page meant to be opened from a CTA rather than browsed).
 - **Depth pitfall**: page content queries must not use `depth: 0` if the richText can contain `upload` nodes (images) or internal `link` nodes — those need the related doc populated to render. Omit `depth` (defaults to 2) or set it explicitly ≥1. This was a real bug once (routes rewritten with `depth: 0` for the nesting feature silently broke every image on those pages).
 
+### "Voor jou" (audience) pages
+
+- `audiences` collection, rendered by `src/app/(frontend)/[slug]/page.tsx`. The hero is fixed, with a configurable title (`heroTitle`, `*accent*` words; empty = "Alles voor <naam> van SVV'04") and a breadcrumb of just Home › name; everything below it comes from the `layout` blocks field, in the order the editor picks: `content` (a richText with the same custom blocks as normal pages, rendered with `cmsJsxConverters` from `src/lib/cms-richtext.tsx`; each one is a full-width band with a `background` of white, light or dark, so alternate them for rhythm), `themes` (the link groups from `themes`), `contact` (contact person card + optional CTA bar) and `assistant` (the "Stel je vraag" band). An empty `layout` falls back to the old order: `body`, themes, assistant, contact.
+- The assistant gets the page's perspective through `AssistantAudienceContext`; the example questions come from the page's `faq` questions. The FAQ is no longer shown, it only feeds those examples.
+- The contact card links to `/contact?afdeling=<role slug>` (first role with a topic); the function shown on it is that contact's first role title, `contact.label` only overrides it.
+- The sponsor options live on `/sponsoring` (a content layout), not on `/vereniging/sponsoring` (hidden from navigation and redirected in `next.config.ts`; its child page `advertenties-aanleveren` stays under the old path).
+
 ### Custom richText blocks (`src/blocks/`)
 
 Each block is a `config.ts` (Payload `Block` definition) + `Component.tsx` (renderer), registered in `payload.config.ts`'s `BlocksFeature` and in the JSX converter map in `src/components/CmsPage.tsx`. Current blocks and when to reach for them:
@@ -812,6 +819,14 @@ Each block is a `config.ts` (Payload `Block` definition) + `Component.tsx` (rend
 - `addressBlock` — address card with an embedded Google Maps card.
 - `pricingTableBlock`, `taskTableBlock` — tabular data (pricing tiers, volunteer tasks).
 - `qrCodeBlock`, `appStoreButtonsBlock` — small utility blocks for the app pages.
+- `factsBlock` — a row of 2–4 key figures (value + label). Only use real numbers from club sources.
+- `optionCardsBlock` — a grid of icon cards (title, text, optional detail chips and corner badge). Used for the sponsor options; styles in `styles/pages/_sponsoring.scss`. The `compact` variant shows each card's one-line `summary` and fits four in a row.
+- `sectionHeaderBlock` — eyebrow + big title (+ optional intro), the same look as the homepage section headers. Wrap words in `*asterisks*` for the accent colour. Start a content band on an audience page with it.
+- `packageTiersBlock` — tier cards (basis/brons/zilver/goud) with a duration and a checklist. Deliberately has no price field: prices are discussed with the sponsorgroep. Four tiers sit next to each other on a wide screen inside an audience band.
+- `adFormatsBlock` — ad sizes drawn to scale (mm in, 1 mm = 0.5 px) with label and dimensions.
+- `boardMembersBlock` — board member rows (round portrait, name, role, responsibility chips, phone/email). Name, photo, phone and email come from the linked `contacts` doc (fetched in the component, since the portrait is two relationships deep); only the role override and responsibility areas live in the block. Styles in `styles/pages/_board.scss`.
+
+- `teamDirectoryBlock` — "wie is wie" cards per function or commission (title, names, optional linked `contacts` doc or role email). A linked contact supplies phone and email; people without a contact record only get a name (no private phone numbers on the site). Styles in `styles/pages/_board.scss`; the email link rule is shared in `src/lib/contact-links.ts`.
 
 All the centered "card" blocks (`quoteBlock`, `documentDownloadBlock`, `addressBlock`, `contact-person-card`) share one width via `$content-block-width` in `src/app/(frontend)/styles/_variables.scss` — change that one variable rather than each block's own `max-width`.
 

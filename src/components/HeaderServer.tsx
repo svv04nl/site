@@ -26,34 +26,20 @@ const ACTION_LINKS: ActionPage[] = [
     actionLabel: 'Sponsor worden',
     slug: 'sponsoring',
     section: 'vereniging',
+    // The sponsor options live on the "Voor jou" page for sponsors.
+    href: '/sponsoring',
   },
 ]
 
 export default async function HeaderServer() {
   const payload = await getPayload({ config })
 
-  const [
-    { docs: teams },
-    { docs: verenigingPages },
-    { docs: commissiesPages },
-    { docs: audiences },
-  ] = await Promise.all([
+  const [{ docs: teams }, { docs: verenigingPages }, { docs: audiences }] = await Promise.all([
     payload.find({ collection: 'teams', limit: 100, sort: 'order' }),
     payload.find({
       collection: 'pages',
       where: {
         section: { equals: 'vereniging' },
-        hideFromNav: { not_equals: true },
-        parent: { exists: false },
-      },
-      sort: 'title',
-      limit: 50,
-      select: { title: true, slug: true, section: true },
-    }),
-    payload.find({
-      collection: 'pages',
-      where: {
-        section: { equals: 'commissies' },
         hideFromNav: { not_equals: true },
         parent: { exists: false },
       },
@@ -78,7 +64,6 @@ export default async function HeaderServer() {
       youthTeams={youthTeams}
       actiePages={ACTION_LINKS}
       verenigingPages={verenigingPages}
-      commissiesPages={commissiesPages}
       audiencePages={audiences.map((a) => ({
         id: a.id,
         title: a.name.charAt(0).toUpperCase() + a.name.slice(1),

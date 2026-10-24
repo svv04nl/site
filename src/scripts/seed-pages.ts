@@ -1,5 +1,5 @@
 /**
- * Seed script: creates vereniging + commissies pages in Payload CMS.
+ * Seed script: creates vereniging pages in Payload CMS.
  * Run with: pnpm seed:pages
  */
 
@@ -44,8 +44,8 @@ const PAGES = [
     slug: 'algemeen',
     title: 'Algemeen',
     content: richText([
-      "SVV'04 Schoonebeek is een amateurvoetbalvereniging uit Schoonebeek, opgericht in 1904. De club heeft een rijke geschiedenis en is een begrip in de regio Emmen.",
-      "Met ruim 400 leden, verdeeld over senioren- en jeugdteams, is SVV'04 een van de grotere voetbalclubs in Drenthe. De club speelt haar thuiswedstrijden op Sportpark De Kampen.",
+      "SVV'04 Schoonebeek is de voetbalvereniging van Schoonebeek, opgericht in 2004. De club is ontstaan uit een fusie van de zaterdagvereniging v.v. Minjak en de zondagvereniging Sc. Oranje. Daarvoor werkten die twee al samen in de jeugdcombinatie Oranje-Minjak, in de bekende rood-wit-blauw gestreepte shirts.",
+      "SVV'04 is de enige voetbalvereniging in het dorp. De club speelt haar thuiswedstrijden op Sportpark De Kampen, een moderne accommodatie die een groot aantal vrijwilligers heeft gerealiseerd.",
       'Wij staan voor goed voetbal, maar ook voor gezelligheid, respect en een veilige sportomgeving voor iedereen.',
     ]),
   },
@@ -140,86 +140,13 @@ const PAGES = [
     ]),
   },
 
-  // ── Commissies ───────────────────────────────────────────────────────────────
   {
-    section: 'commissies',
-    slug: 'activiteitencommissie',
-    title: 'Activiteitencommissie',
-    content: richText([
-      "De activiteitencommissie organiseert diverse evenementen voor de leden en de gemeenschap rondom SVV'04. Denk aan het jaarlijkse zomertoernooi, de feestavond, de sinterklaasviering voor de jeugd en andere sociale activiteiten.",
-      'De commissie bestaat uit een enthousiast team van vrijwilligers dat altijd op zoek is naar leuke ideeën en nieuwe leden. Heb je interesse? Stuur een mail naar activiteiten@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'kantinecommissie',
-    title: 'Kantinecommissie',
-    content: richText([
-      "De kantinecommissie beheert de kantine van SVV'04 en zorgt ervoor dat bezoekers en leden worden voorzien van drank en etenswaren tijdens thuiswedstrijden en trainingsavonden.",
-      'De kantine is de sociale spil van de vereniging. De commissie werkt met een rooster van vrijwilligers en regelt de inkoop, het beheer en de schoonmaak. Voor vragen of om je aan te melden als vrijwilliger: kantine@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'toernooicommissie',
-    title: 'Toernooicommissie',
-    content: richText([
-      "De toernooicommissie organiseert jaarlijks het bekende SVV'04-zomertoernooi, een van de grootste voetbalevenementen in de regio. Tientallen teams van binnen en buiten de gemeente nemen hieraan deel.",
-      'Naast het zomertoernooi organiseert de commissie ook indoor toernooien en andere wedstrijdgerelateerde evenementen. Wil je meehelpen? Neem contact op via toernooi@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'commerciele-commissie',
-    title: 'Commerciële commissie',
-    content: richText([
-      "De commerciële commissie is verantwoordelijk voor het werven en onderhouden van sponsorrelaties. Zij zorgen ervoor dat SVV'04 financieel gezond blijft en voldoende middelen heeft voor accommodatie, materialen en activiteiten.",
-      'Voor sponsorvoorstellen en samenwerkingen kun je terecht bij de commerciële commissie via sponsor@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'scheidsrechterscommissie',
-    title: 'Scheidsrechterscommissie',
-    content: richText([
-      "De scheidsrechterscommissie van SVV'04 is verantwoordelijk voor de opleiding, planning en begeleiding van onze clubscheidsrechters. Zij leiden wedstrijden op alle niveaus, van de jongste jeugd tot aan de senioren.",
-      'Heb je interesse in het leiden van wedstrijden? De KNVB biedt regelmatig opleidingen aan. Neem contact op via scheidsrechters@svv04.nl voor meer informatie.',
-    ]),
-  },
-  {
-    section: 'commissies',
+    section: 'vereniging',
     slug: 'vertrouwenspersoon',
     title: 'Vertrouwenspersoon',
     content: richText([
       "SVV'04 vindt een veilige sportomgeving voor iedereen belangrijk. Onze vertrouwenspersoon is het eerste aanspreekpunt bij ongewenst gedrag, pesten, discriminatie of andere problemen binnen de vereniging.",
       'Je kunt in vertrouwen contact opnemen via vertrouwenspersoon@svv04.nl. Alle gesprekken zijn strikt vertrouwelijk. De vertrouwenspersoon is ook bereikbaar via het secretariaat.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'technische-commissie',
-    title: 'Technische Commissie',
-    content: richText([
-      "De Technische Commissie (TC) is verantwoordelijk voor het voetbaltechnische beleid van SVV'04. De TC stelt trainers aan, begeleidt teams en werkt aan de doorontwikkeling van spelers van jeugd tot senioren.",
-      'De commissie vergadert regelmatig met trainers en stafleden en legt verantwoording af aan het bestuur. Voor vragen over technisch beleid of trainersposities: tc@svv04.nl.',
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'communicatie-commissie',
-    title: 'Communicatie commissie',
-    content: richText([
-      "De communicatiecommissie beheert de website, sociale media en het clubblad van SVV'04. Zij zorgen voor actuele en aantrekkelijke communicatie richting leden, supporters en de bredere gemeenschap.",
-      "Heb je nieuws, een wedstrijdverslag of foto's voor ons? Stuur ze naar communicatie@svv04.nl. We zijn ook op zoek naar vrijwilligers die willen helpen met teksten, foto's of social media.",
-    ]),
-  },
-  {
-    section: 'commissies',
-    slug: 'kleding-en-materiaal',
-    title: 'Kleding & materiaal',
-    content: richText([
-      "De commissie Kleding & Materiaal beheert de clubkleding, ballen, trainingsmateriaal en andere benodigdheden voor alle teams van SVV'04.",
-      'Bij vragen over het bestellen van clubkleding, het uitwisselen van tenues of het aanvragen van materialen kun je terecht bij deze commissie via kleding@svv04.nl.',
     ]),
   },
 ]
@@ -248,7 +175,7 @@ async function main() {
       collection: 'pages',
       data: {
         title: page.title,
-        section: page.section as 'vereniging' | 'commissies',
+        section: page.section as 'vereniging',
         slug: page.slug,
         content: page.content,
       },

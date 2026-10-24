@@ -4,6 +4,13 @@ import type { Audience, Media } from '@/payload-types'
 
 type Crumb = { label: string; href?: string }
 
+// *Asterisks* mark the words that get the accent colour, like in the section headers.
+function renderTitle(title: string) {
+  return title.split(/\*(.+?)\*/g).map((part, i) =>
+    i % 2 === 1 ? <em key={i}>{part}</em> : <React.Fragment key={i}>{part}</React.Fragment>,
+  )
+}
+
 // Grass background for audiences that have no hero image of their own.
 const DEFAULT_BACKDROP = '/images/hero-gras.webp'
 
@@ -51,8 +58,14 @@ export function AudienceHero({ audience, crumbs }: { audience: Audience; crumbs:
             })}
           </nav>
           <h1 className="site-hero-title">
-            Alles voor <em>{audience.name}</em>
-            {' van SVV’04'}
+            {audience.heroTitle ? (
+              renderTitle(audience.heroTitle)
+            ) : (
+              <>
+                Alles voor <em>{audience.name}</em>
+                {' van SVV’04'}
+              </>
+            )}
           </h1>
           {audience.intro && <p className="site-hero-tagline">{audience.intro}</p>}
           {actions.length > 0 && (

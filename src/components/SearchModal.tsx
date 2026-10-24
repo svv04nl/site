@@ -80,7 +80,7 @@ function buildQuickLinkGroups(actiePages: ActionPage[]): SearchGroup[] {
         ...actiePages.map((page) => ({
           label: page.actionLabel || page.title,
           sub: MEEDOEN_SUBTEXT[page.slug] ?? "Meedoen bij SVV'04",
-          href: `/${page.section}/${page.slug}`,
+          href: page.href ?? `/${page.section}/${page.slug}`,
         })),
       ],
     },

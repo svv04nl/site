@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { useChat } from '@ai-sdk/react'
@@ -8,6 +8,7 @@ import { DefaultChatTransport, type UIMessage } from 'ai'
 import MatchCard from '@/components/ui/MatchCard'
 import { ContactPerson } from '@/components/ui/ContactPerson'
 import StandingsCard from '@/components/assistant/StandingsCard'
+import type { AssistantAudience } from '@/components/assistant/AssistantProvider'
 import type { ToolUi } from '@/lib/ai/card-types'
 import { MAX_MESSAGES, MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 import type { AssistantMetadata } from '@/lib/ai/types'
@@ -53,14 +54,16 @@ const TOOL_LABELS: Record<string, string> = {
 
 // The SDK only passes the response text on, so a 429 (rate limit) is turned into a marker error here.
 const RATE_LIMITED = 'rate-limited'
-const transport = new DefaultChatTransport({
-  api: '/api/chat',
-  fetch: async (input, init) => {
-    const response = await fetch(input, init)
-    if (response.status === 429) throw new Error(RATE_LIMITED)
-    return response
-  },
-})
+const createTransport = (getAudience: () => string | null | undefined) =>
+  new DefaultChatTransport({
+    api: '/api/chat',
+    body: () => ({ audience: getAudience() ?? undefined }),
+    fetch: async (input, init) => {
+      const response = await fetch(input, init)
+      if (response.status === 429) throw new Error(RATE_LIMITED)
+      return response
+    },
+  })
 
 type ChatMessage = UIMessage<AssistantMetadata>
 type ToolPart = { type: string; state: string; input?: unknown; output?: unknown }
@@ -177,6 +180,8 @@ type ChatProps = {
   active?: boolean
   /** Panel only: a question to send as soon as the chat is ready. */
   question?: string | null
+  /** The "Voor jou" page the visitor is on: its slug becomes the visitor's perspective, its questions the examples. */
+  audience?: AssistantAudience | null
   onQuestionSent?: () => void
   /** Panel only: called when a link inside the chat is followed, so the popup can close. */
   onNavigate?: () => void
@@ -186,11 +191,16 @@ export default function AssistantChat({
   variant = 'page',
   active = true,
   question = null,
+  audience = null,
   onQuestionSent,
   onNavigate,
 }: ChatProps) {
   const isPanel = variant === 'panel'
   const [input, setInput] = useState('')
+  const audienceRef = useRef(audience)
+  audienceRef.current = audience
+  const transport = useMemo(() => createTransport(() => audienceRef.current?.slug), [])
+  const examples = audience?.questions.length ? audience.questions.slice(0, 6) : EXAMPLES
   const { messages, sendMessage, setMessages, status, error, stop, clearError } =
     useChat<ChatMessage>({
       transport,
@@ -287,7 +297,7 @@ export default function AssistantChat({
         <div className="assistant-examples">
           <p className="assistant-examples__label">Probeer bijvoorbeeld:</p>
           <ul>
-            {EXAMPLES.map((example) => (
+            {examples.map((example) => (
               <li key={example}>
                 <button type="button" onClick={() => submit(example)}>
                   {example}

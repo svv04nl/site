@@ -496,11 +496,15 @@ export interface Audience {
    */
   cardDescription: string;
   /**
+   * Zet woorden tussen *sterretjes* om ze in de clubkleur te tonen, bijv. "Word *sponsor* van SVV'04". Leeg = "Alles voor <naam> van SVV'04".
+   */
+  heroTitle?: string | null;
+  /**
    * Inleidende alinea bovenaan de doelgroeppagina.
    */
   intro?: string | null;
   /**
-   * Uitgebreide, unieke tekst voor deze doelgroep. Belangrijk voor SEO: hoe meer relevante, unieke inhoud, hoe beter deze pagina vindbaar is in Google.
+   * Alleen zichtbaar in de standaardindeling, als de indeling hierboven leeg is. Gebruik anders een Contentblok in de indeling.
    */
   body?: {
     root: {
@@ -543,7 +547,56 @@ export interface Audience {
       }[]
     | null;
   /**
-   * Gegroepeerde links onder de hero, bij voorkeur drie.
+   * Kies welke onderdelen onder de hero komen en in welke volgorde. Sleep om te verplaatsen. Leeg = standaardindeling: paginatekst, linkblokken, "Stel je vraag", contact en actie.
+   */
+  layout?:
+    | (
+        | {
+            /**
+             * Het blok loopt over de volle breedte; wissel af voor ritme.
+             */
+            background?: ('white' | 'light' | 'dark') | null;
+            /**
+             * Vrije tekst met dezelfde blokken als de gewone pagina's (kaarten, pakketten, feiten, ...).
+             */
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'themes';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contact';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'assistant';
+          }
+      )[]
+    | null;
+  /**
+   * Gegroepeerde links, bij voorkeur drie. Ze verschijnen waar het onderdeel "Linkblokken" in de indeling staat.
    */
   themes?:
     | {
@@ -590,9 +643,13 @@ export interface Audience {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Zin onder de kop "Stel je vraag", bijv. "Over wedstrijden, kosten en meedoen: je krijgt meteen antwoord." Leeg = de standaardtekst van de homepage.
+   */
+  assistantIntro?: string | null;
   faqHelp?: {
     /**
-     * Bijv. "Andere vraag?"
+     * Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.
      */
     title?: string | null;
     text?: string | null;
@@ -606,7 +663,7 @@ export interface Audience {
   };
   contact?: {
     /**
-     * Bijv. "Aanspreekpunt jeugd".
+     * Leeg = de eerste functie van de contactpersoon (bijv. "Coördinator jeugd"). Alleen invullen om die te overschrijven.
      */
     label?: string | null;
     /**
@@ -1055,6 +1112,7 @@ export interface AudiencesSelect<T extends boolean = true> {
   showOnHome?: T;
   cardTitle?: T;
   cardDescription?: T;
+  heroTitle?: T;
   intro?: T;
   body?: T;
   metaTitle?: T;
@@ -1066,6 +1124,36 @@ export interface AudiencesSelect<T extends boolean = true> {
         label?: T;
         href?: T;
         id?: T;
+      };
+  layout?:
+    | T
+    | {
+        content?:
+          | T
+          | {
+              background?: T;
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        themes?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
+        contact?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
+        assistant?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
       };
   themes?:
     | T
@@ -1097,6 +1185,7 @@ export interface AudiencesSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  assistantIntro?: T;
   faqHelp?:
     | T
     | {

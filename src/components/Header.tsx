@@ -60,6 +60,8 @@ export type ActionPage = {
   actionLabel?: string | null
   slug: string
   section: string
+  /** Overrides the default /section/slug, e.g. for an action that lives on a "Voor jou" page. */
+  href?: string
 }
 
 export type NavPage = {
@@ -80,7 +82,6 @@ type Props = {
   youthTeams: Team[]
   actiePages: ActionPage[]
   verenigingPages: NavPage[]
-  commissiesPages: NavPage[]
   audiencePages: AudienceNavItem[]
 }
 
@@ -89,7 +90,6 @@ export default function Header({
   youthTeams,
   actiePages,
   verenigingPages,
-  commissiesPages,
   audiencePages,
 }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -151,7 +151,7 @@ export default function Header({
                 <ul className="site-header-topbar-list">
                   {actiePages.map((page) => (
                     <li key={page.id}>
-                      <Link href={`/${page.section}/${page.slug}`}>
+                      <Link href={page.href ?? `/${page.section}/${page.slug}`}>
                         {page.actionLabel || page.title}
                       </Link>
                     </li>
@@ -347,22 +347,6 @@ export default function Header({
                       </div>
                     ),
                   },
-                  {
-                    label: 'Commissies',
-                    content: (
-                      <div className="sub-menu-grid">
-                        {chunk(commissiesPages, 4).map((col, i) => (
-                          <ul key={i} className="sub-menu-list">
-                            {col.map((page) => (
-                              <li key={page.id}>
-                                <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
-                              </li>
-                            ))}
-                          </ul>
-                        ))}
-                      </div>
-                    ),
-                  },
                 ] as const
               ).map(({ label, content }) => (
                 <li
@@ -451,14 +435,6 @@ export default function Header({
                     href: `/${p.section}/${p.slug}`,
                   })),
                 },
-                {
-                  label: 'Commissies',
-                  items: commissiesPages.map((p) => ({
-                    id: p.id,
-                    title: p.title,
-                    href: `/${p.section}/${p.slug}`,
-                  })),
-                },
               ] as const
             ).map(({ label, items }) => (
               <li
@@ -490,7 +466,7 @@ export default function Header({
                 <li className="mobile-nav-divider" />
                 {actiePages.map((page) => (
                   <li key={page.id}>
-                    <Link href={`/${page.section}/${page.slug}`}>{page.title}</Link>
+                    <Link href={page.href ?? `/${page.section}/${page.slug}`}>{page.title}</Link>
                   </li>
                 ))}
               </>

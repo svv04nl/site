@@ -12,6 +12,8 @@ export default async function FooterServer() {
   const [{ docs: pages }, { docs: audiences }] = await Promise.all([
     payload.find({
       collection: 'pages',
+      // Pages hidden from the menus (detail pages, pages that moved) stay out of the footer too.
+      where: { hideFromNav: { not_equals: true } },
       limit: 100,
       sort: 'title',
       select: { title: true, section: true, slug: true },
@@ -25,7 +27,6 @@ export default async function FooterServer() {
   ])
 
   const verenigingPages = pages.filter((p) => p.section === 'vereniging')
-  const commissiesPages = pages.filter((p) => p.section === 'commissies')
 
   return (
     <footer className="site-footer">
@@ -107,18 +108,6 @@ export default async function FooterServer() {
               {verenigingPages.map((p) => (
                 <li key={p.id}>
                   <Link href={`/vereniging/${p.slug}`}>{p.title}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Commissies */}
-          <div className="site-footer-col">
-            <h3 className="site-footer-col-title">Commissies</h3>
-            <ul className="site-footer-nav">
-              {commissiesPages.map((p) => (
-                <li key={p.id}>
-                  <Link href={`/commissies/${p.slug}`}>{p.title}</Link>
                 </li>
               ))}
             </ul>

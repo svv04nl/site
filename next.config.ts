@@ -57,6 +57,14 @@ const nextConfig: NextConfig = {
     return [
       { source: '/senioren', destination: '/teams', permanent: true },
       { source: '/jeugd', destination: '/teams', permanent: true },
+      // The sponsor options moved to the "Voor jou" page for sponsors.
+      { source: '/vereniging/sponsoring', destination: '/sponsoring', permanent: true },
+      // The committee pages are gone; the trust person now lives under Vereniging.
+      {
+        source: '/commissies/vertrouwenspersoon',
+        destination: '/vereniging/vertrouwenspersoon',
+        permanent: true,
+      },
     ]
   },
   async headers() {

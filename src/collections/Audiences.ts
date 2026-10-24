@@ -1,6 +1,60 @@
-import type { CollectionConfig } from 'payload'
+import type { Block, CollectionConfig } from 'payload'
 
 const isAdmin = ({ req: { user } }: { req: { user: any } }) => user?.role === 'admin'
+
+/**
+ * Sections of an audience page below the hero, in the order the editor picks.
+ * The blocks without fields only place content that is edited elsewhere on the
+ * audience: the link groups ("Themablokken"), the contact person with the action
+ * bar ("Aanspreekpunt" and "CTA-balk") and the assistant band.
+ */
+const layoutBlocks: Block[] = [
+  {
+    slug: 'content',
+    labels: { singular: 'Contentblok', plural: 'Contentblokken' },
+    fields: [
+      {
+        name: 'background',
+        type: 'select',
+        label: 'Achtergrond',
+        defaultValue: 'white',
+        options: [
+          { label: 'Wit', value: 'white' },
+          { label: 'Lichtgrijs', value: 'light' },
+          { label: 'Donker', value: 'dark' },
+        ],
+        admin: { description: 'Het blok loopt over de volle breedte; wissel af voor ritme.' },
+      },
+      {
+        name: 'content',
+        type: 'richText',
+        label: 'Inhoud',
+        admin: {
+          description:
+            "Vrije tekst met dezelfde blokken als de gewone pagina's (kaarten, pakketten, feiten, ...).",
+        },
+      },
+    ],
+  },
+  {
+    slug: 'themes',
+    labels: { singular: 'Linkblokken (thema\'s)', plural: 'Linkblokken (thema\'s)' },
+    admin: { disableBlockName: true },
+    fields: [],
+  },
+  {
+    slug: 'contact',
+    labels: { singular: 'Contact en actie', plural: 'Contact en actie' },
+    admin: { disableBlockName: true },
+    fields: [],
+  },
+  {
+    slug: 'assistant',
+    labels: { singular: 'Stel je vraag (AI)', plural: 'Stel je vraag (AI)' },
+    admin: { disableBlockName: true },
+    fields: [],
+  },
+]
 
 /**
  * Audience landing pages ("Voor jou"): one per target group (player, parent,
@@ -89,6 +143,15 @@ export const Audiences: CollectionConfig = {
       admin: { description: 'Bijv. "Trainingstijden, teamindeling, programma en meer."' },
     },
     {
+      name: 'heroTitle',
+      type: 'text',
+      label: 'Titel in de hero (optioneel)',
+      admin: {
+        description:
+          'Zet woorden tussen *sterretjes* om ze in de clubkleur te tonen, bijv. "Word *sponsor* van SVV\'04". Leeg = "Alles voor <naam> van SVV\'04".',
+      },
+    },
+    {
       name: 'intro',
       type: 'textarea',
       label: 'Introtekst',
@@ -97,10 +160,10 @@ export const Audiences: CollectionConfig = {
     {
       name: 'body',
       type: 'richText',
-      label: 'Paginatekst',
+      label: 'Paginatekst (standaardindeling)',
       admin: {
         description:
-          'Uitgebreide, unieke tekst voor deze doelgroep. Belangrijk voor SEO: hoe meer relevante, unieke inhoud, hoe beter deze pagina vindbaar is in Google.',
+          'Alleen zichtbaar in de standaardindeling, als de indeling hierboven leeg is. Gebruik anders een Contentblok in de indeling.',
       },
     },
     {
@@ -152,13 +215,24 @@ export const Audiences: CollectionConfig = {
       ],
     },
     {
+      name: 'layout',
+      type: 'blocks',
+      label: 'Indeling onder de hero',
+      labels: { singular: 'Onderdeel', plural: 'Onderdelen' },
+      blocks: layoutBlocks,
+      admin: {
+        description:
+          'Kies welke onderdelen onder de hero komen en in welke volgorde. Sleep om te verplaatsen. Leeg = standaardindeling: paginatekst, linkblokken, "Stel je vraag", contact en actie.',
+      },
+    },
+    {
       name: 'themes',
       type: 'array',
       label: 'Themablokken',
       labels: { singular: 'Thema', plural: "Thema's" },
       admin: {
         description:
-          'Gegroepeerde links onder de hero, bij voorkeur drie.',
+          'Gegroepeerde links, bij voorkeur drie. Ze verschijnen waar het onderdeel "Linkblokken" in de indeling staat.',
       },
       fields: [
         { name: 'title', type: 'text', label: 'Titel', required: true },
@@ -229,17 +303,27 @@ export const Audiences: CollectionConfig = {
       ],
     },
     {
+      name: 'assistantIntro',
+      type: 'textarea',
+      label: 'Tekst onder "Stel je vraag"',
+      admin: {
+        description:
+          'Zin onder de kop "Stel je vraag", bijv. "Over wedstrijden, kosten en meedoen: je krijgt meteen antwoord." Leeg = de standaardtekst van de homepage.',
+      },
+    },
+    {
       name: 'faqHelp',
       type: 'group',
-      label: 'Kaart "Andere vraag?" (naast de FAQ)',
+      label: 'Kop boven het aanspreekpunt',
       fields: [
-        { name: 'title', type: 'text', label: 'Titel', admin: { description: 'Bijv. "Andere vraag?"' } },
-        { name: 'text', type: 'textarea', label: 'Tekst' },
+        { name: 'title', type: 'text', label: 'Titel', admin: { description: 'Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.' } },
+        { name: 'text', type: 'textarea', label: 'Tekst', admin: { hidden: true } },
         {
           name: 'links',
           type: 'array',
           label: 'Links',
           labels: { singular: 'Link', plural: 'Links' },
+          admin: { hidden: true },
           fields: [
             { name: 'label', type: 'text', label: 'Linktekst', required: true },
             { name: 'href', type: 'text', label: 'Link (URL of pad)', required: true },
@@ -255,8 +339,11 @@ export const Audiences: CollectionConfig = {
         {
           name: 'label',
           type: 'text',
-          label: 'Label',
-          admin: { description: 'Bijv. "Aanspreekpunt jeugd".' },
+          label: 'Functie (optioneel)',
+          admin: {
+            description:
+              'Leeg = de eerste functie van de contactpersoon (bijv. "Coördinator jeugd"). Alleen invullen om die te overschrijven.',
+          },
         },
         {
           name: 'person',

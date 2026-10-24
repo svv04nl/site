@@ -29,9 +29,233 @@
   }
 }
 
-.audience-body {
-  max-width: 760px;
-  padding: 4.5rem 0 0;
+// ─── Content bands ───────────────────────────────────────────────────
+// A content block runs edge to edge in white, light grey or dark, like the bands on the homepage.
+
+.audience-band {
+  &--white {
+    background: var(--color-white);
+  }
+
+  &--light {
+    background: var(--color-light);
+  }
+
+  &--dark {
+    background: var(--color-dark);
+    color: #d4d4d4;
+  }
+
+  > .audience-section {
+    padding-bottom: 5rem;
+    padding-top: 5rem;
+
+    @media screen and (max-width: $breakpoint-medium) {
+      padding-bottom: 3.5rem;
+      padding-top: 3.5rem;
+    }
+  }
+}
+
+// Text stays at a readable width, cards and tables use the full column.
+.audience-body .payload-richtext {
+  > p,
+  > ul:not([class]),
+  > ol {
+    max-width: 760px;
+  }
+}
+
+.audience-band .audience-body {
+  // Subheadings inside a band: a small label with a red line, like the homepage eyebrows.
+  h3 {
+    align-items: center;
+    color: var(--color-dark);
+    display: flex;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    gap: 0.75rem;
+    letter-spacing: 0.08em;
+    margin: 3rem 0 1.25rem;
+    text-transform: uppercase;
+
+    &::before {
+      background: var(--color-primary);
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      height: 3px;
+      width: 2rem;
+    }
+  }
+
+  // Section header (eyebrow + big title), the same look as "Stel je vraag" and "Laatste nieuws".
+  .section-header-block {
+    margin: 0 0 2.5rem;
+  }
+
+  .section-header-block-eyebrow {
+    align-items: center;
+    color: var(--color-dark);
+    display: flex;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+    gap: 0.75rem;
+    letter-spacing: 0.16em;
+    margin: 0 0 0.75rem;
+    text-transform: uppercase;
+
+    &::before {
+      background: var(--color-primary);
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      height: 3px;
+      width: 2.5rem;
+    }
+  }
+
+  .section-header-block-title {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    font-weight: 800;
+    line-height: 0.92;
+    margin: 0;
+    text-transform: uppercase;
+
+    span {
+      color: var(--color-primary);
+    }
+  }
+
+  .section-header-block-intro {
+    color: #555;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    margin: 1.1rem 0 0;
+    max-width: 640px;
+  }
+}
+
+.audience-band--dark .audience-body {
+  color: #d4d4d4;
+
+  h3,
+  .section-header-block-eyebrow,
+  .section-header-block-title {
+    color: var(--color-white);
+  }
+
+  .section-header-block-title span {
+    color: var(--color-accent);
+  }
+
+  .section-header-block-intro {
+    color: #bbb;
+  }
+
+  // A dark band is a statement: header, text and quote share one centre line.
+  .section-header-block {
+    text-align: center;
+  }
+
+  .section-header-block-eyebrow {
+    justify-content: center;
+
+    &::after {
+      background: var(--color-primary);
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      height: 3px;
+      width: 2.5rem;
+    }
+  }
+
+  .section-header-block-intro {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .payload-richtext > p {
+    color: #d4d4d4;
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    line-height: 1.5;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 760px;
+    text-align: center;
+  }
+
+  .facts-block {
+    border-bottom: 0;
+    border-top: 3px solid var(--color-primary);
+    margin: 0 0 3rem;
+  }
+
+  .facts-block-item {
+    border-color: rgb(255 255 255 / 14%);
+    padding-bottom: 1.75rem;
+    padding-top: 1.5rem;
+  }
+
+  .facts-block-value {
+    color: var(--color-accent);
+    font-size: clamp(3.75rem, 8vw, 6.5rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .facts-block-label {
+    color: #bbb;
+    font-size: 0.9375rem;
+    margin-top: 0.6rem;
+    max-width: 16ch;
+  }
+
+  .quote-block {
+    margin: 4rem auto 0;
+    max-width: 820px;
+    text-align: center;
+
+    &::before {
+      color: var(--color-accent);
+    }
+  }
+
+  .quote-block-text {
+    color: var(--color-white);
+    font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .quote-block-highlight {
+    color: var(--color-accent);
+  }
+
+  .quote-block-rule {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// Four packages next to each other on a wide screen.
+.audience-band .audience-body .package-tiers {
+  gap: 1.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 1rem;
+
+  @media screen and (max-width: 1099px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    grid-template-columns: 1fr;
+  }
 }
 
 // ─── Themed link groups ──────────────────────────────────────────────
@@ -125,297 +349,6 @@
   transition: transform 0.2s ease;
 }
 
-// ─── FAQ ─────────────────────────────────────────────────────────────
-
-.audience-faq {
-  background: var(--color-light);
-}
-
-.audience-faq-inner {
-  align-items: start;
-  display: grid;
-  gap: 3.5rem;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  margin: 0 auto;
-  max-width: var(--grid-base);
-  padding: 5.5rem var(--container-padding);
-
-  @media screen and (max-width: $breakpoint-medium) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    gap: 2.5rem;
-    padding-bottom: 3.5rem;
-    padding-top: 3.5rem;
-  }
-}
-
-.audience-faq-intro {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.audience-faq-eyebrow {
-  align-items: center;
-  color: var(--color-dark);
-  display: flex;
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
-  gap: 0.75rem;
-  letter-spacing: 0.16em;
-  margin: 0;
-  text-transform: uppercase;
-
-  &::before {
-    background: var(--color-primary);
-    content: '';
-    display: block;
-    height: 3px;
-    width: 2.5rem;
-  }
-}
-
-.audience-faq-title {
-  font-family: var(--font-heading);
-  font-size: 3.25rem;
-  font-weight: 800;
-  line-height: 0.95;
-  margin: 0;
-  text-transform: uppercase;
-
-  span {
-    color: var(--color-primary);
-  }
-
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    font-size: 2.5rem;
-  }
-}
-
-.audience-faq-text {
-  color: #444;
-  font-size: 1.125rem;
-  line-height: 1.55;
-  margin: 0;
-}
-
-.audience-faq-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.audience-faq-chip {
-  background: var(--color-white);
-  border: 1.5px solid #d6d6d6;
-  border-radius: 999px;
-  color: var(--color-dark);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  padding: 0.5625rem 1rem;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
-
-  &:hover {
-    border-color: var(--color-dark);
-  }
-
-  &.is-active {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: var(--color-white);
-  }
-}
-
-.audience-faq-help {
-  background: #1c1c1c;
-  border-radius: 12px;
-  color: var(--color-white);
-  padding: 1.75rem;
-}
-
-.audience-faq-help-title {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0 0 0.5rem;
-  text-transform: uppercase;
-}
-
-.audience-faq-help-text {
-  color: #cfcfcf;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.audience-faq-help-links {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  margin-top: 1rem;
-
-  a {
-    color: #ff4a40;
-    font-family: var(--font-heading);
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    text-transform: uppercase;
-
-    &:hover {
-      color: var(--color-white);
-    }
-  }
-}
-
-.audience-faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-
-.audience-faq-item {
-  background: var(--color-white);
-  border: 1px solid #e3e3e3;
-  border-radius: 12px;
-}
-
-.audience-faq-question {
-  align-items: center;
-  background: none;
-  border: 0;
-  color: var(--color-dark);
-  cursor: pointer;
-  display: grid;
-  font: inherit;
-  gap: 1rem;
-  grid-template-columns: 1fr 36px;
-  padding: 1.375rem 1.625rem;
-  text-align: left;
-  width: 100%;
-
-  > span:first-child {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  &:hover .audience-faq-question-text {
-    color: var(--color-primary);
-  }
-
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    padding: 1.125rem 1.125rem;
-  }
-}
-
-.audience-faq-category {
-  color: var(--color-primary);
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.audience-faq-question-text {
-  font-size: 1.1875rem;
-  font-weight: 600;
-  line-height: 1.3;
-  transition: color 0.15s ease;
-}
-
-.audience-faq-toggle {
-  align-items: center;
-  background: var(--color-light);
-  border-radius: 50%;
-  color: var(--color-primary);
-  display: flex;
-  font-size: 1.375rem;
-  font-weight: 600;
-  height: 36px;
-  justify-content: center;
-  width: 36px;
-}
-
-// Closed panels collapse to zero height and are hidden from keyboard and
-// screen readers, but stay in the DOM.
-.audience-faq-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition:
-    grid-template-rows 0.2s ease-out,
-    visibility 0s linear 0.2s;
-  visibility: hidden;
-
-  .is-open > & {
-    grid-template-rows: 1fr;
-    transition-delay: 0s;
-    visibility: visible;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-}
-
-.audience-faq-panel-inner {
-  min-height: 0;
-  overflow: hidden;
-  padding: 0 1.625rem;
-
-  .is-open & {
-    padding-bottom: 1.625rem;
-  }
-
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    padding-left: 1.125rem;
-    padding-right: 1.125rem;
-  }
-}
-
-.audience-faq-answer {
-  color: #333;
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  margin: 0;
-  max-width: 620px;
-}
-
-.audience-faq-answer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  margin-top: 1rem;
-}
-
-.audience-faq-answer-link {
-  background: var(--color-primary);
-  border-radius: 6px;
-  color: var(--color-white);
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 0.6875rem 1rem;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: background-color 0.15s ease;
-
-  &:hover {
-    background: #a80000;
-  }
-}
-
 // ─── Closing row: contact person + CTA ───────────────────────────────
 
 .audience-closing {
@@ -425,19 +358,20 @@
 }
 
 .audience-contact {
-  align-items: center;
   border: 1px solid #e6e6e6;
   border-radius: 12px;
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 1.375rem;
   padding: 2rem 2.25rem;
 
   @media screen and (max-width: $breakpoint-mobile-lg) {
+    gap: 1.125rem;
     padding: 1.5rem;
   }
 }
 
-// Whole card is a mailto link.
+// Whole card links to the contact form.
 .audience-contact--link {
   color: inherit;
   text-decoration: none;
@@ -451,10 +385,51 @@
     box-shadow: 0 14px 32px rgba(0 0 0 / 0.1);
     transform: translateY(-3px);
 
-    .audience-contact-mail {
-      color: var(--color-primary);
+    .audience-contact-arrow {
+      transform: translateX(4px);
     }
   }
+}
+
+// Heading above the person, in the same style as the section eyebrows.
+.audience-contact-heading {
+  align-items: center;
+  color: var(--color-dark);
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 800;
+  gap: 0.75rem;
+  letter-spacing: 0.12em;
+  margin: 0;
+  text-transform: uppercase;
+
+  &::before {
+    background: var(--color-primary);
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    height: 3px;
+    width: 2rem;
+  }
+}
+
+.audience-contact-person {
+  align-items: center;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.audience-contact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.audience-contact-arrow {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  font-size: 1.75rem;
+  transition: transform 0.2s ease;
 }
 
 .audience-contact-photo {
@@ -493,15 +468,6 @@
   line-height: 1.1;
   margin: 0.25rem 0 0;
   text-transform: uppercase;
-}
-
-.audience-contact-mail {
-  color: #444;
-  font-size: 0.9375rem;
-  margin: 0.375rem 0 0;
-  overflow-wrap: anywhere;
-  text-decoration: underline;
-  transition: color 0.15s ease;
 }
 
 // Red CTA banner

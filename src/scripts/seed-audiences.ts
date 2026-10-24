@@ -37,9 +37,10 @@ type AudienceSeed = {
     answer: string
     links: { label: string; href: string }[]
   }[]
-  faqHelp: { title: string; text: string; links: { label: string; href: string }[] }
-  contact: { label: string; roleSlug: string }
-  cta: { title: string; text: string; buttonLabel: string; buttonUrl: string }
+  assistantIntro: string
+  faqHelp: { title: string }
+  contact: { roleSlug: string }
+  cta: { enabled?: boolean; title: string; text: string; buttonLabel: string; buttonUrl: string }
 }
 
 const HERO_IMAGE_FILENAME = 'sportpark-hoofdveld'
@@ -84,7 +85,7 @@ const AUDIENCES: AudienceSeed[] = [
         links: [
           { title: 'Clubkleding', description: 'Wedstrijdtenue, webshop en bedrukken', href: '/vereniging/clubkleding' },
           { title: 'Vrijwilligerswerk', description: 'Taken voor spelende leden', href: '/vereniging/vrijwilligerswerk' },
-          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/commissies/vertrouwenspersoon' },
+          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/vereniging/vertrouwenspersoon' },
           { title: 'Lidmaatschap', description: 'Contributie en opzeggen', href: '/vereniging/lidmaatschap' },
         ],
       },
@@ -153,15 +154,12 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Bij wie kan ik terecht als er iets niet goed voelt?',
         answer:
           'Bij de vertrouwenspersoon van de club. Alle gesprekken zijn strikt vertrouwelijk.',
-        links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
+        links: [{ label: 'Vertrouwenspersoon', href: '/vereniging/vertrouwenspersoon' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met voetbalzaken.',
-      links: [{ label: 'Contact', href: '/contact' }],
-    },
-    contact: { label: 'Aanspreekpunt voetbalzaken', roleSlug: 'voetbaltechnische-zaken' },
+    assistantIntro: 'Over wedstrijden, meedoen, kleding en de club: je krijgt meteen antwoord.',
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'voetbaltechnische-zaken' },
     cta: {
       title: 'Nog geen lid?',
       text: 'Je mag eerst gratis meetrainen.',
@@ -207,7 +205,7 @@ const AUDIENCES: AudienceSeed[] = [
         intro: 'Contributie en afspraken binnen de club.',
         links: [
           { title: 'Contributie', description: 'Tarieven en betaling', href: '/vereniging/lidmaatschap' },
-          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/commissies/vertrouwenspersoon' },
+          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/vereniging/vertrouwenspersoon' },
           { title: 'Meehelpen', description: 'Vrijwilligerswerk voor ouders', href: '/vereniging/vrijwilligerswerk' },
         ],
       },
@@ -266,7 +264,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Bij wie kan ik terecht als er iets niet goed voelt?',
         answer:
           'Je kunt contact opnemen met de vertrouwenspersoon van de club. Het gesprek blijft vertrouwelijk.',
-        links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
+        links: [{ label: 'Vertrouwenspersoon', href: '/vereniging/vertrouwenspersoon' }],
       },
       {
         category: 'Meedoen',
@@ -275,12 +273,9 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Vrijwilligerswerk', href: '/vereniging/vrijwilligerswerk' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met de jeugdcoördinator.',
-      links: [{ label: 'Contact', href: '/contact' }],
-    },
-    contact: { label: 'Aanspreekpunt jeugd', roleSlug: 'coordinator-jeugd' },
+    assistantIntro: 'Over wedstrijden, kosten, meedoen en veiligheid: je krijgt meteen antwoord.',
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'coordinator-jeugd' },
     cta: {
       title: 'Kind aanmelden?',
       text: 'Je kind mag eerst gratis meetrainen.',
@@ -317,17 +312,14 @@ const AUDIENCES: AudienceSeed[] = [
         intro: 'Waar je terecht kunt voor kleding, ballen en begeleiding.',
         links: [
           { title: 'Clubkleding', description: 'Tenues en presentatiekleding', href: '/vereniging/clubkleding' },
-          { title: 'Kleding & materiaal', description: 'Ballen en trainingsmateriaal aanvragen', href: '/commissies/kleding-en-materiaal' },
-          { title: 'Technische Commissie', description: 'Voetbaltechnisch beleid en trainers', href: '/commissies/technische-commissie' },
         ],
       },
       {
         title: 'Afspraken en hulp',
         intro: 'Als je er niet uitkomt of hulp nodig hebt.',
         links: [
-          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/commissies/vertrouwenspersoon' },
+          { title: 'Vertrouwenspersoon', description: 'Iets vertrouwelijk bespreken', href: '/vereniging/vertrouwenspersoon' },
           { title: 'WhatsApp-community', description: 'Teamgroep en oudergroep', href: '/vereniging/whatsapp-community' },
-          { title: 'Scheidsrechterscommissie', description: 'Opleiding en begeleiding van scheidsrechters', href: '/commissies/scheidsrechterscommissie' },
           { title: 'Vrijwilligerswerk', description: 'Taken en functies binnen de club', href: '/vereniging/vrijwilligerswerk' },
         ],
       },
@@ -361,7 +353,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Waar vraag ik ballen en trainingsmateriaal aan?',
         answer:
           'Bij de commissie Kleding & Materiaal. Je bereikt hen via kleding@svv04.nl.',
-        links: [{ label: 'Kleding & materiaal', href: '/commissies/kleding-en-materiaal' }],
+        links: [],
       },
       {
         category: 'Materiaal',
@@ -375,14 +367,14 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Wie stelt trainers aan en begeleidt ze?',
         answer:
           'De Technische Commissie. Zij stelt trainers aan, begeleidt teams en werkt aan de ontwikkeling van spelers. Vragen kun je mailen naar tc@svv04.nl.',
-        links: [{ label: 'Technische Commissie', href: '/commissies/technische-commissie' }],
+        links: [],
       },
       {
         category: 'Afspraken',
         question: 'Wat doe ik bij een probleem in het team, zoals pesten?',
         answer:
           'Neem contact op met de vertrouwenspersoon van de club. Alle gesprekken zijn strikt vertrouwelijk.',
-        links: [{ label: 'Vertrouwenspersoon', href: '/commissies/vertrouwenspersoon' }],
+        links: [{ label: 'Vertrouwenspersoon', href: '/vereniging/vertrouwenspersoon' }],
       },
       {
         category: 'Afspraken',
@@ -390,19 +382,12 @@ const AUDIENCES: AudienceSeed[] = [
         answer:
           'De KNVB biedt regelmatig opleidingen aan. Neem contact op met de scheidsrechterscommissie via scheidsrechters@svv04.nl voor meer informatie.',
         links: [
-          { label: 'Scheidsrechterscommissie', href: '/commissies/scheidsrechterscommissie' },
         ],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met voetbalzaken of de Technische Commissie.',
-      links: [
-        { label: 'Contact', href: '/contact' },
-        { label: 'Technische Commissie', href: '/commissies/technische-commissie' },
-      ],
-    },
-    contact: { label: 'Aanspreekpunt voetbalzaken', roleSlug: 'voetbaltechnische-zaken' },
+    assistantIntro: 'Over je team, materiaal en afspraken: je krijgt meteen antwoord.',
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'voetbaltechnische-zaken' },
     cta: {
       title: 'Wil je meehelpen?',
       text: 'We kunnen altijd extra trainers en leiders gebruiken.',
@@ -433,22 +418,10 @@ const AUDIENCES: AudienceSeed[] = [
         ],
       },
       {
-        title: 'Commissies',
-        intro: 'Een vaste plek binnen de club.',
-        links: [
-          { title: 'Kantinecommissie', description: 'Kantinediensten en beheer', href: '/commissies/kantinecommissie' },
-          { title: 'Activiteitencommissie', description: 'Feestavond, sinterklaasviering en meer', href: '/commissies/activiteitencommissie' },
-          { title: 'Toernooicommissie', description: 'Het zomertoernooi en andere toernooien', href: '/commissies/toernooicommissie' },
-          { title: 'Communicatiecommissie', description: 'Website, social media en clubblad', href: '/commissies/communicatie-commissie' },
-        ],
-      },
-      {
         title: 'Meer weten',
         intro: 'Interesse in een grotere rol of een vraag vooraf?',
         links: [
           { title: 'Bestuur', description: 'Interesse om mee te besturen', href: '/vereniging/bestuur' },
-          { title: 'Technische Commissie', description: 'Trainers en voetbaltechnisch werk', href: '/commissies/technische-commissie' },
-          { title: 'Scheidsrechterscommissie', description: 'Wedstrijden leiden', href: '/commissies/scheidsrechterscommissie' },
           { title: 'Contact', description: 'Vragen aan de vrijwilligerscoördinator', href: '/contact?afdeling=vrijwilligerscordinator' },
         ],
       },
@@ -500,10 +473,9 @@ const AUDIENCES: AudienceSeed[] = [
         category: 'Meedoen',
         question: 'Kan ik ook iets anders doen dan een kantinedienst?',
         answer:
-          'Ja. Er zijn commissies voor onder meer activiteiten, toernooien, communicatie en de kantine. Je kunt ook scheidsrechter worden.',
+          'Ja. Er zijn commissies voor onder meer activiteiten, communicatie en de kantine. Je kunt ook scheidsrechter worden.',
         links: [
           { label: 'Taken en functies', href: '/vereniging/vrijwilligerswerk/taken' },
-          { label: 'Scheidsrechterscommissie', href: '/commissies/scheidsrechterscommissie' },
         ],
       },
       {
@@ -513,12 +485,9 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Contact', href: '/contact?afdeling=vrijwilligerscordinator' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met de vrijwilligerscoördinator.',
-      links: [{ label: 'Contact', href: '/contact?afdeling=vrijwilligerscordinator' }],
-    },
-    contact: { label: 'Vrijwilligerscoördinator', roleSlug: 'vrijwilligerscordinator' },
+    assistantIntro: 'Over de vrijwilligersverplichting, taken en meedoen: je krijgt meteen antwoord.',
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'vrijwilligerscordinator' },
     cta: {
       title: 'Wil je meehelpen?',
       text: 'Bekijk alle taken en kies wat bij je past.',
@@ -534,16 +503,13 @@ const AUDIENCES: AudienceSeed[] = [
     cardDescription: 'Sponsormogelijkheden en de voordelen van samenwerken.',
     intro:
       "Verbind jouw onderneming aan een bruisende club. Ontdek de sponsormogelijkheden van SVV'04 en wat we samen kunnen bereiken.",
-    heroActions: [
-      { label: 'Onze sponsoren', href: '/alle-sponsors' },
-      { label: 'Contact opnemen', href: '/contact?afdeling=sponsorgroep' },
-    ],
+    heroActions: [{ label: 'Word sponsor', href: '/contact?afdeling=sponsorgroep' }],
     themes: [
       {
         title: 'De club',
         intro: "Waar je aan verbonden raakt.",
         links: [
-          { title: "Over SVV'04", description: 'Opgericht in 1904, thuis op Sportpark De Kampen', href: '/vereniging/algemeen' },
+          { title: "Over SVV'04", description: 'Opgericht in 2004, thuis op Sportpark De Kampen', href: '/vereniging/algemeen' },
           { title: 'Teams', description: 'Senioren en jeugd', href: '/teams' },
           { title: 'Programma & uitslagen', description: 'Wat er elke week gespeeld wordt', href: '/programma' },
           { title: 'Nieuws', description: 'Het laatste clubnieuws', href: '/nieuws' },
@@ -554,7 +520,6 @@ const AUDIENCES: AudienceSeed[] = [
         intro: 'Sponsoren en evenementen.',
         links: [
           { title: 'Onze sponsoren', description: "De bedrijven die SVV'04 steunen", href: '/alle-sponsors' },
-          { title: 'Toernooicommissie', description: 'Het zomertoernooi en andere toernooien', href: '/commissies/toernooicommissie' },
           { title: 'Agenda', description: 'Activiteiten en evenementen', href: '/agenda' },
         ],
       },
@@ -562,7 +527,6 @@ const AUDIENCES: AudienceSeed[] = [
         title: 'Contact',
         intro: 'Direct een gesprek over sponsoring.',
         links: [
-          { title: 'Commerciële commissie', description: 'Sponsorvoorstellen en samenwerkingen', href: '/commissies/commerciele-commissie' },
           { title: 'Contact', description: 'Direct naar de sponsorgroep', href: '/contact?afdeling=sponsorgroep' },
           { title: 'Bestuur', description: 'De mensen achter de club', href: '/vereniging/bestuur' },
         ],
@@ -573,18 +537,15 @@ const AUDIENCES: AudienceSeed[] = [
         category: 'Sponsor worden',
         question: "Hoe word ik sponsor van SVV'04?",
         answer:
-          'Neem contact op met de sponsorgroep of de commerciële commissie via sponsor@svv04.nl. Zij bespreken met je wat bij jouw bedrijf past.',
-        links: [
-          { label: 'Commerciële commissie', href: '/commissies/commerciele-commissie' },
-          { label: 'Contact', href: '/contact?afdeling=sponsorgroep' },
-        ],
+          'Neem contact op met de sponsorgroep. Zij bespreken met je wat bij jouw bedrijf past.',
+        links: [{ label: 'Contact', href: '/contact?afdeling=sponsorgroep' }],
       },
       {
         category: 'Sponsor worden',
         question: 'Waar gaat de sponsorinkomst naartoe?',
         answer:
-          "De commerciële commissie zorgt dat SVV'04 financieel gezond blijft en genoeg middelen heeft voor de accommodatie, materialen en activiteiten.",
-        links: [{ label: 'Commerciële commissie', href: '/commissies/commerciele-commissie' }],
+          "Sponsorinkomsten zorgen dat SVV'04 financieel gezond blijft en genoeg middelen heeft voor de accommodatie, materialen en activiteiten.",
+        links: [{ label: 'Sponsormogelijkheden', href: '/sponsoring' }],
       },
       {
         category: 'Sponsor worden',
@@ -594,9 +555,9 @@ const AUDIENCES: AudienceSeed[] = [
       },
       {
         category: 'De club',
-        question: 'Hoe groot is de club?',
+        question: "Wat voor club is SVV'04?",
         answer:
-          "SVV'04 is opgericht in 1904 en heeft ruim 400 leden, verdeeld over senioren- en jeugdteams. De club speelt op Sportpark De Kampen in Schoonebeek.",
+          "SVV'04 is in 2004 opgericht door een fusie van v.v. Minjak en Sc. Oranje en is de enige voetbalvereniging in Schoonebeek. De club speelt op Sportpark De Kampen.",
         links: [{ label: 'Over SVV’04', href: '/vereniging/algemeen' }],
       },
       {
@@ -604,10 +565,7 @@ const AUDIENCES: AudienceSeed[] = [
         question: 'Welke evenementen organiseert de club?',
         answer:
           'Onder meer het jaarlijkse zomertoernooi, waar tientallen teams uit en buiten de gemeente aan meedoen. Daarnaast zijn er een feestavond en een sinterklaasviering voor de jeugd.',
-        links: [
-          { label: 'Toernooicommissie', href: '/commissies/toernooicommissie' },
-          { label: 'Activiteitencommissie', href: '/commissies/activiteitencommissie' },
-        ],
+        links: [],
       },
       {
         category: 'De club',
@@ -617,17 +575,16 @@ const AUDIENCES: AudienceSeed[] = [
         links: [{ label: 'Nieuws', href: '/nieuws' }],
       },
     ],
-    faqHelp: {
-      title: 'Andere vraag?',
-      text: 'Neem contact op met de sponsorgroep.',
-      links: [{ label: 'Contact', href: '/contact?afdeling=sponsorgroep' }],
-    },
-    contact: { label: 'Aanspreekpunt sponsoring', roleSlug: 'sponsorgroep' },
+    assistantIntro: 'Over sponsor worden en de club: je krijgt meteen antwoord.',
+    faqHelp: { title: 'Neem contact op' },
+    contact: { roleSlug: 'sponsorgroep' },
     cta: {
+      // The sponsor page has its own "Word sponsor" button in the hero and the contact card.
+      enabled: false,
       title: 'Interesse?',
-      text: 'Neem contact op en ontdek wat we voor elkaar kunnen betekenen.',
-      buttonLabel: 'Neem contact op',
-      buttonUrl: '/contact?afdeling=sponsorgroep',
+      text: 'Ontdek wat we voor elkaar kunnen betekenen.',
+      buttonLabel: 'Bekijk de mogelijkheden',
+      buttonUrl: '/sponsoring',
     },
   },
 ]
@@ -668,8 +625,9 @@ async function main() {
         links: t.links,
       })),
       faq: audience.faq,
+      assistantIntro: audience.assistantIntro,
       faqHelp: audience.faqHelp,
-      contact: { label: audience.contact.label, person },
+      contact: { person },
       cta: { enabled: true, ...audience.cta },
     }
 

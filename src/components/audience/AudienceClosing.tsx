@@ -11,26 +11,7 @@ function initials(name: string): string {
     .join('')
 }
 
-// The whole card is one mailto link when the contact has an e-mail address.
-function ContactCard({
-  email,
-  className,
-  children,
-}: {
-  email?: string | null
-  className: string
-  children: React.ReactNode
-}) {
-  return email ? (
-    <a href={`mailto:${email}`} className={className}>
-      {children}
-    </a>
-  ) : (
-    <div className={className}>{children}</div>
-  )
-}
-
-// Closing row: the contact person for this audience next to the red CTA banner.
+// Closing row: the contact person (with a heading above) next to the red CTA banner.
 export function AudienceClosing({ audience }: { audience: Audience }) {
   const person =
     typeof audience.contact?.person === 'object' ? (audience.contact.person as Contact) : null
@@ -38,29 +19,37 @@ export function AudienceClosing({ audience }: { audience: Audience }) {
   if (!person && !cta) return null
 
   const photo = person?.photo as Media | null | undefined
+  const heading = audience.faqHelp?.title
+  // The person's function (e.g. "Coördinator jeugd"); the audience label only overrides it.
+  const role = audience.contact?.label || person?.roles?.[0]?.title
+  // The card opens the contact form with this person's topic preselected (same value the form uses).
+  const topicRole = person?.roles?.find((r) => r.topic)
+  const contactHref = topicRole
+    ? `/contact?afdeling=${encodeURIComponent(topicRole.slug || topicRole.title)}`
+    : '/contact'
 
   return (
     <div className="audience-closing">
       {person && (
-        <ContactCard
-          email={person.email}
-          className={`audience-contact${person.email ? ' audience-contact--link' : ''}`}
-        >
-          {photo?.url ? (
-            <img src={photo.url} alt="" className="audience-contact-photo" />
-          ) : (
-            <span className="audience-contact-photo audience-contact-initials" aria-hidden="true">
-              {initials(person.name)}
-            </span>
-          )}
-          <div>
-            {audience.contact?.label && (
-              <p className="audience-contact-label">{audience.contact.label}</p>
+        <Link href={contactHref} className="audience-contact audience-contact--link">
+          {heading && <p className="audience-contact-heading">{heading}</p>}
+          <div className="audience-contact-person">
+            {photo?.url ? (
+              <img src={photo.url} alt="" className="audience-contact-photo" />
+            ) : (
+              <span className="audience-contact-photo audience-contact-initials" aria-hidden="true">
+                {initials(person.name)}
+              </span>
             )}
-            <p className="audience-contact-name">{person.name}</p>
-            {person.email && <p className="audience-contact-mail">Mail naar {person.email}</p>}
+            <div className="audience-contact-info">
+              {role && <p className="audience-contact-label">{role}</p>}
+              <p className="audience-contact-name">{person.name}</p>
+            </div>
+            <span className="audience-contact-arrow" aria-hidden="true">
+              &rarr;
+            </span>
           </div>
-        </ContactCard>
+        </Link>
       )}
 
       {cta && (
