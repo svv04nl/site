@@ -10,30 +10,14 @@ import { ContactPerson } from '@/components/ui/ContactPerson'
 import StandingsCard from '@/components/assistant/StandingsCard'
 import type { AssistantAudience } from '@/components/assistant/AssistantProvider'
 import type { ToolUi } from '@/lib/ai/card-types'
+import { EXAMPLES, QUICK_LINKS } from '@/lib/ai/examples'
 import { MAX_MESSAGES, MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 import type { AssistantMetadata } from '@/lib/ai/types'
 
 // Kept in this tab only (cleared when it closes) and never sent anywhere but the chat route.
 const STORAGE_KEY = 'svv04-assistant-conversation'
 
-export const EXAMPLES = [
-  "Wanneer speelt SVV'04 1 de volgende wedstrijd?",
-  'Wat is er dit weekend thuis?',
-  'Wat is de stand van de O11-1?',
-  'Wie is de trainer van de O13-1?',
-  'Hoe word ik lid?',
-  'Wat kost de contributie voor een jeugdlid?',
-]
-
-// Direct routes for visitors who do not want to type a question (panel only).
-const QUICK_LINKS = [
-  { label: 'Teams', href: '/teams' },
-  { label: 'Programma & uitslagen', href: '/programma' },
-  { label: 'Nieuws', href: '/nieuws' },
-  { label: 'Agenda', href: '/agenda' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Lid worden', href: '/vereniging/lidmaatschap' },
-]
+export { EXAMPLES }
 
 // Shown while a tool runs, so visitors see what the assistant is doing.
 const TOOL_LABELS: Record<string, string> = {

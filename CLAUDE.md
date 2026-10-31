@@ -808,6 +808,18 @@ Project-specific patterns for this club website, on top of the generic Payload r
 - The contact card links to `/contact?afdeling=<role slug>` (first role with a topic); the function shown on it is that contact's first role title, `contact.label` only overrides it.
 - The sponsor options live on `/sponsoring` (a content layout), not on `/vereniging/sponsoring` (hidden from navigation and redirected in `next.config.ts`; its child page `advertenties-aanleveren` stays under the old path).
 
+### App API (`/api/app/*`)
+
+The public, read-only API of the SVV'04 app. `openapi.yaml` is the contract: change it first, then the code. One route handler per endpoint in `src/app/(frontend)/api/app/`, all shared logic in `src/lib/app-api/`.
+
+- Every route is `appRoute(ttl, handler)` / `appRouteWithParams` from `lib/app-api/http.ts`: JSON with `Cache-Control`, errors as `application/problem+json`. Throw `badRequest()` / `notFound()` for client errors.
+- Payload and Sportlink data never leave as-is. Mappers produce the contract shapes: `matches.ts` (Sportlink to `Match`, with two cached club-wide lists), `teams.ts`, `posts.ts`, `audiences.ts`, `contacts.ts`, `media.ts`, and `richtext.ts` (Lexical and the privacy/cookie markdown to typed `Block`s; an unknown CMS block becomes `unsupported`, so a new block never breaks the app).
+- Site paths become app targets in `links.ts` (`hrefToTarget`). A new page type or route on the website needs a case there.
+- Only publish what the site shows publicly: no phone numbers without a contact record, no `whatsapp` flag (no consent field exists), player names only as the team page shows them.
+- The chat is `POST /api/chat` with `{ messages: [{ role, text }] }` (`lib/app-api/chat.ts`); the website's own body (`parts`) takes the old streaming path. The app branch skips BotID and uses a per-instance rate limit.
+- Check a change against the contract by calling the route handlers with a `Request` and validating the JSON against the schemas in `openapi.yaml` (the handlers need no dev server). `tests/int/app-api.int.spec.ts` covers the mappers.
+- `APP_MIN_VERSION_IOS` / `APP_MIN_VERSION_ANDROID` set `minAppVersion` in `GET /config` (default `1.0.0`).
+
 ### Custom richText blocks (`src/blocks/`)
 
 Each block is a `config.ts` (Payload `Block` definition) + `Component.tsx` (renderer), registered in `payload.config.ts`'s `BlocksFeature` and in the JSX converter map in `src/components/CmsPage.tsx`. Current blocks and when to reach for them:

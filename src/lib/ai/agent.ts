@@ -27,10 +27,13 @@ export const isAssistantEnabled = () => process.env.AI_ASSISTANT_ENABLED === 'tr
 /** Shows tool calls, token usage and timing on the test page. Never on for visitors. */
 export const isAssistantDebug = () => process.env.AI_ASSISTANT_DEBUG === 'true'
 
-export async function createAssistantAgent({ audience }: { audience?: string | null } = {}) {
+export async function createAssistantAgent({
+  audience,
+  favoriteTeams,
+}: { audience?: string | null; favoriteTeams?: string[] } = {}) {
   return new ToolLoopAgent({
     model: process.env.AI_ASSISTANT_MODEL || DEFAULT_MODEL,
-    instructions: buildInstructions(await siteMapForPrompt(), audience),
+    instructions: buildInstructions(await siteMapForPrompt(), audience, favoriteTeams),
     tools: {
       searchSite,
       getPage,

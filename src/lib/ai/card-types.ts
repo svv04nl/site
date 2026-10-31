@@ -36,6 +36,8 @@ export type LinkCardData = {
 export type StandingsCardData = {
   /** Competition and poule, e.g. "Zaterdag 11-tal 4e klasse". */
   title: string
+  /** The SVV'04 team the table was asked for (the app links to it). */
+  team?: { slug: string; name: string }
   rows: {
     position: number
     team: string
