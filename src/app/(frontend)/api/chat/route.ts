@@ -5,6 +5,8 @@ import { checkBotId } from 'botid/server'
 import { createAssistantAgent, isAssistantDebug, isAssistantEnabled } from '@/lib/ai/agent'
 import { MAX_MESSAGES, MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 import type { AssistantMetadata } from '@/lib/ai/types'
+import { handleAppChat, isAppChatBody } from '@/lib/app-api/chat'
+import { errorResponse } from '@/lib/app-api/http'
 
 export const maxDuration = 60
 
@@ -35,12 +37,24 @@ async function findAudienceName(slug: string): Promise<string | null> {
 }
 
 export async function POST(request: Request) {
+  const rawBody: unknown = await request.json().catch(() => null)
+
+  // The SVV'04 app (openapi.yaml, POST /chat) sends `{ messages: [{ role, text }] }` and gets
+  // `{ text, cards }` back. A native app cannot pass the BotID check, so it has its own rate limit.
+  if (isAppChatBody(rawBody)) {
+    try {
+      return await handleAppChat(request, rawBody)
+    } catch (error) {
+      return errorResponse(error)
+    }
+  }
+
   if (!isAssistantEnabled()) return new Response('Not found', { status: 404 })
 
   const verification = await checkBotId()
   if (verification.isBot) return Response.json({ error: 'Access denied' }, { status: 403 })
 
-  const body = (await request.json().catch(() => null)) as {
+  const body = rawBody as {
     messages?: IncomingMessage[]
     audience?: unknown
   } | null

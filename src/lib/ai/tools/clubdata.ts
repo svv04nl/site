@@ -286,6 +286,7 @@ export const getTeamStandings = tool({
             ? {
                 standings: [
                   {
+                    team: { slug: resolved.team.slug, name },
                     // The poule name usually repeats the competition; use the longer of the two.
                     title: shown.poule.includes(shown.competition)
                       ? shown.poule

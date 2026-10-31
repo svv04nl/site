@@ -1,4 +1,5 @@
 import type { CollectionConfig, Validate } from 'payload'
+import { POST_CATEGORIES } from './post-categories'
 
 // Hero image requirements: the hero is a wide banner (2400×1000 is the
 // recommended upload), so reject images that would look soft or get cropped
@@ -274,11 +275,7 @@ export const Posts: CollectionConfig = {
       name: 'categories',
       type: 'select',
       hasMany: true,
-      options: [
-        { label: 'Club', value: 'club' },
-        { label: 'Senioren', value: 'senioren' },
-        { label: 'Junioren', value: 'junioren' },
-      ],
+      options: POST_CATEGORIES,
       admin: {
         position: 'sidebar',
       },

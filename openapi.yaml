@@ -1,0 +1,1272 @@
+openapi: 3.1.0
+info:
+  title: SVV'04 app-API
+  version: 0.1.0
+  summary: Alleen-lezen API voor de SVV'04-app (iOS en Android, Skip Fuse).
+  description: |
+    Contract tussen de SVV'04-app en de site (Next.js + Payload CMS).
+
+    Uitgangspunten
+    - De app praat alleen met de site. De site haalt Club.Dataservice (Sportlink) server-side op en
+      geeft hier een app-vriendelijke vorm terug.
+    - Geen login. Favoriete teams en rol staan op het toestel en gaan als query-parameter mee.
+    - Alleen gegevens die de site ook publiek toont. Geen namen van spelers van tegenstanders,
+      geen telefoonnummers zonder contactrecord.
+    - Richtext komt als lijst van getypeerde blokken (`Block`), nooit als HTML.
+    - Datums in ISO 8601, tijden in Europe/Amsterdam. `kickoff` is de lokale tijd als "HH:mm".
+    - Alle responses sturen `Cache-Control` mee. Richtlijn: programma 5 minuten, nieuws 5 minuten,
+      teams/pagina's/contacten 1 uur, config 1 uur.
+
+    Per scherm
+    | Scherm | Endpoints |
+    | --- | --- |
+    | Eerste start (rol en teams) | `GET /config`, `GET /teams` |
+    | Mijn SVV'04 | `GET /home` |
+    | Stel je vraag | `POST /api/chat` (bestaand), `GET /audiences/{slug}` voor voorbeeldvragen |
+    | Programma | `GET /program`, `GET /results` |
+    | Nieuws | `GET /posts`, `GET /categories` |
+    | Nieuwsbericht | `GET /posts/{slug}` |
+    | Teams | `GET /teams` |
+    | Teamdetail (P2) | `GET /teams/{slug}` |
+    | Club | `GET /club` |
+    | Voor jou (rolpagina) | `GET /audiences/{slug}` |
+    | Clubpagina | `GET /pages/{slug}` |
+    | Contact | `GET /contacts` |
+    | Agenda (P2) | `GET /activities` |
+    | Sponsors (P2) | `GET /sponsors` |
+servers:
+  - url: https://svv04.nl/api/app
+    description: Productie
+  - url: https://svv04.vercel.app/api/app
+    description: Preview
+tags:
+  - name: App
+    description: Configuratie en vaste links
+  - name: Mijn
+    description: Startscherm Mijn SVV'04
+  - name: Programma
+  - name: Nieuws
+  - name: Teams
+  - name: Club
+  - name: Contact
+  - name: Assistent
+
+paths:
+  /config:
+    get:
+      tags: [App]
+      operationId: getConfig
+      summary: App-configuratie, vaste links en rollen
+      description: |
+        Eén keer ophalen bij het starten van de app. Bevat de rollen voor de eerste start,
+        externe links (Voetbal.nl, webshop, tribune, privacy), de disclaimer van de assistent
+        en de minimale appversie.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppConfig' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /home:
+    get:
+      tags: [Mijn]
+      operationId: getHome
+      summary: Alles voor het scherm Mijn SVV'04 in één call
+      parameters:
+        - $ref: '#/components/parameters/Teams'
+        - name: role
+          in: query
+          description: Gekozen rol op het toestel. Bepaalt de links onder "Voor jou" en de voorbeeldvragen.
+          schema: { $ref: '#/components/schemas/RoleSlug' }
+        - name: date
+          in: query
+          description: Alleen voor testen. Doet alsof het deze dag is. Standaard vandaag (Europe/Amsterdam).
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HomeResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /program:
+    get:
+      tags: [Programma]
+      operationId: getProgram
+      summary: Programma per dag (standaard dit weekend)
+      description: |
+        Alle wedstrijden van SVV'04-teams in de gevraagde periode, gegroepeerd per dag.
+        Filters Thuis/Uit en Mijn teams mogen ook in de app gebeuren; de parameters bestaan om
+        de payload klein te houden.
+      parameters:
+        - $ref: '#/components/parameters/Period'
+        - $ref: '#/components/parameters/Venue'
+        - $ref: '#/components/parameters/Teams'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MatchSchedule' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /results:
+    get:
+      tags: [Programma]
+      operationId: getResults
+      summary: Uitslagen per dag (standaard afgelopen weekend)
+      description: Zelfde vorm als `/program`; `result` is gevuld.
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [last-weekend, this-weekend, last-week]
+            default: last-weekend
+        - $ref: '#/components/parameters/Venue'
+        - $ref: '#/components/parameters/Teams'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MatchSchedule' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /matches/{id}:
+    get:
+      tags: [Programma]
+      operationId: getMatch
+      summary: Wedstrijddetail
+      description: |
+        Dezelfde gegevens als de wedstrijdpagina op de site. Van de tegenstander staan geen spelers
+        of staf in het antwoord, alleen van het SVV'04-team in deze wedstrijd.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Wedstrijdcode uit Sportlink (`Match.id`).
+          schema: { type: string, pattern: '^\d{1,12}$' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MatchDetail' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /posts:
+    get:
+      tags: [Nieuws]
+      operationId: listPosts
+      summary: Nieuwslijst met filters en paginering
+      parameters:
+        - name: category
+          in: query
+          description: Slug uit `GET /categories`.
+          schema: { type: string }
+        - $ref: '#/components/parameters/Teams'
+        - name: cursor
+          in: query
+          description: Waarde van `nextCursor` uit de vorige pagina.
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PostList' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /posts/{slug}:
+    get:
+      tags: [Nieuws]
+      operationId: getPost
+      summary: Eén nieuwsbericht met richtext-blokken
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Post' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /categories:
+    get:
+      tags: [Nieuws]
+      operationId: listCategories
+      summary: Categorieën voor de filterchips op Nieuws
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Category' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /teams:
+    get:
+      tags: [Teams]
+      operationId: listTeams
+      summary: Alle teams, senioren en jeugd
+      description: Voor het Teams-scherm en de teamkeuze bij de eerste start.
+      parameters:
+        - name: include
+          in: query
+          description: Met `nextMatch` krijgt elk team zijn volgende wedstrijd mee (voor de kaarten van Mijn teams).
+          schema:
+            type: array
+            items: { type: string, enum: [nextMatch] }
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [groups]
+                properties:
+                  groups:
+                    type: array
+                    description: Op volgorde - senioren eerst, dan jeugd van oud naar jong.
+                    items: { $ref: '#/components/schemas/TeamGroup' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /teams/{slug}:
+    get:
+      tags: [Teams]
+      operationId: getTeam
+      summary: Teamdetail (P2)
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TeamDetail' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /club:
+    get:
+      tags: [Club]
+      operationId: getClub
+      summary: Inhoud van de Club-tab
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClubIndex' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /audiences/{slug}:
+    get:
+      tags: [Club]
+      operationId: getAudience
+      summary: Rolpagina (Voor jou) met linkgroepen, contactpersoon en voorbeeldvragen
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/RoleSlug' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Audience' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /pages/{slug}:
+    get:
+      tags: [Club]
+      operationId: getPage
+      summary: Verenigingspagina als richtext-blokken
+      description: Generieke tekstweergave voor alle pagina's uit de sectie Vereniging, plus privacy en cookies.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Page' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /contacts:
+    get:
+      tags: [Contact]
+      operationId: getContacts
+      summary: Onderwerpen met contactpersoon en vaste gegevens
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContactDirectory' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /activities:
+    get:
+      tags: [Club]
+      operationId: listActivities
+      summary: Clubactiviteiten (agenda, P2)
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Activity' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /sponsors:
+    get:
+      tags: [Club]
+      operationId: listSponsors
+      summary: Sponsors per niveau (P2)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [tiers]
+                properties:
+                  tiers:
+                    type: array
+                    items:
+                      type: object
+                      required: [title, sponsors]
+                      properties:
+                        title: { type: string, examples: [Hoofdsponsor] }
+                        sponsors:
+                          type: array
+                          items: { $ref: '#/components/schemas/Sponsor' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /chat:
+    servers:
+      - url: https://svv04.nl/api
+    post:
+      tags: [Assistent]
+      operationId: postChat
+      summary: Vraag aan de assistent (bestaand endpoint)
+      description: |
+        Bestaat al als `/api/chat`. Dit is de vorm die de app nodig heeft; controleer of het huidige
+        endpoint hierop past of voeg een app-variant toe. De app stuurt het hele gesprek mee
+        (geen sessie op de server). Wachttijd is een paar seconden; de app toont een laadstaat en
+        een stopknop.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChatRequest' }
+      responses:
+        '200':
+          description: Antwoord met tekst en kaarten
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ChatResponse' }
+        '429':
+          description: Te veel vragen achter elkaar
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        default: { $ref: '#/components/responses/Error' }
+
+components:
+  parameters:
+    Slug:
+      name: slug
+      in: path
+      required: true
+      schema: { type: string, pattern: '^[a-z0-9-]+$' }
+    Teams:
+      name: teams
+      in: query
+      description: Komma-gescheiden team-slugs (favorieten op het toestel), bijvoorbeeld `svv04-1,svv04-o11-1jm`.
+      schema:
+        type: array
+        items: { type: string }
+      style: form
+      explode: false
+    Period:
+      name: period
+      in: query
+      schema:
+        type: string
+        enum: [this-weekend, next-weekend, this-week, next-week, next-3-weeks]
+        default: this-weekend
+    Venue:
+      name: venue
+      in: query
+      schema:
+        type: string
+        enum: [all, home, away]
+        default: all
+
+  responses:
+    Error:
+      description: Fout. De app toont de foutstaat met Opnieuw en Contact.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    NotFound:
+      description: Niet gevonden
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+    # ---------- Algemeen ----------
+    Problem:
+      type: object
+      description: RFC 9457 problem details.
+      required: [title, status]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+
+    Image:
+      type: object
+      required: [url]
+      properties:
+        url: { type: string, format: uri }
+        width: { type: integer }
+        height: { type: integer }
+        alt: { type: string, description: Leeg bij decoratieve beelden. }
+        mobileUrl:
+          type: string
+          format: uri
+          description: Aparte uitsnede voor telefoon (bijv. `heroImageMobile`).
+
+    Link:
+      type: object
+      description: Iets waar de app naartoe navigeert. `target` bepaalt hoe.
+      required: [title, target]
+      properties:
+        title: { type: string, examples: [Contributie] }
+        subtitle: { type: string, examples: ['Tarieven, betalen, opzeggen'] }
+        icon:
+          type: string
+          description: Naam uit de iconenset van de app.
+          examples: [calendar, card, phone, shirt]
+        target: { $ref: '#/components/schemas/LinkTarget' }
+
+    LinkTarget:
+      description: In-app scherm, externe app of webpagina.
+      oneOf:
+        - type: object
+          required: [kind, screen]
+          properties:
+            kind: { const: screen }
+            screen:
+              type: string
+              enum: [home, program, results, posts, post, teams, team, club, page, audience, contacts, activities, sponsors, assistant]
+            slug: { type: string, description: Bij post, team, page, audience. }
+            contactTopic: { type: string, description: Bij contacts - onderwerp voorkiezen. }
+        - type: object
+          required: [kind, url]
+          properties:
+            kind: { const: browser }
+            url: { type: string, format: uri }
+            inApp:
+              type: boolean
+              default: true
+              description: true = in-app browser (tribune), false = externe browser (webshop).
+        - type: object
+          required: [kind, app]
+          properties:
+            kind: { const: externalApp }
+            app: { type: string, enum: [voetbalnl] }
+            deepLink: { type: string, description: Optioneel pad binnen de app. }
+      discriminator:
+        propertyName: kind
+
+    RoleSlug:
+      type: string
+      enum: [spelers, ouders, trainers-leiders, vrijwilligers, sponsoring, supporters]
+
+    # ---------- Config ----------
+    AppConfig:
+      type: object
+      required: [roles, links, assistant, minAppVersion]
+      properties:
+        minAppVersion:
+          type: object
+          description: Lager dan dit = de app vraagt om te updaten.
+          properties:
+            ios: { type: string, examples: ['1.0.0'] }
+            android: { type: string, examples: ['1.0.0'] }
+        roles:
+          type: array
+          description: Keuzes bij de eerste start en op Club.
+          items:
+            type: object
+            required: [slug, title]
+            properties:
+              slug: { $ref: '#/components/schemas/RoleSlug' }
+              title: { type: string, examples: [Ouder] }
+              icon: { type: string }
+        links:
+          type: object
+          required: [voetbalNl, privacy]
+          properties:
+            voetbalNl:
+              type: object
+              properties:
+                iosAppStoreUrl: { type: string, format: uri }
+                androidPlayStoreUrl: { type: string, format: uri }
+                iosUrlScheme: { type: string, description: Om te testen of de app geïnstalleerd is. }
+                androidPackage: { type: string }
+            webshop: { type: string, format: uri }
+            tribune: { type: string, format: uri }
+            privacy: { $ref: '#/components/schemas/LinkTarget' }
+            cookies: { $ref: '#/components/schemas/LinkTarget' }
+            facebook: { type: string, format: uri }
+            instagram: { type: string, format: uri }
+        assistant:
+          type: object
+          required: [disclaimer, maxInputLength]
+          properties:
+            enabled: { type: boolean, default: true }
+            disclaimer:
+              type: string
+              examples: ['Antwoorden komen van een AI en kunnen fouten bevatten. Controleer belangrijke zaken bij de club.']
+            maxInputLength: { type: integer, default: 500 }
+            defaultSuggestions:
+              type: array
+              items: { type: string }
+            shortcuts:
+              type: array
+              description: '"Of ga direct naar" in de startstaat.'
+              items: { $ref: '#/components/schemas/Link' }
+
+    # ---------- Mijn ----------
+    HomeResponse:
+      type: object
+      required: [today, myTeams, forYou, news, askSuggestions]
+      properties:
+        askSuggestions:
+          type: array
+          description: Twee voorbeeldvragen onder de vraagbalk, afgestemd op rol en teams.
+          maxItems: 3
+          items: { type: string, examples: ['Wie is de trainer van de O11-1?'] }
+        today:
+          type: array
+          description: Wedstrijden van favoriete teams op de huidige dag. Leeg = kaart Vandaag verbergen.
+          items: { $ref: '#/components/schemas/Match' }
+        weekend:
+          type: object
+          description: Voor de balk "Dit weekend bij SVV'04".
+          properties:
+            matchCount: { type: integer }
+            homeMatchCount: { type: integer }
+        featuredPost:
+          oneOf:
+            - $ref: '#/components/schemas/PostSummary'
+            - type: 'null'
+          description: Uitgelicht bericht (`heroFeatured` binnen `heroFrom`-`heroUntil`), anders het nieuwste.
+        myTeams:
+          type: array
+          description: In de volgorde van de `teams`-parameter.
+          items: { $ref: '#/components/schemas/TeamCard' }
+        forYou:
+          type: object
+          required: [role, links]
+          properties:
+            role: { $ref: '#/components/schemas/RoleSlug' }
+            links:
+              type: array
+              maxItems: 3
+              items: { $ref: '#/components/schemas/Link' }
+            contact: { $ref: '#/components/schemas/Contact' }
+        news:
+          type: array
+          description: Nieuws van favoriete teams en algemeen clubnieuws, nieuwste eerst.
+          maxItems: 5
+          items: { $ref: '#/components/schemas/PostSummary' }
+        nextActivity:
+          oneOf:
+            - $ref: '#/components/schemas/Activity'
+            - type: 'null'
+
+    # ---------- Programma ----------
+    MatchSchedule:
+      type: object
+      required: [period, days]
+      properties:
+        period:
+          type: object
+          required: [from, to]
+          properties:
+            from: { type: string, format: date }
+            to: { type: string, format: date }
+        days:
+          type: array
+          items: { $ref: '#/components/schemas/MatchDay' }
+        moreUrl:
+          $ref: '#/components/schemas/LinkTarget'
+          description: Knop "Verder vooruit in Voetbal.nl".
+
+    MatchDay:
+      type: object
+      required: [date, matches]
+      properties:
+        date: { type: string, format: date, examples: ['2026-10-31'] }
+        label: { type: string, examples: [Zaterdag 31 oktober] }
+        matches:
+          type: array
+          description: Op aanvangstijd.
+          items: { $ref: '#/components/schemas/Match' }
+
+    Match:
+      type: object
+      required: [id, date, kickoff, status, home, away, isHomeGame, ownTeamSlug, venue]
+      properties:
+        id: { type: string, description: Wedstrijdcode uit Sportlink. }
+        date: { type: string, format: date }
+        kickoff: { type: string, pattern: '^\d{2}:\d{2}$', examples: ['19:00'] }
+        startsAt: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [scheduled, cancelled, postponed, played]
+          description: cancelled = tijd doorgestreept en label Afgelast.
+        competition: { type: string, examples: [3e klasse] }
+        ownTeamSlug: { type: string, description: Het SVV'04-team in deze wedstrijd; voor ster en lichtrode kaart. }
+        isHomeGame: { type: boolean }
+        home: { $ref: '#/components/schemas/MatchTeam' }
+        away: { $ref: '#/components/schemas/MatchTeam' }
+        venue:
+          type: object
+          required: [name]
+          properties:
+            name: { type: string, examples: [Sportpark De Kampen] }
+            shortName: { type: string, examples: [De Kampen] }
+            address: { type: string }
+            mapsQuery: { type: string, description: Zoektekst voor Apple Kaarten of Google Maps (knop Route). }
+            field: { type: string, examples: ['Veld 1'] }
+        result:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [home, away]
+              properties:
+                home: { type: integer }
+                away: { type: integer }
+        externalUrl:
+          type: string
+          format: uri
+          description: Optioneel - de wedstrijd op voetbal.nl.
+
+    MatchDetail:
+      type: object
+      required: [match, venue, officials]
+      properties:
+        match: { $ref: '#/components/schemas/Match' }
+        competition: { type: string, description: Klasse, bijvoorbeeld "3e klasse". }
+        remarks: { type: string }
+        venue:
+          type: object
+          required: [name]
+          properties:
+            name: { type: string }
+            address: { type: string }
+            phone: { type: string }
+            routeUrl: { type: string, format: uri }
+        lockerRooms:
+          type: object
+          properties:
+            home: { type: string }
+            away: { type: string }
+            referee: { type: string }
+        officials:
+          type: array
+          items:
+            type: object
+            required: [role, name]
+            properties:
+              role: { type: string, examples: [Scheidsrechter] }
+              name: { type: string }
+        ownTeam:
+          type: object
+          description: Selectie en staf van het SVV'04-team in deze wedstrijd. Afgeschermde spelers tellen alleen mee in `hiddenCount`.
+          required: [name, players, hiddenCount, staff]
+          properties:
+            name: { type: string }
+            players: { type: array, items: { type: string } }
+            hiddenCount: { type: integer }
+            staff:
+              type: array
+              items:
+                type: object
+                required: [name, role]
+                properties:
+                  name: { type: string }
+                  role: { type: string }
+
+    MatchTeam:
+      type: object
+      required: [name, isOwn]
+      properties:
+        name: { type: string, examples: ["SVV'04 1", "Hardenberg '85 1"] }
+        isOwn: { type: boolean, description: true = SVV'04 (rood, clublogo). }
+        teamSlug: { type: string, description: Alleen bij eigen teams. }
+        logoUrl:
+          type: string
+          format: uri
+          description: Clublogo. Ontbreekt = de app toont een rondje met initialen.
+
+    # ---------- Nieuws ----------
+    Category:
+      type: object
+      required: [slug, title]
+      properties:
+        slug: { type: string, examples: [club] }
+        title: { type: string, examples: [Club] }
+
+    PostSummary:
+      type: object
+      required: [slug, title, publishedAt]
+      properties:
+        slug: { type: string }
+        title: { type: string, examples: ["Welkom op de nieuwe website van SVV'04"] }
+        excerpt: { type: string }
+        publishedAt: { type: string, format: date-time }
+        image: { $ref: '#/components/schemas/Image' }
+        categories:
+          type: array
+          items: { $ref: '#/components/schemas/Category' }
+        teams:
+          type: array
+          description: Gekoppelde teams (`relatedTeams`), als omlijnd label.
+          items: { $ref: '#/components/schemas/TeamRef' }
+        webUrl: { type: string, format: uri, description: Voor de deelknop. }
+
+    PostList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/PostSummary' }
+        nextCursor:
+          type: [string, 'null']
+
+    Post:
+      allOf:
+        - $ref: '#/components/schemas/PostSummary'
+        - type: object
+          required: [content]
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/Block' }
+            related:
+              type: array
+              description: '"Meer nieuws" onderaan, maximaal 3.'
+              maxItems: 3
+              items: { $ref: '#/components/schemas/PostSummary' }
+
+    # ---------- Teams ----------
+    TeamRef:
+      type: object
+      required: [slug, name]
+      properties:
+        slug: { type: string, examples: [svv04-o11-1jm] }
+        name: { type: string, examples: ["SVV'04 O11-1JM"] }
+        shortName: { type: string, examples: [O11-1JM] }
+
+    Team:
+      allOf:
+        - $ref: '#/components/schemas/TeamRef'
+        - type: object
+          required: [type]
+          properties:
+            type: { type: string, enum: [senior, youth, other] }
+            category: { type: string, examples: [Mannen zondag, Onder 11] }
+            order: { type: integer }
+            photo: { $ref: '#/components/schemas/Image' }
+            nextMatch:
+              oneOf:
+                - $ref: '#/components/schemas/Match'
+                - type: 'null'
+              description: Alleen met `include=nextMatch`.
+
+    TeamGroup:
+      type: object
+      required: [title, type, teams]
+      properties:
+        title: { type: string, examples: [Senioren] }
+        type: { type: string, enum: [senior, youth, other] }
+        teams:
+          type: array
+          items: { $ref: '#/components/schemas/Team' }
+
+    TeamCard:
+      type: object
+      description: Kaart in de carrousel Mijn teams.
+      required: [team]
+      properties:
+        team: { $ref: '#/components/schemas/Team' }
+        nextMatch:
+          oneOf:
+            - $ref: '#/components/schemas/Match'
+            - type: 'null'
+        unreadNewsCount:
+          type: integer
+          description: Berichten over dit team sinds `since` (optioneel, alleen als de app dat meestuurt).
+        headCoach: { type: string, description: Naam van de trainer, uit `team-staff`. }
+
+    TeamDetail:
+      allOf:
+        - $ref: '#/components/schemas/Team'
+        - type: object
+          properties:
+            staff:
+              type: array
+              items:
+                type: object
+                required: [name, role]
+                properties:
+                  name: { type: string }
+                  role: { type: string, examples: [Trainer, Teammanager] }
+            players:
+              type: object
+              description: Selectie. Spelers die hun naam afschermen tellen alleen mee in `hiddenCount`.
+              properties:
+                names: { type: array, items: { type: string } }
+                hiddenCount: { type: integer }
+            program:
+              type: array
+              items: { $ref: '#/components/schemas/Match' }
+            results:
+              type: array
+              items: { $ref: '#/components/schemas/Match' }
+            standings: { $ref: '#/components/schemas/Standings' }
+            kitSponsor: { $ref: '#/components/schemas/Sponsor' }
+
+    Standings:
+      type: object
+      required: [rows]
+      properties:
+        competition: { type: string }
+        period: { type: string, examples: [Seizoen, Periode 1] }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [position, team, played, points, isOwn]
+            properties:
+              position: { type: integer }
+              team: { type: string }
+              logoUrl: { type: string, format: uri }
+              played: { type: integer }
+              points: { type: integer }
+              isOwn: { type: boolean }
+
+    # ---------- Club ----------
+    ClubIndex:
+      type: object
+      required: [roles, sections]
+      properties:
+        roles:
+          type: array
+          description: Tegels "Voor jou".
+          items:
+            type: object
+            required: [slug, title]
+            properties:
+              slug: { $ref: '#/components/schemas/RoleSlug' }
+              title: { type: string }
+              icon: { type: string }
+        sections:
+          type: array
+          description: Bijv. "Vereniging" (de 10 pagina's) en "Meer" (Contact, Agenda, Tribune, Sponsors, Webshop).
+          items:
+            type: object
+            required: [title, links]
+            properties:
+              title: { type: string, examples: [Vereniging, Meer] }
+              links:
+                type: array
+                items: { $ref: '#/components/schemas/Link' }
+
+    Audience:
+      type: object
+      required: [slug, title, groups]
+      properties:
+        slug: { $ref: '#/components/schemas/RoleSlug' }
+        title: { type: string, description: 'Met *accentwoord*, bijv. "Alles voor *ouders* van SVV''04".' }
+        intro: { type: string }
+        groups:
+          type: array
+          description: Genummerde linkgroepen.
+          items:
+            type: object
+            required: [title, links]
+            properties:
+              title: { type: string, examples: [Op de wedstrijddag] }
+              intro: { type: string }
+              links:
+                type: array
+                items: { $ref: '#/components/schemas/Link' }
+        contact: { $ref: '#/components/schemas/Contact' }
+        suggestions:
+          type: array
+          description: Voorbeeldvragen voor de assistent bij deze rol.
+          items: { type: string }
+        cta: { $ref: '#/components/schemas/Link' }
+
+    Page:
+      type: object
+      required: [slug, title, content]
+      properties:
+        slug: { type: string, examples: [lidmaatschap] }
+        title: { type: string, description: 'Met *accentwoord*.' }
+        section: { type: string, enum: [vereniging, commissies, meedoen, juridisch] }
+        anchors:
+          type: array
+          description: Ankerchips "Op deze pagina" - de koppen van niveau 2.
+          items:
+            type: object
+            required: [id, title]
+            properties:
+              id: { type: string }
+              title: { type: string }
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/Block' }
+        updatedAt: { type: string, format: date-time }
+        webUrl: { type: string, format: uri }
+
+    Activity:
+      type: object
+      required: [id, date, title]
+      properties:
+        id: { type: string }
+        date: { type: string, format: date }
+        time: { type: string, pattern: '^\d{2}:\d{2}$' }
+        title: { type: string, examples: [Kerstattentie vrijwilligers] }
+        location: { type: string, examples: [De Kantine] }
+        note: { type: string, examples: [incl. huldiging van jubilarissen] }
+
+    Sponsor:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        logo: { $ref: '#/components/schemas/Image' }
+        url: { type: string, format: uri }
+
+    # ---------- Contact ----------
+    Contact:
+      type: object
+      required: [name, role]
+      properties:
+        name: { type: string, examples: [Alinda Steffens] }
+        role: { type: string, examples: [Vrijwilligerscoördinator] }
+        photo: { $ref: '#/components/schemas/Image' }
+        phone:
+          type: string
+          description: Alleen als het contactrecord een nummer heeft. Formaat E.164.
+          examples: ['+31651794835']
+        email: { type: string, format: email }
+        whatsapp:
+          type: boolean
+          description: true = WhatsApp-knop tonen (mobiel nummer en toestemming). De app bouwt `https://wa.me/<phone zonder +>`.
+
+    ContactDirectory:
+      type: object
+      required: [topics, fixed]
+      properties:
+        topics:
+          type: array
+          description: Onderwerpen in de keuzelijst, op volgorde.
+          items:
+            type: object
+            required: [slug, title, contact]
+            properties:
+              slug: { type: string, examples: [vrijwilligerswerk] }
+              title: { type: string, examples: [Vrijwilligerswerk] }
+              contact: { $ref: '#/components/schemas/Contact' }
+        fixed:
+          type: object
+          description: Vaste gegevens onder de contactkaart.
+          properties:
+            accommodation:
+              type: object
+              properties:
+                name: { type: string, examples: [Sportpark De Kampen] }
+                address: { type: string, examples: ['De Kampen 18, 7761 CK Schoonebeek'] }
+                phone: { type: string, examples: ['+31524531656'] }
+                mapsQuery: { type: string }
+            secretariat: { $ref: '#/components/schemas/Contact' }
+            membership: { $ref: '#/components/schemas/Contact' }
+            bank:
+              type: object
+              properties:
+                name: { type: string, examples: [Rabobank] }
+                iban: { type: string }
+
+    # ---------- Assistent ----------
+    ChatRequest:
+      type: object
+      required: [messages]
+      properties:
+        messages:
+          type: array
+          description: Hele gesprek, oudste eerst. De laatste is de nieuwe vraag.
+          items:
+            type: object
+            required: [role, text]
+            properties:
+              role: { type: string, enum: [user, assistant] }
+              text: { type: string, maxLength: 500 }
+        context:
+          type: object
+          properties:
+            role: { $ref: '#/components/schemas/RoleSlug' }
+            teams:
+              type: array
+              description: Favoriete team-slugs, zodat "mijn team" begrepen wordt.
+              items: { type: string }
+            client: { type: string, enum: [ios, android], description: Voor statistiek. }
+
+    ChatResponse:
+      type: object
+      required: [text, cards]
+      properties:
+        text: { type: string, description: Kort antwoord, platte tekst met eventueel *accent*. }
+        cards:
+          type: array
+          items: { $ref: '#/components/schemas/ChatCard' }
+
+    ChatCard:
+      oneOf:
+        - type: object
+          required: [type, match]
+          properties:
+            type: { const: match }
+            match: { $ref: '#/components/schemas/Match' }
+            action: { $ref: '#/components/schemas/Link' }
+        - type: object
+          required: [type, contact]
+          properties:
+            type: { const: contact }
+            contact: { $ref: '#/components/schemas/Contact' }
+        - type: object
+          required: [type, standings]
+          properties:
+            type: { const: standings }
+            team: { $ref: '#/components/schemas/TeamRef' }
+            standings: { $ref: '#/components/schemas/Standings' }
+        - type: object
+          required: [type, link]
+          properties:
+            type: { const: link }
+            link: { $ref: '#/components/schemas/Link' }
+      discriminator:
+        propertyName: type
+
+    # ---------- Richtext ----------
+    Inline:
+      type: object
+      description: Een tekststuk binnen een alinea.
+      required: [text]
+      properties:
+        text: { type: string }
+        bold: { type: boolean }
+        italic: { type: boolean }
+        accent: { type: boolean, description: 'Woord tussen *sterretjes* in het CMS.' }
+        link: { $ref: '#/components/schemas/LinkTarget' }
+
+    Block:
+      description: |
+        Eén richtext-blok. Onbekende typen toont de app als `unsupported` (met link naar de webpagina),
+        zodat nieuwe CMS-blokken de app niet breken.
+      oneOf:
+        - $ref: '#/components/schemas/ParagraphBlock'
+        - $ref: '#/components/schemas/HeadingBlock'
+        - $ref: '#/components/schemas/ListBlock'
+        - $ref: '#/components/schemas/ImageBlock'
+        - $ref: '#/components/schemas/CtaBlock'
+        - $ref: '#/components/schemas/ContactBlock'
+        - $ref: '#/components/schemas/QuoteBlock'
+        - $ref: '#/components/schemas/DocumentDownloadBlock'
+        - $ref: '#/components/schemas/AddressBlock'
+        - $ref: '#/components/schemas/PricingTableBlock'
+        - $ref: '#/components/schemas/AppStoreButtonsBlock'
+        - $ref: '#/components/schemas/UnsupportedBlock'
+      discriminator:
+        propertyName: type
+        mapping:
+          paragraph: '#/components/schemas/ParagraphBlock'
+          heading: '#/components/schemas/HeadingBlock'
+          list: '#/components/schemas/ListBlock'
+          image: '#/components/schemas/ImageBlock'
+          cta: '#/components/schemas/CtaBlock'
+          contact: '#/components/schemas/ContactBlock'
+          quote: '#/components/schemas/QuoteBlock'
+          documentDownload: '#/components/schemas/DocumentDownloadBlock'
+          address: '#/components/schemas/AddressBlock'
+          pricingTable: '#/components/schemas/PricingTableBlock'
+          appStoreButtons: '#/components/schemas/AppStoreButtonsBlock'
+          unsupported: '#/components/schemas/UnsupportedBlock'
+
+    ParagraphBlock:
+      type: object
+      required: [type, children]
+      properties:
+        type: { const: paragraph }
+        children: { type: array, items: { $ref: '#/components/schemas/Inline' } }
+
+    HeadingBlock:
+      type: object
+      required: [type, level, text]
+      properties:
+        type: { const: heading }
+        level: { type: integer, enum: [2, 3] }
+        id: { type: string, description: Anker-id voor de chips "Op deze pagina". }
+        text: { type: string }
+
+    ListBlock:
+      type: object
+      required: [type, ordered, items]
+      properties:
+        type: { const: list }
+        ordered: { type: boolean }
+        items:
+          type: array
+          items: { type: array, items: { $ref: '#/components/schemas/Inline' } }
+
+    ImageBlock:
+      type: object
+      required: [type, image]
+      properties:
+        type: { const: image }
+        image: { $ref: '#/components/schemas/Image' }
+        caption: { type: string }
+
+    CtaBlock:
+      type: object
+      required: [type, title, action]
+      properties:
+        type: { const: cta }
+        title: { type: string, examples: ['Kind aanmelden? Word lid'] }
+        text: { type: string }
+        action: { $ref: '#/components/schemas/Link' }
+
+    ContactBlock:
+      type: object
+      required: [type, contact]
+      properties:
+        type: { const: contact }
+        contact: { $ref: '#/components/schemas/Contact' }
+
+    QuoteBlock:
+      type: object
+      required: [type, text]
+      properties:
+        type: { const: quote }
+        text: { type: string }
+        author: { type: string }
+        authorRole: { type: string }
+
+    DocumentDownloadBlock:
+      type: object
+      required: [type, title, url]
+      properties:
+        type: { const: documentDownload }
+        title: { type: string, examples: [Vrijwilligersplan] }
+        url: { type: string, format: uri }
+        mimeType: { type: string, examples: [application/pdf] }
+        sizeBytes: { type: integer }
+
+    AddressBlock:
+      type: object
+      required: [type, name, address]
+      properties:
+        type: { const: address }
+        name: { type: string }
+        address: { type: string }
+        mapsQuery: { type: string }
+
+    PricingTableBlock:
+      type: object
+      required: [type, rows]
+      properties:
+        type: { const: pricingTable }
+        title: { type: string, description: 'Bijv. "Tarieven seizoen 2026-2027".' }
+        season: { type: string }
+        columns:
+          type: array
+          description: Periodes voor de segmentknop, bijv. per kwartaal en per seizoen.
+          items:
+            type: object
+            required: [key, title]
+            properties:
+              key: { type: string, examples: [quarter, season] }
+              title: { type: string, examples: [Per kwartaal] }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [label, amounts]
+            properties:
+              label: { type: string, examples: [O8 t/m O12] }
+              amounts:
+                type: object
+                description: Bedrag in eurocenten per kolom-key.
+                additionalProperties: { type: integer }
+              note: { type: string }
+
+    AppStoreButtonsBlock:
+      type: object
+      required: [type, app]
+      properties:
+        type: { const: appStoreButtons }
+        app: { type: string, enum: [voetbalnl] }
+        title: { type: string }
+
+    UnsupportedBlock:
+      type: object
+      required: [type, blockType]
+      properties:
+        type: { const: unsupported }
+        blockType: { type: string, examples: [taskTableBlock, adFormatsBlock, qrCodeBlock] }
+        title: { type: string }
+        webUrl:
+          type: string
+          format: uri
+          description: Leeg = blok overslaan (bijv. qrCodeBlock). Gevuld = rij met "Bekijk op de website".
