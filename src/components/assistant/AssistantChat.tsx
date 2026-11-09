@@ -167,8 +167,6 @@ type ChatProps = {
   /** The "Voor jou" page the visitor is on: its slug becomes the visitor's perspective, its questions the examples. */
   audience?: AssistantAudience | null
   onQuestionSent?: () => void
-  /** Panel only: called when a link inside the chat is followed, so the popup can close. */
-  onNavigate?: () => void
 }
 
 export default function AssistantChat({
@@ -177,7 +175,6 @@ export default function AssistantChat({
   question = null,
   audience = null,
   onQuestionSent,
-  onNavigate,
 }: ChatProps) {
   const isPanel = variant === 'panel'
   const [input, setInput] = useState('')
@@ -295,7 +292,7 @@ export default function AssistantChat({
               <ul className="assistant-quicklinks">
                 {QUICK_LINKS.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} onClick={onNavigate}>
+                    <Link href={link.href}>
                       {link.label}
                     </Link>
                   </li>

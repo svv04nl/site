@@ -33,10 +33,26 @@ export default function AssistantPanel({ open, onClose, question, audience, onQu
     return () => document.documentElement.classList.remove('assistant-panel-open')
   }, [open])
 
+  // Following an internal link closes the panel. The provider also closes it when the path
+  // changes, but a link to the page you are already on (e.g. "Bekijk: Spelregels" while on
+  // /vereniging/spelregels) does not change the path.
+  const onLinkClick = (e: React.MouseEvent) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const link = (e.target as HTMLElement).closest('a[href]') as HTMLAnchorElement | null
+    if (!link || link.target === '_blank' || link.origin !== window.location.origin) return
+    onClose()
+  }
+
   return (
     <>
       <div className="assistant-panel-backdrop" hidden={!open} onClick={onClose} />
-      <section className="assistant-panel" role="dialog" aria-label="Stel je vraag" hidden={!open}>
+      <section
+        className="assistant-panel"
+        role="dialog"
+        aria-label="Stel je vraag"
+        hidden={!open}
+        onClick={onLinkClick}
+      >
         <header className="assistant-panel__header">
           <SparkleIcon size={18} />
           <h2>Stel je vraag</h2>
@@ -66,7 +82,6 @@ export default function AssistantPanel({ open, onClose, question, audience, onQu
           question={question}
           audience={audience}
           onQuestionSent={onQuestionSent}
-          onNavigate={onClose}
         />
       </section>
     </>
