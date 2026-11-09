@@ -17,7 +17,7 @@ import { AddressBlock } from './blocks/AddressBlock/config'
 import { TaskTableBlock } from './blocks/TaskTableBlock/config'
 import { QuoteBlock } from './blocks/QuoteBlock/config'
 import { DocumentDownloadBlock } from './blocks/DocumentDownloadBlock/config'
-import { DocumentTableBlock } from './blocks/DocumentTableBlock/config'
+import { DocumentCardsBlock } from './blocks/DocumentCardsBlock/config'
 import { GalleryBlock } from './blocks/GalleryBlock/config'
 import { FactsBlock } from './blocks/FactsBlock/config'
 import { OptionCardsBlock } from './blocks/OptionCardsBlock/config'
@@ -102,7 +102,7 @@ export default buildConfig({
           TaskTableBlock,
           QuoteBlock,
           DocumentDownloadBlock,
-          DocumentTableBlock,
+          DocumentCardsBlock,
           GalleryBlock,
           FactsBlock,
           OptionCardsBlock,

@@ -1,0 +1,175 @@
+// ─── Document cards block ─────────────────────────────────────────────────────
+// Cards side by side, one per category (e.g. an age group), with its documents.
+// Scoped under .static-page-body so it wins over its generic h2/ul/li/a/p rules.
+
+.static-page-body {
+  .document-cards {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 1.75rem 0 2rem;
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .document-card {
+    background: var(--color-white);
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    border-top: 4px solid var(--color-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.25rem 1rem;
+    scroll-margin-top: calc(var(--topbar-height) + var(--mainbar-height) + 1rem);
+
+    &--wide {
+      grid-column: 1 / -1;
+
+      // Many documents: two columns inside the card on a wide screen.
+      .document-card-rows {
+        column-gap: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        @media screen and (max-width: $breakpoint-mobile-lg) {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+    }
+  }
+
+  .document-card-head {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .document-card-title {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .document-card-format {
+    background: var(--color-dark);
+    border-radius: 999px;
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    padding: 0.38rem 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .document-card-intro {
+    color: #555;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: -0.2rem 0 0.9rem;
+  }
+
+  .document-card-group + .document-card-group {
+    border-top: 1px dashed #e2e2e2;
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+  }
+
+  .document-card-group-label {
+    color: #999;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.3rem;
+    text-transform: uppercase;
+  }
+
+  .document-card-rows {
+    list-style: none;
+    margin: 0;
+
+    li {
+      margin: 0;
+    }
+  }
+
+  .document-card-row {
+    align-items: center;
+    border-radius: 8px;
+    color: var(--color-dark);
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    margin: 0 -0.5rem;
+    padding: 0.45rem 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      background: #f6f6f6;
+
+      .document-card-name {
+        color: var(--color-primary);
+      }
+
+      .document-card-meta svg {
+        transform: translate(2px, -2px);
+      }
+    }
+  }
+
+  .document-card-icon {
+    align-items: center;
+    border-radius: 7px;
+    display: flex;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+
+    &--game {
+      background: rgba(204, 0, 0, 0.08);
+      color: var(--color-primary);
+    }
+
+    &--role {
+      background: var(--color-light);
+      color: var(--color-dark);
+    }
+  }
+
+  .document-card-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.35;
+    transition: color 0.15s ease;
+  }
+
+  .document-card-meta {
+    align-items: center;
+    color: #999;
+    display: flex;
+    font-size: 0.68rem;
+    font-weight: 600;
+    gap: 0.3rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    svg {
+      color: var(--color-primary);
+      transition: transform 0.15s ease;
+    }
+  }
+}
