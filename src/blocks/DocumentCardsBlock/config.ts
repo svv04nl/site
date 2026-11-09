@@ -44,7 +44,7 @@ export const DocumentCardsBlock: Block = {
       minRows: 1,
       admin: {
         description:
-          'Elk document wordt een kaart, vier naast elkaar (vijf als het er precies vijf zijn). Documenten over de wedstrijd komen eerst, die per rol erna.',
+          'Elk document wordt een kaart, twee naast elkaar. Documenten over de wedstrijd komen eerst, die per rol erna.',
       },
       fields: [
         { name: 'title', type: 'text', label: 'Titel', required: true },

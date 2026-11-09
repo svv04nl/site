@@ -151,7 +151,7 @@ export default function DocumentCardsBlockComponent({ title, format, intro, rows
         {format && <span className="document-cards-format">{format}</span>}
       </header>
       {intro && <p className="document-cards-intro">{intro}</p>}
-      <ul className={`document-cards-grid${items.length === 5 ? ' document-cards-grid--five' : ''}`}>
+      <ul className="document-cards-grid">
         {items.map((row, i) => (
           <DocumentCard key={row.id ?? i} row={row} />
         ))}

@@ -56,38 +56,34 @@
 
   .document-cards-grid {
     display: grid;
-    gap: 0.9rem;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     list-style: none;
     margin: 0;
-
-    &--five {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
 
     li {
       display: flex;
       margin: 0;
     }
 
-    @media screen and (max-width: $breakpoint-tablet) {
-      &,
-      &--five {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
+  // Icon on the left, kind and title in the middle, file type on the right.
   .document-card {
+    align-items: center;
     background: var(--color-white);
     border: 1px solid #e6e6e6;
     border-radius: 12px;
     color: var(--color-dark);
-    display: flex;
+    column-gap: 0.9rem;
+    display: grid;
     flex: 1;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 1rem 1rem 0.85rem;
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    padding: 0.9rem 1rem;
     text-decoration: none;
     transition:
       border-color 0.15s ease,
@@ -110,10 +106,10 @@
     align-items: center;
     border-radius: 10px;
     display: flex;
-    height: 2.5rem;
+    grid-row: 1 / span 2;
+    height: 2.75rem;
     justify-content: center;
-    margin-bottom: 0.4rem;
-    width: 2.5rem;
+    width: 2.75rem;
   }
 
   .document-card--game .document-card-icon {
@@ -127,10 +123,14 @@
   }
 
   .document-card-kind {
+    align-self: end;
     color: #999;
     font-size: 0.68rem;
     font-weight: 600;
+    grid-column: 2;
+    grid-row: 1;
     letter-spacing: 0.08em;
+    line-height: 1.4;
     text-transform: uppercase;
   }
 
@@ -139,12 +139,14 @@
   }
 
   .document-card-name {
-    font-size: 0.92rem;
+    align-self: start;
+    font-size: 0.95rem;
     font-weight: 600;
+    grid-column: 2;
+    grid-row: 2;
     line-height: 1.35;
   }
 
-  // Pinned to the bottom so the cards in a row line up.
   .document-card-meta {
     align-items: center;
     color: #999;
@@ -152,10 +154,11 @@
     font-size: 0.68rem;
     font-weight: 600;
     gap: 0.3rem;
+    grid-column: 3;
+    grid-row: 1 / span 2;
     letter-spacing: 0.06em;
-    margin-top: auto;
-    padding-top: 0.6rem;
     text-transform: uppercase;
+    white-space: nowrap;
 
     svg {
       color: var(--color-primary);
