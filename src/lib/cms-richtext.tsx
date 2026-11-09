@@ -90,7 +90,12 @@ export const cmsJsxConverters: JSXConvertersFunction = (args) => ({
       />
     ),
     documentCardsBlock: ({ node }: { node: any }) => (
-      <DocumentCardsBlockComponent cards={node.fields.cards} />
+      <DocumentCardsBlockComponent
+        title={node.fields.title}
+        format={node.fields.format}
+        intro={node.fields.intro}
+        rows={node.fields.rows}
+      />
     ),
   },
 })

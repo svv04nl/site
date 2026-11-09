@@ -11,19 +11,12 @@ type Row = {
   size?: string | null
 }
 
-type Card = {
-  id?: string | null
+type Props = {
   title?: string | null
   format?: string | null
   intro?: string | null
-  wide?: boolean | null
   rows?: Row[] | null
 }
-
-const GROUPS = [
-  { key: 'game', label: 'Wedstrijd' },
-  { key: 'role', label: 'Per rol' },
-] as const
 
 const kindInfo = (kind?: string | null) =>
   DOCUMENT_KINDS.find((k) => k.value === kind) ?? DOCUMENT_KINDS[0]
@@ -93,8 +86,8 @@ const ICONS: Record<DocumentKind, React.ReactNode> = {
 function Icon({ kind }: { kind: DocumentKind }) {
   return (
     <svg
-      width="18"
-      height="18"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -108,20 +101,21 @@ function Icon({ kind }: { kind: DocumentKind }) {
   )
 }
 
-function DocumentRow({ row }: { row: Row }) {
+function DocumentCard({ row }: { row: Row }) {
   const kind = kindInfo(row.kind)
   const external = /^https?:\/\//.test(row.url!)
-  const meta = row.fileType === 'page' ? 'Web' : ['PDF', row.size].filter(Boolean).join(' · ')
+  const meta = row.fileType === 'page' ? 'Webpagina' : ['PDF', row.size].filter(Boolean).join(' · ')
   return (
     <li>
       <a
-        className="document-card-row"
+        className={`document-card document-card--${kind.group}`}
         href={row.url!}
         {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
-        <span className={`document-card-icon document-card-icon--${kind.group}`} title={kind.label}>
+        <span className="document-card-icon">
           <Icon kind={kind.value} />
         </span>
+        <span className="document-card-kind">{kind.label}</span>
         <span className="document-card-name">{row.title}</span>
         <span className="document-card-meta">
           {meta}
@@ -144,44 +138,24 @@ function DocumentRow({ row }: { row: Row }) {
   )
 }
 
-/** Cards side by side, one per category (e.g. an age group): game documents first, then one per role. */
-export default function DocumentCardsBlockComponent({ cards }: { cards?: Card[] | null }) {
-  const visible = (cards ?? [])
-    .map((card) => ({ ...card, rows: (card.rows ?? []).filter((row) => row.title && row.url) }))
-    .filter((card) => card.title && card.rows.length > 0)
-  if (visible.length === 0) return null
+/** A header for a category (e.g. an age group) with its documents as cards side by side: game documents first, then per role. */
+export default function DocumentCardsBlockComponent({ title, format, intro, rows }: Props) {
+  const order = (row: Row) => (kindInfo(row.kind).group === 'game' ? 0 : 1)
+  const items = (rows ?? []).filter((row) => row.title && row.url).sort((a, b) => order(a) - order(b))
+  if (!title || items.length === 0) return null
 
   return (
-    <div className="document-cards">
-      {visible.map((card, i) => (
-        <section
-          key={card.id ?? i}
-          id={slugify(card.title!)}
-          className={`document-card${card.wide ? ' document-card--wide' : ''}`}
-        >
-          <header className="document-card-head">
-            <h2 className="document-card-title">{card.title}</h2>
-            {card.format && <span className="document-card-format">{card.format}</span>}
-          </header>
-          {card.intro && <p className="document-card-intro">{card.intro}</p>}
-          {GROUPS.map((group, _, groups) => {
-            const rows = card.rows.filter((row) => kindInfo(row.kind).group === group.key)
-            if (rows.length === 0) return null
-            // Only label the groups when the card has both, e.g. not on a card with only rules.
-            const labelled = groups.every((g) => card.rows.some((row) => kindInfo(row.kind).group === g.key))
-            return (
-              <div className="document-card-group" key={group.key}>
-                {labelled && <p className="document-card-group-label">{group.label}</p>}
-                <ul className="document-card-rows">
-                  {rows.map((row, j) => (
-                    <DocumentRow key={row.id ?? j} row={row} />
-                  ))}
-                </ul>
-              </div>
-            )
-          })}
-        </section>
-      ))}
-    </div>
+    <section className="document-cards" id={slugify(title)}>
+      <header className="document-cards-head">
+        <h2 className="document-cards-title">{title}</h2>
+        {format && <span className="document-cards-format">{format}</span>}
+      </header>
+      {intro && <p className="document-cards-intro">{intro}</p>}
+      <ul className={`document-cards-grid${items.length === 5 ? ' document-cards-grid--five' : ''}`}>
+        {items.map((row, i) => (
+          <DocumentCard key={row.id ?? i} row={row} />
+        ))}
+      </ul>
+    </section>
   )
 }
