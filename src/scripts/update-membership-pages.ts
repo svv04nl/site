@@ -122,7 +122,7 @@ function buildLidmaatschapContent(jeugdContactId: string | number, ledenadminCon
     p(
       "Lid worden van SVV'04 kan het hele jaar door, van de allerjongste jeugd tot senioren. Voordat je je aanmeldt, mag je eerst een paar keer gratis meetrainen.",
     ),
-    ctaBlock('Direct aanmelden', 'https://mijn.knvb.nl'),
+    ctaBlock('Direct aanmelden', 'https://www.knvb.nl/ontdek-voetbal/inschrijven/GKWH14N'),
     h2('Jeugd en ouders'),
     p(
       mixed(
