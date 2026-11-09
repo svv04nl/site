@@ -8,6 +8,7 @@ import AddressBlockComponent from '@/blocks/AddressBlock/Component'
 import TaskTableBlockComponent from '@/blocks/TaskTableBlock/Component'
 import QuoteBlockComponent from '@/blocks/QuoteBlock/Component'
 import DocumentDownloadBlockComponent from '@/blocks/DocumentDownloadBlock/Component'
+import DocumentTableBlockComponent from '@/blocks/DocumentTableBlock/Component'
 import FactsBlockComponent from '@/blocks/FactsBlock/Component'
 import OptionCardsBlockComponent from '@/blocks/OptionCardsBlock/Component'
 import PackageTiersBlockComponent from '@/blocks/PackageTiersBlock/Component'
@@ -86,6 +87,14 @@ export const cmsJsxConverters: JSXConvertersFunction = (args) => ({
         title={node.fields.title}
         description={node.fields.description}
         file={node.fields.file}
+      />
+    ),
+    documentTableBlock: ({ node }: { node: any }) => (
+      <DocumentTableBlockComponent
+        title={node.fields.title}
+        format={node.fields.format}
+        intro={node.fields.intro}
+        rows={node.fields.rows}
       />
     ),
   },
