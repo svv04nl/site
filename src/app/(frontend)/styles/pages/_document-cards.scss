@@ -1,0 +1,168 @@
+// ─── Document cards block ─────────────────────────────────────────────────────
+// A header for a category (e.g. an age group), then its documents as cards side by side.
+// Scoped under .static-page-body so it wins over its generic h2/ul/li/a/p rules.
+
+.static-page-body {
+  .document-cards {
+    margin: 2.5rem 0;
+    scroll-margin-top: calc(var(--topbar-height) + var(--mainbar-height) + 1rem);
+  }
+
+  // Title, label and a rule that runs to the right edge.
+  .document-cards-head {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+
+    &::after {
+      background: linear-gradient(to right, var(--color-primary) 2.5rem, #e6e6e6 2.5rem);
+      content: '';
+      flex: 1;
+      height: 2px;
+      min-width: 2.5rem;
+    }
+  }
+
+  .document-cards-title {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .document-cards-format {
+    background: var(--color-dark);
+    border-radius: 999px;
+    color: var(--color-white);
+    flex-shrink: 0;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    padding: 0.38rem 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .document-cards-intro {
+    color: #555;
+    margin: -0.25rem 0 1rem;
+  }
+
+  .document-cards-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+
+    li {
+      display: flex;
+      margin: 0;
+    }
+
+    @media screen and (max-width: $breakpoint-mobile-lg) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  // Icon on the left, kind and title in the middle, file type on the right.
+  .document-card {
+    align-items: center;
+    background: var(--color-white);
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    color: var(--color-dark);
+    column-gap: 0.9rem;
+    display: grid;
+    flex: 1;
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--color-primary);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+
+      .document-card-meta svg {
+        transform: translate(2px, -2px);
+      }
+    }
+  }
+
+  .document-card-icon {
+    align-items: center;
+    border-radius: 10px;
+    display: flex;
+    grid-row: 1 / span 2;
+    height: 2.75rem;
+    justify-content: center;
+    width: 2.75rem;
+  }
+
+  .document-card--game .document-card-icon {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .document-card--role .document-card-icon {
+    background: var(--color-light);
+    color: var(--color-dark);
+  }
+
+  .document-card-kind {
+    align-self: end;
+    color: #999;
+    font-size: 0.68rem;
+    font-weight: 600;
+    grid-column: 2;
+    grid-row: 1;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .document-card--game .document-card-kind {
+    color: var(--color-primary);
+  }
+
+  .document-card-name {
+    align-self: start;
+    font-size: 0.95rem;
+    font-weight: 600;
+    grid-column: 2;
+    grid-row: 2;
+    line-height: 1.35;
+  }
+
+  .document-card-meta {
+    align-items: center;
+    color: #999;
+    display: flex;
+    font-size: 0.68rem;
+    font-weight: 600;
+    gap: 0.3rem;
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    svg {
+      color: var(--color-primary);
+      transition: transform 0.15s ease;
+    }
+  }
+}
