@@ -57,10 +57,10 @@ describe('hrefToTarget', () => {
 
 describe('format', () => {
   it('turns Dutch phone numbers into E.164', () => {
-    expect(toE164('06-50813259')).toBe('+31650813259')
+    expect(toE164('06-12345678')).toBe('+31612345678')
     expect(toE164('0524-531656')).toBe('+31524531656')
-    expect(toE164('+31 6 5081 3259')).toBe('+31650813259')
-    expect(toE164('0031650813259')).toBe('+31650813259')
+    expect(toE164('+31 6 1234 5678')).toBe('+31612345678')
+    expect(toE164('0031612345678')).toBe('+31612345678')
     expect(toE164('12345')).toBeUndefined()
     expect(toE164(null)).toBeUndefined()
   })

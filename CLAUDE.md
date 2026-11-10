@@ -46,7 +46,7 @@ src/
 │       ├── transform.ts     # Response transformers
 │       └── types.ts         # TypeScript types
 ├── migrations/              # PostgreSQL migration files
-├── scripts/                 # Maintenance scripts (seed, media, sync)
+├── scripts/                 # Maintenance scripts (media, sync)
 └── payload.config.ts        # Main Payload config
 ```
 

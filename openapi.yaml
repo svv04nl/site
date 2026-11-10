@@ -1000,7 +1000,7 @@ components:
         phone:
           type: string
           description: Alleen als het contactrecord een nummer heeft. Formaat E.164.
-          examples: ['+31651794835']
+          examples: ['+31612345678']
         email: { type: string, format: email }
         whatsapp:
           type: boolean
