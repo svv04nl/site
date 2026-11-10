@@ -98,15 +98,15 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Ask the assistant; only shown while the assistant is switched on */}
-        <AssistantBar />
-
         {/* Fixtures strip — prominent dark band, max 3 upcoming matches */}
         <FixturesStrip
           teams={teams.map((team) => ({ teamcode: team.teamcode!, teamName: team.name }))}
           maxDays={31}
           limit={3}
         />
+
+        {/* Vind jouw weg: audience cards, right under the matches */}
+        <FindYourWaySection />
 
         <div className="home-main">
           {/* Latest news; a featured post stays in the list, also after its hero period */}
@@ -129,16 +129,16 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Sidebar: webshop, main sponsors, agenda */}
+          {/* Sidebar: agenda, webshop, main sponsors */}
           <div className="home-main-side">
+            <ActiviteitenSidebar />
             <WebshopBanner />
             <SponsorSidebar />
-            <ActiviteitenSidebar />
           </div>
         </div>
 
-        {/* Vind jouw weg — audience cards */}
-        <FindYourWaySection />
+        {/* Ask the assistant as a safety net for whoever did not find it above; only shown while the assistant is switched on */}
+        <AssistantBar />
 
         {/* Main sponsors: above the ticker on narrow screens (hidden next to the news on desktop) */}
         <SponsorSidebar variant="stacked" />
