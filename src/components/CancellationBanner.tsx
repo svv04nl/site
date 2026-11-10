@@ -1,6 +1,7 @@
 import React from 'react'
 import { clubScheduleQuery } from '@/lib/clubdata/queries'
 import { shortTeamName } from '@/lib/app-api/format'
+import { isProduction } from '@/lib/site-env'
 import { CancellationBannerClient, type CancelledMatch } from './CancellationBannerClient'
 
 // Sportlink puts these words in a match's status when it does not go ahead.
@@ -11,8 +12,7 @@ const CANCELLED_KEYWORDS = ['afgelast', 'uitgesteld', 'gestaakt', 'afgekeurd']
 const DAYS_AHEAD = 3
 
 // Test mode: on previews and locally, open a page with ?afgelasting=test to see the bar
-// with made-up matches. Never on the live site.
-const TEST_MODE_ALLOWED = process.env.VERCEL_ENV !== 'production'
+// with made-up matches. Never on the live site (see isProduction in lib/site-env).
 const TEST_MATCHES: CancelledMatch[] = [
   { matchCode: 1, label: "SVV'04 1 – Testclub 1" },
   { matchCode: 2, label: "SVV'04 JO11-1 – Testclub JO11-2" },
@@ -48,7 +48,7 @@ export default async function CancellationBanner() {
     cancelled = []
   }
 
-  const testMatches = TEST_MODE_ALLOWED ? TEST_MATCHES : undefined
+  const testMatches = isProduction() ? undefined : TEST_MATCHES
   if (cancelled.length === 0 && !testMatches) return null
   return <CancellationBannerClient matches={cancelled} testMatches={testMatches} />
 }
