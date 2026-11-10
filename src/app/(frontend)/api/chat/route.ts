@@ -1,14 +1,12 @@
 import { createAgentUIStreamResponse } from 'ai'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { checkBotId } from 'botid/server'
 import { createAssistantAgent, isAssistantDebug, isAssistantEnabled } from '@/lib/ai/agent'
 import { MAX_MESSAGES, MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 import type { AssistantMetadata } from '@/lib/ai/types'
 import { handleAppChat, isAppChatBody } from '@/lib/app-api/chat'
 import { errorResponse } from '@/lib/app-api/http'
-
-export const maxDuration = 60
+import { isHuman } from '@/lib/turnstile'
 
 type IncomingMessage = { role?: unknown; parts?: unknown }
 
@@ -40,7 +38,7 @@ export async function POST(request: Request) {
   const rawBody: unknown = await request.json().catch(() => null)
 
   // The SVV'04 app (openapi.yaml, POST /chat) sends `{ messages: [{ role, text }] }` and gets
-  // `{ text, cards }` back. A native app cannot pass the BotID check, so it has its own rate limit.
+  // `{ text, cards }` back. A native app cannot pass the Turnstile check, so it has its own rate limit.
   if (isAppChatBody(rawBody)) {
     try {
       return await handleAppChat(request, rawBody)
@@ -51,8 +49,7 @@ export async function POST(request: Request) {
 
   if (!isAssistantEnabled()) return new Response('Not found', { status: 404 })
 
-  const verification = await checkBotId()
-  if (verification.isBot) return Response.json({ error: 'Access denied' }, { status: 403 })
+  if (!(await isHuman(request))) return Response.json({ error: 'Access denied' }, { status: 403 })
 
   const body = rawBody as {
     messages?: IncomingMessage[]

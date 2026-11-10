@@ -1,0 +1,71 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "site",
+  // Het Cloudflare-account "SVV04" (geen geheim; zo kiest wrangler nooit het verkeerde account).
+  "account_id": "823aaf7b3d3f953cd50cb1d2a118212c",
+  // Eigen entry: de Next-app van OpenNext plus de dagelijkse crons (zie worker.ts).
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-09",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "observability": { "enabled": true },
+  "upload_source_maps": true,
+  "limits": { "cpu_ms": 60000 },
+
+  // Connection pool voor Neon (productie). Previews hebben geen Hyperdrive en verbinden
+  // rechtstreeks met hun eigen Neon-branch via de secret DATABASE_URL.
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "40af75fb4c2540569c3ff34d76534f54",
+      // Lokaal (wrangler dev) dezelfde database als next dev.
+      "localConnectionString": "postgresql://localhost:5432/svv04",
+    },
+  ],
+
+  // Cache van Next (fetch-revalidate, revalidatePath).
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "svv04-opennext-cache",
+    },
+  ],
+
+  // Beeldformaten van media (zie src/app/(frontend)/api/img).
+  "images": { "binding": "IMAGES" },
+
+  // AI Gateway voor de assistent (zie src/lib/ai/agent.ts), gateway "svv04".
+  "ai": { "binding": "AI", "remote": true },
+
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "site",
+    },
+  ],
+
+  // Dezelfde tijden als de oude vercel.json (UTC).
+  "triggers": {
+    "crons": ["0 4 * * *", "30 4 * * *"],
+  },
+
+  // Alle overige instellingen (DATABASE_URL, PAYLOAD_SECRET, ...) zijn secrets: zie
+  // docs/cloudflare.md.
+
+  // Elke PR krijgt een eigen Preview (zie .github/workflows/preview.yml). Geen Hyperdrive en
+  // geen crons; de database en de test-sleutels komen als secrets per Preview. De cache deelt de
+  // bucket met productie: de sleutels bevatten de build-id, dus builds zitten elkaar niet in de weg.
+  "previews": {
+    "r2_buckets": [
+      {
+        "binding": "NEXT_INC_CACHE_R2_BUCKET",
+        "bucket_name": "svv04-opennext-cache",
+      },
+    ],
+    "images": { "binding": "IMAGES" },
+    "ai": { "binding": "AI", "remote": true },
+  },
+}

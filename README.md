@@ -1,6 +1,6 @@
 # SVV'04 Schoonebeek — Website
 
-Website voor voetbalvereniging SVV'04 uit Schoonebeek. Gebouwd met Next.js, Payload CMS en gehost op Vercel.
+Website voor voetbalvereniging SVV'04 uit Schoonebeek. Gebouwd met Next.js, Payload CMS en gehost op Cloudflare Workers.
 
 ## Tech stack
 
@@ -9,15 +9,16 @@ Website voor voetbalvereniging SVV'04 uit Schoonebeek. Gebouwd met Next.js, Payl
 - **PostgreSQL** via [Neon](https://neon.tech) — database
 - **Vercel Blob** — media-opslag
 - **Resend** — e-mail
-- **Vercel** — hosting en CI/CD
+- **Cloudflare Workers** (via [OpenNext](https://opennext.js.org/cloudflare)) — hosting, met Hyperdrive, Images, Turnstile en Web Analytics
+- **GitHub Actions** — CI/CD (deploy en previews)
 
 ## Lokale ontwikkeling
 
 ### Vereisten
 
-- Node.js ≥ 20
-- pnpm ≥ 9
-- Toegang tot Vercel project (voor env vars)
+- Node.js ≥ 22
+- pnpm ≥ 12
+- Een `.env.local` met de dev-gegevens (zie `.env.example`)
 
 ### Setup
 
@@ -26,8 +27,7 @@ Website voor voetbalvereniging SVV'04 uit Schoonebeek. Gebouwd met Next.js, Payl
 git clone <repo-url>
 cd site
 
-# 2. Haal lokale env vars op via Vercel CLI
-vercel env pull .env.local
+# 2. Zet de lokale env vars in .env.local (zie .env.example)
 
 # 3. Installeer dependencies
 pnpm install
@@ -42,28 +42,29 @@ De dev-omgeving gebruikt de **Neon `dev` branch** — gescheiden van productie. 
 
 ## Scripts
 
-| Script | Beschrijving |
-|--------|-------------|
-| `pnpm dev` | Start dev server |
-| `pnpm devsafe` | Start dev server na schone `.next`-build |
-| `pnpm build` | Productie build |
-| `pnpm generate` | Genereer TypeScript types + import map |
-| `pnpm migrate:create` | Maak een nieuwe migratie aan (alleen vóór productie-deploy) |
-| `pnpm sync:teamcodes` | Synchroniseer Sportlink teamcodes naar CMS |
-| `pnpm regenerate:media-sizes` | Genereer alle afbeeldingsformaten opnieuw |
-| `pnpm db:dev:reset` | Reset de Neon dev-branch naar productie |
-| `pnpm db:dev:no-expiry` | Zet de Neon dev-branch op geen vervaldatum |
-| `pnpm test` | Voer alle tests uit (integration + e2e) |
-| `pnpm test:int` | Voer integratietests uit (Vitest) |
-| `pnpm test:e2e` | Voer e2e-tests uit (Playwright) |
+| Script                  | Beschrijving                                                |
+| ----------------------- | ----------------------------------------------------------- |
+| `pnpm dev`              | Start dev server                                            |
+| `pnpm devsafe`          | Start dev server na schone `.next`-build                    |
+| `pnpm build`            | Next.js-build (Turbopack)                                   |
+| `pnpm cf:build`         | Build voor Cloudflare (OpenNext, webpack)                   |
+| `pnpm cf:preview`       | Cloudflare-build lokaal draaien in workerd                  |
+| `pnpm generate`         | Genereer TypeScript types + import map                      |
+| `pnpm migrate:create`   | Maak een nieuwe migratie aan (alleen vóór productie-deploy) |
+| `pnpm sync:teamcodes`   | Synchroniseer Sportlink teamcodes naar CMS                  |
+| `pnpm db:dev:reset`     | Reset de Neon dev-branch naar productie                     |
+| `pnpm db:dev:no-expiry` | Zet de Neon dev-branch op geen vervaldatum                  |
+| `pnpm test`             | Voer alle tests uit (integration + e2e)                     |
+| `pnpm test:int`         | Voer integratietests uit (Vitest)                           |
+| `pnpm test:e2e`         | Voer e2e-tests uit (Playwright)                             |
 
 ## Databases
 
-| Omgeving | Neon branch | Verbinding |
-|----------|-------------|-----------|
-| Lokaal / dev | `dev` | `.env.local` → `DATABASE_URL` |
-| Preview | `preview/<git-branch>` (automatisch) | Vercel Preview env → `DATABASE_URL` (geïnjecteerd door Neon-integratie) |
-| Productie | `production` | Vercel Production env → `DATABASE_URL` |
+| Omgeving     | Neon branch                         | Verbinding                                                                               |
+| ------------ | ----------------------------------- | ---------------------------------------------------------------------------------------- |
+| Lokaal / dev | `dev`                               | `.env.local` → `DATABASE_URL`                                                            |
+| Preview      | `preview/pr-<nummer>` (automatisch) | Secret `DATABASE_URL` van de Worker Preview (gezet door `.github/workflows/preview.yml`) |
+| Productie    | `production`                        | Hyperdrive-binding `HYPERDRIVE` van de Worker                                            |
 
 ## Projectstructuur
 
@@ -86,36 +87,17 @@ src/
 
 ## Deployment
 
-Elke push naar `main` triggert automatisch een productie-deployment; elke PR een
-preview-deployment. De build-command (`vercel.json`) draait `scripts/vercel-build.sh`:
-eerst de Payload-migraties tegen de database van **die** omgeving (via de
-**unpooled** Neon-verbinding, vereist voor DDL), dáárna de Next.js-build. Die
-volgorde is nodig omdat de build routes zoals `/sitemap.xml` statisch
-prerendert en die de database bevragen — de tabellen moeten dus al bestaan.
+De site draait op Cloudflare Workers. Zie [docs/cloudflare.md](docs/cloudflare.md) voor de
+opbouw, de secrets en de eenmalige setup.
 
-Het script stopt bewust met een foutmelding als `DATABASE_URL_UNPOOLED` ontbreekt —
-zo migreert een preview-build nooit per ongeluk tegen een verkeerde database.
-
-### Preview-branches met automatische Neon-branch
-
-Previews krijgen een eigen, geïsoleerde kopie van de productie-database via de
-**Neon-Vercel integratie**. Per PR wordt een Neon-branch aangemaakt, de migraties
-draaien daar (niet op productie), en bij het sluiten van de PR wordt de branch
-opgeruimd.
-
-**Eenmalige setup in de dashboards (kan niet vanuit de repo):**
-
-1. **Neon-integratie koppelen** — Vercel → project → *Integrations* →
-   *Neon* (Marketplace) → koppel aan het juiste Neon-project. Kies bij de
-   integratie-instellingen: *Create a database branch for each preview deployment*.
-2. **Env-scope controleren** — de integratie zet `DATABASE_URL` en
-   `DATABASE_URL_UNPOOLED` in de **Preview**-scope. Zorg dat er géén handmatige
-   `DATABASE_URL_UNPOOLED` in de Preview-scope staat die naar productie wijst
-   (anders wint die en migreer je alsnog op prod). Production- en
-   Development-scopes blijven ongewijzigd.
-3. **Neon-plan** — automatische branches per preview vereisen voldoende
-   branch-quota; op het gratis plan is dat beperkt. Controleer je Neon-plan als
-   previews falen op "branch limit reached".
+- **Productie**: elke push naar `main` draait `.github/workflows/deploy.yml`: eerst de
+  Payload-migraties op productie (via de **unpooled** Neon-verbinding, vereist voor DDL),
+  dan de build en de deploy. Die volgorde is nodig omdat de build pagina's prerendert die
+  de database bevragen.
+- **Previews**: elke PR draait `.github/workflows/preview.yml`: een eigen Neon-branch
+  `preview/pr-<nummer>` (kopie van productie), de migraties van de PR daarop, en een Worker
+  Preview met een vaste URL die als comment in de PR komt. Bij het sluiten van de PR
+  worden de branch en de Preview opgeruimd.
 
 > **Productie-migraties**: bij de eerste deploy met deze migratiegeschiedenis is
 > de baseline (`..._baseline_prod_schema`) handmatig als toegepast gemarkeerd in

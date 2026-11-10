@@ -4,11 +4,11 @@ import { createFakePayload, fundraiserRow, type FakePayload } from '../helpers/f
 
 vi.mock('payload', () => ({ getPayload: vi.fn() }))
 vi.mock('@payload-config', () => ({ default: {} }))
-vi.mock('botid/server', () => ({ checkBotId: vi.fn() }))
+vi.mock('@/lib/turnstile', () => ({ isHuman: vi.fn() }))
 vi.mock('@/lib/mollie', () => ({ createPayment: vi.fn(), getPayment: vi.fn() }))
 
 const { getPayload } = await import('payload')
-const { checkBotId } = await import('botid/server')
+const { isHuman } = await import('@/lib/turnstile')
 const { createPayment } = await import('@/lib/mollie')
 const { POST } = await import('@/app/(frontend)/api/donatie/route')
 
@@ -29,7 +29,7 @@ function setup(fundraiser: Record<string, unknown> | null = fundraiserRow) {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  vi.mocked(checkBotId).mockResolvedValue({ isBot: false } as any)
+  vi.mocked(isHuman).mockResolvedValue(true)
   vi.mocked(createPayment).mockResolvedValue({
     id: 'tr_test1',
     status: 'open',
@@ -123,7 +123,7 @@ describe('POST /api/donatie', () => {
   })
 
   it('weigert bots', async () => {
-    vi.mocked(checkBotId).mockResolvedValue({ isBot: true } as any)
+    vi.mocked(isHuman).mockResolvedValue(false)
 
     const res = await post(valid)
 

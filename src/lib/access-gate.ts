@@ -15,15 +15,10 @@ export function getAccessCode(): string | undefined {
   return code || undefined
 }
 
-// Het script van BotID (donatieformulier) wordt via dit vaste pad geladen. Het pad staat in het
-// pakket botid en is voor iedereen hetzelfde; zonder deze vrijstelling krijgt de browser HTML
-// terug in plaats van het script en werkt de botcontrole op het donatieformulier niet.
-const BOTID_DIR = '/149e9513-01fa-4fb0-aad4-566afd725d1b'
-
 // Plekken die altijd bereikbaar moeten blijven: Next-bestanden, alle API-routes (Mollie moet de
-// webhook kunnen aanroepen en Vercel de cron; de rest heeft eigen controle), het adminscherm
+// webhook kunnen aanroepen en de cron zijn route; de rest heeft eigen controle), het adminscherm
 // met eigen login, de toegangspagina zelf en wat die pagina of zoekmachines nodig hebben.
-const EXEMPT_DIRS = ['/_next', '/_vercel', '/api', '/admin', ACCESS_PATH, BOTID_DIR]
+const EXEMPT_DIRS = ['/_next', '/api', '/admin', ACCESS_PATH]
 const EXEMPT_FILES = new Set([
   '/robots.txt',
   '/favicon.ico',

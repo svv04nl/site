@@ -6,7 +6,6 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { nl } from 'payload/i18n/nl'
 import { fileURLToPath } from 'url'
-import sharp from 'sharp'
 
 import { CtaBlock } from './blocks/CtaBlock/config'
 import { ContactBlock } from './blocks/ContactBlock/config'
@@ -43,6 +42,20 @@ import { messageSubmitEndpoint } from './endpoints/message-submit'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// Op Cloudflare Workers loopt de database via Hyperdrive (connection pool bij Cloudflare).
+// Previews hebben geen Hyperdrive en gebruiken DATABASE_URL van hun eigen Neon-branch.
+// Buiten de Worker (next dev, payload migrate, scripts) is het gewoon DATABASE_URL.
+const onWorkers = typeof navigator !== 'undefined' && navigator.userAgent === 'Cloudflare-Workers'
+
+async function databaseUrl(): Promise<string> {
+  if (onWorkers) {
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare')
+    const { env } = await getCloudflareContext({ async: true })
+    if (env.HYPERDRIVE) return env.HYPERDRIVE.connectionString
+  }
+  return process.env.DATABASE_URL || ''
+}
 
 const blobToken = process.env.BLOB_READ_WRITE_TOKEN || ''
 const blobStoreId = blobToken.match(/^vercel_blob_rw_([a-z\d]+)_/i)?.[1]?.toLowerCase() ?? ''
@@ -121,10 +134,13 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: await databaseUrl(),
+      // Een Worker mag een verbinding niet over requests heen hergebruiken.
+      ...(onWorkers ? { maxUses: 1 } : {}),
     },
   }),
-  sharp,
+  // Geen sharp: dat draait niet op Workers. Beeldformaten maakt Cloudflare Images op het
+  // moment van tonen (zie collections/Media.ts en app/(frontend)/api/img).
   plugins: [
     vercelBlobStorage({
       enabled: !!blobToken,

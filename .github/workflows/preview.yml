@@ -1,0 +1,181 @@
+# A Preview per pull request, like on Vercel: its own Neon branch (a copy of production), the
+# PR's migrations on that branch, and a Worker Preview with a stable URL posted on the PR.
+# The address is the slug of the branch name: feature/Sponsoren-blok becomes
+# feature-sponsoren-blok-site.svv04.workers.dev, with Neon branch preview/feature-sponsoren-blok.
+# Closing the PR deletes the Neon branch and the Preview.
+name: Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  deploy:
+    name: Deploy preview
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    environment: Preview
+    # What loading the Payload config needs (migrations and build). Messages.ts creates a
+    # Resend client on load, which requires a key.
+    env:
+      PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      # Lowercase, only a-z, 0-9 and '-'. At most 50 characters: "<name>-site" has to fit in a
+      # 63-character DNS label. An empty slug (only characters like '/') becomes pr-<number>.
+      - name: Preview name
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          slug=$(printf '%s' "$HEAD_REF" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//' | cut -c1-50 | sed -E 's/-+$//')
+          [ -n "$slug" ] || slug="pr-$PR_NUMBER"
+          echo "PREVIEW_NAME=$slug" >> "$GITHUB_ENV"
+          echo "NEON_BRANCH=preview/$slug" >> "$GITHUB_ENV"
+          echo "Preview: $slug"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Reuses the branch on the next push, so test data in the preview stays.
+      - name: Neon branch
+        id: neon
+        uses: neondatabase/create-branch-action@v6
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          branch_name: ${{ env.NEON_BRANCH }}
+
+      - name: Migrations
+        run: pnpm migrate
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url }}
+
+      - name: Build
+        run: pnpm cf:build
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_pooled }}
+          NEXT_PUBLIC_CLUBDATA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_CLUBDATA_CLIENT_ID }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+
+      # The secrets of this Preview. DATABASE_URL points to its own Neon branch; the rest are
+      # test keys shared by all previews. No Turnstile and no access code.
+      - name: Preview secrets
+        run: |
+          jq -n \
+            --arg DATABASE_URL "${{ steps.neon.outputs.db_url_pooled }}" \
+            --arg PAYLOAD_SECRET "$PAYLOAD_SECRET" \
+            --arg BLOB_READ_WRITE_TOKEN "$BLOB_READ_WRITE_TOKEN" \
+            --arg RESEND_API_KEY "$RESEND_API_KEY" \
+            --arg CRON_SECRET "$CRON_SECRET" \
+            --arg MOLLIE_API_KEY "$MOLLIE_API_KEY" \
+            --arg AI_ASSISTANT_ENABLED "$AI_ASSISTANT_ENABLED" \
+            '$ARGS.named | with_entries(select(.value != ""))' > "$RUNNER_TEMP/preview-secrets.json"
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MOLLIE_API_KEY: ${{ secrets.MOLLIE_API_KEY }}
+          AI_ASSISTANT_ENABLED: ${{ vars.AI_ASSISTANT_ENABLED }}
+
+      - name: Populate cache
+        run: pnpm opennextjs-cloudflare populateCache remote
+
+      - name: Deploy preview
+        id: preview
+        run: |
+          pnpm wrangler preview --name "$PREVIEW_NAME" \
+            --secrets-file "$RUNNER_TEMP/preview-secrets.json" \
+            --message "${{ github.event.pull_request.head.sha }}" \
+            --json > "$RUNNER_TEMP/preview.json"
+          rm "$RUNNER_TEMP/preview-secrets.json"
+          # esbuild writes its warnings to stdout too; wrangler's JSON starts at the first line
+          # that begins with '{'.
+          json=$(sed -n '/^{/,$p' "$RUNNER_TEMP/preview.json" | jq -c .)
+          echo "$json" | jq .
+          echo "json=$json" >> "$GITHUB_OUTPUT"
+
+      - name: Comment on the PR
+        uses: actions/github-script@v8
+        env:
+          PREVIEW_JSON: ${{ steps.preview.outputs.json }}
+        with:
+          script: |
+            const result = JSON.parse(process.env.PREVIEW_JSON)
+            // Take the Worker URLs from the wrangler preview output, whatever its shape. The one
+            // named after the branch is stable; the other belongs to this one deployment.
+            const urls = [...new Set(JSON.stringify(result).match(/https:\/\/[^"\s]+\.workers\.dev/g) ?? [])]
+            const stable = `${process.env.PREVIEW_NAME}-`
+            const marker = '<!-- svv04-preview -->'
+            const body = [
+              marker,
+              `**Preview** for ${context.payload.pull_request.head.sha.slice(0, 7)}`,
+              '',
+              ...urls.map((url) =>
+                url.startsWith(`https://${stable}`) ? `- ${url} (latest push)` : `- ${url} (this deployment)`,
+              ),
+              '',
+              `Database: Neon branch \`${process.env.NEON_BRANCH}\` (a copy of production).`,
+            ].join('\n')
+            const { owner, repo } = context.repo
+            const issue_number = context.payload.pull_request.number
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number })
+            const existing = comments.find((c) => c.body?.startsWith(marker))
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body })
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body })
+            }
+
+  cleanup:
+    name: Clean up preview
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    environment: Preview
+    steps:
+      - uses: actions/checkout@v5
+      # Lowercase, only a-z, 0-9 and '-'. At most 50 characters: "<name>-site" has to fit in a
+      # 63-character DNS label. An empty slug (only characters like '/') becomes pr-<number>.
+      - name: Preview name
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          slug=$(printf '%s' "$HEAD_REF" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//' | cut -c1-50 | sed -E 's/-+$//')
+          [ -n "$slug" ] || slug="pr-$PR_NUMBER"
+          echo "PREVIEW_NAME=$slug" >> "$GITHUB_ENV"
+          echo "NEON_BRANCH=preview/$slug" >> "$GITHUB_ENV"
+          echo "Preview: $slug"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Delete preview
+        run: pnpm wrangler preview delete --name "$PREVIEW_NAME" || true
+      - name: Delete Neon branch
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          branch: ${{ env.NEON_BRANCH }}

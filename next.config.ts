@@ -1,13 +1,17 @@
 import { withPayload } from '@payloadcms/next/withPayload'
-import { withBotId } from 'botid/next/config'
 import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
 
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const isDev = process.env.NODE_ENV === 'development'
+
+// Maakt de Cloudflare-bindings (Images, R2, ...) ook onder `next dev` beschikbaar via
+// getCloudflareContext(). De database blijft lokaal gewoon DATABASE_URL.
+if (isDev) initOpenNextCloudflareForDev()
 
 // Parse the specific Vercel Blob store hostname from the token rather than using a wildcard.
 const blobToken = process.env.BLOB_READ_WRITE_TOKEN || ''
@@ -22,7 +26,9 @@ const csp = [
   // Next.js requires 'unsafe-inline' for hydration scripts.
   // 'unsafe-eval' is only needed for webpack hot-reload in development.
   // maps.googleapis.com loads the Google Maps JavaScript API (AddressBlock).
-  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://maps.googleapis.com${isDev ? " 'unsafe-eval'" : ''}`,
+  // challenges.cloudflare.com is Turnstile (bot check), static.cloudflareinsights.com is
+  // Cloudflare Web Analytics.
+  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://maps.googleapis.com${isDev ? " 'unsafe-eval'" : ''}`,
 
   // Inline styles are used by Next.js and various components.
   `style-src 'self' 'unsafe-inline'`,
@@ -36,11 +42,12 @@ const csp = [
   `img-src 'self' data: blob:${blobHost ? ` ${blobHost}` : ''} https://logoapi.voetbal.nl https://maps.gstatic.com https://maps.googleapis.com`,
 
   // Client-side TanStack Query hooks fetch live sports data directly from Sportlink.
-  // Vercel Analytics and Speed Insights send beacons to vitals.vercel-insights.com.
+  // Cloudflare Web Analytics sends beacons to cloudflareinsights.com.
   // Google Maps JS API (geocoding, tile requests) calls maps.googleapis.com.
-  `connect-src 'self' https://data.sportlink.com https://vitals.vercel-insights.com https://maps.googleapis.com${isDev ? ' ws://localhost:*' : ''}`,
+  `connect-src 'self' https://data.sportlink.com https://cloudflareinsights.com https://maps.googleapis.com${isDev ? ' ws://localhost:*' : ''}`,
 
-  `frame-src 'none'`,
+  // Turnstile renders its check in an iframe.
+  `frame-src https://challenges.cloudflare.com`,
   `object-src 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,
@@ -48,6 +55,9 @@ const csp = [
 ].join('; ')
 
 const nextConfig: NextConfig = {
+  // Packages with Cloudflare Workers (workerd) specific code.
+  // See https://opennext.js.org/cloudflare/howtos/workerd
+  serverExternalPackages: ['jose', 'pg', 'pg-cloudflare'],
   productionBrowserSourceMaps: true,
   // Allows the dev server (HMR, RSC requests) to be reached through a
   // Cloudflare quick tunnel for testing on a phone/other device. The
@@ -75,7 +85,16 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  webpack: (webpackConfig) => {
+  // Webpack is only used for the Cloudflare build (see open-next.config.ts); next dev and the
+  // Vercel build use Turbopack.
+  webpack: (webpackConfig, { isServer }) => {
+    if (isServer) {
+      webpackConfig.resolve.alias = {
+        ...webpackConfig.resolve.alias,
+        // @vercel/blob imports fetch from undici, which compiles WebAssembly on load.
+        undici$: path.resolve(dirname, 'src/lib/shims/undici.ts'),
+      }
+    }
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
@@ -89,4 +108,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withBotId(withPayload(nextConfig, { devBundleServerPackages: false }))
+export default withPayload(nextConfig, { devBundleServerPackages: false })

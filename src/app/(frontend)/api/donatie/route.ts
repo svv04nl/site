@@ -1,13 +1,12 @@
 import { randomUUID } from 'node:crypto'
-import { checkBotId } from 'botid/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { createPayment } from '@/lib/mollie'
+import { isHuman } from '@/lib/turnstile'
 import { FUNDRAISER_SLUG, parseDonationInput, paymentTotal } from '@/lib/fundraiser'
 
 export async function POST(request: Request) {
-  const verification = await checkBotId()
-  if (verification.isBot) {
+  if (!(await isHuman(request))) {
     return Response.json({ error: 'Access denied' }, { status: 403 })
   }
 
