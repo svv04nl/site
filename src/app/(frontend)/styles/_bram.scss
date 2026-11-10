@@ -39,12 +39,38 @@
   }
 }
 
+.assistant-fab-dock {
+  bottom: 1.25rem;
+  position: fixed;
+  right: 1.25rem;
+  transform-origin: 100% 100%;
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
+  z-index: 900;
+
+  // Steps aside while the "Stel je vraag" band is in view or the popup is open.
+  &.is-away {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.3) translate(24px, 24px);
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
 .assistant-fab {
   align-items: center;
   background: var(--color-primary);
   border: 0;
   border-radius: 999px;
-  bottom: 1.25rem;
   box-shadow: 0 10px 28px rgb(0 0 0 / 28%);
   color: var(--color-white);
   cursor: pointer;
@@ -56,15 +82,8 @@
   letter-spacing: 0.04em;
   min-height: 74px;
   padding: 6px 1.25rem 6px 6px;
-  position: fixed;
-  right: 1.25rem;
   text-transform: uppercase;
-  transform-origin: 100% 100%;
-  transition:
-    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s ease,
-    background-color 0.15s ease;
-  z-index: 900;
+  transition: background-color 0.15s ease;
 
   &:hover {
     background: #a80000;
@@ -75,25 +94,40 @@
     outline-offset: 3px;
   }
 
-  // Steps aside while the "Stel je vraag" band is in view or the popup is open.
-  &.is-away {
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.3) translate(24px, 24px);
-  }
-
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
-    bottom: 1rem;
     padding: 6px;
-    right: 1rem;
 
     .assistant-fab__label {
       display: none;
     }
   }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+// Small cross at the top right: hides Bram for the rest of the visit.
+.assistant-fab__close {
+  align-items: center;
+  background: var(--color-dark);
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 25%);
+  color: var(--color-white);
+  cursor: pointer;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 24px;
+
+  &:hover {
+    background: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-dark);
+    outline-offset: 2px;
   }
 }
 

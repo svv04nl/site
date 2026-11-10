@@ -57,7 +57,7 @@ export default function AssistantPanel({ open, onClose, question, audience, onQu
           <BramAvatar size={46} />
           <div className="assistant-panel__title">
             <h2>Vraag het Bram</h2>
-            <p>De digitale hulp van SVV&rsquo;04</p>
+            <p>Weet alles van SVV&rsquo;04</p>
           </div>
           <button
             type="button"
