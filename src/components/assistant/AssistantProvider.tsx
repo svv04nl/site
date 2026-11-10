@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 
 // The chat (AI SDK, markdown) only loads when a visitor first opens the assistant.
 const AssistantPanel = dynamic(() => import('./AssistantPanel'), { ssr: false })
+const AssistantFab = dynamic(() => import('./AssistantFab').then((m) => m.AssistantFab), { ssr: false })
 
 /** The "Voor jou" page the visitor is on: its slug and the example questions for that group. */
 export type AssistantAudience = { slug: string; questions: string[] }
@@ -81,6 +82,7 @@ export function AssistantProvider({
   return (
     <AssistantContext.Provider value={value}>
       {children}
+      {enabled && <AssistantFab />}
       {enabled && mounted && (
         <AssistantPanel
           open={open}

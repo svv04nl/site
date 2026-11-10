@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { BreadcrumbBar } from './BreadcrumbContext'
 import SearchModal from './SearchModal'
 import { useAssistant } from '@/components/assistant/AssistantProvider'
-import { SparkleIcon } from '@/components/assistant/icons'
 
 const NavArrow = () => (
   <svg
@@ -159,17 +158,8 @@ export default function Header({
                 </ul>
               </nav>
             )}
-            {assistant.enabled ? (
-              <button
-                type="button"
-                className="assistant-trigger"
-                aria-label="Stel je vraag"
-                onClick={openFinder}
-              >
-                <SparkleIcon />
-                Stel je vraag
-              </button>
-            ) : (
+            {/* The assistant opens from the Bram button at the bottom right; the topbar only searches when it is off */}
+            {!assistant.enabled && (
               <button
                 type="button"
                 className="search-trigger"
@@ -246,27 +236,15 @@ export default function Header({
             <img src="/logo.webp" alt="SVV'04" className="site-header-mobile-logo-img" width="278" height="336" />
           </Link>
 
-          {/* Mobile: assistant (webshop stays in the menu), or the webshop while the assistant is off */}
-          {assistant.enabled ? (
-            <button
-              type="button"
-              className="site-header-mobile-cta"
-              aria-label="Stel je vraag"
-              onClick={openFinder}
-            >
-              <SparkleIcon size={13} />
-              Stel je vraag
-            </button>
-          ) : (
-            <a
-              className="site-header-mobile-cta"
-              href="https://clubs.deventrade.com/nl/svv-04/clubcollectie"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Webshop
-            </a>
-          )}
+          {/* Mobile: the webshop; the assistant opens from the Bram button at the bottom right */}
+          <a
+            className="site-header-mobile-cta"
+            href="https://clubs.deventrade.com/nl/svv-04/clubcollectie"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Webshop
+          </a>
 
           {/* Desktop nav */}
           <div className="site-header-nav-right">

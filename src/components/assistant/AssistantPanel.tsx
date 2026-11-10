@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react'
 import AssistantChat from '@/components/assistant/AssistantChat'
 import type { AssistantAudience } from '@/components/assistant/AssistantProvider'
-import { SparkleIcon } from '@/components/assistant/icons'
+import { BramAvatar } from '@/components/assistant/BramAvatar'
 
 type Props = {
   open: boolean
@@ -49,13 +49,16 @@ export default function AssistantPanel({ open, onClose, question, audience, onQu
       <section
         className="assistant-panel"
         role="dialog"
-        aria-label="Stel je vraag"
+        aria-label="Vraag het Bram"
         hidden={!open}
         onClick={onLinkClick}
       >
         <header className="assistant-panel__header">
-          <SparkleIcon size={18} />
-          <h2>Stel je vraag</h2>
+          <BramAvatar size={46} />
+          <div className="assistant-panel__title">
+            <h2>Vraag het Bram</h2>
+            <p>De digitale hulp van SVV&rsquo;04</p>
+          </div>
           <button
             type="button"
             className="assistant-panel__close"

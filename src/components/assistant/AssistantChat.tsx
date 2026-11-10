@@ -276,6 +276,11 @@ export default function AssistantChat({
     <div className={`assistant${isPanel ? ' assistant--panel' : ''}`}>
       {messages.length === 0 ? (
         <div className="assistant-examples">
+          {isPanel && (
+            <p className="assistant-greeting">
+              Hoi! Ik ben Bram, de zebra van SVV&rsquo;04. Waar kan ik je mee helpen?
+            </p>
+          )}
           <p className="assistant-examples__label">Probeer bijvoorbeeld:</p>
           <ul>
             {examples.map((example) => (

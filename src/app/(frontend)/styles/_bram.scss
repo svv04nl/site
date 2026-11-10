@@ -1,0 +1,106 @@
+// ─── Bram (mascot) and the "Vraag het Bram" button ───────────────────────────
+
+// Bram's head in a white circle; the top of the head pops out above the circle.
+// The mask shows everything above the circle's centre line, and below it only
+// what falls inside the circle.
+.bram-avatar {
+  --bram-size: 62px;
+
+  flex: none;
+  height: var(--bram-size);
+  position: relative;
+  width: var(--bram-size);
+
+  &::before {
+    background: var(--color-white);
+    border-radius: 50%;
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+
+  img {
+    --bram-height: calc(var(--bram-size) * 1.14);
+    --bram-mid: calc(var(--bram-height) - var(--bram-size) / 2);
+
+    bottom: 0;
+    height: var(--bram-height);
+    left: 0;
+    -webkit-mask:
+      linear-gradient(#000, #000) 0 0 / 100% var(--bram-mid) no-repeat,
+      radial-gradient(circle calc(var(--bram-size) / 2) at 50% var(--bram-mid), #000 98%, transparent 100%);
+    mask:
+      linear-gradient(#000, #000) 0 0 / 100% var(--bram-mid) no-repeat,
+      radial-gradient(circle calc(var(--bram-size) / 2) at 50% var(--bram-mid), #000 98%, transparent 100%);
+    object-fit: contain;
+    object-position: bottom;
+    position: absolute;
+    width: var(--bram-size);
+  }
+}
+
+.assistant-fab {
+  align-items: center;
+  background: var(--color-primary);
+  border: 0;
+  border-radius: 999px;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 10px 28px rgb(0 0 0 / 28%);
+  color: var(--color-white);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  letter-spacing: 0.04em;
+  min-height: 74px;
+  padding: 6px 1.25rem 6px 6px;
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right, 0px));
+  text-transform: uppercase;
+  transform-origin: 100% 100%;
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    background-color 0.15s ease;
+  z-index: 900;
+
+  &:hover {
+    background: #a80000;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-dark);
+    outline-offset: 3px;
+  }
+
+  // Steps aside while the "Stel je vraag" band is in view or the popup is open.
+  &.is-away {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.3) translate(24px, 24px);
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    padding: 6px;
+    right: max(1rem, env(safe-area-inset-right, 0px));
+
+    .assistant-fab__label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.assistant-greeting {
+  background: var(--color-light);
+  border-radius: 12px 12px 12px 4px;
+  font-size: 1rem;
+  margin: 0 0 1.1rem;
+  padding: 0.85rem 1rem;
+}
