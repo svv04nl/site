@@ -60,13 +60,9 @@ export function CancellationBannerClient({
   return (
     <div className="cancellation-banner" role="status">
       <div className="cancellation-banner-inner">
-        <img
-          className="cancellation-banner-bram"
-          src="/bram/bram-afgelast.webp"
-          alt=""
-          width={263}
-          height={220}
-        />
+        <span className="cancellation-banner-bram" aria-hidden="true">
+          <img src="/bram/bram-afgelast.webp" alt="" width={263} height={220} />
+        </span>
         <Link href="/programma" className="cancellation-banner-text">
           <strong>Afgelast:</strong> {text}
         </Link>

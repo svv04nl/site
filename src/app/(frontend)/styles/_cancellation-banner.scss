@@ -19,9 +19,45 @@
 }
 
 .cancellation-banner-bram {
+  --circle: 34px;
+  --pop: 38px; // height of Bram: his head sticks out above the circle
+
   flex: none;
-  height: 2rem;
-  width: auto;
+  height: var(--circle);
+  position: relative;
+  width: var(--circle);
+
+  // White circle behind Bram, like the mascot button.
+  &::before {
+    background: var(--color-white);
+    border-radius: 50%;
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+
+  // The mask shows Bram's head above the middle of the circle and the whole X on the
+  // left. Only the bottom right follows the edge of the circle.
+  img {
+    --cx: 58%; // centre of the circle, measured on the image
+    --mid: calc(var(--pop) - var(--circle) / 2);
+
+    bottom: 0;
+    height: var(--pop);
+    left: 50%;
+    max-width: none;
+    -webkit-mask:
+      linear-gradient(#000, #000) 0 0 / 100% var(--mid) no-repeat,
+      linear-gradient(#000, #000) 0 0 / var(--cx) 100% no-repeat,
+      radial-gradient(circle calc(var(--circle) / 2) at var(--cx) var(--mid), #000 98%, transparent 100%);
+    mask:
+      linear-gradient(#000, #000) 0 0 / 100% var(--mid) no-repeat,
+      linear-gradient(#000, #000) 0 0 / var(--cx) 100% no-repeat,
+      radial-gradient(circle calc(var(--circle) / 2) at var(--cx) var(--mid), #000 98%, transparent 100%);
+    position: absolute;
+    transform: translateX(-58%);
+    width: auto;
+  }
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
     display: none;
