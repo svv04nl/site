@@ -1,6 +1,6 @@
-# Productie: elke push naar main draait de migraties op de productiedatabase, bouwt de site
-# voor Cloudflare en zet hem live. Runtime-secrets staan op de Worker zelf (zie
-# docs/cloudflare.md); hier staan alleen wat de build en de migraties nodig hebben.
+# Production: every push to main runs the migrations on the production database, builds the
+# site for Cloudflare and deploys it. Runtime secrets live on the Worker itself (see
+# docs/cloudflare.md); this file only has what the build and the migrations need.
 name: Deploy
 
 on:
@@ -14,14 +14,14 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy naar Cloudflare
+    name: Deploy to Cloudflare
     runs-on: ubuntu-latest
     environment: Production
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
       BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
-      # Messages.ts maakt bij het laden van de config al een Resend-client.
+      # Messages.ts creates a Resend client when the config loads.
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       NEXT_PUBLIC_CLUBDATA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_CLUBDATA_CLIENT_ID }}
       NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
@@ -40,9 +40,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      # Eerst de migraties: de build rendert pagina's die de database lezen. DDL gaat altijd via
-      # de verbinding zonder pooler.
-      - name: Migraties
+      # Migrations first: the build renders pages that read the database. DDL always goes
+      # through the connection without the pooler.
+      - name: Migrations
         run: pnpm migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_UNPOOLED }}

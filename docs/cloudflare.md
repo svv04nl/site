@@ -91,7 +91,7 @@ Maak in de repo twee environments aan, `production` en `preview`.
 | `MOLLIE_API_KEY`                                      |              | **test**-sleutel          |
 
 Pas daarna de branch protection van `main` aan: de verplichte check wordt de job
-_Preview deployen_ in plaats van de Vercel-check.
+_Deploy preview_ in plaats van de Vercel-check.
 
 ### 4. Neon
 
