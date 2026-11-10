@@ -1,21 +1,32 @@
 // ─── 404 ──────────────────────────────────────────────────────────────────────
-// Shown for unknown pages: Bram with a flat ball, the message and quick links.
+// Shown for unknown pages: Bram with a flat ball in a grey circle, the message and quick links.
 
 .not-found-inner {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 2.5rem 4rem;
+  gap: 2.5rem 3rem;
   justify-content: center;
   padding-bottom: 5rem;
   padding-top: 4rem;
 }
 
 .not-found-bram {
+  align-items: flex-end;
+  aspect-ratio: 1;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
   flex: none;
-  height: auto;
-  max-width: 100%;
-  width: 16rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 15rem;
+
+  img {
+    display: block;
+    height: auto;
+    width: 88%;
+  }
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
     width: 11rem;
@@ -27,8 +38,8 @@
   display: flex;
   flex: 1 1 22rem;
   flex-direction: column;
-  gap: 1rem;
-  max-width: 34rem;
+  gap: 1.1rem;
+  max-width: 40rem;
   min-width: 0;
 }
 
@@ -39,21 +50,44 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   margin: 0;
+  text-transform: uppercase;
+}
+
+.not-found-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
 }
 
 .not-found-intro {
   font-size: 1.125rem;
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .not-found-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin-top: 0.5rem;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
 
   a {
+    border: 1.5px solid #d9d9d9;
+    border-radius: 999px;
     color: var(--color-dark);
     font-weight: 600;
+    padding: 0.6rem 1.15rem;
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
   }
 }
