@@ -829,6 +829,7 @@ The site runs on Cloudflare Workers through OpenNext (`wrangler.jsonc`, `open-ne
 - The Cloudflare build uses webpack (`pnpm cf:build`); `undici` is aliased to `src/lib/shims/undici.ts` there. `next dev` stays on Turbopack.
 - Bot checks use Turnstile (`lib/turnstile.ts`, `instrumentation-client.ts`): POSTs to the paths in `TURNSTILE_PROTECTED_PATHS` get a token header automatically; routes call `isHuman(request)`.
 - Crons are Cron Triggers in `wrangler.jsonc`, mapped to the existing `/api/cron/*` routes in `worker.ts`.
+- There is no `VERCEL_ENV`. To tell production from previews and local development, use `isProduction()` / `siteEnv()` from `src/lib/site-env.ts` (backed by `SITE_ENV` in `wrangler.jsonc`), e.g. to keep test switches off the live site.
 - The assistant's model goes through Cloudflare AI Gateway (gateway `svv04`, Unified Billing) with `createAI` from `agents/models/ai-sdk` (`lib/ai/agent.ts`): the `AI` binding in the Worker, `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_AI_API_TOKEN` elsewhere. Model ids use the catalog spelling (`anthropic/claude-haiku-5.5`).
 - Test a Cloudflare build locally with `pnpm cf:build` and `wrangler dev --env-file .env.local` (set `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` to the dev database).
 
