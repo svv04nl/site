@@ -9,6 +9,15 @@
   justify-content: center;
   padding-bottom: 5rem;
   padding-top: 4rem;
+
+  // Stacked: Bram above the text, everything centred, less air at the top.
+  @media screen and (max-width: #{$breakpoint-tablet}) {
+    flex-direction: column;
+    gap: 1.75rem;
+    padding-bottom: 6rem; // room for the floating assistant button
+    padding-top: 0; // .page already adds space under the header
+    text-align: center;
+  }
 }
 
 .not-found-bram {
@@ -29,7 +38,9 @@
   }
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
-    --bram-circle: 11rem;
+    --bram-circle: 9.5rem;
+
+    margin-top: 2.5rem;
   }
 }
 
@@ -64,6 +75,16 @@
   gap: 1.1rem;
   max-width: 40rem;
   min-width: 0;
+
+  @media screen and (max-width: #{$breakpoint-tablet}) {
+    align-items: center;
+    flex: none;
+    width: 100%;
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    gap: 0.85rem;
+  }
 }
 
 .not-found-code {
@@ -79,16 +100,23 @@
 .not-found-title {
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
   font-weight: 800;
   line-height: 1;
   margin: 0;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 .not-found-intro {
   font-size: 1.125rem;
   margin: 0;
+  text-wrap: pretty;
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    font-size: 1rem;
+    max-width: 19rem; // breaks before "Misschien zoek je dit:"
+  }
 }
 
 .not-found-links {
@@ -97,7 +125,15 @@
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 
+  // Two even columns on a phone instead of a ragged row with one pill left over.
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: 1fr 1fr; // equal columns, as wide as the longest label
+  }
+
   a {
+    text-align: center;
     border: 1.5px solid #d9d9d9;
     border-radius: 999px;
     color: var(--color-dark);
@@ -108,9 +144,21 @@
       border-color 0.15s ease,
       color 0.15s ease;
 
+    @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+      font-size: 0.9375rem;
+      padding: 0.45rem 0.9rem;
+    }
+
     &:hover {
       border-color: var(--color-primary);
       color: var(--color-primary);
     }
+  }
+}
+
+.not-found-text > .btn {
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    font-size: 0.875rem;
+    padding: 0.7rem 1.4rem;
   }
 }
