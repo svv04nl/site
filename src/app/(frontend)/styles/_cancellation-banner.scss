@@ -14,8 +14,8 @@
   gap: 0.75rem;
   margin: 0 auto;
   max-width: var(--grid-base);
-  min-height: 2.5rem;
-  padding: 0.2rem var(--container-padding);
+  min-height: 3rem; // room for Bram's head above his circle
+  padding: 0.3rem var(--container-padding);
 }
 
 .cancellation-banner-bram {
@@ -24,6 +24,7 @@
 
   flex: none;
   height: var(--circle);
+  margin-top: 4px; // a bit lower, so his head stays clear of the top edge
   position: relative;
   width: var(--circle);
 
