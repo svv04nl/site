@@ -49,12 +49,7 @@ De dev-omgeving gebruikt de **Neon `dev` branch** — gescheiden van productie. 
 | `pnpm build` | Productie build |
 | `pnpm generate` | Genereer TypeScript types + import map |
 | `pnpm migrate:create` | Maak een nieuwe migratie aan (alleen vóór productie-deploy) |
-| `pnpm seed` | Seed basisdata (teams, etc.) |
-| `pnpm seed:pages` | Seed standaardpagina's (vereniging, commissies, meedoen) |
-| `pnpm seed:audiences` | Seed "Voor jou"-doelgroeppagina's |
-| `pnpm seed:posts` | Seed nieuwsberichten |
 | `pnpm sync:teamcodes` | Synchroniseer Sportlink teamcodes naar CMS |
-| `pnpm fix:media-urls` | Herstel legacy media-URLs naar directe blob-URLs |
 | `pnpm regenerate:media-sizes` | Genereer alle afbeeldingsformaten opnieuw |
 | `pnpm db:dev:reset` | Reset de Neon dev-branch naar productie |
 | `pnpm db:dev:no-expiry` | Zet de Neon dev-branch op geen vervaldatum |
@@ -85,7 +80,7 @@ src/
 ├── lib/
 │   └── clubdata/            # Club.Dataservice (Sportlink) integratie
 ├── migrations/              # PostgreSQL migraties
-├── scripts/                 # Beheerscripts (seed, media, sync)
+├── scripts/                 # Beheerscripts (media, sync)
 └── payload.config.ts        # Hoofd Payload-configuratie
 ```
 

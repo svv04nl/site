@@ -9,7 +9,7 @@ export function slugify(value: string): string {
     .replace(/\s+/g, '-')
 }
 
-/** "06-50813259" or "0524-531656" to E.164 ("+31650813259"). Undefined if it is not a Dutch or international number. */
+/** "06-12345678" or "0524-531656" to E.164 ("+31612345678"). Undefined if it is not a Dutch or international number. */
 export function toE164(phone: string | null | undefined): string | undefined {
   if (!phone) return undefined
   const digits = phone.replace(/[^\d+]/g, '')
