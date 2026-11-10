@@ -44,7 +44,7 @@
   background: var(--color-primary);
   border: 0;
   border-radius: 999px;
-  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  bottom: 1.25rem;
   box-shadow: 0 10px 28px rgb(0 0 0 / 28%);
   color: var(--color-white);
   cursor: pointer;
@@ -57,7 +57,7 @@
   min-height: 74px;
   padding: 6px 1.25rem 6px 6px;
   position: fixed;
-  right: max(1.25rem, env(safe-area-inset-right, 0px));
+  right: 1.25rem;
   text-transform: uppercase;
   transform-origin: 100% 100%;
   transition:
@@ -83,9 +83,9 @@
   }
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    bottom: 1rem;
     padding: 6px;
-    right: max(1rem, env(safe-area-inset-right, 0px));
+    right: 1rem;
 
     .assistant-fab__label {
       display: none;
