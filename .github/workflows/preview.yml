@@ -119,14 +119,18 @@ jobs:
         with:
           script: |
             const result = JSON.parse(process.env.PREVIEW_JSON)
-            // Take every URL from the wrangler preview output, whatever its shape.
-            const urls = [...new Set(JSON.stringify(result).match(/https:\/\/[^"\s]+/g) ?? [])]
+            // Take the Worker URLs from the wrangler preview output, whatever its shape. The one
+            // named after the branch is stable; the other belongs to this one deployment.
+            const urls = [...new Set(JSON.stringify(result).match(/https:\/\/[^"\s]+\.workers\.dev/g) ?? [])]
+            const stable = `${process.env.PREVIEW_NAME}-`
             const marker = '<!-- svv04-preview -->'
             const body = [
               marker,
               `**Preview** for ${context.payload.pull_request.head.sha.slice(0, 7)}`,
               '',
-              ...urls.map((url) => `- ${url}`),
+              ...urls.map((url) =>
+                url.startsWith(`https://${stable}`) ? `- ${url} (latest push)` : `- ${url} (this deployment)`,
+              ),
               '',
               `Database: Neon branch \`${process.env.NEON_BRANCH}\` (a copy of production).`,
             ].join('\n')
