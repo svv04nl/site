@@ -106,8 +106,11 @@ jobs:
             --message "${{ github.event.pull_request.head.sha }}" \
             --json > "$RUNNER_TEMP/preview.json"
           rm "$RUNNER_TEMP/preview-secrets.json"
-          cat "$RUNNER_TEMP/preview.json"
-          echo "json=$(jq -c . "$RUNNER_TEMP/preview.json")" >> "$GITHUB_OUTPUT"
+          # esbuild schrijft zijn waarschuwingen ook naar stdout; de JSON van wrangler begint
+          # bij de eerste regel die met '{' begint.
+          json=$(sed -n '/^{/,$p' "$RUNNER_TEMP/preview.json" | jq -c .)
+          echo "$json" | jq .
+          echo "json=$json" >> "$GITHUB_OUTPUT"
 
       - name: Link in de PR
         uses: actions/github-script@v8
