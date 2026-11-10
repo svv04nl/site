@@ -27,6 +27,12 @@ jobs:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     environment: Preview
+    # Wat het laden van de Payload-config nodig heeft (migraties en build). Messages.ts maakt
+    # bij het laden al een Resend-client, die een sleutel eist.
+    env:
+      PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
     steps:
       - uses: actions/checkout@v5
       # Kleine letters, alleen a-z, 0-9 en '-'. Maximaal 50 tekens: "<naam>-site" moet als
@@ -68,8 +74,6 @@ jobs:
         run: pnpm cf:build
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_pooled }}
-          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
           NEXT_PUBLIC_CLUBDATA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_CLUBDATA_CLIENT_ID }}
           NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
@@ -87,9 +91,6 @@ jobs:
             --arg AI_ASSISTANT_ENABLED "$AI_ASSISTANT_ENABLED" \
             '$ARGS.named | with_entries(select(.value != ""))' > "$RUNNER_TEMP/preview-secrets.json"
         env:
-          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           MOLLIE_API_KEY: ${{ secrets.MOLLIE_API_KEY }}
           AI_ASSISTANT_ENABLED: ${{ vars.AI_ASSISTANT_ENABLED }}
