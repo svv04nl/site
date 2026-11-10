@@ -1,12 +1,11 @@
-import { checkBotId } from 'botid/server'
 import type { Endpoint } from 'payload'
+import { isHuman } from '@/lib/turnstile'
 
 export const messageSubmitEndpoint: Endpoint = {
   path: '/message-submit',
   method: 'post',
   handler: async (req) => {
-    const verification = await checkBotId()
-    if (verification.isBot) {
+    if (!(await isHuman(req))) {
       return Response.json({ error: 'Access denied' }, { status: 403 })
     }
 

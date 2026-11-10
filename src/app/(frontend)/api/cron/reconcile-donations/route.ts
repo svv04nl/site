@@ -3,9 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { reconcileOpenDonations } from '@/lib/donations'
 
-export const maxDuration = 120
-
-// Called daily by Vercel Cron (see vercel.json), which authenticates with CRON_SECRET.
+// Called daily by the Cron Trigger in wrangler.jsonc (see worker.ts), which authenticates with CRON_SECRET.
 // Safety net for donations whose Mollie webhook and return page were both missed.
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET

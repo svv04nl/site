@@ -8,8 +8,7 @@ import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
 import { AssistantProvider } from '@/components/assistant/AssistantProvider'
 import { isAssistantEnabled } from '@/lib/ai/agent'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { WebAnalytics } from '@/components/WebAnalytics'
 import './globals.scss'
 
 const sairaCondensed = Saira_Condensed({
@@ -57,8 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </AssistantProvider>
         </div>
-        <Analytics />
-        <SpeedInsights />
+        <WebAnalytics />
       </body>
     </html>
   )

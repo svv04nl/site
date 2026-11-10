@@ -1,7 +1,6 @@
 import React from 'react'
 import { Saira_Condensed, Outfit } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { WebAnalytics } from '@/components/WebAnalytics'
 import './tribune.scss'
 
 const sairaCondensed = Saira_Condensed({
@@ -43,8 +42,7 @@ export default function TribuneLayout({ children }: { children: React.ReactNode 
     >
       <body>
         {children}
-        <Analytics />
-        <SpeedInsights />
+        <WebAnalytics />
       </body>
     </html>
   )

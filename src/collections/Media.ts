@@ -1,4 +1,17 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadRequest } from 'payload'
+import { MEDIA_SIZES, canTransform, fitsSize, sizedDimensions } from '@/lib/media-sizes'
+
+// Origin van een REST- of GraphQL-request, zodat een externe lezer een volledige URL krijgt.
+// De Local API (servercomponenten, de app-API) heeft geen echte request-URL: dan een relatief
+// pad, dat de site zelf goed oplost (de app-API maakt het absoluut, zie lib/app-api/media.ts).
+function originOf(req: PayloadRequest): string {
+  if (req.payloadAPI === 'local' || !req.url) return ''
+  try {
+    return new URL(req.url).origin
+  } catch {
+    return ''
+  }
+}
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -9,6 +22,26 @@ export const Media: CollectionConfig = {
   access: {
     read: () => true,
   },
+  hooks: {
+    afterRead: [
+      ({ doc, req }) => {
+        if (!doc?.id || !canTransform(doc.mimeType)) return doc
+        const version = encodeURIComponent(doc.updatedAt ?? '')
+        const origin = originOf(req)
+        const sizes = { ...(doc.sizes ?? {}) }
+        for (const [name, size] of Object.entries(MEDIA_SIZES)) {
+          if (sizes[name]?.url || !fitsSize(size, doc.width, doc.height)) continue
+          sizes[name] = {
+            ...sizes[name],
+            ...sizedDimensions(size, doc.width, doc.height),
+            mimeType: 'image/webp',
+            url: `${origin}/api/img/${name}/${doc.id}?v=${version}`,
+          }
+        }
+        return { ...doc, sizes }
+      },
+    ],
+  },
   fields: [
     {
       name: 'alt',
@@ -17,59 +50,15 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    imageSizes: [
-      {
-        name: 'newsCard',
-        width: 600,
-        height: 300,
-        position: 'centre',
-        formatOptions: {
-          format: 'webp',
-          options: { quality: 80 },
-        },
-      },
-      {
-        name: 'featuredPost',
-        width: 1200,
-        height: 600,
-        position: 'centre',
-        formatOptions: {
-          format: 'webp',
-          options: { quality: 82 },
-        },
-      },
-      {
-        // Homepage hero for a featured news post (see Posts.heroFeatured)
-        name: 'hero',
-        width: 2400,
-        height: 1000,
-        position: 'centre',
-        formatOptions: {
-          format: 'webp',
-          options: { quality: 80 },
-        },
-      },
-      {
-        // Team listing cards (senioren/jeugd overview pages)
-        name: 'teamCard',
-        width: 600,
-        height: undefined,
-        formatOptions: {
-          format: 'webp',
-          options: { quality: 90 },
-        },
-      },
-      {
-        // Team detail page photo (main column)
-        name: 'teamPhoto',
-        width: 900,
-        height: undefined,
-        formatOptions: {
-          format: 'webp',
-          options: { quality: 90 },
-        },
-      },
-    ],
+    // Blijven staan voor de bestaande formaten in de database. Nieuwe uploads krijgen ze niet
+    // meer (geen sharp op Workers); die vult de afterRead-hook hieronder aan.
+    imageSizes: Object.entries(MEDIA_SIZES).map(([name, size]) => ({
+      name,
+      width: size.width,
+      height: size.height,
+      ...(size.height ? { position: 'centre' as const } : {}),
+      formatOptions: { format: 'webp' as const, options: { quality: size.quality } },
+    })),
     adminThumbnail: 'featuredPost',
     focalPoint: true,
     withMetadata: true,

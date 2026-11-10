@@ -54,7 +54,7 @@ src/
 
 ### Minimal Config Pattern
 
-This project uses **PostgreSQL via Neon** and **Vercel Blob** for media storage.
+This project uses **PostgreSQL via Neon** and **Vercel Blob** for media storage, and runs on **Cloudflare Workers** via OpenNext (see `docs/cloudflare.md`).
 
 ```typescript
 import { buildConfig } from 'payload'
@@ -816,9 +816,21 @@ The public, read-only API of the SVV'04 app. `openapi.yaml` is the contract: cha
 - Payload and Sportlink data never leave as-is. Mappers produce the contract shapes: `matches.ts` (Sportlink to `Match`, with two cached club-wide lists), `teams.ts`, `posts.ts`, `audiences.ts`, `contacts.ts`, `media.ts`, and `richtext.ts` (Lexical and the privacy/cookie markdown to typed `Block`s; an unknown CMS block becomes `unsupported`, so a new block never breaks the app).
 - Site paths become app targets in `links.ts` (`hrefToTarget`). A new page type or route on the website needs a case there.
 - Only publish what the site shows publicly: no phone numbers without a contact record, no `whatsapp` flag (no consent field exists), player names only as the team page shows them.
-- The chat is `POST /api/chat` with `{ messages: [{ role, text }] }` (`lib/app-api/chat.ts`); the website's own body (`parts`) takes the old streaming path. The app branch skips BotID and uses a per-instance rate limit.
+- The chat is `POST /api/chat` with `{ messages: [{ role, text }] }` (`lib/app-api/chat.ts`); the website's own body (`parts`) takes the old streaming path. The app branch skips the Turnstile check and uses a per-instance rate limit.
 - Check a change against the contract by calling the route handlers with a `Request` and validating the JSON against the schemas in `openapi.yaml` (the handlers need no dev server). `tests/int/app-api.int.spec.ts` covers the mappers.
 - `APP_MIN_VERSION_IOS` / `APP_MIN_VERSION_ANDROID` set `minAppVersion` in `GET /config` (default `1.0.0`).
+
+### Hosting on Cloudflare Workers
+
+The site runs on Cloudflare Workers through OpenNext (`wrangler.jsonc`, `open-next.config.ts`, `worker.ts`); `docs/cloudflare.md` has the setup and the secrets. Things that differ from a plain Node host:
+
+- No `sharp` in the Worker. Payload stores originals only; `collections/Media.ts` fills missing `sizes` with `/api/img/<size>/<id>` URLs that Cloudflare Images renders (`lib/media-sizes.ts`). Sizes larger than the original are skipped, like before. Read sizes through `sizes.<name>.url ?? url` as the existing components do.
+- Database: Hyperdrive in production, the preview's own Neon branch (secret `DATABASE_URL`) on previews, `DATABASE_URL` everywhere else (`payload.config.ts`).
+- The Cloudflare build uses webpack (`pnpm cf:build`); `undici` is aliased to `src/lib/shims/undici.ts` there. `next dev` stays on Turbopack.
+- Bot checks use Turnstile (`lib/turnstile.ts`, `instrumentation-client.ts`): POSTs to the paths in `TURNSTILE_PROTECTED_PATHS` get a token header automatically; routes call `isHuman(request)`.
+- Crons are Cron Triggers in `wrangler.jsonc`, mapped to the existing `/api/cron/*` routes in `worker.ts`.
+- The assistant's model goes through Cloudflare AI Gateway (gateway `svv04`, Unified Billing) with `createAI` from `agents/models/ai-sdk` (`lib/ai/agent.ts`): the `AI` binding in the Worker, `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_AI_API_TOKEN` elsewhere. Model ids use the catalog spelling (`anthropic/claude-haiku-5.5`).
+- Test a Cloudflare build locally with `pnpm cf:build` and `wrangler dev --env-file .env.local` (set `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` to the dev database).
 
 ### Custom richText blocks (`src/blocks/`)
 

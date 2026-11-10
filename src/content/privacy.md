@@ -39,7 +39,7 @@ SVV'04 verwerkt persoonsgegevens voor de volgende doeleinden:
 Op de website kunt u vragen stellen aan een AI-assistent. De assistent beantwoordt alleen vragen over SVV'04 en gebruikt hiervoor de inhoud van de website en wedstrijdgegevens van de KNVB.
 
 - **Wat verwerken wij:** De vragen die u typt en de antwoorden van de assistent
-- **Waar gaat het naartoe:** Uw vragen worden via Vercel (AI Gateway) naar het taalmodel Claude van Anthropic gestuurd om een antwoord te maken. Deze partijen verwerken uw vraag volgens hun eigen voorwaarden.
+- **Waar gaat het naartoe:** Uw vragen worden via Cloudflare (AI Gateway) naar het taalmodel Claude van Anthropic gestuurd om een antwoord te maken. Deze partijen verwerken uw vraag volgens hun eigen voorwaarden.
 - **Wat bewaren wij:** Niets. SVV'04 slaat de gesprekken niet op. Het gesprek blijft alleen in uw eigen browser staan, totdat u het tabblad sluit of een nieuw gesprek start.
 - **Let op:** Vul in de assistent geen persoonsgegevens in, van uzelf of van anderen. De assistent geeft geen informatie over spelers en kan fouten maken.
 
