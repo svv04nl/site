@@ -17,12 +17,14 @@ export default function NotFound() {
     <main className="page not-found">
       <div className="page-inner not-found-inner">
         <span className="not-found-bram">
-          <img
-            src="/bram/bram-lekkebal.webp"
-            alt="Bram de zebra met een lekke bal"
-            width={593}
-            height={640}
-          />
+          <span className="not-found-bram__fig">
+            <img
+              src="/bram/bram-lekkebal.webp"
+              alt="Bram de zebra met een lekke bal"
+              width={593}
+              height={640}
+            />
+          </span>
         </span>
         <div className="not-found-text">
           <p className="not-found-code">Foutcode 404</p>

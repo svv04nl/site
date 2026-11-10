@@ -12,24 +12,47 @@
 }
 
 .not-found-bram {
-  align-items: flex-end;
-  aspect-ratio: 1;
-  background: #f0f0f0;
-  border-radius: 50%;
-  display: flex;
-  flex: none;
-  justify-content: center;
-  overflow: hidden;
-  width: 15rem;
+  --bram-circle: 15rem;
 
-  img {
-    display: block;
-    height: auto;
-    width: 88%;
+  aspect-ratio: 1;
+  flex: none;
+  margin-top: 3rem; // room for the head above the circle
+  position: relative;
+  width: var(--bram-circle);
+
+  &::before {
+    background: #f0f0f0;
+    border-radius: 50%;
+    content: '';
+    inset: 0;
+    position: absolute;
   }
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
-    width: 11rem;
+    --bram-circle: 11rem;
+  }
+}
+
+// Box taller and wider than the circle. The mask shows everything above the middle of the
+// circle (so the head and ears stick out) and below that only what falls inside the circle.
+.not-found-bram__fig {
+  inset: -25% -10% 0;
+  -webkit-mask:
+    linear-gradient(#000, #000) top / 100% 60% no-repeat,
+    radial-gradient(circle calc(var(--bram-circle) / 2) at 50% 60%, #000 99%, transparent 100%);
+  mask:
+    linear-gradient(#000, #000) top / 100% 60% no-repeat,
+    radial-gradient(circle calc(var(--bram-circle) / 2) at 50% 60%, #000 99%, transparent 100%);
+  position: absolute;
+
+  img {
+    bottom: 0;
+    display: block;
+    height: auto;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    width: calc(var(--bram-circle) * 1.08);
   }
 }
 
