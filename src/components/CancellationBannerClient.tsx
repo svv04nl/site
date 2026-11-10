@@ -11,7 +11,24 @@ export type CancelledMatch = {
 // Above this many matches the bar names the first few and counts the rest.
 const MAX_LISTED = 3
 
-export function CancellationBannerClient({ matches }: { matches: CancelledMatch[] }) {
+export function CancellationBannerClient({
+  matches: realMatches,
+  testMatches,
+}: {
+  matches: CancelledMatch[]
+  /** Only passed outside production: shown when the URL has ?afgelasting=test. */
+  testMatches?: CancelledMatch[]
+}) {
+  const [testMode, setTestMode] = useState(false)
+
+  useEffect(() => {
+    if (testMatches && new URLSearchParams(window.location.search).get('afgelasting') === 'test') {
+      setTestMode(true)
+    }
+  }, [testMatches])
+
+  const matches = testMode && testMatches ? testMatches : realMatches
+
   // Closing the bar hides it for the rest of the visit. A new cancellation
   // changes the key, so the bar comes back for that one.
   const storageKey = `svv-afgelast-${matches.map((m) => m.matchCode).join('-')}`
@@ -25,7 +42,7 @@ export function CancellationBannerClient({ matches }: { matches: CancelledMatch[
     }
   }, [storageKey])
 
-  if (dismissed) return null
+  if (dismissed || matches.length === 0) return null
 
   const listed = matches.slice(0, MAX_LISTED).map((m) => m.label)
   const rest = matches.length - listed.length

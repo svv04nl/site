@@ -10,6 +10,14 @@ const CANCELLED_KEYWORDS = ['afgelast', 'uitgesteld', 'gestaakt', 'afgekeurd']
 // is already visible on Thursday or Friday.
 const DAYS_AHEAD = 3
 
+// Test mode: on previews and locally, open a page with ?afgelasting=test to see the bar
+// with made-up matches. Never on the live site.
+const TEST_MODE_ALLOWED = process.env.VERCEL_ENV !== 'production'
+const TEST_MATCHES: CancelledMatch[] = [
+  { matchCode: 1, label: "SVV'04 1 – Testclub 1" },
+  { matchCode: 2, label: "SVV'04 JO11-1 – Testclub JO11-2" },
+]
+
 /** "YYYY-MM-DD" for today in Dutch time, plus `offset` days. */
 function amsterdamDayKey(offset = 0) {
   const date = new Date(Date.now() + offset * 24 * 60 * 60 * 1000)
@@ -19,7 +27,7 @@ function amsterdamDayKey(offset = 0) {
 /**
  * Yellow bar above the header listing our own matches that Sportlink marks as
  * cancelled in the coming days. Renders nothing when there are none, or when
- * the Sportlink data cannot be loaded.
+ * the Sportlink data cannot be loaded (apart from the test mode above).
  */
 export default async function CancellationBanner() {
   let cancelled: CancelledMatch[] = []
@@ -37,9 +45,10 @@ export default async function CancellationBanner() {
         label: `${shortTeamName(m.homeTeam)} – ${shortTeamName(m.awayTeam)}`,
       }))
   } catch {
-    return null
+    cancelled = []
   }
 
-  if (cancelled.length === 0) return null
-  return <CancellationBannerClient matches={cancelled} />
+  const testMatches = TEST_MODE_ALLOWED ? TEST_MATCHES : undefined
+  if (cancelled.length === 0 && !testMatches) return null
+  return <CancellationBannerClient matches={cancelled} testMatches={testMatches} />
 }
