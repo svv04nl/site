@@ -8,6 +8,7 @@ import { format, parseISO, isValid } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import MatchCard from '@/components/ui/MatchCard'
+import CalendarIcon from '@/components/ui/CalendarIcon'
 import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
@@ -147,6 +148,18 @@ export default function WedstrijdDetailPage() {
                     </span>
                   ))}
               </div>
+
+              {/* Only own matches still to play are in the agenda file */}
+              {(isOwnHome || isOwnAway) && !hasScore && (
+                <a
+                  className="btn btn--outline-dark wedstrijd-agenda-btn"
+                  href={`/api/agenda/wedstrijd/${wedstrijdcode}`}
+                  download
+                >
+                  <CalendarIcon />
+                  Zet in agenda
+                </a>
+              )}
             </div>
 
             {/* Opmerkingen */}

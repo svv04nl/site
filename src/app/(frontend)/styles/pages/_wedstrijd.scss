@@ -198,3 +198,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+// ─── Zet in agenda ───────────────────────────────────────────────────────────
+
+.wedstrijd-agenda-btn {
+  display: flex;
+  font-size: 0.85rem;
+  margin: 1rem auto 0;
+  padding: 0.65rem 1.2rem;
+  width: fit-content;
+}

@@ -11,6 +11,7 @@ import TeamPhotoWithLightbox from '@/components/team/TeamPhotoWithLightbox'
 import type { Media } from '@/payload-types'
 import ScrollToTop from '@/components/team/ScrollToTop'
 import TeamNextMatchSection from '@/components/team/TeamNextMatchSection'
+import TeamCalendarSection from '@/components/team/TeamCalendarSection'
 import LeagueSection from '@/components/team/LeagueSection'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
@@ -93,6 +94,7 @@ export default async function TeamPage({ params }: Props) {
           <div className="sidebar-col">
             <div className="sidebar-col__inner">
               <TeamNextMatchSection teamcode={teamcode!} teamName={team.name} />
+              {teamcode && <TeamCalendarSection slug={slug} />}
               <TeamSponsorSection sponsors={team.sponsors} />
 
               {teamPosts.length > 0 && (
