@@ -196,6 +196,35 @@ export function loadClubResults(): Promise<MatchDto[]> {
   })
 }
 
+/**
+ * The matches of one team: everything still to play this season plus the results of the last
+ * `weeksBack` weeks, soonest first. Asks Sportlink for that team only (programma and uitslagen
+ * with its teamcode) instead of filtering the club-wide lists. A result replaces the same match
+ * from the program.
+ */
+export function loadTeamMatches(teamcode: number, weeksBack = 4): Promise<MatchDto[]> {
+  return cached(`app-team-matches-${teamcode}-${weeksBack}`, TTL_MS, async () => {
+    const team = { ...CLUB_PARAMS, teamcode: String(teamcode) }
+    const [program, results] = await Promise.all([
+      fetchClubData<SportlinkMatch[]>('programma', {
+        ...team,
+        aantalregels: '100',
+        aantaldagen: '365',
+        weekoffset: '0',
+      }),
+      fetchClubData<SportlinkMatch[]>('uitslagen', {
+        ...team,
+        aantalregels: '100',
+        aantaldagen: String(weeksBack * 7 + 7),
+        weekoffset: String(-weeksBack),
+      }),
+    ])
+    const byId = new Map<string, MatchDto>()
+    for (const m of await mapMatches([...program, ...results])) byId.set(m.id, m)
+    return [...byId.values()].sort(byKickoff)
+  })
+}
+
 const inRange = (m: MatchDto, range: DateRange) => m.date >= range.from && m.date <= range.to
 
 /** Matches (to play and played) in a date range. A result replaces the same match in the program. */
