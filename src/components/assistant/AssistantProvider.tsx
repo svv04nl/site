@@ -6,7 +6,9 @@ import { usePathname } from 'next/navigation'
 
 // The chat (AI SDK, markdown) only loads when a visitor first opens the assistant.
 const AssistantPanel = dynamic(() => import('./AssistantPanel'), { ssr: false })
-const AssistantFab = dynamic(() => import('./AssistantFab').then((m) => m.AssistantFab), { ssr: false })
+const AssistantFab = dynamic(() => import('./AssistantFab').then((m) => m.AssistantFab), {
+  ssr: false,
+})
 
 /** The "Voor jou" page the visitor is on: its slug and the example questions for that group. */
 export type AssistantAudience = { slug: string; questions: string[] }
@@ -51,7 +53,9 @@ export function AssistantProvider({
   const openAssistant = useCallback((text?: string) => {
     setMounted(true)
     setOpen(true)
-    if (text?.trim()) setQuestion(text.trim())
+    if (text?.trim()) {
+      setQuestion(text.trim())
+    }
   }, [])
 
   const closeAssistant = useCallback(() => setOpen(false), [])
@@ -63,7 +67,9 @@ export function AssistantProvider({
 
   // Cmd/Ctrl+K opens the assistant from anywhere.
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) {
+      return
+    }
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault()

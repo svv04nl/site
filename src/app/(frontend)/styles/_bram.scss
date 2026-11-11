@@ -17,6 +17,11 @@
     content: '';
     inset: 0;
     position: absolute;
+    transition: background-color 0.45s ease;
+  }
+
+  &--red::before {
+    background: var(--color-primary);
   }
 
   img {
@@ -28,10 +33,18 @@
     left: 0;
     -webkit-mask:
       linear-gradient(#000, #000) 0 0 / 100% var(--bram-mid) no-repeat,
-      radial-gradient(circle calc(var(--bram-size) / 2) at 50% var(--bram-mid), #000 98%, transparent 100%);
+      radial-gradient(
+        circle calc(var(--bram-size) / 2) at 50% var(--bram-mid),
+        #000 98%,
+        transparent 100%
+      );
     mask:
       linear-gradient(#000, #000) 0 0 / 100% var(--bram-mid) no-repeat,
-      radial-gradient(circle calc(var(--bram-size) / 2) at 50% var(--bram-mid), #000 98%, transparent 100%);
+      radial-gradient(
+        circle calc(var(--bram-size) / 2) at 50% var(--bram-mid),
+        #000 98%,
+        transparent 100%
+      );
     object-fit: contain;
     object-position: bottom;
     position: absolute;
@@ -49,11 +62,28 @@
     opacity 0.3s ease;
   z-index: 900;
 
-  // Steps aside while the "Stel je vraag" band is in view or the popup is open.
+  // Coming back (popup closed, or Bram flew back from the band): after the flight lands.
+  transition-delay: 0.4s;
+
+  // Steps aside while the popup is open, and while Bram sits in the "Stel je vraag" band.
   &.is-away {
     opacity: 0;
     pointer-events: none;
     transform: scale(0.3) translate(24px, 24px);
+    transition-delay: 0s;
+  }
+
+  // In the band: no shrinking, Bram flies there himself (see .bram-flight).
+  &.is-docked {
+    transform: none;
+  }
+
+  // Never two things at the bottom of the screen: while the cancellation popup is open,
+  // the button steps aside.
+  body:has(.cancellation-popup) & {
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0s;
   }
 
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
@@ -94,11 +124,17 @@
     outline-offset: 3px;
   }
 
+  // Smaller on a phone, so it covers less of the page.
   @media screen and (max-width: #{$breakpoint-mobile-lg}) {
-    padding: 6px;
+    min-height: 56px;
+    padding: 5px;
 
     .assistant-fab__label {
       display: none;
+    }
+
+    .bram-avatar {
+      --bram-size: 46px !important;
     }
   }
 }
@@ -137,4 +173,141 @@
   font-size: 1rem;
   margin: 0 0 1.1rem;
   padding: 0.85rem 1rem;
+}
+
+// ─── Bram flying between the button and the band ────────────────────────────
+// A copy of the avatar, moved by AssistantFab with the Web Animations API.
+
+.bram-flight {
+  margin: 0;
+  pointer-events: none;
+  position: fixed;
+  transform-origin: 0 0;
+  z-index: 950;
+}
+
+// ─── Bram in the "Stel je vraag" band ───────────────────────────────────────
+// A big red circle at the top right, half over the top edge of the band. Bram appears in it
+// when the band comes into view and stays while you scroll on past it.
+
+.assistant-bar__inner {
+  position: relative;
+}
+
+.assistant-bar__bram {
+  height: 200px;
+  position: absolute;
+  right: var(--container-padding);
+  top: -60px;
+  width: 200px;
+  z-index: 2;
+
+  .bram-avatar {
+    --bram-size: 200px !important;
+  }
+
+  @media screen and (max-width: 900px) {
+    height: 140px;
+    top: -50px;
+    width: 140px;
+
+    .bram-avatar {
+      --bram-size: 140px !important;
+    }
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    height: 104px;
+    top: -44px;
+    width: 104px;
+
+    .bram-avatar {
+      --bram-size: 104px !important;
+    }
+  }
+}
+
+.assistant-bar__bram-button {
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: block;
+  opacity: 0;
+  padding: 0;
+  pointer-events: none;
+  transform: scale(0.4);
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+
+  &:focus-visible {
+    outline: 3px solid var(--color-dark);
+    outline-offset: 4px;
+  }
+
+  // After the flight has landed: a little bounce.
+  .assistant-bar.has-bram & {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    transition:
+      transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) 0.4s,
+      opacity 0.1s linear 0.4s;
+  }
+}
+
+.assistant-bar__bubble {
+  background: var(--color-dark);
+  border-radius: 14px 14px 4px 14px;
+  color: var(--color-white);
+  font-size: 0.95rem;
+  max-width: 13rem;
+  opacity: 0;
+  padding: 0.6rem 1rem;
+  position: absolute;
+  right: calc(100% + 0.75rem);
+  top: 2.5rem;
+  transform: translateY(6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  width: max-content;
+
+  .assistant-bar.has-bram & {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.3s ease 0.8s,
+      transform 0.3s ease 0.8s;
+  }
+
+  @media screen and (max-width: 900px) {
+    display: none;
+  }
+}
+
+// Room for the circle next to the text, so nothing runs under Bram.
+.assistant-bar__intro,
+.assistant-bar__form,
+.assistant-bar__chips {
+  @media screen and (min-width: 901px) {
+    max-width: calc(100% - 260px);
+  }
+}
+
+.assistant-bar .home-h2 {
+  @media screen and (max-width: 900px) {
+    padding-right: 120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-bar__bram-button,
+  .assistant-bar__bubble,
+  .assistant-bar.has-bram .assistant-bar__bram-button,
+  .assistant-bar.has-bram .assistant-bar__bubble {
+    transition: none;
+  }
 }
