@@ -4,6 +4,7 @@ import React from 'react'
 import { outfit, sairaCondensed } from '@/lib/fonts'
 import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
+import CancellationBanner from '@/components/CancellationBanner'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
 import { BreadcrumbProvider } from '@/components/BreadcrumbContext'
 import { AssistantProvider } from '@/components/assistant/AssistantProvider'
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="site-shell">
           <AssistantProvider enabled={isAssistantEnabled()}>
             <BreadcrumbProvider>
+              <CancellationBanner />
               <Header />
               <ReactQueryProvider>{children}</ReactQueryProvider>
             </BreadcrumbProvider>
