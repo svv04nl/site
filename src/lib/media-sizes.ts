@@ -55,3 +55,11 @@ export function sizedDimensions(
   const w = Math.min(size.width, width)
   return { width: w, height: Math.round((height * w) / width) }
 }
+
+/**
+ * Public path of an uploaded file: the route app/(frontend)/media serves it straight from the
+ * R2 bucket, where it is stored under <prefix>/<filename>.
+ */
+export function mediaFileUrl(filename: string, prefix?: string | null): string {
+  return `/${prefix || 'media'}/${encodeURIComponent(filename)}`
+}

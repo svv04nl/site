@@ -16,7 +16,10 @@ const photo = {
   width: 3000,
   height: 2000,
   updatedAt: '2026-11-10T10:00:00.000Z',
-  url: 'https://store.public.blob.vercel-storage.com/media/foto.jpg',
+  filename: 'foto 1.jpg',
+  prefix: 'media',
+  // The stored url column still holds the old Blob URL; the hook replaces it.
+  url: 'https://store.public.blob.vercel-storage.com/media/foto%201.jpg',
 }
 
 describe('beeldformaten', () => {
@@ -52,14 +55,19 @@ describe('Media afterRead', () => {
     expect(Object.keys(doc.sizes).sort()).toEqual(Object.keys(MEDIA_SIZES).sort())
   })
 
-  it('laat bestaande formaten uit Blob staan', () => {
+  it('zet de URL van het origineel op /media, uit de bestandsnaam', () => {
+    expect(read(photo).url).toBe('https://svv04.nl/media/foto%201.jpg')
+  })
+
+  it('houdt bestaande formaten, met een URL naar /media', () => {
     const existing = {
       url: 'https://store.public.blob.vercel-storage.com/media/foto-600x300.webp',
+      filename: 'foto-600x300.webp',
       width: 600,
       height: 300,
     }
     const doc = read({ ...photo, sizes: { newsCard: existing } })
-    expect(doc.sizes.newsCard).toEqual(existing)
+    expect(doc.sizes.newsCard).toEqual({ ...existing, url: 'https://svv04.nl/media/foto-600x300.webp' })
     expect(doc.sizes.featuredPost.url).toContain('/api/img/featuredPost/12')
   })
 
@@ -69,12 +77,16 @@ describe('Media afterRead', () => {
     expect(doc.sizes.teamPhoto.url).toContain('/api/img/teamPhoto/12')
   })
 
-  it('gebruikt een relatief pad zonder request-URL en slaat SVG over', () => {
-    expect(afterRead({ doc: photo, req: {} }).sizes.newsCard.url).toMatch(
-      /^\/api\/img\/newsCard\/12\?v=/,
-    )
-    const svg = { ...photo, mimeType: 'image/svg+xml' }
-    expect(read(svg)).toBe(svg)
+  it('gebruikt een relatief pad zonder request-URL', () => {
+    const doc = afterRead({ doc: photo, req: {} })
+    expect(doc.url).toBe('/media/foto%201.jpg')
+    expect(doc.sizes.newsCard.url).toMatch(/^\/api\/img\/newsCard\/12\?v=/)
+  })
+
+  it('maakt geen formaten voor een SVG, maar zet wel de URL', () => {
+    const doc = read({ ...photo, mimeType: 'image/svg+xml', filename: 'logo.svg' })
+    expect(doc.url).toBe('https://svv04.nl/media/logo.svg')
+    expect(doc.sizes).toEqual({})
   })
 })
 

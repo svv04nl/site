@@ -26,11 +26,18 @@
     },
   ],
 
-  // Cache van Next (fetch-revalidate, revalidatePath).
   "r2_buckets": [
+    // Cache van Next (fetch-revalidate, revalidatePath).
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
       "bucket_name": "svv04-opennext-cache",
+    },
+    // Media (uploads van Payload), geserveerd via /media/<bestand>. Remote, zodat next dev en
+    // wrangler dev dezelfde bucket gebruiken, net als vroeger de Blob-store.
+    {
+      "binding": "MEDIA",
+      "bucket_name": "svv04-media",
+      "remote": true,
     },
   ],
 
@@ -67,6 +74,11 @@
       {
         "binding": "NEXT_INC_CACHE_R2_BUCKET",
         "bucket_name": "svv04-opennext-cache",
+      },
+      {
+        "binding": "MEDIA",
+        "bucket_name": "svv04-media",
+        "remote": true,
       },
     ],
     "images": { "binding": "IMAGES" },

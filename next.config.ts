@@ -13,11 +13,6 @@ const isDev = process.env.NODE_ENV === 'development'
 // getCloudflareContext(). De database blijft lokaal gewoon DATABASE_URL.
 if (isDev) initOpenNextCloudflareForDev()
 
-// Parse the specific Vercel Blob store hostname from the token rather than using a wildcard.
-const blobToken = process.env.BLOB_READ_WRITE_TOKEN || ''
-const blobStoreId = blobToken.match(/^vercel_blob_rw_([a-z\d]+)_/i)?.[1]?.toLowerCase() ?? ''
-const blobHost = blobStoreId ? `https://${blobStoreId}.public.blob.vercel-storage.com` : ''
-
 // Build the Content-Security-Policy header value.
 // Directives are joined into a single line — newlines are not allowed in header values.
 const csp = [
@@ -36,10 +31,9 @@ const csp = [
   // next/font serves fonts from the same origin — no external font host needed.
   `font-src 'self'`,
 
-  // Media is served directly from Vercel Blob (disablePayloadAccessControl: true).
-  // Team logos are loaded from logoapi.voetbal.nl.
+  // Media comes from our own /media route (R2). Team logos are loaded from logoapi.voetbal.nl.
   // Google Maps tiles/icons are served from maps.gstatic.com and maps.googleapis.com.
-  `img-src 'self' data: blob:${blobHost ? ` ${blobHost}` : ''} https://logoapi.voetbal.nl https://maps.gstatic.com https://maps.googleapis.com`,
+  `img-src 'self' data: blob: https://logoapi.voetbal.nl https://maps.gstatic.com https://maps.googleapis.com`,
 
   // Client-side TanStack Query hooks fetch live sports data directly from Sportlink.
   // Cloudflare Web Analytics sends beacons to cloudflareinsights.com.
@@ -91,7 +85,7 @@ const nextConfig: NextConfig = {
     if (isServer) {
       webpackConfig.resolve.alias = {
         ...webpackConfig.resolve.alias,
-        // @vercel/blob imports fetch from undici, which compiles WebAssembly on load.
+        // Payload's safeFetch imports undici, which compiles WebAssembly on load.
         undici$: path.resolve(dirname, 'src/lib/shims/undici.ts'),
       }
     }

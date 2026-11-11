@@ -31,7 +31,6 @@ jobs:
     # Resend client on load, which requires a key.
     env:
       PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
     steps:
       - uses: actions/checkout@v5
@@ -84,7 +83,6 @@ jobs:
           jq -n \
             --arg DATABASE_URL "${{ steps.neon.outputs.db_url_pooled }}" \
             --arg PAYLOAD_SECRET "$PAYLOAD_SECRET" \
-            --arg BLOB_READ_WRITE_TOKEN "$BLOB_READ_WRITE_TOKEN" \
             --arg RESEND_API_KEY "$RESEND_API_KEY" \
             --arg CRON_SECRET "$CRON_SECRET" \
             --arg MOLLIE_API_KEY "$MOLLIE_API_KEY" \

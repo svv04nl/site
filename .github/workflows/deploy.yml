@@ -20,7 +20,6 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
       # Messages.ts creates a Resend client when the config loads.
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       NEXT_PUBLIC_CLUBDATA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_CLUBDATA_CLIENT_ID }}

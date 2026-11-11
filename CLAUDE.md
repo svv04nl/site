@@ -54,13 +54,13 @@ src/
 
 ### Minimal Config Pattern
 
-This project uses **PostgreSQL via Neon** and **Vercel Blob** for media storage, and runs on **Cloudflare Workers** via OpenNext (see `docs/cloudflare.md`).
+This project uses **PostgreSQL via Neon** and **Cloudflare R2** for media storage, and runs on **Cloudflare Workers** via OpenNext (see `docs/cloudflare.md`). The example below is the generic pattern; the real config is `src/payload.config.ts`.
 
 ```typescript
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { r2Storage } from '@payloadcms/storage-r2'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -84,9 +84,8 @@ export default buildConfig({
     pool: { connectionString: process.env.DATABASE_URL },
   }),
   plugins: [
-    vercelBlobStorage({
-      enabled: true,
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+    r2Storage({
+      bucket: cloudflareEnv.MEDIA, // the R2 binding
       collections: { media: true },
     }),
   ],
@@ -824,6 +823,7 @@ The public, read-only API of the SVV'04 app. `openapi.yaml` is the contract: cha
 
 The site runs on Cloudflare Workers through OpenNext (`wrangler.jsonc`, `open-next.config.ts`, `worker.ts`); `docs/cloudflare.md` has the setup and the secrets. Things that differ from a plain Node host:
 
+- Media live in the R2 bucket `svv04-media` (binding `MEDIA`, key `media/<filename>`) and are served by `src/app/(frontend)/media/[...path]/route.ts` without Payload. `collections/Media.ts` sets every file URL to `/media/<filename>` (`mediaFileUrl`), whether or not the R2 plugin is loaded (it is off in `next build` and scripts). The bucket is shared by local, previews and production, so never delete media to clean up a test.
 - No `sharp` in the Worker. Payload stores originals only; `collections/Media.ts` fills missing `sizes` with `/api/img/<size>/<id>` URLs that Cloudflare Images renders (`lib/media-sizes.ts`). Sizes larger than the original are skipped, like before. Read sizes through `sizes.<name>.url ?? url` as the existing components do.
 - Database: Hyperdrive in production, the preview's own Neon branch (secret `DATABASE_URL`) on previews, `DATABASE_URL` everywhere else (`payload.config.ts`).
 - The Cloudflare build uses webpack (`pnpm cf:build`); `undici` is aliased to `src/lib/shims/undici.ts` there. `next dev` stays on Turbopack.
