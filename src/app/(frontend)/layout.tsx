@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import React from 'react'
-import { Saira_Condensed, Outfit } from 'next/font/google'
+import { outfit, sairaCondensed } from '@/lib/fonts'
 import Header from '@/components/HeaderServer'
 import Footer from '@/components/FooterServer'
 import ReactQueryProvider from '@/components/ReactQueryProvider'
@@ -10,20 +10,6 @@ import { AssistantProvider } from '@/components/assistant/AssistantProvider'
 import { isAssistantEnabled } from '@/lib/ai/agent'
 import { WebAnalytics } from '@/components/WebAnalytics'
 import './globals.scss'
-
-const sairaCondensed = Saira_Condensed({
-  subsets: ['latin'],
-  weight: ['600', '700', '800', '900'],
-  variable: '--font-saira-condensed',
-  display: 'swap',
-})
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-outfit',
-  display: 'swap',
-})
 
 export const metadata = {
   metadataBase: new URL('https://svv04.nl'),
