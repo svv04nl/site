@@ -31,7 +31,6 @@ jobs:
     # Resend client on load, which requires a key.
     env:
       PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
     steps:
       - uses: actions/checkout@v5
@@ -84,7 +83,6 @@ jobs:
           jq -n \
             --arg DATABASE_URL "${{ steps.neon.outputs.db_url_pooled }}" \
             --arg PAYLOAD_SECRET "$PAYLOAD_SECRET" \
-            --arg BLOB_READ_WRITE_TOKEN "$BLOB_READ_WRITE_TOKEN" \
             --arg RESEND_API_KEY "$RESEND_API_KEY" \
             --arg CRON_SECRET "$CRON_SECRET" \
             --arg MOLLIE_API_KEY "$MOLLIE_API_KEY" \
@@ -107,42 +105,23 @@ jobs:
             --json > "$RUNNER_TEMP/preview.json"
           rm "$RUNNER_TEMP/preview-secrets.json"
           # esbuild writes its warnings to stdout too; wrangler's JSON starts at the first line
-          # that begins with '{'.
+          # that begins with '{'. The Preview URL is the one named after the branch; it always
+          # serves the latest push.
           json=$(sed -n '/^{/,$p' "$RUNNER_TEMP/preview.json" | jq -c .)
           echo "$json" | jq .
-          echo "json=$json" >> "$GITHUB_OUTPUT"
+          url=$(echo "$json" | grep -oE "https://$PREVIEW_NAME-[a-z0-9.-]+\.workers\.dev" | head -1)
+          [ -n "$url" ] || { echo "No Preview URL in the wrangler output"; exit 1; }
+          echo "url=$url" >> "$GITHUB_OUTPUT"
 
+      # One comment per PR that each push updates (marocchino/sticky-pull-request-comment).
       - name: Comment on the PR
-        uses: actions/github-script@v8
-        env:
-          PREVIEW_JSON: ${{ steps.preview.outputs.json }}
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
-          script: |
-            const result = JSON.parse(process.env.PREVIEW_JSON)
-            // Take the Worker URLs from the wrangler preview output, whatever its shape. The one
-            // named after the branch is stable; the other belongs to this one deployment.
-            const urls = [...new Set(JSON.stringify(result).match(/https:\/\/[^"\s]+\.workers\.dev/g) ?? [])]
-            const stable = `${process.env.PREVIEW_NAME}-`
-            const marker = '<!-- svv04-preview -->'
-            const body = [
-              marker,
-              `**Preview** for ${context.payload.pull_request.head.sha.slice(0, 7)}`,
-              '',
-              ...urls.map((url) =>
-                url.startsWith(`https://${stable}`) ? `- ${url} (latest push)` : `- ${url} (this deployment)`,
-              ),
-              '',
-              `Database: Neon branch \`${process.env.NEON_BRANCH}\` (a copy of production).`,
-            ].join('\n')
-            const { owner, repo } = context.repo
-            const issue_number = context.payload.pull_request.number
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number })
-            const existing = comments.find((c) => c.body?.startsWith(marker))
-            if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body })
-            } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body })
-            }
+          header: preview
+          message: |
+            **Preview:** ${{ steps.preview.outputs.url }}
+
+            Latest push: ${{ github.event.pull_request.head.sha }}. Database: Neon branch `${{ env.NEON_BRANCH }}` (a copy of production).
 
   cleanup:
     name: Clean up preview
@@ -179,3 +158,9 @@ jobs:
           project_id: ${{ vars.NEON_PROJECT_ID }}
           api_key: ${{ secrets.NEON_API_KEY }}
           branch: ${{ env.NEON_BRANCH }}
+      - name: Update the PR comment
+        uses: marocchino/sticky-pull-request-comment@v3
+        with:
+          header: preview
+          message: |
+            **Preview:** removed (the pull request is closed), along with Neon branch `${{ env.NEON_BRANCH }}`.

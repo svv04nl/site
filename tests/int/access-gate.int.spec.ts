@@ -46,6 +46,7 @@ describe('isExemptPath', () => {
     '/_next/static/chunks/app.js',
     '/_next/image',
     '/api/img/newsCard/12',
+    '/media/foto.jpg',
     '/robots.txt',
     '/logo.webp',
   ])('laat %s altijd door', (path) => {

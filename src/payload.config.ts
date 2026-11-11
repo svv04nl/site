@@ -1,6 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { resendAdapter } from '@payloadcms/email-resend'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { r2Storage } from '@payloadcms/storage-r2'
 import { lexicalEditor, BlocksFeature, LinkFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -39,26 +39,32 @@ import { Fundraisers } from './collections/Fundraisers'
 import { TeamStaff } from './collections/TeamStaff'
 import { searchEndpoint } from './endpoints/search'
 import { messageSubmitEndpoint } from './endpoints/message-submit'
+import { mediaFileUrl } from './lib/media-sizes'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// Op Cloudflare Workers loopt de database via Hyperdrive (connection pool bij Cloudflare).
-// Previews hebben geen Hyperdrive en gebruiken DATABASE_URL van hun eigen Neon-branch.
-// Buiten de Worker (next dev, payload migrate, scripts) is het gewoon DATABASE_URL.
+// The Cloudflare bindings: in the Worker, and under next dev through
+// initOpenNextCloudflareForDev (next.config.ts). Not there in payload CLI commands, scripts and
+// next build; then the database is DATABASE_URL and the media plugin is off (it is only needed
+// to upload; the Media collection sets the file URLs itself, see collections/Media.ts).
 const onWorkers = typeof navigator !== 'undefined' && navigator.userAgent === 'Cloudflare-Workers'
 
-async function databaseUrl(): Promise<string> {
-  if (onWorkers) {
+async function cloudflareEnv(): Promise<CloudflareEnv | undefined> {
+  try {
     const { getCloudflareContext } = await import('@opennextjs/cloudflare')
-    const { env } = await getCloudflareContext({ async: true })
-    if (env.HYPERDRIVE) return env.HYPERDRIVE.connectionString
+    return (await getCloudflareContext({ async: true })).env
+  } catch {
+    return undefined
   }
-  return process.env.DATABASE_URL || ''
 }
 
-const blobToken = process.env.BLOB_READ_WRITE_TOKEN || ''
-const blobStoreId = blobToken.match(/^vercel_blob_rw_([a-z\d]+)_/i)?.[1]?.toLowerCase() ?? ''
+const cloudflare = await cloudflareEnv()
+
+// In production the database goes through Hyperdrive (Cloudflare's connection pool). Previews
+// have no Hyperdrive and use the DATABASE_URL of their own Neon branch.
+const databaseUrl =
+  (onWorkers ? cloudflare?.HYPERDRIVE?.connectionString : undefined) || process.env.DATABASE_URL || ''
 
 export default buildConfig({
   admin: {
@@ -134,7 +140,7 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: await databaseUrl(),
+      connectionString: databaseUrl,
       // Een Worker mag een verbinding niet over requests heen hergebruiken.
       ...(onWorkers ? { maxUses: 1 } : {}),
     },
@@ -142,17 +148,20 @@ export default buildConfig({
   // Geen sharp: dat draait niet op Workers. Beeldformaten maakt Cloudflare Images op het
   // moment van tonen (zie collections/Media.ts en app/(frontend)/api/img).
   plugins: [
-    vercelBlobStorage({
-      enabled: !!blobToken,
+    // Uploads in the R2 bucket svv04-media, under the same keys as the old Blob store
+    // (media/<file>). Visitors get them from /media/<file> (app/(frontend)/media), straight
+    // from R2 without Payload.
+    r2Storage({
+      enabled: Boolean(cloudflare?.MEDIA),
+      alwaysInsertFields: true,
+      bucket: cloudflare?.MEDIA as NonNullable<CloudflareEnv['MEDIA']>,
       collections: {
         media: {
           prefix: 'media',
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) =>
-            `https://${blobStoreId}.public.blob.vercel-storage.com/${prefix ?? 'media'}/${encodeURIComponent(filename)}`,
+          generateFileURL: ({ filename, prefix }) => mediaFileUrl(filename, prefix),
         },
       },
-      token: blobToken,
     }),
   ],
 })

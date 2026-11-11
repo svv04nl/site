@@ -46,6 +46,8 @@ declare global {
     HYPERDRIVE?: { connectionString: string }
     /** AI Gateway voor de assistent (zie lib/ai/agent.ts). */
     AI?: Ai
+    /** Media (uploads), zie app/(frontend)/media en de R2-plugin in payload.config.ts. */
+    MEDIA?: import('@payloadcms/storage-r2').R2StorageOptions['bucket']
   }
 }
 

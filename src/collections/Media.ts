@@ -1,5 +1,5 @@
 import type { CollectionConfig, PayloadRequest } from 'payload'
-import { MEDIA_SIZES, canTransform, fitsSize, sizedDimensions } from '@/lib/media-sizes'
+import { MEDIA_SIZES, canTransform, fitsSize, mediaFileUrl, sizedDimensions } from '@/lib/media-sizes'
 
 // Origin van een REST- of GraphQL-request, zodat een externe lezer een volledige URL krijgt.
 // De Local API (servercomponenten, de app-API) heeft geen echte request-URL: dan een relatief
@@ -25,10 +25,24 @@ export const Media: CollectionConfig = {
   hooks: {
     afterRead: [
       ({ doc, req }) => {
-        if (!doc?.id || !canTransform(doc.mimeType)) return doc
-        const version = encodeURIComponent(doc.updatedAt ?? '')
+        if (!doc?.id) return doc
         const origin = originOf(req)
-        const sizes = { ...(doc.sizes ?? {}) }
+        // File URLs come from the filename, the same with or without the R2 plugin loaded
+        // (it is off in next build and scripts). The stored url columns still hold old Blob URLs.
+        const sizes: Record<string, any> = {}
+        for (const [name, size] of Object.entries(doc.sizes ?? {}) as [string, any][]) {
+          sizes[name] = size?.filename
+            ? { ...size, url: `${origin}${mediaFileUrl(size.filename, doc.prefix)}` }
+            : size
+        }
+        const withUrls = {
+          ...doc,
+          ...(doc.filename ? { url: `${origin}${mediaFileUrl(doc.filename, doc.prefix)}` } : {}),
+          sizes,
+        }
+        if (!canTransform(doc.mimeType)) return withUrls
+
+        const version = encodeURIComponent(doc.updatedAt ?? '')
         for (const [name, size] of Object.entries(MEDIA_SIZES)) {
           if (sizes[name]?.url || !fitsSize(size, doc.width, doc.height)) continue
           sizes[name] = {
@@ -38,7 +52,7 @@ export const Media: CollectionConfig = {
             url: `${origin}/api/img/${name}/${doc.id}?v=${version}`,
           }
         }
-        return { ...doc, sizes }
+        return { ...withUrls, sizes }
       },
     ],
   },

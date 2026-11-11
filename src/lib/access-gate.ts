@@ -17,8 +17,9 @@ export function getAccessCode(): string | undefined {
 
 // Plekken die altijd bereikbaar moeten blijven: Next-bestanden, alle API-routes (Mollie moet de
 // webhook kunnen aanroepen en de cron zijn route; de rest heeft eigen controle), het adminscherm
-// met eigen login, de toegangspagina zelf en wat die pagina of zoekmachines nodig hebben.
-const EXEMPT_DIRS = ['/_next', '/api', '/admin', ACCESS_PATH]
+// met eigen login, de media (waren op Vercel Blob ook openbaar), de toegangspagina zelf en wat
+// die pagina of zoekmachines nodig hebben.
+const EXEMPT_DIRS = ['/_next', '/api', '/media', '/admin', ACCESS_PATH]
 const EXEMPT_FILES = new Set([
   '/robots.txt',
   '/favicon.ico',

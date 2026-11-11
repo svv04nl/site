@@ -7,7 +7,7 @@ Website voor voetbalvereniging SVV'04 uit Schoonebeek. Gebouwd met Next.js, Payl
 - **Next.js 16** (App Router) — frontend en server-side rendering
 - **Payload CMS 3** — content management (teams, nieuws, pagina's, media, sponsors)
 - **PostgreSQL** via [Neon](https://neon.tech) — database
-- **Vercel Blob** — media-opslag
+- **Cloudflare R2** — media-opslag (bucket `svv04-media`, via `/media/<bestand>`)
 - **Resend** — e-mail
 - **Cloudflare Workers** (via [OpenNext](https://opennext.js.org/cloudflare)) — hosting, met Hyperdrive, Images, Turnstile en Web Analytics
 - **GitHub Actions** — CI/CD (deploy en previews)
