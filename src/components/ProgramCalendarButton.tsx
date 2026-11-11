@@ -113,7 +113,7 @@ export default function ProgramCalendarButton() {
 
             {mode === 'all' && (
               <p className="calendar-dialog__hint">
-                Alle wedstrijden van alle teams, ook de jeugd. Dat zijn er veel.
+                Alle wedstrijden van alle teams, ook de jeugd.
               </p>
             )}
 

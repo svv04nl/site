@@ -115,11 +115,9 @@ function feedOptions(device: Device, path: string, name: string, host: string): 
       google,
     ]
   }
+  // Android has no handler for webcal links: Google Agenda, and the link to copy below.
   if (device === 'android') {
-    return [
-      google,
-      { label: 'Andere agenda-app (Outlook, Samsung)', href: webcal, icon: 'calendar' },
-    ]
+    return [google]
   }
   return [outlook, google, { label: 'Apple Agenda (Mac)', href: webcal, icon: 'phone' }]
 }
@@ -159,8 +157,9 @@ function eventOptions(
       google,
     ]
   }
+  // Android calendar apps often cannot open a loose .ics file: Google Agenda and Outlook.
   if (device === 'android') {
-    return [google, { label: 'Andere agenda-app (Outlook, Samsung)', icon: 'calendar', ...file }]
+    return [google, outlook]
   }
   return [
     outlook,

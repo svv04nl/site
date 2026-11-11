@@ -151,15 +151,17 @@ export default function WedstrijdDetailPage() {
               </div>
             </div>
 
-            {/* Before the match: in your calendar, and the way there */}
-            {!hasScore && (
-              <section className="wedstrijd-section wedstrijd-plan">
-                {(isOwnHome || isOwnAway) && (
-                  <div className="card wedstrijd-plan-card">
-                    <h2 className="wedstrijd-section-title">In je agenda</h2>
-                    <p>Zet deze wedstrijd in je eigen agenda, met tijd en adres.</p>
+            {/* Before the match: in your calendar and the way there. A dark band with a line of
+                text on a computer, only the two buttons on a phone. */}
+            {!hasScore && (isOwnHome || isOwnAway || accommodatie?.naam) && (
+              <section className="wedstrijd-plan" aria-label="Naar de wedstrijd">
+                <div className="wedstrijd-plan-text">
+                  <h2 className="wedstrijd-plan-title">Ga je kijken?</h2>
+                  <p>Zet de wedstrijd in je agenda of plan je route.</p>
+                </div>
+                <div className="wedstrijd-plan-actions">
+                  {(isOwnHome || isOwnAway) && (
                     <CalendarButton
-                      className="btn btn--outline-dark calendar-button"
                       label="Zet in mijn agenda"
                       title="Zet in je agenda"
                       subtitle={`${info.thuisteam} - ${info.uitteam}${displayDate ? `, ${displayDate}` : ''}`}
@@ -185,18 +187,10 @@ export default function WedstrijdDetailPage() {
                         fileName: `svv04-wedstrijd-${wedstrijdcode}.ics`,
                       }}
                     />
-                  </div>
-                )}
-                {accommodatie?.naam && (
-                  <div className="card wedstrijd-plan-card">
-                    <h2 className="wedstrijd-section-title">Route</h2>
-                    <p>
-                      <strong>{accommodatie.naam}</strong>
-                      {(accommodatie.straat || accommodatie.plaats) && <br />}
-                      {[accommodatie.straat, accommodatie.plaats].filter(Boolean).join(', ')}
-                    </p>
+                  )}
+                  {accommodatie?.naam && (
                     <a
-                      className="btn btn--outline-dark"
+                      className="btn wedstrijd-plan-route"
                       href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
                         [accommodatie.naam, accommodatie.straat, accommodatie.plaats]
                           .filter(Boolean)
@@ -205,10 +199,22 @@ export default function WedstrijdDetailPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 11l18-8-8 18-2-8z" />
+                      </svg>
                       Navigeer
                     </a>
-                  </div>
-                )}
+                  )}
+                </div>
               </section>
             )}
 

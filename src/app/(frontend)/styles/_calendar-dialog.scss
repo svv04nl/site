@@ -3,6 +3,8 @@
 // bottom on a phone. Also the "Zet in mijn agenda" buttons and the subscribe bar on /agenda.
 
 .calendar-button {
+  // A <button>, unlike the <a> buttons elsewhere: no browser border.
+  border: 0;
   gap: 0.5rem;
 }
 
@@ -134,8 +136,9 @@
       border-color: #a80000;
     }
 
-    small {
-      color: rgb(255 255 255 / 85%);
+    .calendar-dialog__option-text small {
+      color: var(--color-white);
+      opacity: 0.9;
     }
   }
 }

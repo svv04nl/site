@@ -199,36 +199,77 @@
   }
 }
 
-// ─── In je agenda en route ───────────────────────────────────────────────────
+// ─── Ga je kijken? (agenda en route) ─────────────────────────────────────────
+// Computer: a dark band with a line of text and two buttons. Phone: only the buttons.
 
 .wedstrijd-plan {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-}
-
-.wedstrijd-plan-card {
-  align-items: flex-start;
+  align-items: center;
+  background: var(--color-dark);
+  border-radius: 12px;
+  color: var(--color-white);
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-bottom: 2rem;
   padding: 1.25rem 1.5rem;
 
-  .wedstrijd-section-title {
-    margin: 0;
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    background: none;
+    border-radius: 0;
+    padding: 0;
   }
+}
+
+.wedstrijd-plan-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 
   p {
-    color: #555;
-    line-height: 1.5;
+    color: rgb(255 255 255 / 72%);
+    font-size: 0.9rem;
     margin: 0;
   }
 
-  strong {
-    color: var(--color-dark);
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    display: none;
+  }
+}
+
+.wedstrijd-plan-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.wedstrijd-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-left: auto;
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+// On the dark band a white button; on a phone a dark outline next to the red one.
+.wedstrijd-plan-route {
+  background: var(--color-white);
+  color: var(--color-dark) !important;
+
+  &:hover {
+    background: #eee;
+    transform: translateY(-2px);
   }
 
-  .btn {
-    margin-top: auto;
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    border: 1.5px solid var(--color-dark);
   }
 }
