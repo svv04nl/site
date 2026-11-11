@@ -52,6 +52,10 @@
     "crons": ["0 4 * * *", "30 4 * * *"],
   },
 
+  // Which environment this is: "production" here, "preview" on Previews, unset locally.
+  // Read it through isProduction() in src/lib/site-env.ts (replaces Vercel's VERCEL_ENV).
+  "vars": { "SITE_ENV": "production" },
+
   // Alle overige instellingen (DATABASE_URL, PAYLOAD_SECRET, ...) zijn secrets: zie
   // docs/cloudflare.md.
 
@@ -67,5 +71,6 @@
     ],
     "images": { "binding": "IMAGES" },
     "ai": { "binding": "AI", "remote": true },
+    "vars": { "SITE_ENV": "preview" },
   },
 }
