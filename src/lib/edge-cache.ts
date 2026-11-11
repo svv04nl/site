@@ -11,20 +11,27 @@ export async function withEdgeCache(
   build: () => Promise<Response>,
 ): Promise<Response> {
   const cache = typeof caches !== 'undefined' && 'default' in caches ? caches.default : undefined
-  if (!cache) return build()
+  if (!cache) {
+    return build()
+  }
 
   // A plain GET with only the URL as key; the cache does not take Next's request object.
   const key = new Request(request.url)
   const hit = await cache.match(key)
-  if (hit) return hit
+  if (hit) {
+    return hit
+  }
 
   const response = await build()
   if (response.ok) {
     const stored = cache.put(key, response.clone())
     const { getCloudflareContext } = await import('@opennextjs/cloudflare')
     const context = await getCloudflareContext({ async: true }).catch(() => undefined)
-    if (context) context.ctx.waitUntil(stored)
-    else await stored
+    if (context) {
+      context.ctx.waitUntil(stored)
+    } else {
+      await stored
+    }
   }
   return response
 }

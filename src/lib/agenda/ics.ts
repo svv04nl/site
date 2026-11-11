@@ -12,12 +12,17 @@ const YOUTH_MINUTES = 90
 const isYouth = (name: string) => /\b[JM]?O\d{1,2}\b/i.test(name)
 
 const escapeText = (s: string) =>
-  s.replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/([,;])/g, '\\$1')
+  s
+    .replace(/\\/g, '\\\\')
+    .replace(/\r?\n/g, '\\n')
+    .replace(/([,;])/g, '\\$1')
 
 /** Lines may be at most 75 octets; longer lines continue on the next line after a space. */
 function fold(line: string): string {
   const bytes = new TextEncoder()
-  if (bytes.encode(line).length <= 75) return line
+  if (bytes.encode(line).length <= 75) {
+    return line
+  }
   const parts: string[] = []
   let current = ''
   for (const char of line) {
@@ -33,7 +38,11 @@ function fold(line: string): string {
   return parts.join('\r\n ')
 }
 
-const utcStamp = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+const utcStamp = (d: Date) =>
+  d
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '')
 const dateOnly = (iso: string) => iso.replace(/-/g, '')
 
 function nextDay(iso: string): string {
@@ -44,7 +53,8 @@ function nextDay(iso: string): string {
 
 function matchEvent(m: MatchDto, now: Date): string[] {
   const ownName = m.isHomeGame ? m.home.name : m.away.name
-  const prefix = m.status === 'cancelled' ? 'Afgelast: ' : m.status === 'postponed' ? 'Uitgesteld: ' : ''
+  const prefix =
+    m.status === 'cancelled' ? 'Afgelast: ' : m.status === 'postponed' ? 'Uitgesteld: ' : ''
   const summary = `${prefix}${m.home.name} - ${m.away.name}`
 
   const start = m.startsAt ? new Date(m.startsAt) : null

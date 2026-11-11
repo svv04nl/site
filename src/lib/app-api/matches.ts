@@ -220,7 +220,9 @@ export function loadTeamMatches(teamcode: number, weeksBack = 4): Promise<MatchD
       }),
     ])
     const byId = new Map<string, MatchDto>()
-    for (const m of await mapMatches([...program, ...results])) byId.set(m.id, m)
+    for (const m of await mapMatches([...program, ...results])) {
+      byId.set(m.id, m)
+    }
     return [...byId.values()].sort(byKickoff)
   })
 }

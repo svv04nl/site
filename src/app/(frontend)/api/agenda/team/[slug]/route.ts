@@ -11,8 +11,12 @@ export async function GET(request: Request, context: { params: Promise<{ slug: s
   const { slug } = await context.params
   return withEdgeCache(request, async () => {
     const team = (await loadTeams()).find((t) => t.slug === slug)
-    if (!team) return new Response('Team niet gevonden', { status: 404 })
-    if (!team.teamcode) return new Response('Voor dit team is geen programma bekend', { status: 404 })
+    if (!team) {
+      return new Response('Team niet gevonden', { status: 404 })
+    }
+    if (!team.teamcode) {
+      return new Response('Voor dit team is geen programma bekend', { status: 404 })
+    }
 
     const matches = await loadTeamMatches(team.teamcode)
     const name = /svv/i.test(team.name) ? team.name : `SVV'04 ${team.name}`
