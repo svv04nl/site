@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   groupScheduleByWeek,
@@ -8,6 +8,12 @@ import {
   type ScheduleRange,
 } from '@/lib/clubdata/transform'
 import { clubScheduleQuery } from '@/lib/clubdata/queries'
+import {
+  amsterdamToday,
+  browserTestMode,
+  testCancelledCodes,
+  type CancellationTestMode,
+} from '@/lib/clubdata/cancellation'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 import ProgramCalendarButton from '@/components/ProgramCalendarButton'
 
@@ -21,7 +27,19 @@ type Props = {
 export default function ClubSchedule({ range, emptyMessage }: Props) {
   const [filter, setFilter] = useState<Filter>('alles')
 
-  const { data: matches, isLoading, isError } = useQuery(clubScheduleQuery(filter))
+  const { data, isLoading, isError } = useQuery(clubScheduleQuery(filter))
+
+  // Test mode on previews (?afgelasting=test, =veel or =alles): the same matches as in the
+  // cancellation bar show as cancelled.
+  const [testMode, setTestMode] = useState<CancellationTestMode | null>(null)
+  useEffect(() => setTestMode(browserTestMode()), [])
+  const matches = useMemo(() => {
+    if (!testMode || !data) {
+      return data
+    }
+    const codes = testCancelledCodes(data, testMode, amsterdamToday())
+    return data.map((m) => (codes.has(m.matchCode) ? { ...m, status: 'Afgelast' } : m))
+  }, [data, testMode])
 
   const scopedMatches = range ? filterScheduleByRange(matches ?? [], range) : (matches ?? [])
   const weekGroups = groupScheduleByWeek(scopedMatches)

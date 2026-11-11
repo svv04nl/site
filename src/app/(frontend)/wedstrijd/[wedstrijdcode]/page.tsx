@@ -16,7 +16,13 @@ import {
   gameHomeTeamQuery,
   gameAwayTeamQuery,
 } from '@/lib/clubdata/queries'
-import { cancellationLabel } from '@/lib/clubdata/cancellation'
+import {
+  amsterdamToday,
+  browserTestMode,
+  cancellationLabel,
+  testCancelledCodes,
+  type CancellationTestMode,
+} from '@/lib/clubdata/cancellation'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
 
@@ -81,7 +87,15 @@ export default function WedstrijdDetailPage() {
 
   // The match details carry no status; the club programme does (afgelast, uitgesteld, ...).
   const { data: schedule } = useQuery(clubScheduleQuery('alles'))
-  const status = schedule?.find((m) => String(m.matchCode) === wedstrijdcode)?.status
+  // Test mode on previews (?afgelasting=test, =veel or =alles): the same matches as in the bar.
+  const [testMode, setTestMode] = React.useState<CancellationTestMode | null>(null)
+  React.useEffect(() => setTestMode(browserTestMode()), [])
+  const testCancelled =
+    testMode !== null &&
+    testCancelledCodes(schedule ?? [], testMode, amsterdamToday()).has(Number(wedstrijdcode))
+  const status = testCancelled
+    ? 'Afgelast'
+    : schedule?.find((m) => String(m.matchCode) === wedstrijdcode)?.status
   const cancelled = cancellationLabel(status)
 
   const pageTitle = info ? `${info.thuisteam} – ${info.uitteam}` : 'Wedstrijd'
