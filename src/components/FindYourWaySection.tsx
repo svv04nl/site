@@ -19,7 +19,9 @@ export async function FindYourWaySection() {
     depth: 0,
   })
 
-  if (audiences.length === 0) return null
+  if (audiences.length === 0) {
+    return null
+  }
 
   return (
     <section className="findway-section" aria-labelledby="findway-title">

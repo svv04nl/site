@@ -67,7 +67,10 @@ describe('Media afterRead', () => {
       height: 300,
     }
     const doc = read({ ...photo, sizes: { newsCard: existing } })
-    expect(doc.sizes.newsCard).toEqual({ ...existing, url: 'https://svv04.nl/media/foto-600x300.webp' })
+    expect(doc.sizes.newsCard).toEqual({
+      ...existing,
+      url: 'https://svv04.nl/media/foto-600x300.webp',
+    })
     expect(doc.sizes.featuredPost.url).toContain('/api/img/featuredPost/12')
   })
 

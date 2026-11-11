@@ -99,7 +99,9 @@ function buildVenueGroups(matches: ScheduleMatch[]): SocialTeamGroup[] {
     const { key, label, venue, venuePlaats } = groupKeyFor(m)
     const cancelled = CANCELLED_KEYWORDS.some((kw) => m.status?.toLowerCase().includes(kw))
 
-    if (!groups.has(key)) groups.set(key, { label, rows: [], venue, venuePlaats })
+    if (!groups.has(key)) {
+      groups.set(key, { label, rows: [], venue, venuePlaats })
+    }
     groups.get(key)!.rows.push({
       matchCode: m.matchCode,
       dayKey: m.dayKey,
@@ -145,7 +147,9 @@ export function getDayOptions(matches: ScheduleMatch[]): SocialDayOption[] {
 
 /** The first match day that hasn't passed yet, or the first day overall as a fallback. */
 export function pickDefaultDay(options: SocialDayOption[]): string | null {
-  if (options.length === 0) return null
+  if (options.length === 0) {
+    return null
+  }
   const todayKey = formatDate(new Date(), 'yyyy-MM-dd')
   return options.find((d) => d.dayKey >= todayKey)?.dayKey ?? options[0].dayKey
 }

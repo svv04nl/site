@@ -29,8 +29,11 @@ afterEach(() => {
     ['SITE_ACCESS_CODE', original.code],
     ['PAYLOAD_SECRET', original.secret],
   ] as const) {
-    if (value === undefined) delete process.env[key]
-    else process.env[key] = value
+    if (value === undefined) {
+      delete process.env[key]
+    } else {
+      process.env[key] = value
+    }
   }
 })
 
@@ -165,7 +168,9 @@ describe('proxy', () => {
 
   it('weigert een verkeerd of verlopen cookie', async () => {
     expect((await proxy(request('/tribune', 'verzonnen'))).status).toBe(307)
-    expect((await proxy(request('/tribune', await gate.accessToken('andere-code')))).status).toBe(307)
+    expect((await proxy(request('/tribune', await gate.accessToken('andere-code')))).status).toBe(
+      307,
+    )
     // De code die in de cookie staat, is niet het token.
     expect((await proxy(request('/tribune', CODE))).status).toBe(307)
   })
@@ -186,12 +191,21 @@ describe('proxy', () => {
     '/_next/static/chunks/app.js',
     '/robots.txt',
     '/api/img/hero/7',
-  ])('laat %s zonder cookie door, zodat Mollie, cron, admin en beeldformaten blijven werken', async (path) => {
-    expect(passes(await proxy(request(path)))).toBe(true)
-  })
+  ])(
+    'laat %s zonder cookie door, zodat Mollie, cron, admin en beeldformaten blijven werken',
+    async (path) => {
+      expect(passes(await proxy(request(path)))).toBe(true)
+    },
+  )
 
   it('zet elke gewone pagina achter de code', async () => {
-    for (const path of ['/', '/contact', '/nieuws/een-bericht', '/tribune/bedankt', '/sitemap.xml']) {
+    for (const path of [
+      '/',
+      '/contact',
+      '/nieuws/een-bericht',
+      '/tribune/bedankt',
+      '/sitemap.xml',
+    ]) {
       expect((await proxy(request(path))).status).toBe(307)
     }
   })
@@ -202,7 +216,9 @@ describe('submitAccessCode', () => {
 
   const form = (fields: Record<string, string>) => {
     const data = new FormData()
-    for (const [key, value] of Object.entries(fields)) data.set(key, value)
+    for (const [key, value] of Object.entries(fields)) {
+      data.set(key, value)
+    }
     return data
   }
 
@@ -221,7 +237,9 @@ describe('submitAccessCode', () => {
       .finally(() => {
         settled = true
       })
-    for (let i = 0; i < 100 && !settled; i++) await tick(50)
+    for (let i = 0; i < 100 && !settled; i++) {
+      await tick(50)
+    }
     return result
   }
 
@@ -239,7 +257,12 @@ describe('submitAccessCode', () => {
     expect(name).toBe(gate.ACCESS_COOKIE)
     expect(value).toBe(await gate.accessToken(CODE))
     expect(value).not.toContain(CODE)
-    expect(options).toMatchObject({ httpOnly: true, sameSite: 'lax', path: '/', maxAge: gate.ACCESS_MAX_AGE })
+    expect(options).toMatchObject({
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: gate.ACCESS_MAX_AGE,
+    })
   })
 
   it('negeert spaties rond de code', async () => {
@@ -273,12 +296,18 @@ describe('submitAccessCode', () => {
   it('wacht even bij een verkeerde code, tegen gokken', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     let done = false
-    const pending = submitAccessCode(null, form({ code: 'fout', next: '/' })).then(() => (done = true))
+    const pending = submitAccessCode(null, form({ code: 'fout', next: '/' })).then(
+      () => (done = true),
+    )
 
     // Na 300 ms nep-tijd is er nog geen antwoord, na 800 ms wel.
-    for (let i = 0; i < 6; i++) await tick(50)
+    for (let i = 0; i < 6; i++) {
+      await tick(50)
+    }
     expect(done).toBe(false)
-    for (let i = 0; i < 10 && !done; i++) await tick(50)
+    for (let i = 0; i < 10 && !done; i++) {
+      await tick(50)
+    }
     await pending
     expect(done).toBe(true)
   })

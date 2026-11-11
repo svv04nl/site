@@ -20,7 +20,9 @@ function escapeHtml(value: string): string {
 // as pre-built <tr> HTML via {{{}}} (unescaped) variables — empty means the
 // message came from the feedback widget, not the contact form.
 function detailRow(label: string, value?: string | null): string {
-  if (!value) return '<!---->'
+  if (!value) {
+    return '<!---->'
+  }
   return `<tr><td style="padding:10px 0; border-bottom:1px solid #ececec; font-family:Helvetica, Arial, sans-serif; font-size:13px; color:#999999; vertical-align:top;">${label}</td><td style="padding:10px 0; border-bottom:1px solid #ececec; font-family:Helvetica, Arial, sans-serif; font-size:14px; color:#1a1a1a;">${escapeHtml(value)}</td></tr>`
 }
 
@@ -96,7 +98,9 @@ export const Messages: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc, operation, req }) => {
-        if (operation !== 'create') return
+        if (operation !== 'create') {
+          return
+        }
         try {
           let to = NOTIFY_EMAIL
           if (doc.afdeling) {
@@ -106,7 +110,9 @@ export const Messages: CollectionConfig = {
               limit: 1,
               depth: 0,
             })
-            if (docs[0]?.email) to = docs[0].email
+            if (docs[0]?.email) {
+              to = docs[0].email
+            }
           }
 
           const { error } = await resend.emails.send({
@@ -125,7 +131,9 @@ export const Messages: CollectionConfig = {
           })
           // resend.emails.send() resolves with { error } on API failures rather
           // than throwing — must check explicitly or failures go unnoticed.
-          if (error) throw new Error(`${error.name}: ${error.message}`)
+          if (error) {
+            throw new Error(`${error.name}: ${error.message}`)
+          }
         } catch (err) {
           req.payload.logger.error(`Message notification email failed: ${err}`)
         }

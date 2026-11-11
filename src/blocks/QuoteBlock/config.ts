@@ -13,7 +13,8 @@ export const QuoteBlock: Block = {
       label: 'Tekst',
       required: true,
       admin: {
-        description: 'Zet woorden tussen *sterretjes* om ze uit te lichten, bijv. je *MAG* lid worden.',
+        description:
+          'Zet woorden tussen *sterretjes* om ze uit te lichten, bijv. je *MAG* lid worden.',
       },
     },
   ],

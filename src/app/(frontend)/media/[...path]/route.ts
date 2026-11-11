@@ -18,11 +18,15 @@ export async function GET(request: Request, { params }: { params: Promise<Params
   const cache = typeof caches !== 'undefined' && 'default' in caches ? caches.default : undefined
   const cacheKey = new Request(new URL(request.url).origin + '/' + key)
   const cached = await cache?.match(cacheKey)
-  if (cached) return cached
+  if (cached) {
+    return cached
+  }
 
   const context = await getCloudflareContext({ async: true }).catch(() => undefined)
   const object = await context?.env.MEDIA?.get(key)
-  if (!object) return new Response('Not found', { status: 404 })
+  if (!object) {
+    return new Response('Not found', { status: 404 })
+  }
 
   const headers = new Headers()
   object.writeHttpMetadata(headers)
@@ -33,6 +37,8 @@ export async function GET(request: Request, { params }: { params: Promise<Params
   }
 
   const response = new Response(object.body, { headers })
-  if (cache && context) context.ctx.waitUntil(cache.put(cacheKey, response.clone()))
+  if (cache && context) {
+    context.ctx.waitUntil(cache.put(cacheKey, response.clone()))
+  }
   return response
 }

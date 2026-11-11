@@ -17,7 +17,9 @@ export function toImage(
   media: Media | number | string | null | undefined,
   size?: 'newsCard' | 'featuredPost' | 'hero' | 'teamCard' | 'teamPhoto',
 ): { url: string; width?: number; height?: number; alt?: string } | undefined {
-  if (!media || typeof media !== 'object' || !media.url) return undefined
+  if (!media || typeof media !== 'object' || !media.url) {
+    return undefined
+  }
 
   const sized = size ? media.sizes?.[size] : undefined
   const useSize = Boolean(sized?.url)

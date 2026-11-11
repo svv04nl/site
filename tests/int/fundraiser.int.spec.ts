@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_TOTAL, MIN_AMOUNT, parseDonationInput, paymentTotal, splitAmount } from '@/lib/fundraiser'
+import {
+  MAX_TOTAL,
+  MIN_AMOUNT,
+  parseDonationInput,
+  paymentTotal,
+  splitAmount,
+} from '@/lib/fundraiser'
 
 const base = { name: 'Jan Jansen', email: 'jan@example.nl', amount: 30 }
 
@@ -50,7 +56,10 @@ describe('parseDonationInput', () => {
 
   it('vereist een bedrijfsnaam bij een bedrijf en negeert die anders', () => {
     expect(parseDonationInput({ ...base, isCompany: true }, 30).ok).toBe(false)
-    const company = parseDonationInput({ ...base, isCompany: true, companyName: 'Bakkerij Bos' }, 30)
+    const company = parseDonationInput(
+      { ...base, isCompany: true, companyName: 'Bakkerij Bos' },
+      30,
+    )
     expect(company.ok && company.data.companyName).toBe('Bakkerij Bos')
     const person = parseDonationInput({ ...base, companyName: 'Bakkerij Bos' }, 30)
     expect(person.ok && person.data.companyName).toBeUndefined()

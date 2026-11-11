@@ -50,7 +50,9 @@ export function AssistantProvider({
   const openAssistant = useCallback((text?: string) => {
     setMounted(true)
     setOpen(true)
-    if (text?.trim()) setQuestion(text.trim())
+    if (text?.trim()) {
+      setQuestion(text.trim())
+    }
   }, [])
 
   const closeAssistant = useCallback(() => setOpen(false), [])
@@ -62,7 +64,9 @@ export function AssistantProvider({
 
   // Cmd/Ctrl+K opens the assistant from anywhere.
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) {
+      return
+    }
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault()

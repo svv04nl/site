@@ -17,13 +17,17 @@ type Props = {
 }
 
 function contactId(contact: Unit['contact']): number | string | null {
-  if (contact == null) return null
+  if (contact == null) {
+    return null
+  }
   return typeof contact === 'object' ? contact.id : contact
 }
 
 export default async function TeamDirectoryBlockComponent({ units }: Props) {
   const resolvedUnits = (units ?? []).filter((u) => u.title)
-  if (resolvedUnits.length === 0) return null
+  if (resolvedUnits.length === 0) {
+    return null
+  }
 
   const ids = resolvedUnits.map((u) => contactId(u.contact)).filter((id) => id != null)
   const byId = new Map<string, Contact>()
@@ -46,11 +50,7 @@ export default async function TeamDirectoryBlockComponent({ units }: Props) {
         const people = (unit.people ?? []).filter((p) => p.name)
         // A linked contact supplies the name when none is listed explicitly.
         const names =
-          people.length > 0
-            ? people
-            : contact
-              ? [{ name: contact.name, note: null }]
-              : []
+          people.length > 0 ? people : contact ? [{ name: contact.name, note: null }] : []
         const phone = contact?.phone
         const email = contact?.email ?? unit.email
 

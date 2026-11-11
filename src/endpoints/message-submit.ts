@@ -10,10 +10,7 @@ export const messageSubmitEndpoint: Endpoint = {
     }
 
     const body = (await req.json?.()) ?? {}
-    const { name, email, message, afdeling, onderwerp, pageUrl } = body as Record<
-      string,
-      unknown
-    >
+    const { name, email, message, afdeling, onderwerp, pageUrl } = body as Record<string, unknown>
 
     if (!name || !email || !message) {
       return Response.json({ error: 'Naam, e-mail en bericht zijn verplicht.' }, { status: 400 })

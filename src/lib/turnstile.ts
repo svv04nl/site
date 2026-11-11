@@ -15,16 +15,22 @@ const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
  */
 export async function isHuman(request: { headers: Headers }): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY
-  if (!secret) return true
+  if (!secret) {
+    return true
+  }
 
   const token = request.headers.get(TURNSTILE_HEADER)
-  if (!token || token.length > 2048) return false
+  if (!token || token.length > 2048) {
+    return false
+  }
 
   const body = new FormData()
   body.append('secret', secret)
   body.append('response', token)
   const ip = request.headers.get('cf-connecting-ip')
-  if (ip) body.append('remoteip', ip)
+  if (ip) {
+    body.append('remoteip', ip)
+  }
 
   try {
     const res = await fetch(SITEVERIFY, { method: 'POST', body })

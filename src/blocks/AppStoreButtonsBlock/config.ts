@@ -19,7 +19,8 @@ export const AppStoreButtonsBlock: Block = {
       type: 'text',
       label: 'Google Play-link (Android)',
       required: true,
-      defaultValue: 'https://play.google.com/store/apps/details?id=com.xs2theworld.voetballNL&hl=nl',
+      defaultValue:
+        'https://play.google.com/store/apps/details?id=com.xs2theworld.voetballNL&hl=nl',
     },
   ],
 }

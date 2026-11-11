@@ -59,19 +59,25 @@ if (siteKey && typeof window !== 'undefined') {
 
   const isProtected = (input: RequestInfo | URL, init?: RequestInit) => {
     const method = (init?.method ?? (input instanceof Request ? input.method : 'GET')).toUpperCase()
-    if (method !== 'POST') return false
+    if (method !== 'POST') {
+      return false
+    }
     const url = new URL(input instanceof Request ? input.url : String(input), window.location.href)
     return url.origin === window.location.origin && TURNSTILE_PROTECTED_PATHS.includes(url.pathname)
   }
 
   const originalFetch = window.fetch.bind(window)
   window.fetch = async (input, init) => {
-    if (!isProtected(input, init)) return originalFetch(input, init)
+    if (!isProtected(input, init)) {
+      return originalFetch(input, init)
+    }
     const token = await getToken().catch(() => '')
     const headers = new Headers(
       init?.headers ?? (input instanceof Request ? input.headers : undefined),
     )
-    if (token) headers.set(TURNSTILE_HEADER, token)
+    if (token) {
+      headers.set(TURNSTILE_HEADER, token)
+    }
     return originalFetch(input, { ...init, headers })
   }
 }

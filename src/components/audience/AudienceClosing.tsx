@@ -16,7 +16,9 @@ export function AudienceClosing({ audience }: { audience: Audience }) {
   const person =
     typeof audience.contact?.person === 'object' ? (audience.contact.person as Contact) : null
   const cta = audience.cta?.enabled ? audience.cta : null
-  if (!person && !cta) return null
+  if (!person && !cta) {
+    return null
+  }
 
   const photo = person?.photo as Media | null | undefined
   const heading = audience.faqHelp?.title

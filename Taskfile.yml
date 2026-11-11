@@ -1,0 +1,44 @@
+# Tasks for formatting and checks. Install Task: https://taskfile.dev (brew install go-task).
+#   task fix     formats everything and fixes what ESLint can fix (braces around every if, ...)
+#   task check   what CI runs on every pull request: format, lint, types and tests
+version: '3'
+
+tasks:
+  fix:
+    desc: Format with Prettier and apply ESLint's automatic fixes
+    cmds:
+      - pnpm exec eslint . --fix
+      - pnpm exec prettier --write .
+
+  check:
+    desc: Format, lint, types and tests, as on CI
+    cmds:
+      - task: format:check
+      - task: lint
+      - task: typecheck
+      - task: test
+
+  format:
+    desc: Format every file with Prettier
+    cmds:
+      - pnpm exec prettier --write .
+
+  format:check:
+    desc: Fail when a file is not formatted with Prettier
+    cmds:
+      - pnpm exec prettier --check .
+
+  lint:
+    desc: ESLint, failing on errors (warnings are allowed)
+    cmds:
+      - pnpm exec eslint .
+
+  typecheck:
+    desc: TypeScript without emitting files
+    cmds:
+      - pnpm exec tsc --noEmit
+
+  test:
+    desc: Integration tests (Vitest)
+    cmds:
+      - pnpm test:int

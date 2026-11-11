@@ -3,7 +3,12 @@
 import React, { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getWeekMatches, getDayOptions, getScheduleForDay, getTournamentTeamsForDay } from './data'
-import { POSTER_DIMENSIONS, paginateTeamGroups, shouldUseBigStyle, type PosterFormat } from './Poster'
+import {
+  POSTER_DIMENSIONS,
+  paginateTeamGroups,
+  shouldUseBigStyle,
+  type PosterFormat,
+} from './Poster'
 
 const FORMAT_LABELS: Record<PosterFormat, string> = {
   story: 'Instagram Story (9:16)',
@@ -20,7 +25,11 @@ export default function ProgrammaSocialsPage() {
   const [format, setFormat] = useState<PosterFormat>('story')
   const [cacheBust, setCacheBust] = useState(0)
 
-  const { data: matches, isLoading, isError } = useQuery({
+  const {
+    data: matches,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['social-schedule-week'],
     queryFn: getWeekMatches,
     staleTime: 5 * 60 * 1000,
@@ -29,7 +38,9 @@ export default function ProgrammaSocialsPage() {
   const dayOptions = useMemo(() => getDayOptions(matches ?? []), [matches])
 
   const images = useMemo<GalleryImage[]>(() => {
-    if (!matches) return []
+    if (!matches) {
+      return []
+    }
     return dayOptions.flatMap((day) => {
       const daySchedule = getScheduleForDay(matches, day.dayKey)
       const bigStyle = shouldUseBigStyle(daySchedule.teamGroups)
@@ -86,10 +97,15 @@ export default function ProgrammaSocialsPage() {
   }
 
   return (
-    <main className="page" style={{ paddingTop: 'var(--container-padding)', paddingBottom: 'var(--container-padding)' }}>
+    <main
+      className="page"
+      style={{ paddingTop: 'var(--container-padding)', paddingBottom: 'var(--container-padding)' }}
+    >
       <div className="page-inner">
         {isError && (
-          <p className="league-error">Programma kon niet worden geladen. Probeer het later opnieuw.</p>
+          <p className="league-error">
+            Programma kon niet worden geladen. Probeer het later opnieuw.
+          </p>
         )}
 
         {!isError && isLoading && <p>Programma laden…</p>}

@@ -65,7 +65,7 @@ export const Pages: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description:
-          'Maakt dit een subpagina met een geneste URL, bijv. /vereniging/lidmaatschap/taken. Subpagina\'s verschijnen niet in het menu of de zijbalk — alleen bereikbaar via een link vanaf de bovenliggende pagina.',
+          "Maakt dit een subpagina met een geneste URL, bijv. /vereniging/lidmaatschap/taken. Subpagina's verschijnen niet in het menu of de zijbalk — alleen bereikbaar via een link vanaf de bovenliggende pagina.",
       },
     },
     {

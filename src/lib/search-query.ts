@@ -8,12 +8,17 @@ const MIN_LENGTH_FOR_SINGULAR_FALLBACK = 3
  */
 export function searchQueryVariants(query: string): string[] {
   const q = query.trim().toLowerCase()
-  if (!q) return []
+  if (!q) {
+    return []
+  }
 
   const variants = new Set([q])
   if (q.length > MIN_LENGTH_FOR_SINGULAR_FALLBACK) {
-    if (q.endsWith('en')) variants.add(q.slice(0, -2))
-    else if (q.endsWith('s')) variants.add(q.slice(0, -1))
+    if (q.endsWith('en')) {
+      variants.add(q.slice(0, -2))
+    } else if (q.endsWith('s')) {
+      variants.add(q.slice(0, -1))
+    }
   }
   return [...variants]
 }

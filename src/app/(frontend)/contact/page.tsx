@@ -47,7 +47,9 @@ export default async function ContactPage({ searchParams }: Props) {
   // voor het eerst voorkomen (contacten zijn al op `order` gesorteerd).
   const groups: { title: string; persons: Contact[] }[] = []
   for (const contact of contacts) {
-    if (contact.showOnContactPage === false) continue
+    if (contact.showOnContactPage === false) {
+      continue
+    }
     const title = contact.group?.trim() || 'Contact'
     let group = groups.find((g) => g.title === title)
     if (!group) {

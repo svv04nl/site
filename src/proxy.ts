@@ -11,18 +11,26 @@ import {
 // Zet de hele website achter de toegangscode uit SITE_ACCESS_CODE (zie lib/access-gate.ts).
 export async function proxy(request: NextRequest) {
   const code = getAccessCode()
-  if (!code) return NextResponse.next()
+  if (!code) {
+    return NextResponse.next()
+  }
 
   const { pathname, search } = request.nextUrl
-  if (isExemptPath(pathname)) return NextResponse.next()
+  if (isExemptPath(pathname)) {
+    return NextResponse.next()
+  }
 
   const cookie = request.cookies.get(ACCESS_COOKIE)?.value
-  if (cookie && safeEqual(cookie, await accessToken(code))) return NextResponse.next()
+  if (cookie && safeEqual(cookie, await accessToken(code))) {
+    return NextResponse.next()
+  }
 
   const url = request.nextUrl.clone()
   url.pathname = ACCESS_PATH
   url.search = ''
-  if (pathname !== '/') url.searchParams.set('next', `${pathname}${search}`)
+  if (pathname !== '/') {
+    url.searchParams.set('next', `${pathname}${search}`)
+  }
 
   const response = NextResponse.redirect(url)
   // Zoekmachines en tussenliggende caches mogen de poort niet onthouden.

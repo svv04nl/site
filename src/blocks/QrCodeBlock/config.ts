@@ -4,7 +4,7 @@ export const QrCodeBlock: Block = {
   slug: 'qrCodeBlock',
   labels: {
     singular: 'QR-code',
-    plural: "QR-codes",
+    plural: 'QR-codes',
   },
   fields: [
     {

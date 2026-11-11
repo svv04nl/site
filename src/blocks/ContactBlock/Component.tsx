@@ -8,11 +8,11 @@ type Props = {
 }
 
 export default function ContactBlockComponent({ heading, contacts }: Props) {
-  const resolved = (contacts ?? []).filter(
-    (c): c is Contact => typeof c === 'object' && c !== null,
-  )
+  const resolved = (contacts ?? []).filter((c): c is Contact => typeof c === 'object' && c !== null)
 
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <div className="contact-block">

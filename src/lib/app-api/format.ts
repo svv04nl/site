@@ -11,11 +11,19 @@ export function slugify(value: string): string {
 
 /** "06-12345678" or "0524-531656" to E.164 ("+31612345678"). Undefined if it is not a Dutch or international number. */
 export function toE164(phone: string | null | undefined): string | undefined {
-  if (!phone) return undefined
+  if (!phone) {
+    return undefined
+  }
   const digits = phone.replace(/[^\d+]/g, '')
-  if (digits.startsWith('+')) return /^\+\d{8,15}$/.test(digits) ? digits : undefined
-  if (digits.startsWith('00')) return /^\d{10,17}$/.test(digits) ? `+${digits.slice(2)}` : undefined
-  if (digits.startsWith('0')) return /^0\d{9}$/.test(digits) ? `+31${digits.slice(1)}` : undefined
+  if (digits.startsWith('+')) {
+    return /^\+\d{8,15}$/.test(digits) ? digits : undefined
+  }
+  if (digits.startsWith('00')) {
+    return /^\d{10,17}$/.test(digits) ? `+${digits.slice(2)}` : undefined
+  }
+  if (digits.startsWith('0')) {
+    return /^0\d{9}$/.test(digits) ? `+31${digits.slice(1)}` : undefined
+  }
   return undefined
 }
 
@@ -30,7 +38,9 @@ export function shortTeamName(name: string): string {
 
 /** "EMMEN" -> "Emmen", "KLAZIENAVEEN" -> "Klazienaveen". */
 export function titleCase(value: string): string {
-  return value.toLowerCase().replace(/(^|[\s-])(\p{L})/gu, (_m, sep: string, ch: string) => sep + ch.toUpperCase())
+  return value
+    .toLowerCase()
+    .replace(/(^|[\s-])(\p{L})/gu, (_m, sep: string, ch: string) => sep + ch.toUpperCase())
 }
 
 /** "*accent*" markers to plain text, for places that cannot show the accent colour. */

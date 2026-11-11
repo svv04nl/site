@@ -17,8 +17,12 @@ export default {
 
   async scheduled(controller: { cron: string }, env: Env, ctx: Ctx) {
     const path = CRON_ROUTES[controller.cron]
-    if (!path) throw new Error(`Onbekende cron: ${controller.cron}`)
-    if (!env.CRON_SECRET) throw new Error('CRON_SECRET ontbreekt')
+    if (!path) {
+      throw new Error(`Onbekende cron: ${controller.cron}`)
+    }
+    if (!env.CRON_SECRET) {
+      throw new Error('CRON_SECRET ontbreekt')
+    }
 
     const request = new Request(`https://svv04.nl${path}`, {
       headers: { authorization: `Bearer ${env.CRON_SECRET}` },
@@ -33,6 +37,8 @@ export default {
         body: body.slice(0, 2000),
       }),
     )
-    if (!response.ok) throw new Error(`${path} gaf ${response.status}`)
+    if (!response.ok) {
+      throw new Error(`${path} gaf ${response.status}`)
+    }
   },
 }

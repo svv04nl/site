@@ -44,7 +44,9 @@ export async function loadContacts(): Promise<Contact[]> {
 export function findContactByRole(contacts: Contact[], slug: string) {
   for (const contact of contacts) {
     const role = contact.roles?.find((r) => roleKey(r) === slug)
-    if (role) return { contact, role }
+    if (role) {
+      return { contact, role }
+    }
   }
   return undefined
 }

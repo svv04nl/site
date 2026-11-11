@@ -14,7 +14,9 @@ export function getUnit(fundraiser: {
   unitName?: string | null
   unitNamePlural?: string | null
 }): FundraiserUnit | null {
-  if (!fundraiser.unitPrice) return null
+  if (!fundraiser.unitPrice) {
+    return null
+  }
   return {
     name: fundraiser.unitName || 'eenheid',
     namePlural: fundraiser.unitNamePlural || 'eenheden',
@@ -44,13 +46,17 @@ export type DonationInput = {
 type ParseResult = { ok: true; data: DonationInput } | { ok: false; error: string }
 
 function toWholeNumber(value: unknown): number {
-  if (value === undefined || value === null || value === '') return 0
+  if (value === undefined || value === null || value === '') {
+    return 0
+  }
   const parsed = typeof value === 'number' ? value : Number(String(value).replace(',', '.'))
   return Number.isFinite(parsed) ? parsed : NaN
 }
 
 export function splitAmount(amount: number, unitPrice?: number | null) {
-  if (!unitPrice) return { units: 0, freeAmount: amount }
+  if (!unitPrice) {
+    return { units: 0, freeAmount: amount }
+  }
   return { units: Math.floor(amount / unitPrice), freeAmount: amount % unitPrice }
 }
 
@@ -77,7 +83,9 @@ export function parseDonationInput(body: unknown, unitPrice?: number | null): Pa
   const coverFee = input.coverFee === true
   const amount = toWholeNumber(input.amount)
 
-  if (!name || name.length > 100) return { ok: false, error: 'Vul je naam in.' }
+  if (!name || name.length > 100) {
+    return { ok: false, error: 'Vul je naam in.' }
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
     return { ok: false, error: 'Vul een geldig e-mailadres in.' }
   }

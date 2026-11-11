@@ -186,7 +186,7 @@
       text-align: left;
     }
 
-    &:nth-child(n+4) {
+    &:nth-child(n + 4) {
       width: 35px;
       padding-left: 0.25rem;
       padding-right: 0.25rem;
@@ -213,7 +213,7 @@
       text-align: left;
     }
 
-    &:nth-child(n+4) {
+    &:nth-child(n + 4) {
       width: 35px;
       padding-left: 0.25rem;
       padding-right: 0.25rem;
@@ -373,13 +373,27 @@
   table-layout: fixed;
   width: 100%;
 
-  col.col-time { width: 90px; }
-  col.col-date { width: 140px; }
-  col.col-score { width: 110px; }
-  col.col-home { width: 26%; }
-  col.col-away { width: 26%; }
-  col.col-venue { width: auto; }
-  col.col-status { width: 100px; }
+  col.col-time {
+    width: 90px;
+  }
+  col.col-date {
+    width: 140px;
+  }
+  col.col-score {
+    width: 110px;
+  }
+  col.col-home {
+    width: 26%;
+  }
+  col.col-away {
+    width: 26%;
+  }
+  col.col-venue {
+    width: auto;
+  }
+  col.col-status {
+    width: 100px;
+  }
 
   th {
     border-bottom: 1px solid #e0e0e0;
@@ -519,14 +533,26 @@
   table-layout: fixed;
   width: 100%;
 
-  .col-pos { width: 3rem; }
-  .col-lineup-team { width: auto; }
-  .col-lineup-day { width: 10rem; }
-  .col-lineup-time { width: 7rem; }
+  .col-pos {
+    width: 3rem;
+  }
+  .col-lineup-team {
+    width: auto;
+  }
+  .col-lineup-day {
+    width: 10rem;
+  }
+  .col-lineup-time {
+    width: 7rem;
+  }
 
   @media screen and (max-width: $breakpoint-tablet) {
-    .col-lineup-day { width: 6rem; }
-    .col-lineup-time { width: 4.5rem; }
+    .col-lineup-day {
+      width: 6rem;
+    }
+    .col-lineup-time {
+      width: 4.5rem;
+    }
   }
 
   td,

@@ -1,6 +1,12 @@
 import { ImageResponse } from 'next/og'
 import { loadGoogleFont } from '@/lib/og/fonts'
-import { getWeekMatches, getDayOptions, pickDefaultDay, getScheduleForDay, getTournamentTeamsForDay } from '../data'
+import {
+  getWeekMatches,
+  getDayOptions,
+  pickDefaultDay,
+  getScheduleForDay,
+  getTournamentTeamsForDay,
+} from '../data'
 import { getClubLogoDataUri, get7x7LogoDataUri } from '../logos'
 import { Tournament7x7Poster, POSTER_DIMENSIONS, type PosterFormat } from '../Poster'
 

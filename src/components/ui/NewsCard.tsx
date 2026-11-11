@@ -24,9 +24,8 @@ export function NewsCard({ post }: Props) {
   const bgColor = (post as any).imageBackground || '#ffffff'
   const categories = (post as any).categories as string[] | null | undefined
   const relatedTeams = (post as any).relatedTeams as Array<Team | string> | null | undefined
-  const teamNames = relatedTeams
-    ?.filter((t): t is Team => typeof t === 'object')
-    .map((t) => t.name) ?? []
+  const teamNames =
+    relatedTeams?.filter((t): t is Team => typeof t === 'object').map((t) => t.name) ?? []
 
   const allTags = [categoryLabel(categories), ...teamNames]
 
@@ -60,7 +59,9 @@ export function NewsCard({ post }: Props) {
           </time>
           <div className="card-news-tags">
             {allTags.map((tag) => (
-              <span key={tag} className="card-news-tag">{tag}</span>
+              <span key={tag} className="card-news-tag">
+                {tag}
+              </span>
             ))}
           </div>
         </div>

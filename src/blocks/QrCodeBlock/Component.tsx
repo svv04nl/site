@@ -7,7 +7,9 @@ type Props = {
 }
 
 export default async function QrCodeBlockComponent({ url, label }: Props) {
-  if (!url) return null
+  if (!url) {
+    return null
+  }
 
   const dataUri = await QRCode.toDataURL(url, { margin: 1, width: 240 })
 

@@ -74,7 +74,9 @@ const noMediaBucket = new Proxy({} as NonNullable<CloudflareEnv['MEDIA']>, {
 // In production the database goes through Hyperdrive (Cloudflare's connection pool). Previews
 // have no Hyperdrive and use the DATABASE_URL of their own Neon branch.
 const databaseUrl =
-  (onWorkers ? cloudflare?.HYPERDRIVE?.connectionString : undefined) || process.env.DATABASE_URL || ''
+  (onWorkers ? cloudflare?.HYPERDRIVE?.connectionString : undefined) ||
+  process.env.DATABASE_URL ||
+  ''
 
 export default buildConfig({
   admin: {
@@ -92,7 +94,20 @@ export default buildConfig({
     supportedLanguages: { nl },
     fallbackLanguage: 'nl',
   },
-  collections: [Users, Media, Posts, Teams, Sponsors, Pages, Contacts, Audiences, Messages, Fundraisers, Donations, TeamStaff],
+  collections: [
+    Users,
+    Media,
+    Posts,
+    Teams,
+    Sponsors,
+    Pages,
+    Contacts,
+    Audiences,
+    Messages,
+    Fundraisers,
+    Donations,
+    TeamStaff,
+  ],
   endpoints: [searchEndpoint, messageSubmitEndpoint],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

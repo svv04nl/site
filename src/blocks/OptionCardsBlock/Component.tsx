@@ -96,7 +96,9 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function OptionCardsBlockComponent({ cards, variant }: Props) {
   const compact = variant === 'compact'
   const resolved = (cards ?? []).filter((c) => c.title && c.description)
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <ul

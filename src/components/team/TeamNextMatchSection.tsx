@@ -16,7 +16,9 @@ type Props = {
 export default function TeamNextMatchSection({ teamcode, teamName, programmaHref }: Props) {
   const { data: match } = useQuery(nextMatchQuery(teamcode ? Number(teamcode) : null))
 
-  if (!match) return null
+  if (!match) {
+    return null
+  }
 
   return (
     <div className="sidebar-section">

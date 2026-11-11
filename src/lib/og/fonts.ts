@@ -9,7 +9,9 @@ const fontCache = new Map<string, ArrayBuffer>()
 export async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
   const cacheKey = `${family}:${weight}`
   const cached = fontCache.get(cacheKey)
-  if (cached) return cached
+  if (cached) {
+    return cached
+  }
 
   const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}`
   const css = await fetch(cssUrl).then((res) => res.text())

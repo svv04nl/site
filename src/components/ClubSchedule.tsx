@@ -2,7 +2,11 @@
 
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { groupScheduleByWeek, filterScheduleByRange, type ScheduleRange } from '@/lib/clubdata/transform'
+import {
+  groupScheduleByWeek,
+  filterScheduleByRange,
+  type ScheduleRange,
+} from '@/lib/clubdata/transform'
 import { clubScheduleQuery } from '@/lib/clubdata/queries'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 

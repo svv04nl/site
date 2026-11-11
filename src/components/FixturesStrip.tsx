@@ -35,7 +35,9 @@ export default function FixturesStrip({ teams, maxDays = 31, limit = 3 }: Props)
     .sort((a, b) => (a.dateISO ?? '').localeCompare(b.dateISO ?? ''))
     .slice(0, limit)
 
-  if (matches.length === 0) return null
+  if (matches.length === 0) {
+    return null
+  }
 
   return (
     <section className="fixtures-strip">

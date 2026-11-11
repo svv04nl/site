@@ -89,7 +89,9 @@ function buildQuickLinkGroups(actiePages: ActionPage[]): SearchGroup[] {
 
 function filterGroups(groups: SearchGroup[], query: string): SearchGroup[] {
   const variants = searchQueryVariants(query)
-  if (variants.length === 0) return groups
+  if (variants.length === 0) {
+    return groups
+  }
   return groups
     .map((g) => ({
       group: g.group,
@@ -144,7 +146,9 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
   const latestRequestId = useRef(0)
 
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      return
+    }
     setQuery('')
     setContentGroups([])
     setSelectedIndex(0)
@@ -168,7 +172,9 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
           // Ignore this response if a newer request has since been issued —
           // slower older requests can otherwise resolve after and overwrite
           // fresher results.
-          if (requestId !== latestRequestId.current) return
+          if (requestId !== latestRequestId.current) {
+            return
+          }
           setContentGroups(data.groups ?? [])
         })
         .catch((err) => {
@@ -214,7 +220,9 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
   }
 
   const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (flatItems.length === 0) return
+    if (flatItems.length === 0) {
+      return
+    }
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setSelectedIndex((i) => Math.min(i + 1, flatItems.length - 1))
@@ -224,11 +232,15 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
     } else if (e.key === 'Enter') {
       e.preventDefault()
       const item = flatItems[selectedIndex]
-      if (item) navigateTo(item)
+      if (item) {
+        navigateTo(item)
+      }
     }
   }
 
-  if (!open) return null
+  if (!open) {
+    return null
+  }
 
   return (
     <div className="search-modal-overlay" onClick={onClose}>

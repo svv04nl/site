@@ -13,7 +13,9 @@ const encodeCursor = (publishedAt: string, id: number) =>
 function decodeCursor(cursor: string): { publishedAt: string; id: number } {
   try {
     const [publishedAt, id] = JSON.parse(Buffer.from(cursor, 'base64url').toString())
-    if (typeof publishedAt === 'string' && typeof id === 'number') return { publishedAt, id }
+    if (typeof publishedAt === 'string' && typeof id === 'number') {
+      return { publishedAt, id }
+    }
   } catch {
     // falls through to the error below
   }
@@ -25,7 +27,9 @@ export const GET = appRoute(TTL.news, async (request) => {
   const limit = intParam(url, 'limit', 20, 1, 50)
 
   const category = url.searchParams.get('category')
-  if (category && !categories.some((c) => c.slug === category)) throw badRequest('Onbekende categorie.')
+  if (category && !categories.some((c) => c.slug === category)) {
+    throw badRequest('Onbekende categorie.')
+  }
 
   const teamSlugs = listParam(url, 'teams')
   const teamIds = teamSlugs.length
@@ -36,7 +40,9 @@ export const GET = appRoute(TTL.news, async (request) => {
   const after = cursor ? decodeCursor(cursor) : undefined
 
   const and: Where[] = [postsForTeams(teamIds)]
-  if (category) and.push({ categories: { equals: category } })
+  if (category) {
+    and.push({ categories: { equals: category } })
+  }
   if (after) {
     and.push({
       or: [
@@ -53,6 +59,7 @@ export const GET = appRoute(TTL.news, async (request) => {
 
   return {
     items: page.map((post) => toPostSummary(post)),
-    nextCursor: posts.length > limit && last?.publishedAt ? encodeCursor(last.publishedAt, last.id) : null,
+    nextCursor:
+      posts.length > limit && last?.publishedAt ? encodeCursor(last.publishedAt, last.id) : null,
   }
 })

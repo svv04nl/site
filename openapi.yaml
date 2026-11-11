@@ -492,7 +492,23 @@ components:
             kind: { const: screen }
             screen:
               type: string
-              enum: [home, program, results, posts, post, teams, team, club, page, audience, contacts, activities, sponsors, assistant]
+              enum:
+                [
+                  home,
+                  program,
+                  results,
+                  posts,
+                  post,
+                  teams,
+                  team,
+                  club,
+                  page,
+                  audience,
+                  contacts,
+                  activities,
+                  sponsors,
+                  assistant,
+                ]
             slug: { type: string, description: Bij post, team, page, audience. }
             contactTopic: { type: string, description: Bij contacts - onderwerp voorkiezen. }
         - type: object
@@ -547,7 +563,8 @@ components:
               properties:
                 iosAppStoreUrl: { type: string, format: uri }
                 androidPlayStoreUrl: { type: string, format: uri }
-                iosUrlScheme: { type: string, description: Om te testen of de app geïnstalleerd is. }
+                iosUrlScheme:
+                  { type: string, description: Om te testen of de app geïnstalleerd is. }
                 androidPackage: { type: string }
             webshop: { type: string, format: uri }
             tribune: { type: string, format: uri }
@@ -562,7 +579,10 @@ components:
             enabled: { type: boolean, default: true }
             disclaimer:
               type: string
-              examples: ['Antwoorden komen van een AI en kunnen fouten bevatten. Controleer belangrijke zaken bij de club.']
+              examples:
+                [
+                  'Antwoorden komen van een AI en kunnen fouten bevatten. Controleer belangrijke zaken bij de club.',
+                ]
             maxInputLength: { type: integer, default: 500 }
             defaultSuggestions:
               type: array
@@ -663,7 +683,11 @@ components:
           enum: [scheduled, cancelled, postponed, played]
           description: cancelled = tijd doorgestreept en label Afgelast.
         competition: { type: string, examples: [3e klasse] }
-        ownTeamSlug: { type: string, description: Het SVV'04-team in deze wedstrijd; voor ster en lichtrode kaart. }
+        ownTeamSlug:
+          {
+            type: string,
+            description: Het SVV'04-team in deze wedstrijd; voor ster en lichtrode kaart.,
+          }
         isHomeGame: { type: boolean }
         home: { $ref: '#/components/schemas/MatchTeam' }
         away: { $ref: '#/components/schemas/MatchTeam' }
@@ -674,7 +698,11 @@ components:
             name: { type: string, examples: [Sportpark De Kampen] }
             shortName: { type: string, examples: [De Kampen] }
             address: { type: string }
-            mapsQuery: { type: string, description: Zoektekst voor Apple Kaarten of Google Maps (knop Route). }
+            mapsQuery:
+              {
+                type: string,
+                description: Zoektekst voor Apple Kaarten of Google Maps (knop Route).,
+              }
             field: { type: string, examples: ['Veld 1'] }
         result:
           oneOf:
@@ -927,7 +955,11 @@ components:
       required: [slug, title, groups]
       properties:
         slug: { $ref: '#/components/schemas/RoleSlug' }
-        title: { type: string, description: 'Met *accentwoord*, bijv. "Alles voor *ouders* van SVV''04".' }
+        title:
+          {
+            type: string,
+            description: 'Met *accentwoord*, bijv. "Alles voor *ouders* van SVV''04".',
+          }
         intro: { type: string }
         groups:
           type: array

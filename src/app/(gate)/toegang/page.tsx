@@ -14,7 +14,9 @@ type Props = { searchParams: Promise<{ next?: string }> }
 
 export default async function AccessPage({ searchParams }: Props) {
   // Staat de poort uit, dan is er geen reden om hier te zijn.
-  if (!getAccessCode()) redirect('/')
+  if (!getAccessCode()) {
+    redirect('/')
+  }
   const { next } = await searchParams
 
   return (

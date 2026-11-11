@@ -32,7 +32,9 @@ export async function syncTeamStaff(payload: Payload): Promise<StaffSyncResult> 
   const result: StaffSyncResult = { teams: 0, created: 0, deleted: 0, failedTeams: [] }
 
   for (const team of teams) {
-    if (!team.teamcode) continue
+    if (!team.teamcode) {
+      continue
+    }
 
     let raw: RawTeamIndelingResponse
     try {
@@ -61,12 +63,16 @@ export async function syncTeamStaff(payload: Payload): Promise<StaffSyncResult> 
     const existingKeys = new Set(existing.map((e) => staffKey(e.name, e.role)))
 
     for (const doc of existing) {
-      if (wantedKeys.has(staffKey(doc.name, doc.role))) continue
+      if (wantedKeys.has(staffKey(doc.name, doc.role))) {
+        continue
+      }
       await payload.delete({ collection: 'team-staff', id: doc.id })
       result.deleted++
     }
     for (const member of wanted) {
-      if (existingKeys.has(staffKey(member.name, member.role))) continue
+      if (existingKeys.has(staffKey(member.name, member.role))) {
+        continue
+      }
       await payload.create({
         collection: 'team-staff',
         data: { ...member, team: team.id },

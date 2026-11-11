@@ -5,16 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Nieuw bericht via de website</title>
   </head>
-  <body style="margin:0; padding:0; background-color:#f2f2f2; font-family:Helvetica, Arial, sans-serif;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f2f2f2; padding:32px 16px;">
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+      font-family: Helvetica, Arial, sans-serif;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color: #f2f2f2; padding: 32px 16px"
+    >
       <tr>
         <td align="center">
-          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px; max-width:100%; background-color:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-
+          <table
+            role="presentation"
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            style="
+              width: 600px;
+              max-width: 100%;
+              background-color: #ffffff;
+              border-radius: 10px;
+              overflow: hidden;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            "
+          >
             <!-- Header -->
             <tr>
-              <td style="background-color:#1a1a1a; padding:28px 32px; border-top:4px solid #cc0000;">
-                <span style="font-family:Arial, sans-serif; font-size:28px; font-weight:700; letter-spacing:0.06em; color:#ffffff; text-transform:uppercase;">
+              <td
+                style="background-color: #1a1a1a; padding: 28px 32px; border-top: 4px solid #cc0000"
+              >
+                <span
+                  style="
+                    font-family: Arial, sans-serif;
+                    font-size: 28px;
+                    font-weight: 700;
+                    letter-spacing: 0.06em;
+                    color: #ffffff;
+                    text-transform: uppercase;
+                  "
+                >
                   SVV&rsquo;04
                 </span>
               </td>
@@ -22,11 +58,26 @@
 
             <!-- Title -->
             <tr>
-              <td style="padding:32px 32px 8px;">
-                <h1 style="margin:0; font-family:Arial, sans-serif; font-size:20px; font-weight:700; color:#1a1a1a;">
+              <td style="padding: 32px 32px 8px">
+                <h1
+                  style="
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: #1a1a1a;
+                  "
+                >
                   Nieuw bericht via de website
                 </h1>
-                <p style="margin:8px 0 0; font-family:Helvetica, Arial, sans-serif; font-size:14px; color:#777777;">
+                <p
+                  style="
+                    margin: 8px 0 0;
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 14px;
+                    color: #777777;
+                  "
+                >
                   Iemand heeft een bericht achtergelaten via svv04.nl.
                 </p>
               </td>
@@ -34,29 +85,99 @@
 
             <!-- Details table -->
             <tr>
-              <td style="padding:16px 32px 0;">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <td style="padding: 16px 32px 0">
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="border-collapse: collapse"
+                >
                   <tr>
-                    <td style="padding:10px 0; border-bottom:1px solid #ececec; font-family:Helvetica, Arial, sans-serif; font-size:13px; color:#999999; width:110px; vertical-align:top;">Naam</td>
-                    <td style="padding:10px 0; border-bottom:1px solid #ececec; font-family:Helvetica, Arial, sans-serif; font-size:14px; color:#1a1a1a; font-weight:600;">{{{NAME}}}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px 0; border-bottom:1px solid #ececec; font-family:Helvetica, Arial, sans-serif; font-size:13px; color:#999999; vertical-align:top;">E-mail</td>
-                    <td style="padding:10px 0; border-bottom:1px solid #ececec; font-family:Helvetica, Arial, sans-serif; font-size:14px;">
-                      <a href="mailto:{{{SENDER_EMAIL}}}" style="color:#cc0000; text-decoration:none;">{{{SENDER_EMAIL}}}</a>
+                    <td
+                      style="
+                        padding: 10px 0;
+                        border-bottom: 1px solid #ececec;
+                        font-family: Helvetica, Arial, sans-serif;
+                        font-size: 13px;
+                        color: #999999;
+                        width: 110px;
+                        vertical-align: top;
+                      "
+                    >
+                      Naam
+                    </td>
+                    <td
+                      style="
+                        padding: 10px 0;
+                        border-bottom: 1px solid #ececec;
+                        font-family: Helvetica, Arial, sans-serif;
+                        font-size: 14px;
+                        color: #1a1a1a;
+                        font-weight: 600;
+                      "
+                    >
+                      {{{NAME}}}
                     </td>
                   </tr>
-                  {{{AFDELING_ROW}}}
-                  {{{ONDERWERP_ROW}}}
+                  <tr>
+                    <td
+                      style="
+                        padding: 10px 0;
+                        border-bottom: 1px solid #ececec;
+                        font-family: Helvetica, Arial, sans-serif;
+                        font-size: 13px;
+                        color: #999999;
+                        vertical-align: top;
+                      "
+                    >
+                      E-mail
+                    </td>
+                    <td
+                      style="
+                        padding: 10px 0;
+                        border-bottom: 1px solid #ececec;
+                        font-family: Helvetica, Arial, sans-serif;
+                        font-size: 14px;
+                      "
+                    >
+                      <a
+                        href="mailto:{{{SENDER_EMAIL}}}"
+                        style="color: #cc0000; text-decoration: none"
+                        >{{{SENDER_EMAIL}}}</a
+                      >
+                    </td>
+                  </tr>
+                  {{{AFDELING_ROW}}} {{{ONDERWERP_ROW}}}
                 </table>
               </td>
             </tr>
 
             <!-- Message -->
             <tr>
-              <td style="padding:24px 32px 0;">
-                <div style="font-family:Helvetica, Arial, sans-serif; font-size:13px; color:#999999; margin-bottom:8px;">Bericht</div>
-                <div style="background-color:#f7f7f7; border:1px solid #ececec; border-radius:8px; padding:16px; font-family:Helvetica, Arial, sans-serif; font-size:14px; line-height:1.6; color:#1a1a1a;">
+              <td style="padding: 24px 32px 0">
+                <div
+                  style="
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 13px;
+                    color: #999999;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Bericht
+                </div>
+                <div
+                  style="
+                    background-color: #f7f7f7;
+                    border: 1px solid #ececec;
+                    border-radius: 8px;
+                    padding: 16px;
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #1a1a1a;
+                  "
+                >
                   {{{MESSAGE}}}
                 </div>
               </td>
@@ -64,11 +185,22 @@
 
             <!-- CTA -->
             <tr>
-              <td style="padding:24px 32px 8px;">
+              <td style="padding: 24px 32px 8px">
                 <table role="presentation" cellpadding="0" cellspacing="0">
                   <tr>
-                    <td style="background-color:#cc0000; border-radius:6px;">
-                      <a href="mailto:{{{SENDER_EMAIL}}}" style="display:inline-block; padding:12px 24px; font-family:Arial, sans-serif; font-size:14px; font-weight:700; color:#ffffff; text-decoration:none;">
+                    <td style="background-color: #cc0000; border-radius: 6px">
+                      <a
+                        href="mailto:{{{SENDER_EMAIL}}}"
+                        style="
+                          display: inline-block;
+                          padding: 12px 24px;
+                          font-family: Arial, sans-serif;
+                          font-size: 14px;
+                          font-weight: 700;
+                          color: #ffffff;
+                          text-decoration: none;
+                        "
+                      >
                         Beantwoord via e-mail
                       </a>
                     </td>
@@ -79,23 +211,41 @@
 
             <!-- Page URL -->
             <tr>
-              <td style="padding:16px 32px 32px;">
-                <p style="margin:0; font-family:Helvetica, Arial, sans-serif; font-size:12px; color:#aaaaaa;">
-                  Verstuurd vanaf: <a href="{{{PAGE_URL}}}" style="color:#aaaaaa;">{{{PAGE_URL}}}</a>
+              <td style="padding: 16px 32px 32px">
+                <p
+                  style="
+                    margin: 0;
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 12px;
+                    color: #aaaaaa;
+                  "
+                >
+                  Verstuurd vanaf:
+                  <a href="{{{PAGE_URL}}}" style="color: #aaaaaa">{{{PAGE_URL}}}</a>
                 </p>
               </td>
             </tr>
 
             <!-- Footer -->
             <tr>
-              <td style="background-color:#fafafa; border-top:1px solid #ececec; padding:20px 32px;">
-                <p style="margin:0; font-family:Helvetica, Arial, sans-serif; font-size:12px; color:#999999; line-height:1.6;">
-                  Dit bericht is automatisch verzonden vanaf de website van SVV&rsquo;04 Schoonebeek.<br />
+              <td
+                style="background-color: #fafafa; border-top: 1px solid #ececec; padding: 20px 32px"
+              >
+                <p
+                  style="
+                    margin: 0;
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 12px;
+                    color: #999999;
+                    line-height: 1.6;
+                  "
+                >
+                  Dit bericht is automatisch verzonden vanaf de website van SVV&rsquo;04
+                  Schoonebeek.<br />
                   De Kampen 18, 7761 CK Schoonebeek
                 </p>
               </td>
             </tr>
-
           </table>
         </td>
       </tr>

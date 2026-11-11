@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -11,7 +12,7 @@ export const revalidate = 60
 const WORK = [
   {
     title: 'Nieuwe gevel- en dakbeplating',
-    text: "Onze jeugdspelers hebben heel wat ballen tegen de achterbeplating geschoten. Dat is natuurlijk mooi, maar de beplating heeft daardoor zijn beste tijd gehad. We willen de gevel- en dakbeplating vervangen door nieuwe, strakke platen, zodat de tribune er weer fris uitziet.",
+    text: 'Onze jeugdspelers hebben heel wat ballen tegen de achterbeplating geschoten. Dat is natuurlijk mooi, maar de beplating heeft daardoor zijn beste tijd gehad. We willen de gevel- en dakbeplating vervangen door nieuwe, strakke platen, zodat de tribune er weer fris uitziet.',
     photos: [
       {
         src: '/tribune/gevel-achterwand.jpg',
@@ -84,20 +85,32 @@ export default async function TribunePage() {
     depth: 0,
   })
   const fundraiser = docs[0]
-  if (!fundraiser) notFound()
+  if (!fundraiser) {
+    notFound()
+  }
 
   const { goalAmount, active, transactionFee, nameOnObjectLabel } = fundraiser
   const unit = getUnit(fundraiser)
   const stats = await getFundraiserStats(fundraiser.id)
-  const progress = goalAmount ? Math.min(100, Math.round((stats.totalAmount / goalAmount) * 100)) : null
+  const progress = goalAmount
+    ? Math.min(100, Math.round((stats.totalAmount / goalAmount) * 100))
+    : null
 
   return (
     <main className="fr">
       <header className="fr-hero">
-        <img className="fr-hero-img" src="/tribune/hero.jpg" alt="De tribune van SVV'04 vanaf het middenveld" />
+        <img
+          className="fr-hero-img"
+          src="/tribune/hero.jpg"
+          alt="De tribune van SVV'04 vanaf het middenveld"
+        />
         <div className="fr-hero-shade" />
         <div className="fr-hero-inner">
-          <a className="fr-logo" href="https://svv04.nl" aria-label="SVV'04 Schoonebeek, naar svv04.nl">
+          <a
+            className="fr-logo"
+            href="https://svv04.nl"
+            aria-label="SVV'04 Schoonebeek, naar svv04.nl"
+          >
             <img src="/logo.webp" alt="SVV'04 Schoonebeek" width={278} height={336} />
           </a>
           <div className="fr-hero-copy">
@@ -137,9 +150,7 @@ export default async function TribunePage() {
               {unit && (
                 <div>
                   <strong>{stats.totalUnits}</strong>
-                  <span>
-                    {stats.totalUnits === 1 ? unit.name : unit.namePlural} gedoneerd
-                  </span>
+                  <span>{stats.totalUnits === 1 ? unit.name : unit.namePlural} gedoneerd</span>
                 </div>
               )}
               <div>
@@ -235,7 +246,7 @@ export default async function TribunePage() {
           <p className="fr-contact">
             Heb je vragen of goede ideeën? Wil je sponsoring op maat?
             <br />
-            <a href="/contact?afdeling=sponsorgroep">Neem contact op met de sponsorgroep.</a>
+            <Link href="/contact?afdeling=sponsorgroep">Neem contact op met de sponsorgroep.</Link>
           </p>
         </div>
       </section>
@@ -262,7 +273,7 @@ export default async function TribunePage() {
       <footer className="fr-footer">
         <p>SVV&apos;04 Schoonebeek · De Kampen 18, 7761 CK Schoonebeek</p>
         <p>
-          <a href="https://svv04.nl">svv04.nl</a> · <a href="/privacy">Privacyverklaring</a>
+          <a href="https://svv04.nl">svv04.nl</a> · <Link href="/privacy">Privacyverklaring</Link>
         </p>
       </footer>
     </main>

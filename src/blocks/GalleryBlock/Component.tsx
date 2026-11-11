@@ -33,7 +33,9 @@ export default function GalleryBlockComponent({ images }: Props) {
         ]
       : [],
   )
-  if (items.length === 0) return null
+  if (items.length === 0) {
+    return null
+  }
 
   return (
     <>

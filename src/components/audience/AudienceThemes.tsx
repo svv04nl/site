@@ -3,7 +3,9 @@ import type { Audience } from '@/payload-types'
 
 // Themed link groups ("01 Aan de slag", ...) shown under the hero.
 export function AudienceThemes({ themes }: { themes: NonNullable<Audience['themes']> }) {
-  if (themes.length === 0) return null
+  if (themes.length === 0) {
+    return null
+  }
 
   return (
     <div className="audience-themes">

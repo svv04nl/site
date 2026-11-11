@@ -7,7 +7,10 @@ const hits = new Map<string, number[]>()
 const LIMIT = 10
 const WINDOW_MS = 60_000
 
-export function checkRateLimit(key: string, now = Date.now()): { ok: true } | { ok: false; retryAfter: number } {
+export function checkRateLimit(
+  key: string,
+  now = Date.now(),
+): { ok: true } | { ok: false; retryAfter: number } {
   const recent = (hits.get(key) ?? []).filter((t) => now - t < WINDOW_MS)
   if (recent.length >= LIMIT) {
     hits.set(key, recent)
@@ -18,7 +21,11 @@ export function checkRateLimit(key: string, now = Date.now()): { ok: true } | { 
 
   // Keep the map small: forget visitors whose window has passed.
   if (hits.size > 5000) {
-    for (const [k, times] of hits) if (now - times[times.length - 1] >= WINDOW_MS) hits.delete(k)
+    for (const [k, times] of hits) {
+      if (now - times[times.length - 1] >= WINDOW_MS) {
+        hits.delete(k)
+      }
+    }
   }
   return { ok: true }
 }

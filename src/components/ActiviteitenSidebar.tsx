@@ -9,7 +9,9 @@ export function ActiviteitenSidebar() {
   const { data: activiteiten = [], isLoading } = useQuery(activiteitenQuery(100))
 
   // Geen agenda-items (en niet meer aan het laden): laat de sectie helemaal weg.
-  if (!isLoading && activiteiten.length === 0) return null
+  if (!isLoading && activiteiten.length === 0) {
+    return null
+  }
 
   return (
     <div className="sidebar-section">

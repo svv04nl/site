@@ -44,7 +44,9 @@ const createTransport = (getAudience: () => string | null | undefined) =>
     body: () => ({ audience: getAudience() ?? undefined }),
     fetch: async (input, init) => {
       const response = await fetch(input, init)
-      if (response.status === 429) throw new Error(RATE_LIMITED)
+      if (response.status === 429) {
+        throw new Error(RATE_LIMITED)
+      }
       return response
     },
   })
@@ -57,7 +59,9 @@ const toolParts = (message: ChatMessage) =>
 const toolName = (part: ToolPart) => part.type.replace('tool-', '')
 
 function MarkdownLink({ href, children }: { href?: string; children?: React.ReactNode }) {
-  if (href?.startsWith('/')) return <Link href={href}>{children}</Link>
+  if (href?.startsWith('/')) {
+    return <Link href={href}>{children}</Link>
+  }
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
@@ -101,7 +105,9 @@ function MessageCards({ message }: { message: ChatMessage }) {
     ],
     (action) => action.url,
   )
-  if (!matches.length && !standings.length && !contacts.length && !actions.length) return null
+  if (!matches.length && !standings.length && !contacts.length && !actions.length) {
+    return null
+  }
 
   return (
     <div className="assistant-cards">
@@ -144,7 +150,9 @@ function MessageCards({ message }: { message: ChatMessage }) {
 /** Steps, tool calls, tokens and timing of one answer. Metadata only arrives with AI_ASSISTANT_DEBUG. */
 function logAnswer(message: ChatMessage) {
   const { startedAt, finishedAt, usage } = message.metadata ?? {}
-  if (!usage) return
+  if (!usage) {
+    return
+  }
   const steps = message.parts.filter((p) => p.type === 'step-start').length
   const seconds = startedAt && finishedAt ? (finishedAt - startedAt) / 1000 : undefined
   console.groupCollapsed(
@@ -199,7 +207,9 @@ export default function AssistantChat({
     if (!isPanel) {
       try {
         const saved = sessionStorage.getItem(STORAGE_KEY)
-        if (saved) setMessages(JSON.parse(saved) as ChatMessage[])
+        if (saved) {
+          setMessages(JSON.parse(saved) as ChatMessage[])
+        }
       } catch {
         sessionStorage.removeItem(STORAGE_KEY)
       }
@@ -209,9 +219,14 @@ export default function AssistantChat({
 
   // Save once an answer is complete (not on every streamed token).
   useEffect(() => {
-    if (isPanel || !restored || status !== 'ready') return
-    if (messages.length) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-    else sessionStorage.removeItem(STORAGE_KEY)
+    if (isPanel || !restored || status !== 'ready') {
+      return
+    }
+    if (messages.length) {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    } else {
+      sessionStorage.removeItem(STORAGE_KEY)
+    }
   }, [isPanel, messages, status, restored])
 
   // Closing the popup ends the conversation, also an answer that is still coming in.
@@ -232,27 +247,35 @@ export default function AssistantChat({
 
   const submit = (text: string) => {
     const trimmed = text.trim()
-    if (!trimmed || busy || full) return
+    if (!trimmed || busy || full) {
+      return
+    }
     sendMessage({ text: trimmed })
     setInput('')
   }
 
   // A question handed over by the homepage bar or Cmd+K: send it once, after the restore.
   useEffect(() => {
-    if (!question || !restored) return
+    if (!question || !restored) {
+      return
+    }
     submit(question)
     onQuestionSent?.()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question, restored])
 
   useEffect(() => {
-    if (isPanel && active) inputRef.current?.focus()
+    if (isPanel && active) {
+      inputRef.current?.focus()
+    }
   }, [isPanel, active])
 
   // The page is long after a few answers; after clearing it, start at the top again.
   const resetConversation = () => {
     setMessages([])
-    if (!isPanel) window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (!isPanel) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   // What the assistant is doing right now, taken from the latest unfinished tool call.
@@ -292,9 +315,7 @@ export default function AssistantChat({
               <ul className="assistant-quicklinks">
                 {QUICK_LINKS.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href}>
-                      {link.label}
-                    </Link>
+                    <Link href={link.href}>{link.label}</Link>
                   </li>
                 ))}
               </ul>

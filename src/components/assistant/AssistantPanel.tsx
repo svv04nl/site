@@ -16,11 +16,21 @@ type Props = {
 }
 
 /** The assistant as a panel at the bottom right (a full-screen sheet on mobile). */
-export default function AssistantPanel({ open, onClose, question, audience, onQuestionSent }: Props) {
+export default function AssistantPanel({
+  open,
+  onClose,
+  question,
+  audience,
+  onQuestionSent,
+}: Props) {
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      return
+    }
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -28,7 +38,9 @@ export default function AssistantPanel({ open, onClose, question, audience, onQu
 
   // Keep the page behind the full-screen sheet from scrolling.
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      return
+    }
     document.documentElement.classList.add('assistant-panel-open')
     return () => document.documentElement.classList.remove('assistant-panel-open')
   }, [open])
@@ -37,9 +49,13 @@ export default function AssistantPanel({ open, onClose, question, audience, onQu
   // changes, but a link to the page you are already on (e.g. "Bekijk: Spelregels" while on
   // /vereniging/spelregels) does not change the path.
   const onLinkClick = (e: React.MouseEvent) => {
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return
+    }
     const link = (e.target as HTMLElement).closest('a[href]') as HTMLAnchorElement | null
-    if (!link || link.target === '_blank' || link.origin !== window.location.origin) return
+    if (!link || link.target === '_blank' || link.origin !== window.location.origin) {
+      return
+    }
     onClose()
   }
 

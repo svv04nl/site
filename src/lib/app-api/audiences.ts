@@ -28,7 +28,9 @@ export const rolesOf = (audiences: Audience[]) =>
 /** The contact person of an audience. Function: the override on the audience, else the person's first function. */
 export function audienceContact(audience: Audience): ContactDto | undefined {
   const person = audience.contact?.person
-  if (!person || typeof person !== 'object') return undefined
+  if (!person || typeof person !== 'object') {
+    return undefined
+  }
   const dto = toContact(person)
   return audience.contact?.label ? { ...dto, role: audience.contact.label } : dto
 }
@@ -39,7 +41,9 @@ export function audienceLinks(audience: Audience): LinkDto[] {
   const links: LinkDto[] = []
   for (const theme of audience.themes ?? []) {
     for (const item of theme.links ?? []) {
-      if (seen.has(item.href)) continue
+      if (seen.has(item.href)) {
+        continue
+      }
       seen.add(item.href)
       links.push(linkToHref(item.title, item.href, item.description))
     }

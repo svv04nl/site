@@ -14,7 +14,9 @@ import type { MatchData } from '@/components/NextMatchCard'
 // ─── Date utilities ───────────────────────────────────────────────────────────
 
 function parseDateStr(s: string): Date | null {
-  if (!s) return null
+  if (!s) {
+    return null
+  }
 
   // ISO 8601 with time: "2026-04-04T08:45:00+0200"
   if (s.includes('T')) {
@@ -31,10 +33,14 @@ function parseDateStr(s: string): Date | null {
   }
   // "DD-MM-YYYY"
   const d2 = parse(dateOnly, 'dd-MM-yyyy', new Date())
-  if (isValid(d2)) return d2
+  if (isValid(d2)) {
+    return d2
+  }
   // "YYYYMMDD"
   const d3 = parse(dateOnly, 'yyyyMMdd', new Date())
-  if (isValid(d3)) return d3
+  if (isValid(d3)) {
+    return d3
+  }
 
   return null
 }
@@ -56,7 +62,9 @@ function formatDayLabel(d: Date): string {
 
 export function transformNextMatch(raw: RawProgrammaResponse, teamcode: number): MatchData | null {
   const match = raw.find((m) => m.eigenteam === 'true') ?? raw[0]
-  if (!match) return null
+  if (!match) {
+    return null
+  }
 
   const isHome = match.thuisteamid === teamcode
 
@@ -120,7 +128,9 @@ export function transformTeamRoster(raw: RawTeamIndelingResponse): TeamRosterDat
       players.push(entry)
     } else {
       const key = member.functie || member.rol
-      if (!staffMap.has(key)) staffMap.set(key, [])
+      if (!staffMap.has(key)) {
+        staffMap.set(key, [])
+      }
       staffMap.get(key)!.push(entry)
     }
   }
@@ -227,7 +237,9 @@ function groupMatchesByDay(matches: ScheduleMatch[]): ScheduleDayGroup[] {
   const map = new Map<string, ScheduleMatch[]>()
 
   for (const m of matches) {
-    if (!map.has(m.dayKey)) map.set(m.dayKey, [])
+    if (!map.has(m.dayKey)) {
+      map.set(m.dayKey, [])
+    }
     map.get(m.dayKey)!.push(m)
   }
 
@@ -244,7 +256,9 @@ export function groupScheduleByWeek(matches: ScheduleMatch[]): ScheduleWeekGroup
   const map = new Map<string, ScheduleMatch[]>()
 
   for (const m of matches) {
-    if (!map.has(m.weekKey)) map.set(m.weekKey, [])
+    if (!map.has(m.weekKey)) {
+      map.set(m.weekKey, [])
+    }
     map.get(m.weekKey)!.push(m)
   }
 
@@ -414,7 +428,9 @@ export function groupResultsByDay(
 ): { dayKey: string; label: string; matches: ResultMatch[] }[] {
   const map = new Map<string, ResultMatch[]>()
   for (const m of matches) {
-    if (!map.has(m.dayKey)) map.set(m.dayKey, [])
+    if (!map.has(m.dayKey)) {
+      map.set(m.dayKey, [])
+    }
     map.get(m.dayKey)!.push(m)
   }
 
@@ -432,7 +448,9 @@ export function groupResultsByWeek(
 ): { weekKey: string; label: string; matches: ResultMatch[] }[] {
   const map = new Map<string, ResultMatch[]>()
   for (const m of matches) {
-    if (!map.has(m.weekKey)) map.set(m.weekKey, [])
+    if (!map.has(m.weekKey)) {
+      map.set(m.weekKey, [])
+    }
     map.get(m.weekKey)!.push(m)
   }
 

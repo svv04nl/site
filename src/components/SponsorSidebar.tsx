@@ -35,7 +35,9 @@ export async function SponsorSidebar({ variant = 'side' }: Props) {
     Boolean(item.sponsor),
   )
 
-  if (items.length === 0) return null
+  if (items.length === 0) {
+    return null
+  }
 
   const content = (
     <div className={`sidebar-section sponsor-sidebar sponsor-sidebar--${variant}`}>

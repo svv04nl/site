@@ -21,7 +21,9 @@ function teamLinks(staff: { team: string; teamUrl: string }[]): ToolUi {
     const [[url, name]] = teams
     return { link: { label: `Bekijk de teampagina van ${name}`, url } }
   }
-  if (teams.length > MAX_TEAM_LINKS) return {}
+  if (teams.length > MAX_TEAM_LINKS) {
+    return {}
+  }
   return {
     links: teams.map(([url, name]) => ({ title: name, url, kind: 'page' as const })),
   }
@@ -43,7 +45,9 @@ export const findStaff = tool({
 
     if (team) {
       const teams = await findTeams(team)
-      if (!teams.length) return { error: `Geen team gevonden voor "${team}".` }
+      if (!teams.length) {
+        return { error: `Geen team gevonden voor "${team}".` }
+      }
       and.push({ team: { in: teams.map((t) => t.id) } })
     }
     if (name) {

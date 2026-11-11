@@ -29,7 +29,9 @@ export default function NotFound() {
         <div className="not-found-text">
           <p className="not-found-code">Foutcode 404</p>
           <h1 className="not-found-title">Het balletje blijft niet altijd rollen...</h1>
-          <p className="not-found-intro">Deze pagina bestaat helaas niet meer. Misschien zoek je dit:</p>
+          <p className="not-found-intro">
+            Deze pagina bestaat helaas niet meer. Misschien zoek je dit:
+          </p>
           <nav className="not-found-links" aria-label="Snel naar">
             {QUICK_LINKS.map((link) => (
               <Link key={link.href} href={link.href}>

@@ -51,7 +51,11 @@ describe('hrefToTarget', () => {
   })
 
   it('sends site paths without an app screen to the website', () => {
-    expect(hrefToTarget('/tribune')).toEqual({ kind: 'browser', url: 'https://svv04.nl/tribune', inApp: true })
+    expect(hrefToTarget('/tribune')).toEqual({
+      kind: 'browser',
+      url: 'https://svv04.nl/tribune',
+      inApp: true,
+    })
   })
 })
 
@@ -88,11 +92,26 @@ describe('periods', () => {
   })
 
   it('derives the other program and results periods', () => {
-    expect(programRange('next-weekend', '2026-10-31')).toEqual({ from: '2026-11-07', to: '2026-11-08' })
-    expect(programRange('this-week', '2026-10-31')).toEqual({ from: '2026-10-26', to: '2026-11-01' })
-    expect(programRange('next-week', '2026-10-31')).toEqual({ from: '2026-11-02', to: '2026-11-08' })
-    expect(resultsRange('last-weekend', '2026-10-31')).toEqual({ from: '2026-10-24', to: '2026-10-25' })
-    expect(resultsRange('last-week', '2026-10-31')).toEqual({ from: '2026-10-19', to: '2026-10-25' })
+    expect(programRange('next-weekend', '2026-10-31')).toEqual({
+      from: '2026-11-07',
+      to: '2026-11-08',
+    })
+    expect(programRange('this-week', '2026-10-31')).toEqual({
+      from: '2026-10-26',
+      to: '2026-11-01',
+    })
+    expect(programRange('next-week', '2026-10-31')).toEqual({
+      from: '2026-11-02',
+      to: '2026-11-08',
+    })
+    expect(resultsRange('last-weekend', '2026-10-31')).toEqual({
+      from: '2026-10-24',
+      to: '2026-10-25',
+    })
+    expect(resultsRange('last-week', '2026-10-31')).toEqual({
+      from: '2026-10-19',
+      to: '2026-10-25',
+    })
   })
 
   it('labels days', () => {
@@ -107,14 +126,20 @@ describe('lexicalToBlocks', () => {
   it('converts paragraphs with bold, italic and links, and drops empty ones', () => {
     const blocks = lexicalToBlocks(
       state(
-        { type: 'paragraph', children: [text('Hoi '), text('dik', 1), text(' en '), text('schuin', 2)] },
+        {
+          type: 'paragraph',
+          children: [text('Hoi '), text('dik', 1), text(' en '), text('schuin', 2)],
+        },
         { type: 'paragraph', children: [] },
         {
           type: 'paragraph',
           children: [
             {
               type: 'link',
-              fields: { linkType: 'internal', doc: { relationTo: 'pages', value: { slug: 'lidmaatschap' } } },
+              fields: {
+                linkType: 'internal',
+                doc: { relationTo: 'pages', value: { slug: 'lidmaatschap' } },
+              },
               children: [text('Lid worden')],
             },
           ],
@@ -124,11 +149,18 @@ describe('lexicalToBlocks', () => {
     expect(blocks).toEqual([
       {
         type: 'paragraph',
-        children: [{ text: 'Hoi ' }, { text: 'dik', bold: true }, { text: ' en ' }, { text: 'schuin', italic: true }],
+        children: [
+          { text: 'Hoi ' },
+          { text: 'dik', bold: true },
+          { text: ' en ' },
+          { text: 'schuin', italic: true },
+        ],
       },
       {
         type: 'paragraph',
-        children: [{ text: 'Lid worden', link: { kind: 'screen', screen: 'page', slug: 'lidmaatschap' } }],
+        children: [
+          { text: 'Lid worden', link: { kind: 'screen', screen: 'page', slug: 'lidmaatschap' } },
+        ],
       },
     ])
   })
@@ -162,7 +194,11 @@ describe('lexicalToBlocks', () => {
             type: 'listitem',
             children: [
               text('een'),
-              { type: 'list', listType: 'bullet', children: [{ type: 'listitem', children: [text('binnen')] }] },
+              {
+                type: 'list',
+                listType: 'bullet',
+                children: [{ type: 'listitem', children: [text('binnen')] }],
+              },
             ],
           },
           { type: 'listitem', children: [text('twee')] },
@@ -180,7 +216,11 @@ describe('lexicalToBlocks', () => {
     const block = (fields: Record<string, unknown>) => ({ type: 'block', fields })
     const blocks = lexicalToBlocks(
       state(
-        block({ blockType: 'ctaBlock', buttonLabel: 'Direct aanmelden', buttonUrl: 'https://mijn.knvb.nl' }),
+        block({
+          blockType: 'ctaBlock',
+          buttonLabel: 'Direct aanmelden',
+          buttonUrl: 'https://mijn.knvb.nl',
+        }),
         block({ blockType: 'quoteBlock', text: 'Je *MAG* lid worden' }),
         block({ blockType: 'taskTableBlock', heading: 'Taken', rows: [] }),
         block({ blockType: 'qrCodeBlock', url: 'https://svv04.nl' }),
@@ -197,7 +237,12 @@ describe('lexicalToBlocks', () => {
         },
       },
       { type: 'quote', text: 'Je *MAG* lid worden' },
-      { type: 'unsupported', blockType: 'taskTableBlock', title: 'Taken', webUrl: 'https://svv04.nl/vereniging/x' },
+      {
+        type: 'unsupported',
+        blockType: 'taskTableBlock',
+        title: 'Taken',
+        webUrl: 'https://svv04.nl/vereniging/x',
+      },
     ])
   })
 
@@ -245,7 +290,10 @@ describe('markdownToBlocks', () => {
         type: 'paragraph',
         children: [
           { text: 'Vragen? Mail ' },
-          { text: 'de secretaris', link: { kind: 'browser', url: 'mailto:secretaris@svv04.nl', inApp: false } },
+          {
+            text: 'de secretaris',
+            link: { kind: 'browser', url: 'mailto:secretaris@svv04.nl', inApp: false },
+          },
           { text: '.' },
         ],
       },
@@ -295,7 +343,12 @@ describe('toMatch', () => {
       isHomeGame: false,
       home: { name: 'DZOH O10-1', isOwn: false },
       away: { name: "SVV'04 O10-1", isOwn: true, teamSlug: 'svv04-o10-1' },
-      venue: { name: 'Sportpark Zwanenveld', shortName: 'Zwanenveld', mapsQuery: 'Sportpark Zwanenveld, Emmen', field: 'veld 2 B1' },
+      venue: {
+        name: 'Sportpark Zwanenveld',
+        shortName: 'Zwanenveld',
+        mapsQuery: 'Sportpark Zwanenveld, Emmen',
+        field: 'veld 2 B1',
+      },
       result: null,
     })
     expect(match.home.logoUrl).toContain('BBBC31U')
@@ -325,14 +378,18 @@ describe('http helpers', () => {
   it('rejects enum values outside the contract with a 400', () => {
     expect(enumParam(url(''), 'venue', ['all', 'home'] as const, 'all')).toBe('all')
     expect(enumParam(url('venue=home'), 'venue', ['all', 'home'] as const, 'all')).toBe('home')
-    expect(() => enumParam(url('venue=nope'), 'venue', ['all', 'home'] as const, 'all')).toThrow(ApiError)
+    expect(() => enumParam(url('venue=nope'), 'venue', ['all', 'home'] as const, 'all')).toThrow(
+      ApiError,
+    )
   })
 })
 
 describe('checkRateLimit', () => {
   it('allows ten requests a minute per visitor and then says when to retry', () => {
     const now = 1_000_000
-    for (let i = 0; i < 10; i++) expect(checkRateLimit('visitor-a', now + i).ok).toBe(true)
+    for (let i = 0; i < 10; i++) {
+      expect(checkRateLimit('visitor-a', now + i).ok).toBe(true)
+    }
     const blocked = checkRateLimit('visitor-a', now + 11)
     expect(blocked.ok).toBe(false)
     expect(blocked.ok === false && blocked.retryAfter).toBeGreaterThan(0)

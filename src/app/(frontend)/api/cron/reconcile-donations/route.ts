@@ -13,6 +13,8 @@ export async function GET(request: Request) {
 
   const payload = await getPayload({ config })
   const result = await reconcileOpenDonations(payload)
-  if (result.paid > 0 || result.otherChange > 0) revalidatePath('/tribune')
+  if (result.paid > 0 || result.otherChange > 0) {
+    revalidatePath('/tribune')
+  }
   return Response.json(result)
 }

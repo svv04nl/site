@@ -5,9 +5,7 @@ type Props = {
 }
 
 export default function TeamSponsorSection({ sponsors }: Props) {
-  const items = (sponsors ?? []).filter(
-    (s): s is Sponsor => typeof s === 'object' && s !== null,
-  )
+  const items = (sponsors ?? []).filter((s): s is Sponsor => typeof s === 'object' && s !== null)
 
   const content =
     items.length > 0 ? (

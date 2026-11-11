@@ -107,7 +107,9 @@ function tournamentContentHeight1x(teams: SocialTournamentTeam[]) {
     const left = tournamentCardHeight1x(teams[i])
     const right = teams[i + 1] ? tournamentCardHeight1x(teams[i + 1]) : 0
     total += Math.max(left, right)
-    if (i + 2 < teams.length) total += TOURNAMENT_GRID_GAP_PX
+    if (i + 2 < teams.length) {
+      total += TOURNAMENT_GRID_GAP_PX
+    }
   }
   return total
 }
@@ -146,11 +148,15 @@ export function paginateTeamGroups(
   let cursor = 0
   for (let g = 0; g < teamGroups.length; g++) {
     groupStart.push(cursor)
-    for (let r = 0; r < teamGroups[g].rows.length; r++) rowGroup.push(g)
+    for (let r = 0; r < teamGroups[g].rows.length; r++) {
+      rowGroup.push(g)
+    }
     cursor += teamGroups[g].rows.length
   }
   const n = rowGroup.length
-  if (n === 0) return [[]]
+  if (n === 0) {
+    return [[]]
+  }
 
   const maxHeightAtMinScale = contentBudget(format) / MIN_SCALE
 
@@ -160,11 +166,11 @@ export function paginateTeamGroups(
     const gStart = rowGroup[start]
     const gEnd = rowGroup[end - 1]
     let labelHeight = 0
-    for (let g = gStart; g <= gEnd; g++) labelHeight += groupLabelHeight1x(teamGroups[g])
+    for (let g = gStart; g <= gEnd; g++) {
+      labelHeight += groupLabelHeight1x(teamGroups[g])
+    }
     const touchedGroups = gEnd - gStart + 1
-    return (
-      labelHeight + (end - start) * rowPx + (touchedGroups - 1) * gapPx + CONTENT_TOP_PAD_PX
-    )
+    return labelHeight + (end - start) * rowPx + (touchedGroups - 1) * gapPx + CONTENT_TOP_PAD_PX
   }
 
   // A cut before row index p is allowed if it falls on a real group boundary,
@@ -199,8 +205,12 @@ export function paginateTeamGroups(
     for (let i = 1; i <= n; i++) {
       for (let j = 1; j <= Math.min(pageCount, i); j++) {
         for (let m = j - 1; m < i; m++) {
-          if (m !== 0 && !isAllowedCut(m)) continue
-          if (dp[m][j - 1] === Infinity) continue
+          if (m !== 0 && !isAllowedCut(m)) {
+            continue
+          }
+          if (dp[m][j - 1] === Infinity) {
+            continue
+          }
           const candidateMax = Math.max(dp[m][j - 1], heightOf(m, i))
           if (candidateMax < dp[i][j]) {
             dp[i][j] = candidateMax
@@ -413,7 +423,12 @@ function BigMatchRow({
           minWidth: 0,
         }}
       >
-        <ClubLogo clubcode={row.homeTeamClubcode} name={row.homeTeam} scale={scale} baseSize={130} />
+        <ClubLogo
+          clubcode={row.homeTeamClubcode}
+          name={row.homeTeam}
+          scale={scale}
+          baseSize={130}
+        />
         <span
           style={{
             display: 'flex',
@@ -479,7 +494,12 @@ function BigMatchRow({
           minWidth: 0,
         }}
       >
-        <ClubLogo clubcode={row.awayTeamClubcode} name={row.awayTeam} scale={scale} baseSize={130} />
+        <ClubLogo
+          clubcode={row.awayTeamClubcode}
+          name={row.awayTeam}
+          scale={scale}
+          baseSize={130}
+        />
         <span
           style={{
             display: 'flex',

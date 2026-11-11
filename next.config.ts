@@ -11,7 +11,9 @@ const isDev = process.env.NODE_ENV === 'development'
 
 // Maakt de Cloudflare-bindings (Images, R2, ...) ook onder `next dev` beschikbaar via
 // getCloudflareContext(). De database blijft lokaal gewoon DATABASE_URL.
-if (isDev) initOpenNextCloudflareForDev()
+if (isDev) {
+  initOpenNextCloudflareForDev()
+}
 
 // Build the Content-Security-Policy header value.
 // Directives are joined into a single line — newlines are not allowed in header values.

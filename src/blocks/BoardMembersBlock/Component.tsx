@@ -21,7 +21,9 @@ type Props = {
 }
 
 function contactId(contact: Member['contact']): number | string | null {
-  if (contact == null) return null
+  if (contact == null) {
+    return null
+  }
   return typeof contact === 'object' ? contact.id : contact
 }
 
@@ -37,7 +39,9 @@ function initials(name: string) {
 
 export default async function BoardMembersBlockComponent({ members }: Props) {
   const ids = (members ?? []).map((m) => contactId(m.contact)).filter((id) => id != null)
-  if (ids.length === 0) return null
+  if (ids.length === 0) {
+    return null
+  }
 
   // Fetched here rather than relying on the page query's depth: the portrait is two
   // relationships deep (block -> contact -> media).
@@ -55,7 +59,9 @@ export default async function BoardMembersBlockComponent({ members }: Props) {
     .map((m) => ({ member: m, contact: byId.get(String(contactId(m.contact))) }))
     .filter((r): r is { member: Member; contact: Contact } => Boolean(r.contact))
 
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <ul className="board-members">

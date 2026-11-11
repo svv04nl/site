@@ -5,7 +5,9 @@ export async function fetchClubData<T>(
   params?: Record<string, string>,
 ): Promise<T> {
   const clientId = process.env.NEXT_PUBLIC_CLUBDATA_CLIENT_ID
-  if (!clientId) throw new Error('NEXT_PUBLIC_CLUBDATA_CLIENT_ID is not set')
+  if (!clientId) {
+    throw new Error('NEXT_PUBLIC_CLUBDATA_CLIENT_ID is not set')
+  }
 
   const url = new URL(`${BASE_URL}/${article}`)
   url.searchParams.set('client_id', clientId)
@@ -14,6 +16,8 @@ export async function fetchClubData<T>(
   }
 
   const res = await fetch(url.toString(), { next: { revalidate: 300 } })
-  if (!res.ok) throw new Error(`clubdata ${article}: HTTP ${res.status}`)
+  if (!res.ok) {
+    throw new Error(`clubdata ${article}: HTTP ${res.status}`)
+  }
   return res.json() as Promise<T>
 }

@@ -3,11 +3,16 @@
 // searched with a `where` clause and is matched in JS instead.
 export function extractText(node: unknown, out: string[] = []): string[] {
   if (Array.isArray(node)) {
-    for (const child of node) extractText(child, out)
+    for (const child of node) {
+      extractText(child, out)
+    }
   } else if (node && typeof node === 'object') {
     for (const [key, value] of Object.entries(node)) {
-      if (key === 'text' && typeof value === 'string') out.push(value)
-      else if (value && typeof value === 'object') extractText(value, out)
+      if (key === 'text' && typeof value === 'string') {
+        out.push(value)
+      } else if (value && typeof value === 'object') {
+        extractText(value, out)
+      }
     }
   }
   return out
@@ -19,7 +24,9 @@ const SNIPPET_CONTEXT = 50
 export function snippetAround(text: string, variants: string[]): string | undefined {
   const lower = text.toLowerCase()
   const index = Math.min(...variants.map((v) => lower.indexOf(v)).filter((i) => i !== -1))
-  if (!Number.isFinite(index)) return undefined
+  if (!Number.isFinite(index)) {
+    return undefined
+  }
   const start = Math.max(0, index - SNIPPET_CONTEXT)
   const end = Math.min(text.length, index + SNIPPET_CONTEXT * 2)
   return `${start > 0 ? '…' : ''}${text.slice(start, end).trim()}${end < text.length ? '…' : ''}`

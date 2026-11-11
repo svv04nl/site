@@ -13,7 +13,9 @@ export const GET = appRoute(TTL.program, async (request) => {
   const venue = enumParam(url, 'venue', ['all', 'home', 'away'] as const, 'all')
   const range = resultsRange(period, todayInAmsterdam())
 
-  const results = (await loadClubResults()).filter((m) => m.date >= range.from && m.date <= range.to)
+  const results = (await loadClubResults()).filter(
+    (m) => m.date >= range.from && m.date <= range.to,
+  )
   const matches = filterMatches(results, { venue, teams: listParam(url, 'teams') })
   return {
     period: range,

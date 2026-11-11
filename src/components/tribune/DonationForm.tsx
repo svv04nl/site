@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useState } from 'react'
 import {
   MAX_TOTAL,
@@ -33,7 +34,9 @@ export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }
   const { units, freeAmount: extra } = splitAmount(total, unit?.price)
   const canAddUnit = unit ? (units + 1) * unit.price <= MAX_TOTAL : false
   const setUnitCount = (n: number) => {
-    if (unit) setAmountText(String(Math.max(0, n) * unit.price))
+    if (unit) {
+      setAmountText(String(Math.max(0, n) * unit.price))
+    }
   }
   const fee = coverFee ? transactionFee : 0
   const toPay = paymentTotal(total, fee)
@@ -73,32 +76,32 @@ export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }
   return (
     <form className="fr-form" onSubmit={handleSubmit} noValidate>
       {unit && (
-      <fieldset className="fr-field fr-field--center">
-        <legend>
-          Aantal {unit.namePlural} ({formatEuro(unit.price)} per {unit.name})
-        </legend>
-        <div className="fr-stepper">
-          <button
-            type="button"
-            onClick={() => setUnitCount(extra > 0 ? units : units - 1)}
-            disabled={total <= 0}
-            aria-label={`Eén ${unit.name} minder`}
-          >
-            −
-          </button>
-          <output aria-live="polite">
-            <strong>{units}</strong> {units === 1 ? unit.name : unit.namePlural}
-          </output>
-          <button
-            type="button"
-            onClick={() => setUnitCount(units + 1)}
-            disabled={!canAddUnit}
-            aria-label={`Eén ${unit.name} meer`}
-          >
-            +
-          </button>
-        </div>
-      </fieldset>
+        <fieldset className="fr-field fr-field--center">
+          <legend>
+            Aantal {unit.namePlural} ({formatEuro(unit.price)} per {unit.name})
+          </legend>
+          <div className="fr-stepper">
+            <button
+              type="button"
+              onClick={() => setUnitCount(extra > 0 ? units : units - 1)}
+              disabled={total <= 0}
+              aria-label={`Eén ${unit.name} minder`}
+            >
+              −
+            </button>
+            <output aria-live="polite">
+              <strong>{units}</strong> {units === 1 ? unit.name : unit.namePlural}
+            </output>
+            <button
+              type="button"
+              onClick={() => setUnitCount(units + 1)}
+              disabled={!canAddUnit}
+              aria-label={`Eén ${unit.name} meer`}
+            >
+              +
+            </button>
+          </div>
+        </fieldset>
       )}
 
       <div className="fr-field fr-field--center">
@@ -246,7 +249,7 @@ export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }
       </button>
       <p className="fr-note">
         Je betaalt veilig via Mollie. Met doneren ga je akkoord met onze{' '}
-        <a href="/privacy">privacyverklaring</a>.
+        <Link href="/privacy">privacyverklaring</Link>.
       </p>
     </form>
   )

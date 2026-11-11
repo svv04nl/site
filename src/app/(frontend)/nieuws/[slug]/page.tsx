@@ -26,7 +26,9 @@ export async function generateMetadata({ params }: Props) {
     limit: 1,
   })
   const post = docs[0]
-  if (!post) return {}
+  if (!post) {
+    return {}
+  }
   return { title: `SVV'04 - ${post.title}` }
 }
 
@@ -52,7 +54,9 @@ export default async function PostPage({ params }: Props) {
     }),
   ])
 
-  if (!docs[0]) notFound()
+  if (!docs[0]) {
+    notFound()
+  }
 
   const post = docs[0]
   const image = post.featuredImage as Media | null | undefined
@@ -135,47 +139,50 @@ export default async function PostPage({ params }: Props) {
         {/* Sidebar */}
         <div className="sidebar-col">
           <div className="sidebar-col__inner">
-          <div className="sidebar-section">
-            <h2 className="sidebar-section-title">Laatste Nieuws</h2>
-            <ul className="news-sidebar-list">
-              {sidebarPosts.map((p) => {
-                const pCats = (p as any).categories as string[] | null | undefined
-                const pTeams = (p as any).relatedTeams as Array<Team | string> | null | undefined
-                const pTeamNames =
-                  pTeams?.filter((t): t is Team => typeof t === 'object').map((t) => t.name) ?? []
-                const pTags = [...(pCats?.map((c) => CATEGORY_LABELS[c] ?? c) ?? []), ...pTeamNames]
-                return (
-                  <li key={p.id}>
-                    <Link href={`/nieuws/${p.slug}`} className="news-sidebar-item">
-                      <div className="news-sidebar-item-meta">
-                        {p.publishedAt && (
-                          <time className="news-secondary-date">
-                            {new Date(p.publishedAt).toLocaleDateString('nl-NL', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </time>
-                        )}
-                        {pTags.length > 0 && (
-                          <div className="card-news-tags">
-                            {pTags.map((tag) => (
-                              <span key={tag} className="card-news-tag">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <h3 className="news-sidebar-item-title">{p.title}</h3>
-                      {p.excerpt && <p className="news-sidebar-item-excerpt">{p.excerpt}</p>}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-            <MoreLink href="/nieuws" text="Meer nieuws" />
-          </div>
+            <div className="sidebar-section">
+              <h2 className="sidebar-section-title">Laatste Nieuws</h2>
+              <ul className="news-sidebar-list">
+                {sidebarPosts.map((p) => {
+                  const pCats = (p as any).categories as string[] | null | undefined
+                  const pTeams = (p as any).relatedTeams as Array<Team | string> | null | undefined
+                  const pTeamNames =
+                    pTeams?.filter((t): t is Team => typeof t === 'object').map((t) => t.name) ?? []
+                  const pTags = [
+                    ...(pCats?.map((c) => CATEGORY_LABELS[c] ?? c) ?? []),
+                    ...pTeamNames,
+                  ]
+                  return (
+                    <li key={p.id}>
+                      <Link href={`/nieuws/${p.slug}`} className="news-sidebar-item">
+                        <div className="news-sidebar-item-meta">
+                          {p.publishedAt && (
+                            <time className="news-secondary-date">
+                              {new Date(p.publishedAt).toLocaleDateString('nl-NL', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                              })}
+                            </time>
+                          )}
+                          {pTags.length > 0 && (
+                            <div className="card-news-tags">
+                              {pTags.map((tag) => (
+                                <span key={tag} className="card-news-tag">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <h3 className="news-sidebar-item-title">{p.title}</h3>
+                        {p.excerpt && <p className="news-sidebar-item-excerpt">{p.excerpt}</p>}
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+              <MoreLink href="/nieuws" text="Meer nieuws" />
+            </div>
           </div>
         </div>
       </div>

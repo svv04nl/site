@@ -90,7 +90,8 @@ export const Teams: CollectionConfig = {
       relationTo: 'sponsors',
       hasMany: true,
       admin: {
-        description: 'Teamsponsor(en) (Payload sponsor items) — meestal 1, soms 2 bij een gedeelde tenuedeal.',
+        description:
+          'Teamsponsor(en) (Payload sponsor items) — meestal 1, soms 2 bij een gedeelde tenuedeal.',
       },
     },
     {

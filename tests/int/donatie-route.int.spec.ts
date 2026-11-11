@@ -17,9 +17,7 @@ let payload: FakePayload
 const valid = { name: 'Jan Jansen', email: 'jan@example.nl', amount: 65, coverFee: true }
 
 function post(body: unknown, origin = 'https://svv04.nl') {
-  return POST(
-    new Request(`${origin}/api/donatie`, { method: 'POST', body: JSON.stringify(body) }),
-  )
+  return POST(new Request(`${origin}/api/donatie`, { method: 'POST', body: JSON.stringify(body) }))
 }
 
 function setup(fundraiser: Record<string, unknown> | null = fundraiserRow) {

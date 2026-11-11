@@ -6,9 +6,11 @@ type Crumb = { label: string; href?: string }
 
 // *Asterisks* mark the words that get the accent colour, like in the section headers.
 function renderTitle(title: string) {
-  return title.split(/\*(.+?)\*/g).map((part, i) =>
-    i % 2 === 1 ? <em key={i}>{part}</em> : <React.Fragment key={i}>{part}</React.Fragment>,
-  )
+  return title
+    .split(/\*(.+?)\*/g)
+    .map((part, i) =>
+      i % 2 === 1 ? <em key={i}>{part}</em> : <React.Fragment key={i}>{part}</React.Fragment>,
+    )
 }
 
 // Grass background for audiences that have no hero image of their own.

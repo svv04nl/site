@@ -11,7 +11,9 @@ export const metadata = {
 }
 
 export default function AssistantPage() {
-  if (!isAssistantEnabled()) notFound()
+  if (!isAssistantEnabled()) {
+    notFound()
+  }
 
   return (
     <main className="page">
@@ -20,7 +22,7 @@ export default function AssistantPage() {
       <div className="page-inner assistant-page">
         <SectionHeader as="h1" title="Stel je vraag" />
         <p className="assistant-intro">
-          Stel een vraag over SVV'04: de club, het lidmaatschap, vrijwilligerswerk, programma,
+          Stel een vraag over SVV&apos;04: de club, het lidmaatschap, vrijwilligerswerk, programma,
           uitslagen en standen. Het antwoord komt uit de website en de KNVB-gegevens.
         </p>
         <AssistantChat />

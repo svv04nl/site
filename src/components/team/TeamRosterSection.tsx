@@ -9,7 +9,9 @@ export default function TeamRosterSection() {
   const { teamcode } = useTeam()
   const { data } = useQuery(teamRosterQuery(teamcode))
 
-  if (!data) return null
+  if (!data) {
+    return null
+  }
 
   return <TeamRoster data={data} />
 }

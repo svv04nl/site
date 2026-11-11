@@ -13,7 +13,9 @@ type Props = {
 
 export default function TaskTableBlockComponent({ heading, rows }: Props) {
   const resolved = (rows ?? []).filter((r) => r.task)
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <div className="pricing-table-wrap">
