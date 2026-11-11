@@ -46,8 +46,8 @@ const dirname = path.dirname(filename)
 
 // The Cloudflare bindings: in the Worker, and under next dev through
 // initOpenNextCloudflareForDev (next.config.ts). Not there in payload CLI commands, scripts and
-// next build; then the database is DATABASE_URL and the media plugin is off (it is only needed
-// to upload; the Media collection sets the file URLs itself, see collections/Media.ts).
+// next build; then the database is DATABASE_URL and the media plugin gets a stand-in bucket
+// (see noMediaBucket below).
 const onWorkers = typeof navigator !== 'undefined' && navigator.userAgent === 'Cloudflare-Workers'
 
 async function cloudflareEnv(): Promise<CloudflareEnv | undefined> {
@@ -60,6 +60,16 @@ async function cloudflareEnv(): Promise<CloudflareEnv | undefined> {
 }
 
 const cloudflare = await cloudflareEnv()
+
+// Stand-in for the media bucket where there is no binding (scripts, next build). The R2 plugin
+// must stay on there: switched off it also drops its `prefix` field (alwaysInsertFields does not
+// apply to a disabled plugin), and dev push would then want to remove that column. Reading media
+// needs no bucket; only an upload or delete reaches this and fails clearly.
+const noMediaBucket = new Proxy({} as NonNullable<CloudflareEnv['MEDIA']>, {
+  get() {
+    throw new Error('Media bucket not available here: uploads only work in the Worker and next dev')
+  },
+})
 
 // In production the database goes through Hyperdrive (Cloudflare's connection pool). Previews
 // have no Hyperdrive and use the DATABASE_URL of their own Neon branch.
@@ -152,9 +162,8 @@ export default buildConfig({
     // (media/<file>). Visitors get them from /media/<file> (app/(frontend)/media), straight
     // from R2 without Payload.
     r2Storage({
-      enabled: Boolean(cloudflare?.MEDIA),
       alwaysInsertFields: true,
-      bucket: cloudflare?.MEDIA as NonNullable<CloudflareEnv['MEDIA']>,
+      bucket: cloudflare?.MEDIA ?? noMediaBucket,
       collections: {
         media: {
           prefix: 'media',
