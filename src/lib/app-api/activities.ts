@@ -1,10 +1,21 @@
 import { activiteitenQuery } from '@/lib/clubdata/queries'
 import { slugify } from '@/lib/app-api/format'
 import type { ActivityDto } from '@/lib/app-api/types'
+import { sharedCache } from '@/lib/shared-cache'
 
-/** Club activities (not matches) from the Club.Dataservice calendar, soonest first. */
-export async function loadActivities(): Promise<ActivityDto[]> {
-  const raw = await activiteitenQuery(365).queryFn()
+/** How long the club calendar is shared before Sportlink is asked again (seconds). */
+export const ACTIVITIES_TTL_S = 15 * 60
+
+/**
+ * Club activities (not matches) from the Club.Dataservice calendar, soonest first. Cached for
+ * the whole site (sharedCache), so the app, the agenda page and the club feed share one copy.
+ */
+export const loadActivities = sharedCache(fetchActivities, 'club-activities', {
+  revalidate: ACTIVITIES_TTL_S,
+})
+
+async function fetchActivities(): Promise<ActivityDto[]> {
+  const raw = await activiteitenQuery(365, { fresh: true }).queryFn()
   const seen = new Map<string, number>()
 
   return raw

@@ -258,12 +258,14 @@ export const ordiedienstScheduleQuery = () => ({
   staleTime: STALE_TIME,
 })
 
-export const activiteitenQuery = (aantaldagen = 365) => ({
+export const activiteitenQuery = (aantaldagen = 365, { fresh = false } = {}) => ({
   queryKey: ['verenigingsactiviteiten', aantaldagen] as const,
   queryFn: () =>
-    fetchClubData<RawActiviteitenResponse>('verenigingsactiviteiten', {
-      aantaldagen: String(aantaldagen),
-    }).catch(() => [] as RawActiviteitenResponse),
+    fetchClubData<RawActiviteitenResponse>(
+      'verenigingsactiviteiten',
+      { aantaldagen: String(aantaldagen) },
+      { fresh },
+    ).catch(() => [] as RawActiviteitenResponse),
   staleTime: STALE_TIME,
 })
 

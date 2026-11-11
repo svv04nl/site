@@ -24,6 +24,7 @@ import {
   type CancellationTestMode,
 } from '@/lib/clubdata/cancellation'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
+import { SITE_URL } from '@/lib/app-api/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
 
 function parseDateStr(s: string): Date | null {
@@ -90,6 +91,10 @@ export default function WedstrijdDetailPage() {
   // Test mode on previews (?afgelasting=test, =veel or =alles): the same matches as in the bar.
   const [testMode, setTestMode] = React.useState<CancellationTestMode | null>(null)
   React.useEffect(() => setTestMode(browserTestMode()), [])
+  // The link in a calendar event points to this site: the live one by default, a preview or
+  // localhost once the page runs in the browser.
+  const [siteUrl, setSiteUrl] = React.useState(SITE_URL)
+  React.useEffect(() => setSiteUrl(window.location.origin), [])
   const testCancelled =
     testMode !== null &&
     testCancelledCodes(schedule ?? [], testMode, amsterdamToday()).has(Number(wedstrijdcode))
@@ -233,7 +238,7 @@ export default function WedstrijdDetailPage() {
                           location: [accommodatie?.naam, accommodatie?.straat, accommodatie?.plaats]
                             .filter(Boolean)
                             .join(', '),
-                          details: `Kijk op https://svv04.nl/wedstrijd/${wedstrijdcode} voor afgelastingen en wijzigingen.`,
+                          details: `Kijk op ${siteUrl}/wedstrijd/${wedstrijdcode} voor afgelastingen en wijzigingen.`,
                         },
                         icsPath: `/api/agenda/wedstrijd/${wedstrijdcode}.ics`,
                         fileName: `svv04-wedstrijd-${wedstrijdcode}.ics`,

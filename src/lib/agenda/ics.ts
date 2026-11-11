@@ -52,7 +52,7 @@ function nextDay(iso: string): string {
   return d.toISOString().slice(0, 10)
 }
 
-function matchEvent(m: MatchDto, now: Date): string[] {
+function matchEvent(m: MatchDto, now: Date, siteUrl: string): string[] {
   const ownName = m.isHomeGame ? m.home.name : m.away.name
   const prefix =
     m.status === 'cancelled' ? 'Afgelast: ' : m.status === 'postponed' ? 'Uitgesteld: ' : ''
@@ -73,7 +73,7 @@ function matchEvent(m: MatchDto, now: Date): string[] {
     ? [m.venue.name, m.venue.address].filter(Boolean).join(', ')
     : m.venue.mapsQuery || m.venue.name
 
-  const url = `${SITE_URL}/wedstrijd/${m.id}`
+  const url = `${siteUrl}/wedstrijd/${m.id}`
   const description = [
     m.competition,
     m.venue.field ? `Veld ${m.venue.field}` : '',
@@ -118,11 +118,15 @@ function calendar(events: string[], name?: string): string {
   return lines.map(fold).join('\r\n') + '\r\n'
 }
 
-/** A calendar with the given matches. `name` makes it a feed you can subscribe to. */
-export function matchesToIcs(matches: MatchDto[], name?: string): string {
+/**
+ * A calendar with the given matches. `name` makes it a feed you can subscribe to. Every event
+ * links to its match page on `siteUrl` (default the live site; routes pass the origin of the
+ * request, so a preview links to itself).
+ */
+export function matchesToIcs(matches: MatchDto[], name?: string, siteUrl = SITE_URL): string {
   const now = new Date()
   return calendar(
-    matches.flatMap((m) => matchEvent(m, now)),
+    matches.flatMap((m) => matchEvent(m, now, siteUrl)),
     name,
   )
 }
@@ -130,7 +134,7 @@ export function matchesToIcs(matches: MatchDto[], name?: string): string {
 // Sportlink has no end time for activities: a timed activity gets two hours.
 const ACTIVITY_MINUTES = 120
 
-function activityEvent(a: ActivityDto, now: Date): string[] {
+function activityEvent(a: ActivityDto, now: Date, siteUrl: string): string[] {
   const start = a.time ? amsterdamTime(a.date, a.time) : undefined
   const when = start
     ? [
@@ -147,16 +151,20 @@ function activityEvent(a: ActivityDto, now: Date): string[] {
     `SUMMARY:${escapeText(a.title)}`,
     ...(a.location ? [`LOCATION:${escapeText(a.location)}`] : []),
     ...(a.note ? [`DESCRIPTION:${escapeText(a.note)}`] : []),
-    `URL:${SITE_URL}/agenda`,
+    `URL:${siteUrl}/agenda`,
     'END:VEVENT',
   ]
 }
 
 /** The club calendar (activities, no matches) as a feed. */
-export function activitiesToIcs(activities: ActivityDto[], name: string): string {
+export function activitiesToIcs(
+  activities: ActivityDto[],
+  name: string,
+  siteUrl = SITE_URL,
+): string {
   const now = new Date()
   return calendar(
-    activities.flatMap((a) => activityEvent(a, now)),
+    activities.flatMap((a) => activityEvent(a, now, siteUrl)),
     name,
   )
 }
@@ -166,7 +174,9 @@ export function icsResponse(body: string, filename: string, download: boolean): 
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
       'Content-Disposition': `${download ? 'attachment' : 'inline'}; filename="${filename}"`,
-      'Cache-Control': 'public, max-age=0, s-maxage=1800, stale-while-revalidate=3600',
+      // The data behind it is shared and refreshed every few minutes (sharedCache); a shared
+      // cache in front may keep the file as long.
+      'Cache-Control': 'public, max-age=0, s-maxage=120',
     },
   })
 }
@@ -179,3 +189,6 @@ export function withoutIcsExtension(segment: string): string | null {
   const match = /^(.+)\.ics$/i.exec(segment)
   return match ? match[1] : null
 }
+
+/** The origin of a request (https://svv04.nl, a preview, localhost), for links in a feed. */
+export const siteUrlOf = (request: Request) => new URL(request.url).origin
