@@ -3,14 +3,20 @@
 import React from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { format, parseISO, isValid } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import MatchCard from '@/components/ui/MatchCard'
 import CalendarButton from '@/components/ui/CalendarDialog'
 import { addMinutes, matchMinutes } from '@/lib/agenda/links'
-import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
+import {
+  clubScheduleQuery,
+  gameInfoQuery,
+  gameHomeTeamQuery,
+  gameAwayTeamQuery,
+} from '@/lib/clubdata/queries'
+import { cancellationLabel } from '@/lib/clubdata/cancellation'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
 
@@ -73,6 +79,11 @@ export default function WedstrijdDetailPage() {
 
   const hasScore = info?.thuisscore !== null && info?.uitscore !== null
 
+  // The match details carry no status; the club programme does (afgelast, uitgesteld, ...).
+  const { data: schedule } = useQuery(clubScheduleQuery('alles'))
+  const status = schedule?.find((m) => String(m.matchCode) === wedstrijdcode)?.status
+  const cancelled = cancellationLabel(status)
+
   const pageTitle = info ? `${info.thuisteam} – ${info.uitteam}` : 'Wedstrijd'
 
   return (
@@ -117,6 +128,32 @@ export default function WedstrijdDetailPage() {
         {info && (
           <>
             {/* Match header: the shared match card, with what only this page knows around it */}
+            {cancelled && (
+              <div className="wedstrijd-cancelled" role="status">
+                <span className="wedstrijd-cancelled-icon" aria-hidden="true">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M5.6 5.6l12.8 12.8" />
+                  </svg>
+                </span>
+                <div className="wedstrijd-cancelled-text">
+                  <strong>Deze wedstrijd is {cancelled.toLowerCase()}</strong>
+                  <span>Een nieuwe datum zie je in het programma zodra die bekend is.</span>
+                </div>
+                <Link href="/programma" className="wedstrijd-cancelled-link">
+                  Naar het programma ›
+                </Link>
+              </div>
+            )}
+
             <div className="wedstrijd-header">
               {info.klasse && <div className="wedstrijd-header-meta">{info.klasse}</div>}
 
@@ -131,6 +168,7 @@ export default function WedstrijdDetailPage() {
                 time={info.aanvangstijdopgemaakt}
                 score={hasScore ? `${info.thuisscore} – ${info.uitscore}` : undefined}
                 venue={info.veldnaam}
+                status={status}
                 homeNote={kleedkamers?.thuis ? `Kleedkamer ${kleedkamers.thuis}` : undefined}
                 awayNote={kleedkamers?.uit ? `Kleedkamer ${kleedkamers.uit}` : undefined}
               />
@@ -153,7 +191,7 @@ export default function WedstrijdDetailPage() {
 
             {/* Before the match: in your calendar and the way there. A dark band with a line of
                 text on a computer, only the two buttons on a phone. */}
-            {!hasScore && (isOwnHome || isOwnAway || accommodatie?.naam) && (
+            {!hasScore && !cancelled && (isOwnHome || isOwnAway || accommodatie?.naam) && (
               <section className="wedstrijd-plan" aria-label="Naar de wedstrijd">
                 <div className="wedstrijd-plan-text">
                   <h2 className="wedstrijd-plan-title">Ga je kijken?</h2>

@@ -389,3 +389,51 @@
     font-size: 1.5rem;
   }
 }
+
+// ─── Afgelaste wedstrijd ─────────────────────────────────────────────────────
+// Used by the match card, the programme table and the match page.
+
+.match-status-chip {
+  background: var(--color-primary);
+  border-radius: 4px;
+  color: var(--color-white);
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 0.3rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.match-card--cancelled {
+  background: #fff5f5;
+
+  .match-card-team,
+  .match-card-time,
+  .match-card-date {
+    color: #999 !important;
+  }
+
+  .match-card-logo {
+    opacity: 0.5;
+  }
+
+  .match-status-chip {
+    margin-top: 0.25rem;
+  }
+}
+
+.league-row--cancelled {
+  td {
+    background: #fff5f5;
+    color: #999;
+  }
+
+  // The own team name has its red colour inline.
+  .league-schedule-team-cell span {
+    color: #999 !important;
+    font-weight: 400 !important;
+  }
+}

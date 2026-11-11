@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import type { ScheduleWeekGroup, ScheduleMatch } from '@/lib/clubdata/transform'
 import MatchCard from '@/components/ui/MatchCard'
 import ClubLogo from '@/components/ClubLogo'
+import { cancellationLabel } from '@/lib/clubdata/cancellation'
 
 const ShieldIcon = () => (
   <svg
@@ -48,14 +49,15 @@ function TableHead() {
 
 function MatchRow({ m, onNavigate }: { m: ScheduleMatch; onNavigate: (href: string) => void }) {
   const href = `/wedstrijd/${m.matchCode}`
+  const cancelled = cancellationLabel(m.status)
   return (
     <tr
-      className={`league-row--link${m.isOwn ? ' league-schedule-own-row' : ''}`}
+      className={`league-row--link${m.isOwn ? ' league-schedule-own-row' : ''}${cancelled ? ' league-row--cancelled' : ''}`}
       onClick={() => onNavigate(href)}
     >
       <td className="league-schedule-time" data-label="Tijd">
         <Link href={href} className="league-row-link" onClick={(e) => e.stopPropagation()}>
-          {m.time}
+          {cancelled ? <s>{m.time}</s> : m.time}
         </Link>
       </td>
       <td data-label="Thuis">
@@ -89,7 +91,7 @@ function MatchRow({ m, onNavigate }: { m: ScheduleMatch; onNavigate: (href: stri
         </span>
       </td>
       <td className="league-schedule-location" data-label="Locatie">
-        {m.venue}
+        {cancelled ? <span className="match-status-chip">{cancelled}</span> : m.venue}
       </td>
     </tr>
   )
