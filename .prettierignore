@@ -1,0 +1,21 @@
+# Generated
+src/payload-types.ts
+src/app/(payload)/admin/importMap.js
+src/migrations/
+cloudflare-env.d.ts
+next-env.d.ts
+pnpm-lock.yaml
+
+# Build output and local tooling
+.next/
+.open-next/
+.wrangler/
+.claude/
+.playwright-mcp/
+test-results/
+playwright-report/
+coverage/
+
+# Static files and the app design handoff
+public/
+docs/app-design/

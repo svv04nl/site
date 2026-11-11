@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -235,7 +236,7 @@ export default async function TribunePage() {
           <p className="fr-contact">
             Heb je vragen of goede ideeën? Wil je sponsoring op maat?
             <br />
-            <a href="/contact?afdeling=sponsorgroep">Neem contact op met de sponsorgroep.</a>
+            <Link href="/contact?afdeling=sponsorgroep">Neem contact op met de sponsorgroep.</Link>
           </p>
         </div>
       </section>
@@ -262,7 +263,7 @@ export default async function TribunePage() {
       <footer className="fr-footer">
         <p>SVV&apos;04 Schoonebeek · De Kampen 18, 7761 CK Schoonebeek</p>
         <p>
-          <a href="https://svv04.nl">svv04.nl</a> · <a href="/privacy">Privacyverklaring</a>
+          <a href="https://svv04.nl">svv04.nl</a> · <Link href="/privacy">Privacyverklaring</Link>
         </p>
       </footer>
     </main>

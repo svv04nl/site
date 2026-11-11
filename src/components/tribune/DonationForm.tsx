@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useState } from 'react'
 import {
   MAX_TOTAL,
@@ -246,7 +247,7 @@ export default function DonationForm({ unit, transactionFee, nameOnObjectLabel }
       </button>
       <p className="fr-note">
         Je betaalt veilig via Mollie. Met doneren ga je akkoord met onze{' '}
-        <a href="/privacy">privacyverklaring</a>.
+        <Link href="/privacy">privacyverklaring</Link>.
       </p>
     </form>
   )

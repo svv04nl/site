@@ -1,0 +1,32 @@
+# Checks on every pull request and on main: format (Prettier), lint (ESLint), types and the
+# integration tests. Same as `task check` locally; `task fix` repairs formatting and braces.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: go-task/setup-task@v2
+      - run: pnpm install --frozen-lockfile
+      - run: task check
