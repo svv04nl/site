@@ -1,21 +1,7 @@
 import React from 'react'
-import { Saira_Condensed, Outfit } from 'next/font/google'
+import { outfit, sairaCondensed } from '@/lib/fonts'
 import { WebAnalytics } from '@/components/WebAnalytics'
 import './tribune.scss'
-
-const sairaCondensed = Saira_Condensed({
-  subsets: ['latin'],
-  weight: ['600', '700', '800', '900'],
-  variable: '--font-saira-condensed',
-  display: 'swap',
-})
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-outfit',
-  display: 'swap',
-})
 
 export const metadata = {
   metadataBase: new URL('https://svv04.nl'),
