@@ -9,12 +9,16 @@ function loadDataUri(filename: string) {
 
 let cachedClubLogo: string | null = null
 export function getClubLogoDataUri() {
-  if (!cachedClubLogo) cachedClubLogo = loadDataUri('svv04-logo.png')
+  if (!cachedClubLogo) {
+    cachedClubLogo = loadDataUri('svv04-logo.png')
+  }
   return cachedClubLogo
 }
 
 let cached7x7Logo: string | null = null
 export function get7x7LogoDataUri() {
-  if (!cached7x7Logo) cached7x7Logo = loadDataUri('knvb-7x7-voetbal-logo.png')
+  if (!cached7x7Logo) {
+    cached7x7Logo = loadDataUri('knvb-7x7-voetbal-logo.png')
+  }
   return cached7x7Logo
 }

@@ -47,29 +47,41 @@ function blockLines(node: Node, out: string[]): void {
     case 'paragraph':
     case 'quote': {
       const text = inlineText(node).trim()
-      if (text) out.push(text)
+      if (text) {
+        out.push(text)
+      }
       return
     }
     case 'list':
       for (const item of childrenOf(node)) {
         const text = inlineText(item).trim()
-        if (text) out.push(`- ${text}`)
+        if (text) {
+          out.push(`- ${text}`)
+        }
       }
       return
     case 'block':
-      if (isObject(node.fields)) flattenFields(node.fields, out)
+      if (isObject(node.fields)) {
+        flattenFields(node.fields, out)
+      }
       return
     default:
-      for (const child of childrenOf(node)) blockLines(child, out)
+      for (const child of childrenOf(node)) {
+        blockLines(child, out)
+      }
   }
 }
 
 /** Plain text of a Lexical richText value, including the content of custom blocks. */
 export function richTextToPlainText(value: unknown): string {
   const root = isObject(value) && isObject(value.root) ? value.root : value
-  if (!isObject(root)) return ''
+  if (!isObject(root)) {
+    return ''
+  }
   const out: string[] = []
-  for (const child of childrenOf(root)) blockLines(child, out)
+  for (const child of childrenOf(root)) {
+    blockLines(child, out)
+  }
   return out.join('\n')
 }
 
@@ -84,19 +96,28 @@ const isForeignDoc = (v: Node) => 'createdAt' in v || 'mimeType' in v
  */
 export function flattenFields(fields: Node, out: string[]): void {
   for (const [key, value] of Object.entries(fields)) {
-    if (SKIP_KEYS.has(key)) continue
+    if (SKIP_KEYS.has(key)) {
+      continue
+    }
     if (typeof value === 'string') {
-      if (value.trim()) out.push(`${key}: ${value}`)
+      if (value.trim()) {
+        out.push(`${key}: ${value}`)
+      }
     } else if (isRichText(value)) {
       const text = richTextToPlainText(value)
-      if (text) out.push(text)
+      if (text) {
+        out.push(text)
+      }
     } else if (Array.isArray(value)) {
       for (const item of value) {
-        if (typeof item === 'string') out.push(item)
-        else if (isObject(item) && !isForeignDoc(item)) {
+        if (typeof item === 'string') {
+          out.push(item)
+        } else if (isObject(item) && !isForeignDoc(item)) {
           const row: string[] = []
           flattenFields(item, row)
-          if (row.length) out.push(row.join(' | '))
+          if (row.length) {
+            out.push(row.join(' | '))
+          }
         }
       }
     } else if (isObject(value) && !isForeignDoc(value)) {

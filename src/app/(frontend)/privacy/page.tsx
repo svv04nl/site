@@ -16,7 +16,11 @@ export default function PrivacyPage() {
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Privacyverklaring' }]} />
 
       <div className="page-inner">
-        <SectionHeader as="h1" title="Privacyverklaring" subtitle="Laatst bijgewerkt: oktober 2026" />
+        <SectionHeader
+          as="h1"
+          title="Privacyverklaring"
+          subtitle="Laatst bijgewerkt: oktober 2026"
+        />
         <div className="static-page-body">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>

@@ -6,7 +6,9 @@ type Props = {
 }
 
 export default function CtaBlockComponent({ buttonLabel, buttonUrl }: Props) {
-  if (!buttonLabel || !buttonUrl) return null
+  if (!buttonLabel || !buttonUrl) {
+    return null
+  }
 
   // Links within the site stay in the same tab; only external links open a new one.
   const isInternal = buttonUrl.startsWith('/')

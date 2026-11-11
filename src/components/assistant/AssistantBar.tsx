@@ -41,10 +41,14 @@ export function AssistantBar({
 
   const chips = audience?.questions.length ? audience.questions.slice(0, 4) : CHIPS
 
-  if (!enabled) return null
+  if (!enabled) {
+    return null
+  }
 
   const ask = (text: string) => {
-    if (!text.trim()) return
+    if (!text.trim()) {
+      return
+    }
     openAssistant(text)
     setInput('')
   }

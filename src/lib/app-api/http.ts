@@ -19,7 +19,8 @@ export class ApiError extends Error {
   }
 }
 
-export const notFound = (what: string) => new ApiError(404, 'Niet gevonden', `${what} bestaat niet.`)
+export const notFound = (what: string) =>
+  new ApiError(404, 'Niet gevonden', `${what} bestaat niet.`)
 export const badRequest = (detail: string) => new ApiError(400, 'Ongeldig verzoek', detail)
 
 export function problem(status: number, title: string, detail?: string, headers?: HeadersInit) {
@@ -47,7 +48,9 @@ export function json(data: unknown, ttl: number) {
 }
 
 export function errorResponse(error: unknown) {
-  if (error instanceof ApiError) return problem(error.status, error.title, error.detail)
+  if (error instanceof ApiError) {
+    return problem(error.status, error.title, error.detail)
+  }
   console.error('[app-api]', error)
   return problem(500, 'Er ging iets mis', 'Probeer het later opnieuw.')
 }
@@ -81,7 +84,9 @@ const SLUG = /^[a-z0-9-]+$/
 
 /** A path slug. Anything that is not a slug cannot exist, so it is a 404 without a lookup. */
 export function slugParam(slug: string, what: string): string {
-  if (!SLUG.test(slug)) throw notFound(what)
+  if (!SLUG.test(slug)) {
+    throw notFound(what)
+  }
   return slug
 }
 
@@ -98,7 +103,9 @@ export function enumParam<T extends string>(
   fallback: T,
 ): T {
   const value = url.searchParams.get(name)
-  if (value === null || value === '') return fallback
+  if (value === null || value === '') {
+    return fallback
+  }
   if (!(allowed as readonly string[]).includes(value)) {
     throw badRequest(`Parameter ${name} moet een van ${allowed.join(', ')} zijn.`)
   }
@@ -107,7 +114,9 @@ export function enumParam<T extends string>(
 
 export function intParam(url: URL, name: string, fallback: number, min: number, max: number) {
   const raw = url.searchParams.get(name)
-  if (raw === null || raw === '') return fallback
+  if (raw === null || raw === '') {
+    return fallback
+  }
   const value = Number(raw)
   if (!Number.isInteger(value) || value < min || value > max) {
     throw badRequest(`Parameter ${name} moet een geheel getal tussen ${min} en ${max} zijn.`)
@@ -117,7 +126,9 @@ export function intParam(url: URL, name: string, fallback: number, min: number, 
 
 export function dateParam(url: URL, name: string): string | undefined {
   const raw = url.searchParams.get(name)
-  if (!raw) return undefined
+  if (!raw) {
+    return undefined
+  }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(raw) || Number.isNaN(Date.parse(raw))) {
     throw badRequest(`Parameter ${name} moet een datum zijn (JJJJ-MM-DD).`)
   }

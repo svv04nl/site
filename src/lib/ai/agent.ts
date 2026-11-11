@@ -38,11 +38,15 @@ export async function assistantModel() {
   const binding = await getCloudflareContext({ async: true })
     .then(({ env }) => env.AI)
     .catch(() => undefined)
-  if (binding) return createAI({ binding, gateway: GATEWAY })(id)
+  if (binding) {
+    return createAI({ binding, gateway: GATEWAY })(id)
+  }
 
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
   const apiToken = process.env.CLOUDFLARE_AI_API_TOKEN
-  if (accountId && apiToken) return createAI({ accountId, apiToken, gateway: GATEWAY })(id)
+  if (accountId && apiToken) {
+    return createAI({ accountId, apiToken, gateway: GATEWAY })(id)
+  }
 
   throw new Error(
     'AI-assistent: geen AI-binding en geen CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_AI_API_TOKEN',

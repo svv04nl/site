@@ -22,7 +22,9 @@ export function addDays(isoDate: string, days: number): string {
 
 /** "zondag 11 oktober 2026" for a YYYY-MM-DD date. Tools return this so the model never computes weekdays itself. */
 export function dateLabel(isoDate: string): string {
-  if (!/^\d{4}-\d{2}-\d{2}/.test(isoDate)) return isoDate
+  if (!/^\d{4}-\d{2}-\d{2}/.test(isoDate)) {
+    return isoDate
+  }
   return new Intl.DateTimeFormat('nl-NL', {
     timeZone: 'UTC',
     weekday: 'long',
@@ -34,7 +36,9 @@ export function dateLabel(isoDate: string): string {
 
 /** "zo 11 okt" for a YYYY-MM-DD date, for compact cards. */
 export function dateShort(isoDate: string): string {
-  if (!/^\d{4}-\d{2}-\d{2}/.test(isoDate)) return isoDate
+  if (!/^\d{4}-\d{2}-\d{2}/.test(isoDate)) {
+    return isoDate
+  }
   return new Intl.DateTimeFormat('nl-NL', {
     timeZone: 'UTC',
     weekday: 'short',

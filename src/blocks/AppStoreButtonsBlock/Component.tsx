@@ -5,10 +5,16 @@ import React, { useEffect, useState } from 'react'
 type Platform = 'ios' | 'android' | 'desktop'
 
 function detectPlatform(): Platform {
-  if (typeof navigator === 'undefined') return 'desktop'
+  if (typeof navigator === 'undefined') {
+    return 'desktop'
+  }
   const ua = navigator.userAgent || ''
-  if (/iPad|iPhone|iPod/.test(ua)) return 'ios'
-  if (/Android/i.test(ua)) return 'android'
+  if (/iPad|iPhone|iPod/.test(ua)) {
+    return 'ios'
+  }
+  if (/Android/i.test(ua)) {
+    return 'android'
+  }
   return 'desktop'
 }
 
@@ -24,7 +30,9 @@ export default function AppStoreButtonsBlockComponent({ appStoreUrl, playStoreUr
     setPlatform(detectPlatform())
   }, [])
 
-  if (!appStoreUrl && !playStoreUrl) return null
+  if (!appStoreUrl && !playStoreUrl) {
+    return null
+  }
 
   const showApple = platform !== 'android' && appStoreUrl
   const showPlay = platform !== 'ios' && playStoreUrl

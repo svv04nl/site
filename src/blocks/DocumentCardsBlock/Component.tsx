@@ -141,8 +141,12 @@ function DocumentCard({ row }: { row: Row }) {
 /** A header for a category (e.g. an age group) with its documents as cards side by side: game documents first, then per role. */
 export default function DocumentCardsBlockComponent({ title, format, intro, rows }: Props) {
   const order = (row: Row) => (kindInfo(row.kind).group === 'game' ? 0 : 1)
-  const items = (rows ?? []).filter((row) => row.title && row.url).sort((a, b) => order(a) - order(b))
-  if (!title || items.length === 0) return null
+  const items = (rows ?? [])
+    .filter((row) => row.title && row.url)
+    .sort((a, b) => order(a) - order(b))
+  if (!title || items.length === 0) {
+    return null
+  }
 
   return (
     <section className="document-cards" id={slugify(title)}>

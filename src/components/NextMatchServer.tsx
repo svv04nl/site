@@ -15,7 +15,9 @@ type Props = {
 export default function NextMatchServer({ teamcode, teamName, showTitle = true, maxDays }: Props) {
   const { data: match } = useQuery(nextMatchQuery(teamcode ? Number(teamcode) : null, maxDays))
 
-  if (!match) return null
+  if (!match) {
+    return null
+  }
 
   return <NextMatchCard match={match} teamName={teamName} showTitle={showTitle} />
 }

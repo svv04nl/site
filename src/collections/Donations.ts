@@ -12,7 +12,16 @@ export const Donations: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'fundraiser', 'companyName', 'amount', 'units', 'status', 'nameOnObject', 'createdAt'],
+    defaultColumns: [
+      'name',
+      'fundraiser',
+      'companyName',
+      'amount',
+      'units',
+      'status',
+      'nameOnObject',
+      'createdAt',
+    ],
     description:
       'Donaties voor een fundraiser. Ze worden alleen aangemaakt via /api/donatie en bijgewerkt door de Mollie-webhook, niet rechtstreeks via de API of het adminscherm.',
   },
@@ -62,7 +71,13 @@ export const Donations: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'units', type: 'number', label: 'Aantal eenheden', required: true, admin: readOnly },
+        {
+          name: 'units',
+          type: 'number',
+          label: 'Aantal eenheden',
+          required: true,
+          admin: readOnly,
+        },
         {
           name: 'freeAmount',
           type: 'number',
@@ -99,7 +114,12 @@ export const Donations: CollectionConfig = {
       ],
       admin: { position: 'sidebar', ...readOnly },
     },
-    { name: 'paidAt', type: 'date', label: 'Betaald op', admin: { position: 'sidebar', ...readOnly } },
+    {
+      name: 'paidAt',
+      type: 'date',
+      label: 'Betaald op',
+      admin: { position: 'sidebar', ...readOnly },
+    },
     {
       name: 'method',
       type: 'text',
@@ -123,7 +143,8 @@ export const Donations: CollectionConfig = {
       admin: {
         position: 'sidebar',
         ...readOnly,
-        description: 'Staat in de terugkeer-URL van de donateur, zodat die alleen de eigen donatie ziet.',
+        description:
+          'Staat in de terugkeer-URL van de donateur, zodat die alleen de eigen donatie ziet.',
       },
     },
   ],

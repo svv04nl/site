@@ -22,10 +22,10 @@ export const toTeamRef = (team: Pick<Team, 'slug' | 'name'>): TeamRefDto => ({
 export const isActiveHero = (post: Post, now = new Date().toISOString()) =>
   Boolean(
     post.heroFeatured &&
-      post.heroFrom &&
-      post.heroUntil &&
-      post.heroFrom <= now &&
-      post.heroUntil >= now,
+    post.heroFrom &&
+    post.heroUntil &&
+    post.heroFrom <= now &&
+    post.heroUntil >= now,
   )
 
 /**
@@ -41,7 +41,9 @@ export function toPostSummary(post: Post, { asHero = false } = {}): PostSummaryD
     const category = categories.find((c) => c.slug === slug)
     return category ? [category] : []
   })
-  const teams = (post.relatedTeams ?? []).flatMap((t) => (typeof t === 'object' ? [toTeamRef(t)] : []))
+  const teams = (post.relatedTeams ?? []).flatMap((t) =>
+    typeof t === 'object' ? [toTeamRef(t)] : [],
+  )
 
   return {
     slug: post.slug,

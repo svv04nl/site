@@ -12,7 +12,9 @@ type Props = {
 
 export default function PricingTableBlockComponent({ rows }: Props) {
   const resolved = (rows ?? []).filter((r) => r.category)
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <div className="pricing-table-wrap">

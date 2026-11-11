@@ -31,7 +31,8 @@ export const Fundraisers: CollectionConfig = {
       unique: true,
       index: true,
       admin: {
-        description: 'Koppelt de fundraiser aan zijn pagina. Voor svv04.nl/tribune is dit "tribune".',
+        description:
+          'Koppelt de fundraiser aan zijn pagina. Voor svv04.nl/tribune is dit "tribune".',
       },
     },
     {

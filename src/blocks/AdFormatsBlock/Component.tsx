@@ -19,7 +19,9 @@ function formatMm(value: number) {
 
 export default function AdFormatsBlockComponent({ heading, description, formats }: Props) {
   const resolved = (formats ?? []).filter((f) => f.label && f.width && f.height)
-  if (!heading || resolved.length === 0) return null
+  if (!heading || resolved.length === 0) {
+    return null
+  }
   // The shapes share a baseline: the tallest format sets the height of the stage.
   const stage = Math.max(...resolved.map((f) => f.height!))
 

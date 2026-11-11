@@ -49,7 +49,9 @@ type ResolvedTeam = { team: TeamSummary & { teamcode: number } } | { error: stri
 
 async function resolveTeam(query: string): Promise<ResolvedTeam> {
   const teams = (await findTeams(query)).filter((t) => t.teamcode)
-  if (!teams.length) return { error: `Geen team gevonden voor "${query}".` }
+  if (!teams.length) {
+    return { error: `Geen team gevonden voor "${query}".` }
+  }
   if (teams.length > 1) {
     return {
       error: `Meerdere teams passen bij "${query}": ${teams.map((t) => t.name).join(', ')}. Vraag welk team bedoeld wordt.`,
@@ -139,7 +141,9 @@ export const getTeamSchedule = tool({
   execute: ({ team, competition, limit }) =>
     safe(async () => {
       const resolved = await resolveTeam(team)
-      if ('error' in resolved) return resolved
+      if ('error' in resolved) {
+        return resolved
+      }
       const { teamcode, name } = resolved.team
       const teamUrl = teamHref(resolved.team)
       const raw = await fetchClubData<RawProgrammaResponse>('programma', {
@@ -185,7 +189,9 @@ export const getTeamResults = tool({
   execute: ({ team, competition, limit }) =>
     safe(async () => {
       const resolved = await resolveTeam(team)
-      if ('error' in resolved) return resolved
+      if ('error' in resolved) {
+        return resolved
+      }
       const { teamcode, name } = resolved.team
       const teamUrl = teamHref(resolved.team)
       const poules = await teamPoulesQuery(teamcode).queryFn()
@@ -203,7 +209,11 @@ export const getTeamResults = tool({
         ),
       )
       const own = new Map<number, ResultMatch>()
-      for (const m of lists.flat()) if (m.isOwn) own.set(m.matchCode, m)
+      for (const m of lists.flat()) {
+        if (m.isOwn) {
+          own.set(m.matchCode, m)
+        }
+      }
 
       const matches = [...own.values()]
         .sort((a, b) => b.dayKey.localeCompare(a.dayKey))
@@ -236,7 +246,9 @@ export const getTeamStandings = tool({
   execute: ({ team, competition }) =>
     safe(async () => {
       const resolved = await resolveTeam(team)
-      if ('error' in resolved) return resolved
+      if ('error' in resolved) {
+        return resolved
+      }
       const { teamcode, name } = resolved.team
       const teamUrl = teamHref(resolved.team)
       const poules = await teamPoulesQuery(teamcode).queryFn()

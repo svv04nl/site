@@ -37,7 +37,11 @@ export const GET = appRoute(TTL.content, async () => {
           link('Agenda', screenTarget('activities'), { subtitle: 'Evenementen & data' }),
           link('Tribune', { kind: 'browser', url: TRIBUNE_URL, inApp: true }),
           link('Sponsors', screenTarget('sponsors')),
-          link('Webshop', { kind: 'browser', url: WEBSHOP_URL, inApp: false }, { subtitle: 'Clubkleding & merch' }),
+          link(
+            'Webshop',
+            { kind: 'browser', url: WEBSHOP_URL, inApp: false },
+            { subtitle: 'Clubkleding & merch' },
+          ),
         ],
       },
     ],

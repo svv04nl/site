@@ -65,9 +65,15 @@ async function teamLookup(): Promise<TeamLookup> {
 
 function statusOf(raw: string | null | undefined, hasResult: boolean): MatchDto['status'] {
   const status = (raw ?? '').toLowerCase()
-  if (status.includes('afgelast')) return 'cancelled'
-  if (status.includes('uitgesteld') || status.includes('verplaatst')) return 'postponed'
-  if (status.includes('uitgespeeld') || status.includes('gestaakt') || hasResult) return 'played'
+  if (status.includes('afgelast')) {
+    return 'cancelled'
+  }
+  if (status.includes('uitgesteld') || status.includes('verplaatst')) {
+    return 'postponed'
+  }
+  if (status.includes('uitgespeeld') || status.includes('gestaakt') || hasResult) {
+    return 'played'
+  }
   return 'scheduled'
 }
 
@@ -79,7 +85,9 @@ function resultOf(uitslag: string | null | undefined): MatchDto['result'] {
 /** "Hoofdklasse (2e fase)" -> "Hoofdklasse"; "B1410 Mannen beker 1e ronde" -> "Mannen beker 1e ronde". */
 function competitionOf(raw: SportlinkMatch): string | undefined {
   const withoutPhase = (value: string) => value.replace(/\s*\(\d+e fase\)/i, '').trim()
-  if (raw.klasse) return withoutPhase(raw.klasse)
+  if (raw.klasse) {
+    return withoutPhase(raw.klasse)
+  }
   const name = (raw.competitienaam || raw.competitie)?.replace(/^[A-Z]?\d{3,5}\s+/, '')
   return name ? withoutPhase(name) : undefined
 }
@@ -124,8 +132,18 @@ export function toMatch(raw: SportlinkMatch, lookup: TeamLookup): MatchDto {
     ...(competitionOf(raw) ? { competition: competitionOf(raw) } : {}),
     ownTeamSlug,
     isHomeGame: ownHome,
-    home: teamDto(raw.thuisteam, raw.thuisteamclubrelatiecode, ownHome, ownHome ? ownTeamSlug : undefined),
-    away: teamDto(raw.uitteam, raw.uitteamclubrelatiecode, ownAway, ownAway ? ownTeamSlug : undefined),
+    home: teamDto(
+      raw.thuisteam,
+      raw.thuisteamclubrelatiecode,
+      ownHome,
+      ownHome ? ownTeamSlug : undefined,
+    ),
+    away: teamDto(
+      raw.uitteam,
+      raw.uitteamclubrelatiecode,
+      ownAway,
+      ownAway ? ownTeamSlug : undefined,
+    ),
     venue: {
       name: venueName,
       ...(venueName ? { shortName: venueName.replace(/^sportpark\s+/i, '') } : {}),
@@ -184,8 +202,16 @@ const inRange = (m: MatchDto, range: DateRange) => m.date >= range.from && m.dat
 export async function loadMatchesInRange(range: DateRange): Promise<MatchDto[]> {
   const [program, results] = await Promise.all([loadClubProgram(), loadClubResults()])
   const merged = new Map<string, MatchDto>()
-  for (const m of program) if (inRange(m, range)) merged.set(m.id, m)
-  for (const m of results) if (inRange(m, range)) merged.set(m.id, m)
+  for (const m of program) {
+    if (inRange(m, range)) {
+      merged.set(m.id, m)
+    }
+  }
+  for (const m of results) {
+    if (inRange(m, range)) {
+      merged.set(m.id, m)
+    }
+  }
   return [...merged.values()].sort(byKickoff)
 }
 

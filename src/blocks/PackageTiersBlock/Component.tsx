@@ -13,7 +13,9 @@ type Props = {
 
 export default function PackageTiersBlockComponent({ tiers }: Props) {
   const resolved = (tiers ?? []).filter((t) => t.name)
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <div className="package-tiers">

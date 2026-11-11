@@ -18,7 +18,9 @@ export async function POST(request: Request) {
     where: { mollieId: { equals: id } },
     limit: 1,
   })
-  if (!docs[0]) return new Response(null, { status: 200 })
+  if (!docs[0]) {
+    return new Response(null, { status: 200 })
+  }
 
   try {
     await syncDonation(docs[0])

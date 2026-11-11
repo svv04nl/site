@@ -33,7 +33,9 @@ const EXEMPT_FILES = new Set([
 // Een map is vrijgesteld als het pad er exact mee overeenkomt of eronder valt. Alleen
 // "begint met" is te ruim: /administratie zou dan langs de poort komen.
 export function isExemptPath(pathname: string): boolean {
-  if (EXEMPT_FILES.has(pathname)) return true
+  if (EXEMPT_FILES.has(pathname)) {
+    return true
+  }
   return EXEMPT_DIRS.some((dir) => pathname === dir || pathname.startsWith(`${dir}/`))
 }
 
@@ -59,13 +61,19 @@ export async function accessToken(code: string): Promise<string> {
 export function safeEqual(a: string, b: string): boolean {
   const length = Math.max(a.length, b.length)
   let diff = a.length ^ b.length
-  for (let i = 0; i < length; i++) diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0)
+  for (let i = 0; i < length; i++) {
+    diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0)
+  }
   return diff === 0
 }
 
 // Alleen een pad op deze site: geen andere host (//evil.com), geen schema en niet de poort zelf.
 export function safeRedirectTarget(next: unknown): string {
-  if (typeof next !== 'string' || !next.startsWith('/') || next.startsWith('//')) return '/'
-  if (next.includes('\\') || next.startsWith(ACCESS_PATH)) return '/'
+  if (typeof next !== 'string' || !next.startsWith('/') || next.startsWith('//')) {
+    return '/'
+  }
+  if (next.includes('\\') || next.startsWith(ACCESS_PATH)) {
+    return '/'
+  }
   return next
 }

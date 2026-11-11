@@ -17,7 +17,9 @@ export async function resolvePageSlugPath(payload: Payload, page: Page): Promise
     const parent: Page | null = await payload
       .findByID({ collection: 'pages', id: parentId, depth: 0 })
       .catch(() => null)
-    if (!parent) break
+    if (!parent) {
+      break
+    }
     slugs.unshift(parent.slug ?? '')
     parentRef = parent.parent
     depth++

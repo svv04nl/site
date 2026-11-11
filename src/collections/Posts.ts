@@ -9,7 +9,9 @@ const HERO_MIN_RATIO = 2
 const HERO_MAX_RATIO = 3
 
 const validateHeroImage: Validate = async (value, { data, req }) => {
-  if (!value || !(data as { heroFeatured?: boolean } | undefined)?.heroFeatured) return true
+  if (!value || !(data as { heroFeatured?: boolean } | undefined)?.heroFeatured) {
+    return true
+  }
 
   const id = typeof value === 'object' ? (value as { id: number | string }).id : value
   const media = await req.payload.findByID({
@@ -19,7 +21,9 @@ const validateHeroImage: Validate = async (value, { data, req }) => {
     req,
   })
   const { width, height } = media
-  if (!width || !height) return true
+  if (!width || !height) {
+    return true
+  }
 
   if (width < HERO_MIN_WIDTH) {
     return `Afbeelding is ${width}px breed, voor de hero is minimaal ${HERO_MIN_WIDTH}px nodig (aanbevolen: 2400×1000).`
@@ -34,7 +38,9 @@ const validateHeroImage: Validate = async (value, { data, req }) => {
 const HERO_MOBILE_MIN_WIDTH = 800
 
 const validateHeroImageMobile: Validate = async (value, { data, req }) => {
-  if (!value || !(data as { heroFeatured?: boolean } | undefined)?.heroFeatured) return true
+  if (!value || !(data as { heroFeatured?: boolean } | undefined)?.heroFeatured) {
+    return true
+  }
   const id = typeof value === 'object' ? (value as { id: number | string }).id : value
   const media = await req.payload.findByID({
     collection: 'media',
@@ -49,12 +55,16 @@ const validateHeroImageMobile: Validate = async (value, { data, req }) => {
 }
 
 const validateSingleFeatured: Validate = async (value, { id, siblingData, req }) => {
-  if (!value) return true
+  if (!value) {
+    return true
+  }
   // A post whose window is already over no longer counts, and doesn't need to
   // be blocked by the active one either.
   const now = new Date().toISOString()
   const until = (siblingData as { heroUntil?: string } | undefined)?.heroUntil
-  if (until && until < now) return true
+  if (until && until < now) {
+    return true
+  }
 
   const { docs } = await req.payload.find({
     collection: 'posts',
@@ -119,8 +129,12 @@ export const Posts: CollectionConfig = {
 
           const autoCategories = new Set<string>()
           for (const team of teams) {
-            if (team.type === 'senior') autoCategories.add('senioren')
-            if (team.type === 'youth') autoCategories.add('junioren')
+            if (team.type === 'senior') {
+              autoCategories.add('senioren')
+            }
+            if (team.type === 'youth') {
+              autoCategories.add('junioren')
+            }
           }
 
           const existing = new Set<string>(Array.isArray(data.categories) ? data.categories : [])
@@ -193,8 +207,12 @@ export const Posts: CollectionConfig = {
         value: unknown,
         { siblingData }: { siblingData: { heroFeatured?: boolean; heroFrom?: string } },
       ) => {
-        if (!siblingData?.heroFeatured) return true
-        if (!value) return 'Kies wanneer de hero eindigt.'
+        if (!siblingData?.heroFeatured) {
+          return true
+        }
+        if (!value) {
+          return 'Kies wanneer de hero eindigt.'
+        }
         if (siblingData.heroFrom && new Date(value as string) <= new Date(siblingData.heroFrom)) {
           return 'De einddatum moet na de startdatum liggen.'
         }

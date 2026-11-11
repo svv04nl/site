@@ -18,7 +18,9 @@ export async function SponsorsTicker() {
     .map((sponsor) => ({ src: (sponsor.logo as Media | undefined)?.url, name: sponsor.name }))
     .filter((logo): logo is { src: string; name: string } => Boolean(logo.src))
 
-  if (logos.length === 0) return null
+  if (logos.length === 0) {
+    return null
+  }
 
   return (
     <section className="sponsors-section" aria-label="Onze sponsoren">

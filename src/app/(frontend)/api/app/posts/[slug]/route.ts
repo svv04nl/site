@@ -19,13 +19,16 @@ export const GET = appRouteWithParams<{ slug: string }>(TTL.news, async (_reques
     limit: 1,
   })
   const post = docs[0]
-  if (!post) throw notFound('Dit bericht')
+  if (!post) {
+    throw notFound('Dit bericht')
+  }
 
   // "Meer nieuws": posts about the same teams or in the same categories first, then the newest.
   const teamIds = new Set((post.relatedTeams ?? []).map((t) => (typeof t === 'object' ? t.id : t)))
   const categorySet = new Set(post.categories ?? [])
   const score = (other: typeof post) =>
-    (other.relatedTeams ?? []).filter((t) => teamIds.has(typeof t === 'object' ? t.id : t)).length * 2 +
+    (other.relatedTeams ?? []).filter((t) => teamIds.has(typeof t === 'object' ? t.id : t)).length *
+      2 +
     (other.categories ?? []).filter((c) => categorySet.has(c)).length
 
   const others = await findPosts({

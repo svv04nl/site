@@ -12,7 +12,13 @@ import { thisWeekend } from '@/lib/app-api/dates'
 import { isRoleSlug } from '@/lib/app-api/config'
 import { badRequest, listParam, today } from '@/lib/app-api/http'
 import { loadMatchesInRange, nextMatchOf } from '@/lib/app-api/matches'
-import { findPosts, isActiveHero, postsForTeams, publishedPostsWhere, toPostSummary } from '@/lib/app-api/posts'
+import {
+  findPosts,
+  isActiveHero,
+  postsForTeams,
+  publishedPostsWhere,
+  toPostSummary,
+} from '@/lib/app-api/posts'
 import { headCoaches, loadTeamDocs, toTeam } from '@/lib/app-api/teams'
 import { shortTeamName } from '@/lib/app-api/format'
 import type { RoleSlug } from '@/lib/app-api/types'
@@ -39,7 +45,9 @@ async function featuredPost() {
     limit: 1,
     depth: 1,
   })
-  if (docs[0] && isActiveHero(docs[0], now)) return toPostSummary(docs[0], { asHero: true })
+  if (docs[0] && isActiveHero(docs[0], now)) {
+    return toPostSummary(docs[0], { asHero: true })
+  }
 
   const [latest] = await findPosts({ where: publishedPostsWhere, limit: 1 })
   return latest ? toPostSummary(latest) : null
@@ -50,25 +58,30 @@ export async function buildHome(request: Request) {
   const day = today(url)
 
   const roleParam = url.searchParams.get('role')
-  if (roleParam && !isRoleSlug(roleParam)) throw badRequest('Onbekende rol.')
+  if (roleParam && !isRoleSlug(roleParam)) {
+    throw badRequest('Onbekende rol.')
+  }
 
   const [teamDocs, audiences] = await Promise.all([loadTeamDocs(), loadAudiences()])
 
   // Unknown slugs (a team that was removed) are skipped; the rest keeps the order of the request.
-  const favorites = listParam(url, 'teams').flatMap((slug) => teamDocs.find((t) => t.slug === slug) ?? [])
+  const favorites = listParam(url, 'teams').flatMap(
+    (slug) => teamDocs.find((t) => t.slug === slug) ?? [],
+  )
   const favoriteSlugs = new Set(favorites.map((t) => t.slug))
   const favoriteIds = favorites.map((t) => t.id)
 
   const weekend = thisWeekend(day)
-  const [dayMatches, weekendMatches, featured, newsDocs, activities, coaches, nextMatches] = await Promise.all([
-    favorites.length ? loadMatchesInRange({ from: day, to: day }) : [],
-    loadMatchesInRange(weekend),
-    featuredPost(),
-    findPosts({ where: postsForTeams(favoriteIds), limit: NEWS_LIMIT }),
-    loadActivities(),
-    headCoaches(favoriteIds),
-    Promise.all(favorites.map((t) => nextMatchOf(t.slug))),
-  ])
+  const [dayMatches, weekendMatches, featured, newsDocs, activities, coaches, nextMatches] =
+    await Promise.all([
+      favorites.length ? loadMatchesInRange({ from: day, to: day }) : [],
+      loadMatchesInRange(weekend),
+      featuredPost(),
+      findPosts({ where: postsForTeams(favoriteIds), limit: NEWS_LIMIT }),
+      loadActivities(),
+      headCoaches(favoriteIds),
+      Promise.all(favorites.map((t) => nextMatchOf(t.slug))),
+    ])
 
   const audience =
     audiences.find((a) => a.slug === roleParam) ??
@@ -77,7 +90,9 @@ export async function buildHome(request: Request) {
 
   // Two example questions: one about the first followed team, the rest from the role's own FAQ.
   const first = favorites[0]
-  const firstTeam = first && (shortTeamName(first.name) === first.name ? first.name : `de ${shortTeamName(first.name)}`)
+  const firstTeam =
+    first &&
+    (shortTeamName(first.name) === first.name ? first.name : `de ${shortTeamName(first.name)}`)
   const askSuggestions = [
     ...(firstTeam ? [`Wie is de trainer van ${firstTeam}?`] : []),
     ...(audience ? audienceQuestions(audience) : []),

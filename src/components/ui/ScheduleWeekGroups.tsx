@@ -155,7 +155,11 @@ export default function ScheduleWeekGroups({
                         </tr>
                       )}
                       {day.matches.map((m) => (
-                        <MatchRow key={m.matchCode} m={m} onNavigate={(href) => router.push(href)} />
+                        <MatchRow
+                          key={m.matchCode}
+                          m={m}
+                          onNavigate={(href) => router.push(href)}
+                        />
                       ))}
                     </React.Fragment>
                   ))}
@@ -176,11 +180,15 @@ export default function ScheduleWeekGroups({
                         <col className="col-home" />
                         <col className="col-away" />
                         <col className="col-venue" />
-                            </colgroup>
+                      </colgroup>
                       <TableHead />
                       <tbody>
                         {day.matches.map((m) => (
-                          <MatchRow key={m.matchCode} m={m} onNavigate={(href) => router.push(href)} />
+                          <MatchRow
+                            key={m.matchCode}
+                            m={m}
+                            onNavigate={(href) => router.push(href)}
+                          />
                         ))}
                       </tbody>
                     </table>

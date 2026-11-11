@@ -1,11 +1,19 @@
 import type { CollectionConfig, PayloadRequest } from 'payload'
-import { MEDIA_SIZES, canTransform, fitsSize, mediaFileUrl, sizedDimensions } from '@/lib/media-sizes'
+import {
+  MEDIA_SIZES,
+  canTransform,
+  fitsSize,
+  mediaFileUrl,
+  sizedDimensions,
+} from '@/lib/media-sizes'
 
 // Origin van een REST- of GraphQL-request, zodat een externe lezer een volledige URL krijgt.
 // De Local API (servercomponenten, de app-API) heeft geen echte request-URL: dan een relatief
 // pad, dat de site zelf goed oplost (de app-API maakt het absoluut, zie lib/app-api/media.ts).
 function originOf(req: PayloadRequest): string {
-  if (req.payloadAPI === 'local' || !req.url) return ''
+  if (req.payloadAPI === 'local' || !req.url) {
+    return ''
+  }
   try {
     return new URL(req.url).origin
   } catch {
@@ -25,7 +33,9 @@ export const Media: CollectionConfig = {
   hooks: {
     afterRead: [
       ({ doc, req }) => {
-        if (!doc?.id) return doc
+        if (!doc?.id) {
+          return doc
+        }
         const origin = originOf(req)
         // File URLs come from the filename, the same with or without the R2 plugin loaded
         // (it is off in next build and scripts). The stored url columns still hold old Blob URLs.
@@ -40,11 +50,15 @@ export const Media: CollectionConfig = {
           ...(doc.filename ? { url: `${origin}${mediaFileUrl(doc.filename, doc.prefix)}` } : {}),
           sizes,
         }
-        if (!canTransform(doc.mimeType)) return withUrls
+        if (!canTransform(doc.mimeType)) {
+          return withUrls
+        }
 
         const version = encodeURIComponent(doc.updatedAt ?? '')
         for (const [name, size] of Object.entries(MEDIA_SIZES)) {
-          if (sizes[name]?.url || !fitsSize(size, doc.width, doc.height)) continue
+          if (sizes[name]?.url || !fitsSize(size, doc.width, doc.height)) {
+            continue
+          }
           sizes[name] = {
             ...sizes[name],
             ...sizedDimensions(size, doc.width, doc.height),

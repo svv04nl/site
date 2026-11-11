@@ -18,7 +18,9 @@ const ENV_KEYS = ['AI_ASSISTANT_MODEL', 'CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_AI_
 
 describe('assistantModel', () => {
   beforeEach(() => {
-    for (const key of ENV_KEYS) delete process.env[key]
+    for (const key of ENV_KEYS) {
+      delete process.env[key]
+    }
   })
   afterEach(() => vi.clearAllMocks())
 

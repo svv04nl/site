@@ -1,6 +1,11 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createFakePayload, donationRow, fundraiserRow, type FakePayload } from '../helpers/fake-payload'
+import {
+  createFakePayload,
+  donationRow,
+  fundraiserRow,
+  type FakePayload,
+} from '../helpers/fake-payload'
 
 vi.mock('payload', () => ({ getPayload: vi.fn() }))
 vi.mock('@payload-config', () => ({ default: {} }))
@@ -197,7 +202,9 @@ describe('reconcileOpenDonations', () => {
 
     expect(result).toEqual({ checked: 1, paid: 1, otherChange: 0, unchanged: 0, failed: 0 })
     expect(stored(1).status).toBe('betaald')
-    for (const id of [2, 3, 4]) expect(stored(id).status).toBe('open')
+    for (const id of [2, 3, 4]) {
+      expect(stored(id).status).toBe('open')
+    }
     expect(getPayment).toHaveBeenCalledTimes(1)
   })
 
@@ -226,7 +233,9 @@ describe('reconcileOpenDonations', () => {
       tr_pending: { status: 'pending' },
     }
     vi.mocked(getPayment).mockImplementation(async (id: string) => {
-      if (id === 'tr_broken') throw new Error('Mollie 500')
+      if (id === 'tr_broken') {
+        throw new Error('Mollie 500')
+      }
       return { id, ...byId[id] } as any
     })
 

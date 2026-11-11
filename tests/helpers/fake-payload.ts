@@ -19,10 +19,16 @@ function valuesAt(row: Row, path: string): unknown[] {
 // Ondersteunt alleen wat de code gebruikt: and/or, equals, not_equals, exists, in,
 // less_than en greater_than.
 export function matches(row: Row, where?: Record<string, any>): boolean {
-  if (!where) return true
+  if (!where) {
+    return true
+  }
   return Object.entries(where).every(([key, condition]) => {
-    if (key === 'and') return (condition as any[]).every((c) => matches(row, c))
-    if (key === 'or') return (condition as any[]).some((c) => matches(row, c))
+    if (key === 'and') {
+      return (condition as any[]).every((c) => matches(row, c))
+    }
+    if (key === 'or') {
+      return (condition as any[]).some((c) => matches(row, c))
+    }
     const values = valuesAt(row, key)
     return Object.entries(condition as Record<string, any>).every(([op, expected]) => {
       switch (op) {
@@ -50,12 +56,16 @@ export function createFakePayload(seed: Collections = {}) {
     donations: [],
     fundraisers: [],
     contacts: [],
-    ...Object.fromEntries(Object.entries(seed).map(([k, rows]) => [k, rows.map((r) => ({ ...r }))])),
+    ...Object.fromEntries(
+      Object.entries(seed).map(([k, rows]) => [k, rows.map((r) => ({ ...r }))]),
+    ),
   }
   let nextId = 1000
 
   const rows = (collection: string) => {
-    if (!db[collection]) throw new Error(`Onbekende collectie ${collection}`)
+    if (!db[collection]) {
+      throw new Error(`Onbekende collectie ${collection}`)
+    }
     return db[collection]
   }
 
@@ -73,7 +83,9 @@ export function createFakePayload(seed: Collections = {}) {
 
     findByID: vi.fn(async ({ collection, id }: any) => {
       const row = rows(collection).find((r) => r.id === id)
-      if (!row) throw new Error(`Not found: ${collection} ${id}`)
+      if (!row) {
+        throw new Error(`Not found: ${collection} ${id}`)
+      }
       return { ...row }
     }),
 
@@ -87,7 +99,9 @@ export function createFakePayload(seed: Collections = {}) {
     update: vi.fn(async ({ collection, id, where, data }: any) => {
       if (id !== undefined) {
         const row = rows(collection).find((r) => r.id === id)
-        if (!row) throw new Error(`Not found: ${collection} ${id}`)
+        if (!row) {
+          throw new Error(`Not found: ${collection} ${id}`)
+        }
         Object.assign(row, data)
         return { ...row }
       }

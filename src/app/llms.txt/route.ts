@@ -50,9 +50,9 @@ export async function GET() {
   const meedoenPages = pages.filter((p) => p.section === 'meedoen')
 
   const lines: string[] = [
-    '# SVV\'04 Schoonebeek',
+    "# SVV'04 Schoonebeek",
     '',
-    '> Officiële website van SVV\'04 Schoonebeek, een amateurvoetbalvereniging uit Schoonebeek, Nederland.',
+    "> Officiële website van SVV'04 Schoonebeek, een amateurvoetbalvereniging uit Schoonebeek, Nederland.",
     '',
     '## Secties',
     '',
@@ -60,7 +60,7 @@ export async function GET() {
     '- [Teams](https://svv04.nl/teams) — overzicht senioren- en jeugdteams',
     '- [Programma](https://svv04.nl/programma) — wedstrijdprogramma en standen',
     '- [Agenda](https://svv04.nl/agenda) — clubagenda',
-    '- [Voor jou](https://svv04.nl/) — doelgroeppagina\'s (spelers, ouders, trainers, vrijwilligers, sponsoren)',
+    "- [Voor jou](https://svv04.nl/) — doelgroeppagina's (spelers, ouders, trainers, vrijwilligers, sponsoren)",
     '- [Contact](https://svv04.nl/contact) — contactgegevens',
     '',
   ]
@@ -68,7 +68,9 @@ export async function GET() {
   if (seniorTeams.length > 0) {
     lines.push('## Seniorenteams', '')
     for (const team of seniorTeams) {
-      lines.push(`- [${team.name}](https://svv04.nl/teams/${team.slug})${team.category ? ` — ${team.category}` : ''}`)
+      lines.push(
+        `- [${team.name}](https://svv04.nl/teams/${team.slug})${team.category ? ` — ${team.category}` : ''}`,
+      )
     }
     lines.push('')
   }
@@ -76,7 +78,9 @@ export async function GET() {
   if (youthTeams.length > 0) {
     lines.push('## Jeugdteams', '')
     for (const team of youthTeams) {
-      lines.push(`- [${team.name}](https://svv04.nl/teams/${team.slug})${team.category ? ` — ${team.category}` : ''}`)
+      lines.push(
+        `- [${team.name}](https://svv04.nl/teams/${team.slug})${team.category ? ` — ${team.category}` : ''}`,
+      )
     }
     lines.push('')
   }
@@ -93,7 +97,7 @@ export async function GET() {
   }
 
   if (verenigingPages.length > 0) {
-    lines.push('## Verenigingspagina\'s', '')
+    lines.push("## Verenigingspagina's", '')
     for (const page of verenigingPages) {
       lines.push(`- [${page.title}](https://svv04.nl/vereniging/${page.slug})`)
     }
@@ -121,7 +125,9 @@ export async function GET() {
     for (const post of posts) {
       const date = post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 10) : ''
       const excerpt = post.excerpt ? ` — ${post.excerpt}` : ''
-      lines.push(`- [${post.title}](https://svv04.nl/nieuws/${post.slug})${date ? ` (${date})` : ''}${excerpt}`)
+      lines.push(
+        `- [${post.title}](https://svv04.nl/nieuws/${post.slug})${date ? ` (${date})` : ''}${excerpt}`,
+      )
     }
     lines.push('')
   }

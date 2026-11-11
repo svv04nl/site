@@ -13,13 +13,17 @@ import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
 
 function parseDateStr(s: string): Date | null {
-  if (!s) return null
+  if (!s) {
+    return null
+  }
   const d = parseISO(s)
   return isValid(d) ? d : null
 }
 
 function parseScheidsrechters(s: string): { name: string; role: string }[] {
-  if (!s) return []
+  if (!s) {
+    return []
+  }
   // Each entry is "Naam (Functie)" separated by ", " — but names may contain commas,
   // so split on the pattern "),\s*" which only appears between entries.
   return s
@@ -28,7 +32,9 @@ function parseScheidsrechters(s: string): { name: string; role: string }[] {
     .filter(Boolean)
     .map((part) => {
       const match = part.match(/^(.+?)\s*\(([^)]+)\)?$/)
-      if (match) return { name: match[1].trim(), role: match[2].trim() }
+      if (match) {
+        return { name: match[1].trim(), role: match[2].trim() }
+      }
       return { name: part.replace(/\)$/, '').trim(), role: '' }
     })
 }
@@ -171,7 +177,9 @@ export default function WedstrijdDetailPage() {
                 parsedRefs.length > 0 ||
                 !!officials?.verenigingsscheidsrechter ||
                 !!officials?.overigeofficial
-              if (!hasOfficials) return null
+              if (!hasOfficials) {
+                return null
+              }
               return (
                 <section className="wedstrijd-section">
                   <h2 className="wedstrijd-section-title">Officials</h2>
@@ -251,13 +259,19 @@ export default function WedstrijdDetailPage() {
             {(() => {
               const sortStaf = (staf: RawWedstrijdSpeler[]) =>
                 [...staf].sort((a, b) => {
-                  if (a.functie === 'Trainer/coach') return -1
-                  if (b.functie === 'Trainer/coach') return 1
+                  if (a.functie === 'Trainer/coach') {
+                    return -1
+                  }
+                  if (b.functie === 'Trainer/coach') {
+                    return 1
+                  }
                   return 0
                 })
               const homeStaf = sortStaf(homePlayers.filter((p) => p.rol !== 'Teamspeler'))
               const awayStaf = sortStaf(awayPlayers.filter((p) => p.rol !== 'Teamspeler'))
-              if (homeStaf.length === 0 && awayStaf.length === 0) return null
+              if (homeStaf.length === 0 && awayStaf.length === 0) {
+                return null
+              }
               return (
                 <section className="wedstrijd-section">
                   <h2 className="wedstrijd-section-title">Staf</h2>

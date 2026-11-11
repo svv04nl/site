@@ -161,7 +161,9 @@ export const getPage = tool({
         limit: 1,
       })
       const post = docs[0]
-      if (!post) return { error: 'Pagina niet gevonden.' }
+      if (!post) {
+        return { error: 'Pagina niet gevonden.' }
+      }
       return {
         title: post.title,
         url: clean,
@@ -188,7 +190,9 @@ export const getPage = tool({
         limit: 1,
       })
       const team = docs[0]
-      if (!team) return { error: 'Pagina niet gevonden.' }
+      if (!team) {
+        return { error: 'Pagina niet gevonden.' }
+      }
       return {
         title: team.name,
         url: clean,
@@ -199,8 +203,9 @@ export const getPage = tool({
     }
 
     const doc = (await loadContentIndex()).find((d) => d.url === clean)
-    if (!doc)
+    if (!doc) {
       return { error: 'Pagina niet gevonden. Gebruik searchSite om de juiste URL te vinden.' }
+    }
     return {
       title: doc.title,
       url: doc.url,
@@ -271,7 +276,9 @@ export const getContacts = tool({
     const variants = query ? searchQueryVariants(query) : []
     const matched = docs
       .filter((c) => {
-        if (!variants.length) return true
+        if (!variants.length) {
+          return true
+        }
         const haystack = [c.name, c.group, ...(c.roles ?? []).flatMap((r) => [r.title, r.topic])]
           .join(' ')
           .toLowerCase()
@@ -279,7 +286,9 @@ export const getContacts = tool({
       })
       .slice(0, MAX_RESULTS)
 
-    if (!matched.length) return { contacts: [], note: 'Geen contactpersoon gevonden.' }
+    if (!matched.length) {
+      return { contacts: [], note: 'Geen contactpersoon gevonden.' }
+    }
 
     return {
       contacts: matched.map((c) => ({
@@ -341,7 +350,9 @@ export function loadTeams(): Promise<TeamSummary[]> {
 export async function findTeams(query: string): Promise<TeamSummary[]> {
   const teams = await loadTeams()
   const exact = teams.filter((t) => t.name.toLowerCase() === query.trim().toLowerCase())
-  if (exact.length === 1) return exact
+  if (exact.length === 1) {
+    return exact
+  }
   return sortTeamsByPriority(filterTeamsByQuery(teams, query))
 }
 

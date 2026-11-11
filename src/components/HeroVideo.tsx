@@ -15,15 +15,17 @@ export function HeroVideo({ src, poster }: { src: string; poster: string }) {
 
   useEffect(() => {
     const mq = window.matchMedia(DESKTOP_QUERY)
-    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } })
-      .connection?.saveData
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+      ?.saveData
     const update = () => setEnabled(mq.matches && !saveData)
     update()
     mq.addEventListener('change', update)
     return () => mq.removeEventListener('change', update)
   }, [])
 
-  if (!enabled) return null
+  if (!enabled) {
+    return null
+  }
 
   return (
     <video

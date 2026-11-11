@@ -31,7 +31,14 @@ function webhookRequest(id?: string) {
 
 describe('POST /api/mollie-webhook', () => {
   it('weigert een verzoek zonder of met een ongeldig betaal-id', async () => {
-    for (const id of [undefined, '', 'nope', 'tr_', 'tr_abc/../x', "tr_a'; DROP TABLE donations;--"]) {
+    for (const id of [
+      undefined,
+      '',
+      'nope',
+      'tr_',
+      'tr_abc/../x',
+      "tr_a'; DROP TABLE donations;--",
+    ]) {
       expect((await webhook(webhookRequest(id))).status).toBe(400)
     }
     expect(syncDonation).not.toHaveBeenCalled()
@@ -83,8 +90,11 @@ describe('GET /api/cron/reconcile-donations', () => {
   })
 
   afterEach(() => {
-    if (original === undefined) delete process.env.CRON_SECRET
-    else process.env.CRON_SECRET = original
+    if (original === undefined) {
+      delete process.env.CRON_SECRET
+    } else {
+      process.env.CRON_SECRET = original
+    }
   })
 
   it('weigert verzoeken zonder of met een verkeerd geheim', async () => {

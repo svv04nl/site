@@ -18,35 +18,47 @@ type Params = { size: string; id: string }
 
 export async function GET(request: Request, { params }: { params: Promise<Params> }) {
   const { size, id } = await params
-  if (!isMediaSizeName(size) || !/^\d+$/.test(id)) return new Response('Not found', { status: 404 })
+  if (!isMediaSizeName(size) || !/^\d+$/.test(id)) {
+    return new Response('Not found', { status: 404 })
+  }
 
   const cache = typeof caches !== 'undefined' && 'default' in caches ? caches.default : undefined
   // Een gewone GET met alleen de URL als sleutel; het NextRequest zelf accepteert de cache niet.
   const cacheKey = new Request(request.url)
   const cached = await cache?.match(cacheKey)
-  if (cached) return cached
+  if (cached) {
+    return cached
+  }
 
   const payload = await getPayload({ config })
   const media = await payload
     // Zonder select: de url berekent de storage-adapter uit filename.
     .findByID({ collection: 'media', id, depth: 0 })
     .catch(() => null)
-  if (!media?.url) return new Response('Not found', { status: 404 })
+  if (!media?.url) {
+    return new Response('Not found', { status: 404 })
+  }
 
   // Zonder Images-binding (bijv. next dev zonder bindings) of voor een SVG: het origineel.
   const original = new URL(media.url, request.url).toString()
   const context = await getCloudflareContext({ async: true }).catch(() => undefined)
   const images = context?.env.IMAGES
-  if (!context || !images || !canTransform(media.mimeType)) return Response.redirect(original, 302)
+  if (!context || !images || !canTransform(media.mimeType)) {
+    return Response.redirect(original, 302)
+  }
 
   const spec = MEDIA_SIZES[size]
-  if (!fitsSize(spec, media.width, media.height)) return Response.redirect(original, 302)
+  if (!fitsSize(spec, media.width, media.height)) {
+    return Response.redirect(original, 302)
+  }
 
   // Het origineel rechtstreeks uit de R2-bucket (zie lib/media-sizes.ts voor de sleutel).
   const source = media.filename
     ? await context.env.MEDIA?.get(`${media.prefix || 'media'}/${media.filename}`)
     : null
-  if (!source) return Response.redirect(original, 302)
+  if (!source) {
+    return Response.redirect(original, 302)
+  }
 
   const { width, height } = sizedDimensions(spec, media.width, media.height)
   const result = await images
@@ -71,9 +83,13 @@ export async function GET(request: Request, { params }: { params: Promise<Params
       return null
     })
   // Lukt het transformeren niet (bijv. de limiet van Images bereikt), dan het origineel.
-  if (!result) return Response.redirect(original, 302)
+  if (!result) {
+    return Response.redirect(original, 302)
+  }
 
   const response = result.response({ headers: { 'Cache-Control': IMMUTABLE } })
-  if (cache) context.ctx.waitUntil(cache.put(cacheKey, response.clone()))
+  if (cache) {
+    context.ctx.waitUntil(cache.put(cacheKey, response.clone()))
+  }
   return response
 }

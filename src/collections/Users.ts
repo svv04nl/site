@@ -4,8 +4,12 @@ const isAdmin = ({ req: { user } }: { req: { user: any } }) => user?.role === 'a
 
 // Admins manage every account; an editor only sees and edits their own.
 const adminOrSelf: Access = ({ req: { user } }) => {
-  if (!user) return false
-  if (user.role === 'admin') return true
+  if (!user) {
+    return false
+  }
+  if (user.role === 'admin') {
+    return true
+  }
   return { id: { equals: user.id } }
 }
 

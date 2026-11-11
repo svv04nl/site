@@ -38,7 +38,7 @@ const layoutBlocks: Block[] = [
   },
   {
     slug: 'themes',
-    labels: { singular: 'Linkblokken (thema\'s)', plural: 'Linkblokken (thema\'s)' },
+    labels: { singular: "Linkblokken (thema's)", plural: "Linkblokken (thema's)" },
     admin: { disableBlockName: true },
     fields: [],
   },
@@ -316,7 +316,14 @@ export const Audiences: CollectionConfig = {
       type: 'group',
       label: 'Kop boven het aanspreekpunt',
       fields: [
-        { name: 'title', type: 'text', label: 'Titel', admin: { description: 'Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.' } },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Titel',
+          admin: {
+            description: 'Bijv. "Neem contact op". Staat boven de kaart met het aanspreekpunt.',
+          },
+        },
         { name: 'text', type: 'textarea', label: 'Tekst', admin: { hidden: true } },
         {
           name: 'links',

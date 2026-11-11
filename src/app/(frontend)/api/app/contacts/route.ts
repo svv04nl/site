@@ -1,4 +1,9 @@
-import { CLUB_ACCOMMODATION, CLUB_BANK, MEMBERSHIP_ROLE_SLUG, SECRETARIAT_ROLE_SLUG } from '@/lib/app-api/config'
+import {
+  CLUB_ACCOMMODATION,
+  CLUB_BANK,
+  MEMBERSHIP_ROLE_SLUG,
+  SECRETARIAT_ROLE_SLUG,
+} from '@/lib/app-api/config'
 import { findContactByRole, loadContacts, roleKey, toContact } from '@/lib/app-api/contacts'
 import { appRoute, TTL } from '@/lib/app-api/http'
 

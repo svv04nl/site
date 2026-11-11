@@ -32,7 +32,10 @@ export function loadTeamDocs(): Promise<Team[]> {
 
 export const toTeam = (
   team: Team,
-  { nextMatch, photoSize = 'teamCard' }: { nextMatch?: MatchDto | null; photoSize?: 'teamCard' | 'teamPhoto' } = {},
+  {
+    nextMatch,
+    photoSize = 'teamCard',
+  }: { nextMatch?: MatchDto | null; photoSize?: 'teamCard' | 'teamPhoto' } = {},
 ): TeamDto => {
   const photo = toImage(team.photo, photoSize)
   return {
@@ -73,7 +76,9 @@ export async function teamGroups(includeNextMatch: boolean) {
 type StaffRow = { name: string; role: string; teamId: number }
 
 async function loadStaff(teamIds: number[]): Promise<StaffRow[]> {
-  if (!teamIds.length) return []
+  if (!teamIds.length) {
+    return []
+  }
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
     collection: 'team-staff',
@@ -93,21 +98,31 @@ async function loadStaff(teamIds: number[]): Promise<StaffRow[]> {
 // Head coach first, then assistants, then the team manager, then the rest.
 const staffRank = (role: string) => {
   const r = role.toLowerCase()
-  if (r.startsWith('assistent-trainer')) return 1
-  if (r.startsWith('trainer')) return 0
-  if (r.includes('teammanager')) return 2
+  if (r.startsWith('assistent-trainer')) {
+    return 1
+  }
+  if (r.startsWith('trainer')) {
+    return 0
+  }
+  if (r.includes('teammanager')) {
+    return 2
+  }
   return 3
 }
 
 const sortStaff = <T extends { role: string; name: string }>(rows: T[]) =>
-  [...rows].sort((a, b) => staffRank(a.role) - staffRank(b.role) || a.name.localeCompare(b.name, 'nl'))
+  [...rows].sort(
+    (a, b) => staffRank(a.role) - staffRank(b.role) || a.name.localeCompare(b.name, 'nl'),
+  )
 
 /** Name of the head coach per team id (a "Trainer" or "Trainer/coach"; assistants do not count). */
 export async function headCoaches(teamIds: number[]): Promise<Map<number, string>> {
   const rows = await loadStaff(teamIds)
   const coaches = new Map<number, string>()
   for (const row of sortStaff(rows)) {
-    if (staffRank(row.role) === 0 && !coaches.has(row.teamId)) coaches.set(row.teamId, row.name)
+    if (staffRank(row.role) === 0 && !coaches.has(row.teamId)) {
+      coaches.set(row.teamId, row.name)
+    }
   }
   return coaches
 }
@@ -180,11 +195,17 @@ const faseNumber = (klasse: string) => Number(klasse.match(/\((\d+)[a-z]*\s+fase
 async function teamStandings(teamcode: number): Promise<StandingsDto | undefined> {
   const poules = await teamPoulesQuery(teamcode).queryFn()
   const candidates = [...poules.poules, ...poules.fasePoules].filter((p) => p.poulecode)
-  if (!candidates.length) return undefined
+  if (!candidates.length) {
+    return undefined
+  }
 
-  const poule = candidates.reduce((best, p) => (faseNumber(p.klasse) > faseNumber(best.klasse) ? p : best))
+  const poule = candidates.reduce((best, p) =>
+    faseNumber(p.klasse) > faseNumber(best.klasse) ? p : best,
+  )
   const rows = await standingsQuery(poule.poulecode).queryFn()
-  if (!rows.length) return undefined
+  if (!rows.length) {
+    return undefined
+  }
 
   const fase = poule.klasse.match(/\((\d+e fase)\)/i)?.[1]
   return {
@@ -202,7 +223,9 @@ async function teamStandings(teamcode: number): Promise<StandingsDto | undefined
 }
 
 function toSponsor(sponsor: Sponsor | number): SponsorDto | undefined {
-  if (typeof sponsor !== 'object') return undefined
+  if (typeof sponsor !== 'object') {
+    return undefined
+  }
   const logo = toImage(sponsor.logo)
   return {
     name: sponsor.name,

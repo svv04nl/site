@@ -11,7 +11,9 @@ export const metadata = {
 }
 
 export default function AssistantPage() {
-  if (!isAssistantEnabled()) notFound()
+  if (!isAssistantEnabled()) {
+    notFound()
+  }
 
   return (
     <main className="page">

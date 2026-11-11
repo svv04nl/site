@@ -13,7 +13,9 @@ export async function generateMetadata({ params }: Props) {
     where: { section: { equals: 'meedoen' }, slug: { equals: slug } },
     limit: 1,
   })
-  if (!docs[0]) return {}
+  if (!docs[0]) {
+    return {}
+  }
   return { title: `SVV'04 - ${docs[0].title}` }
 }
 
@@ -27,10 +29,18 @@ export default async function MeedoenPage({ params }: Props) {
     limit: 1,
   })
 
-  if (!docs[0]) notFound()
+  if (!docs[0]) {
+    notFound()
+  }
   const page = docs[0]
 
   return (
-    <CmsPage title={page.title} section="meedoen" sectionLabel="Meedoen" content={page.content} slug={slug} />
+    <CmsPage
+      title={page.title}
+      section="meedoen"
+      sectionLabel="Meedoen"
+      content={page.content}
+      slug={slug}
+    />
   )
 }

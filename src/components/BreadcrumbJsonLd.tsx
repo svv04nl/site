@@ -13,7 +13,9 @@ export type BreadcrumbItem = { name: string; href?: string }
  * included as the last list item, per Google's guidelines.
  */
 export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
-  if (items.length === 0) return null
+  if (items.length === 0) {
+    return null
+  }
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -29,7 +31,6 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   return (
     <script
       type="application/ld+json"
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
   )

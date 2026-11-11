@@ -52,10 +52,14 @@ export default function FeedbackWidget() {
 
   useEffect(() => {
     const now = new Date()
-    if (now < LAUNCH_DATE || now > LAUNCH_WINDOW_END) return
+    if (now < LAUNCH_DATE || now > LAUNCH_WINDOW_END) {
+      return
+    }
 
     const lastShown = Number(window.localStorage.getItem(STORAGE_KEY) ?? 0)
-    if (lastShown && Date.now() - lastShown < REPEAT_INTERVAL_MS) return
+    if (lastShown && Date.now() - lastShown < REPEAT_INTERVAL_MS) {
+      return
+    }
 
     const timer = window.setTimeout(() => {
       wasAutoOpened.current = true
@@ -81,9 +85,13 @@ export default function FeedbackWidget() {
   }
 
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      return
+    }
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') closeWidget()
+      if (e.key === 'Escape') {
+        closeWidget()
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -105,7 +113,9 @@ export default function FeedbackWidget() {
           pageUrl: window.location.href,
         }),
       })
-      if (!res.ok) throw new Error('Request failed')
+      if (!res.ok) {
+        throw new Error('Request failed')
+      }
       setStatus('idle')
       setView('sent')
       form.reset()
@@ -146,7 +156,9 @@ export default function FeedbackWidget() {
 
             {view === 'intro' && (
               <div className="feedback-widget-intro">
-                <h3>We hebben hard gewerkt aan onze nieuwe website en we hopen dat het gelukt is!</h3>
+                <h3>
+                  We hebben hard gewerkt aan onze nieuwe website en we hopen dat het gelukt is!
+                </h3>
                 <p>Heb je vragen, opmerkingen of kan je iets niet vinden?</p>
                 <p>Laat het ons weten en neem contact op!</p>
                 <button type="button" className="feedback-widget-cta" onClick={closeWidget}>

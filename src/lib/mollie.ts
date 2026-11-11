@@ -21,7 +21,9 @@ export type MolliePayment = {
 
 async function mollieFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const key = process.env.MOLLIE_API_KEY
-  if (!key) throw new Error('MOLLIE_API_KEY is niet ingesteld')
+  if (!key) {
+    throw new Error('MOLLIE_API_KEY is niet ingesteld')
+  }
 
   const res = await fetch(`${API_URL}${path}`, {
     ...init,

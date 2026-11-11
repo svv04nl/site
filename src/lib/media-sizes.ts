@@ -40,7 +40,9 @@ export function fitsSize(
   width: number | null | undefined,
   height: number | null | undefined,
 ): boolean {
-  if (!width || !height) return false
+  if (!width || !height) {
+    return false
+  }
   return width >= size.width && (!size.height || height >= size.height)
 }
 
@@ -50,8 +52,12 @@ export function sizedDimensions(
   width: number | null | undefined,
   height: number | null | undefined,
 ): { width: number; height?: number } {
-  if (size.height) return { width: size.width, height: size.height }
-  if (!width || !height) return { width: size.width }
+  if (size.height) {
+    return { width: size.width, height: size.height }
+  }
+  if (!width || !height) {
+    return { width: size.width }
+  }
   const w = Math.min(size.width, width)
   return { width: w, height: Math.round((height * w) / width) }
 }

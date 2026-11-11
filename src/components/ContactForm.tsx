@@ -42,7 +42,9 @@ export default function ContactForm({ afdelingen, defaultAfdeling }: Props) {
           pageUrl: window.location.href,
         }),
       })
-      if (!res.ok) throw new Error('Request failed')
+      if (!res.ok) {
+        throw new Error('Request failed')
+      }
       setStatus('sent')
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch {

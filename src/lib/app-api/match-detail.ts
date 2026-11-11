@@ -32,7 +32,9 @@ export type MatchDetailDto = {
 
 /** "Naam (Functie), Naam (Functie)": namen kunnen komma's bevatten, dus splitsen op "),". */
 function parseReferees(value: string): { role: string; name: string }[] {
-  if (!value) return []
+  if (!value) {
+    return []
+  }
   return value
     .split(/\),\s*/)
     .map((part) => part.trim())
@@ -56,7 +58,8 @@ function routeUrlOf(value: string | null | undefined): string | undefined {
   }
 }
 
-const clean = (value: string | null | undefined) => (value && value.trim() ? value.trim() : undefined)
+const clean = (value: string | null | undefined) =>
+  value && value.trim() ? value.trim() : undefined
 
 function ownTeamOf(
   name: string,
@@ -84,9 +87,9 @@ function ownTeamOf(
 export async function loadMatchDetail(code: string): Promise<MatchDetailDto> {
   const [raw, homePeople, awayPeople] = await Promise.all([
     fetchClubData<RawWedstrijdInformatie>('wedstrijd-informatie', { wedstrijdcode: code }),
-    fetchClubData<RawWedstrijdSpelersResponse>('wedstrijd-thuisteam', { wedstrijdcode: code }).catch(
-      () => [] as RawWedstrijdSpelersResponse,
-    ),
+    fetchClubData<RawWedstrijdSpelersResponse>('wedstrijd-thuisteam', {
+      wedstrijdcode: code,
+    }).catch(() => [] as RawWedstrijdSpelersResponse),
     fetchClubData<RawWedstrijdSpelersResponse>('wedstrijd-uitteam', { wedstrijdcode: code }).catch(
       () => [] as RawWedstrijdSpelersResponse,
     ),
@@ -118,7 +121,12 @@ export async function loadMatchDetail(code: string): Promise<MatchDetailDto> {
   const officials = [
     ...parseReferees(raw.matchofficials?.scheidsrechters ?? ''),
     ...(clean(raw.officials?.verenigingsscheidsrechter)
-      ? [{ role: 'Verenigingsscheidsrechter', name: raw.officials.verenigingsscheidsrechter!.trim() }]
+      ? [
+          {
+            role: 'Verenigingsscheidsrechter',
+            name: raw.officials.verenigingsscheidsrechter!.trim(),
+          },
+        ]
       : []),
     ...(clean(raw.officials?.overigeofficial)
       ? [{ role: 'Overige official', name: raw.officials.overigeofficial!.trim() }]
@@ -138,12 +146,19 @@ export async function loadMatchDetail(code: string): Promise<MatchDetailDto> {
       name: raw.accommodatie?.naam ?? match.venue.name,
       ...(match.venue.address ? { address: match.venue.address } : {}),
       ...(toE164(raw.accommodatie?.telefoon) ? { phone: toE164(raw.accommodatie.telefoon) } : {}),
-      ...(routeUrlOf(raw.accommodatie?.routeplanner) ? { routeUrl: routeUrlOf(raw.accommodatie.routeplanner) } : {}),
+      ...(routeUrlOf(raw.accommodatie?.routeplanner)
+        ? { routeUrl: routeUrlOf(raw.accommodatie.routeplanner) }
+        : {}),
     },
     ...(Object.keys(lockerRooms).length ? { lockerRooms } : {}),
     officials,
     ...(ownHome || ownAway
-      ? { ownTeam: ownTeamOf(ownHome ? info.thuisteam : info.uitteam, ownHome ? homePeople : awayPeople) }
+      ? {
+          ownTeam: ownTeamOf(
+            ownHome ? info.thuisteam : info.uitteam,
+            ownHome ? homePeople : awayPeople,
+          ),
+        }
       : {}),
   }
 }

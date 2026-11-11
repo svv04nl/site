@@ -11,7 +11,9 @@ type Props = {
 
 export default function FactsBlockComponent({ items }: Props) {
   const resolved = (items ?? []).filter((i) => i.value && i.label)
-  if (resolved.length === 0) return null
+  if (resolved.length === 0) {
+    return null
+  }
 
   return (
     <dl className="facts-block">

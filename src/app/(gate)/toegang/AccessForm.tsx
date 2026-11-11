@@ -5,10 +5,7 @@ import { noPasswordManager } from '@/lib/no-password-manager'
 import { submitAccessCode, type AccessState } from './actions'
 
 export default function AccessForm({ next }: { next: string }) {
-  const [state, formAction, pending] = useActionState<AccessState, FormData>(
-    submitAccessCode,
-    null,
-  )
+  const [state, formAction, pending] = useActionState<AccessState, FormData>(submitAccessCode, null)
 
   return (
     <form className="gate-form" action={formAction}>

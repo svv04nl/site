@@ -99,7 +99,7 @@ export const Contacts: CollectionConfig = {
       relationTo: 'media',
       label: 'Foto',
       admin: {
-        description: 'Optioneel. Wordt getoond als aanspreekpunt op de doelgroeppagina\'s.',
+        description: "Optioneel. Wordt getoond als aanspreekpunt op de doelgroeppagina's.",
       },
     },
     {
@@ -108,8 +108,7 @@ export const Contacts: CollectionConfig = {
       label: 'Groep',
       admin: {
         position: 'sidebar',
-        description:
-          'Kopje waaronder dit contact op de contactpagina valt, bijv. "Secretariaat".',
+        description: 'Kopje waaronder dit contact op de contactpagina valt, bijv. "Secretariaat".',
       },
     },
     {

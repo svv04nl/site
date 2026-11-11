@@ -39,7 +39,9 @@ function describe(donation: Donation, fundraiser: Fundraiser): string {
     const unitsAmount = donation.amount - donation.freeAmount
     parts.push(`${formatUnits(donation.units, unit)} (${formatEuro(unitsAmount)})`)
   }
-  if (donation.freeAmount > 0) parts.push(`een vrije donatie van ${formatEuro(donation.freeAmount)}`)
+  if (donation.freeAmount > 0) {
+    parts.push(`een vrije donatie van ${formatEuro(donation.freeAmount)}`)
+  }
   return parts.join(' en ')
 }
 
@@ -73,7 +75,9 @@ async function sendPaidEmails(payload: Payload, donation: Donation) {
       limit: 1,
       depth: 0,
     })
-    if (docs[0]?.email) to = docs[0].email
+    if (docs[0]?.email) {
+      to = docs[0].email
+    }
 
     await payload.sendEmail({
       to,
@@ -99,12 +103,16 @@ ${unit ? `<tr><td>${escapeHtml(unit.namePlural)}</td><td>${donation.units}</td><
 // en de terugkeerpagina gebruiken dezelfde functie, dus aanroepen is idempotent:
 // de mails gaan alleen weg bij de overgang naar "betaald".
 export async function syncDonation(donation: Donation): Promise<Donation> {
-  if (!donation.mollieId || donation.status === 'betaald') return donation
+  if (!donation.mollieId || donation.status === 'betaald') {
+    return donation
+  }
 
   const payload = await getPayload({ config })
   const payment = await getPayment(donation.mollieId)
   const status = mapMollieStatus(payment.status)
-  if (status === donation.status) return donation
+  if (status === donation.status) {
+    return donation
+  }
 
   if (status !== 'betaald') {
     return payload.update({ collection: 'donations', id: donation.id, data: { status } })
@@ -117,7 +125,9 @@ export async function syncDonation(donation: Donation): Promise<Donation> {
     data: { status: 'betaald', paidAt: new Date().toISOString(), method: payment.method ?? null },
   })
   const paid = docs[0]
-  if (!paid) return { ...donation, status: 'betaald' }
+  if (!paid) {
+    return { ...donation, status: 'betaald' }
+  }
 
   await sendPaidEmails(payload, paid)
   return paid
@@ -151,9 +161,13 @@ export async function reconcileOpenDonations(
   for (const donation of docs) {
     try {
       const updated = await syncDonation(donation)
-      if (updated.status === 'betaald') result.paid++
-      else if (updated.status !== donation.status) result.otherChange++
-      else result.unchanged++
+      if (updated.status === 'betaald') {
+        result.paid++
+      } else if (updated.status !== donation.status) {
+        result.otherChange++
+      } else {
+        result.unchanged++
+      }
     } catch (err) {
       // Eén mislukte controle mag de rest niet tegenhouden.
       result.failed++

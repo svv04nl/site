@@ -17,7 +17,9 @@ function renderText(text: string) {
 }
 
 export default function QuoteBlockComponent({ text }: Props) {
-  if (!text) return null
+  if (!text) {
+    return null
+  }
 
   return (
     <blockquote className="quote-block">

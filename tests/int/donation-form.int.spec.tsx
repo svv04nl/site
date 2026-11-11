@@ -105,9 +105,9 @@ describe('DonationForm: bedrag en stoeltjes', () => {
 
     fireEvent.change(amountInput(), { target: { value: '9990' } })
 
-    expect((screen.getByRole('button', { name: 'Eén stoeltje meer' }) as HTMLButtonElement).disabled).toBe(
-      true,
-    )
+    expect(
+      (screen.getByRole('button', { name: 'Eén stoeltje meer' }) as HTMLButtonElement).disabled,
+    ).toBe(true)
   })
 })
 
@@ -141,7 +141,9 @@ describe('DonationForm: fundraiser zonder eenheid of toestemmingsoptie', () => {
   it('noemt bij een eenheid het aantal eenheden in de toestemming voor de website', () => {
     renderForm()
 
-    expect(screen.getByLabelText(/het aantal stoeltjes en het bedrag mogen op de website komen/)).toBeTruthy()
+    expect(
+      screen.getByLabelText(/het aantal stoeltjes en het bedrag mogen op de website komen/),
+    ).toBeTruthy()
   })
 
   it('toont de tweede toestemming alleen als er een tekst voor is', () => {
@@ -200,7 +202,9 @@ describe('DonationForm: versturen', () => {
     renderForm()
     fillIn()
     fireEvent.change(amountInput(), { target: { value: '65' } })
-    fireEvent.click(screen.getByLabelText(/het aantal stoeltjes en het bedrag mogen op de website komen/))
+    fireEvent.click(
+      screen.getByLabelText(/het aantal stoeltjes en het bedrag mogen op de website komen/),
+    )
 
     fireEvent.click(submit())
 

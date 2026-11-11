@@ -35,21 +35,29 @@ export function isAppChatBody(body: unknown): body is AppChatBody {
   return (
     Array.isArray(messages) &&
     messages.length > 0 &&
-    messages.every((m) => m && typeof m === 'object' && typeof m.text === 'string' && !('parts' in m))
+    messages.every(
+      (m) => m && typeof m === 'object' && typeof m.text === 'string' && !('parts' in m),
+    )
   )
 }
 
 function validate(body: AppChatBody): AppChatBody {
   const { messages } = body
-  if (messages.length > MAX_MESSAGES) throw badRequest('Het gesprek is te lang.')
+  if (messages.length > MAX_MESSAGES) {
+    throw badRequest('Het gesprek is te lang.')
+  }
   for (const m of messages) {
-    if (m.role !== 'user' && m.role !== 'assistant') throw badRequest('Onbekende rol in een bericht.')
+    if (m.role !== 'user' && m.role !== 'assistant') {
+      throw badRequest('Onbekende rol in een bericht.')
+    }
     if (m.text.length > MAX_USER_MESSAGE_CHARS) {
       throw badRequest(`Een bericht mag maximaal ${MAX_USER_MESSAGE_CHARS} tekens zijn.`)
     }
   }
   const last = messages.at(-1)!
-  if (last.role !== 'user' || !last.text.trim()) throw badRequest('Het laatste bericht moet een vraag zijn.')
+  if (last.role !== 'user' || !last.text.trim()) {
+    throw badRequest('Het laatste bericht moet een vraag zijn.')
+  }
   return body
 }
 
@@ -62,7 +70,9 @@ const matchCode = (url: string) => url.match(/\/wedstrijd\/(\d+)/)?.[1]
 async function findMatch(code: string): Promise<MatchDto | null> {
   const [results, program] = await Promise.all([loadClubResults(), loadClubProgram()])
   const known = results.find((m) => m.id === code) ?? program.find((m) => m.id === code)
-  if (known) return known
+  if (known) {
+    return known
+  }
 
   try {
     const raw = await gameInfoQuery(code).queryFn()
@@ -106,10 +116,19 @@ async function cardsFrom(uis: ToolUi[]): Promise<ChatCardDto[]> {
     uis.flatMap((ui) => ui.matches ?? []),
     (m) => m.matchUrl,
   )
-  const matches = await Promise.all(matchRefs.map((m) => (matchCode(m.matchUrl) ? findMatch(matchCode(m.matchUrl)!) : null)))
-  for (const match of matches) if (match) cards.push({ type: 'match', match })
+  const matches = await Promise.all(
+    matchRefs.map((m) => (matchCode(m.matchUrl) ? findMatch(matchCode(m.matchUrl)!) : null)),
+  )
+  for (const match of matches) {
+    if (match) {
+      cards.push({ type: 'match', match })
+    }
+  }
 
-  for (const table of uniqueBy(uis.flatMap((ui) => ui.standings ?? []), (t) => t.title)) {
+  for (const table of uniqueBy(
+    uis.flatMap((ui) => ui.standings ?? []),
+    (t) => t.title,
+  )) {
     cards.push({
       type: 'standings',
       ...(table.team ? { team: toTeamRef(table.team) } : {}),
@@ -129,13 +148,18 @@ async function cardsFrom(uis: ToolUi[]): Promise<ChatCardDto[]> {
     })
   }
 
-  const contactRefs = uniqueBy(uis.flatMap((ui) => ui.contacts ?? []), (c) => c.name)
+  const contactRefs = uniqueBy(
+    uis.flatMap((ui) => ui.contacts ?? []),
+    (c) => c.name,
+  )
   if (contactRefs.length) {
     const docs = await loadContacts()
     for (const ref of contactRefs) {
       // Prefer the contact record (photo, same phone formatting as the contact screen).
       const doc = docs.find((c) => c.name === ref.name)
-      const role = doc?.roles?.find((r) => roleKey(r) === (ref.roles[0]?.slug || ref.roles[0]?.title))
+      const role = doc?.roles?.find(
+        (r) => roleKey(r) === (ref.roles[0]?.slug || ref.roles[0]?.title),
+      )
       const contact: ContactDto = doc
         ? toContact(doc, role)
         : {
@@ -150,16 +174,20 @@ async function cardsFrom(uis: ToolUi[]): Promise<ChatCardDto[]> {
 
   const links: LinkDto[] = uniqueBy(
     [
-      ...uis.flatMap((ui) => ui.links ?? []).map((l) => ({
-        url: l.url,
-        title: `${l.kind === 'article' ? 'Lees' : 'Bekijk'}: ${l.title}`,
-      })),
+      ...uis
+        .flatMap((ui) => ui.links ?? [])
+        .map((l) => ({
+          url: l.url,
+          title: `${l.kind === 'article' ? 'Lees' : 'Bekijk'}: ${l.title}`,
+        })),
       ...uis.flatMap((ui) => (ui.more ? [{ url: ui.more.url, title: ui.more.label }] : [])),
       ...uis.flatMap((ui) => (ui.link ? [{ url: ui.link.url, title: ui.link.label }] : [])),
     ],
     (l) => l.url,
   ).map((l) => ({ title: l.title, target: hrefToTarget(l.url) }))
-  for (const link of links) cards.push({ type: 'link', link })
+  for (const link of links) {
+    cards.push({ type: 'link', link })
+  }
 
   return cards
 }
@@ -187,7 +215,9 @@ function toPlainAnswer(text: string): { text: string; links: LinkDto[] } {
 // ---------------------------------------------------------------------------------------------
 
 export async function handleAppChat(request: Request, rawBody: AppChatBody): Promise<Response> {
-  if (!isAssistantEnabled()) return problem(404, 'Niet beschikbaar', 'De assistent staat uit.')
+  if (!isAssistantEnabled()) {
+    return problem(404, 'Niet beschikbaar', 'De assistent staat uit.')
+  }
 
   const limit = checkRateLimit(clientKey(request))
   if (!limit.ok) {
@@ -200,8 +230,11 @@ export async function handleAppChat(request: Request, rawBody: AppChatBody): Pro
   const context = body.context ?? {}
 
   // Only slugs reach the database; the names that end up in the prompt come from the CMS.
-  const audience = context.role && isRoleSlug(context.role) ? await audienceName(context.role) : null
-  const slugs = (Array.isArray(context.teams) ? context.teams : []).filter((t) => typeof t === 'string').slice(0, 10)
+  const audience =
+    context.role && isRoleSlug(context.role) ? await audienceName(context.role) : null
+  const slugs = (Array.isArray(context.teams) ? context.teams : [])
+    .filter((t) => typeof t === 'string')
+    .slice(0, 10)
   const favoriteTeams = (await loadTeams()).filter((t) => slugs.includes(t.slug)).map((t) => t.name)
 
   const agent = await createAssistantAgent({ audience, favoriteTeams })
@@ -217,9 +250,13 @@ export async function handleAppChat(request: Request, rawBody: AppChatBody): Pro
 
   const answer = toPlainAnswer(result.text)
   const cards = await cardsFrom(uis)
-  const known = new Set(cards.flatMap((c) => (c.type === 'link' ? [JSON.stringify(c.link.target)] : [])))
+  const known = new Set(
+    cards.flatMap((c) => (c.type === 'link' ? [JSON.stringify(c.link.target)] : [])),
+  )
   for (const link of answer.links) {
-    if (!known.has(JSON.stringify(link.target))) cards.push({ type: 'link', link })
+    if (!known.has(JSON.stringify(link.target))) {
+      cards.push({ type: 'link', link })
+    }
   }
 
   return json({ text: answer.text, cards }, 0)

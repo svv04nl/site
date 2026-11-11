@@ -19,7 +19,9 @@ function AddressMap({ query, mapsUrl }: { query: string; mapsUrl?: string | null
   const [position, setPosition] = useState<google.maps.LatLngLiteral | null>(null)
 
   useEffect(() => {
-    if (!geocodingLib) return
+    if (!geocodingLib) {
+      return
+    }
     const geocoder = new geocodingLib.Geocoder()
     geocoder.geocode({ address: query }, (results, status) => {
       if (status === 'OK' && results?.[0]) {
@@ -29,12 +31,16 @@ function AddressMap({ query, mapsUrl }: { query: string; mapsUrl?: string | null
     })
   }, [geocodingLib, query])
 
-  if (!position) return null
+  if (!position) {
+    return null
+  }
 
   // Klikken op de kaart/marker gaat naar de echte Google Maps-plek (mapsUrl),
   // niet naar een coördinaten-gebaseerde kaartweergave.
   const openPlace = () => {
-    if (mapsUrl) window.open(mapsUrl, '_blank', 'noopener,noreferrer')
+    if (mapsUrl) {
+      window.open(mapsUrl, '_blank', 'noopener,noreferrer')
+    }
   }
 
   return (
@@ -59,7 +65,9 @@ export default function AddressBlockComponent({
   mapsUrl,
   websiteUrl,
 }: Props) {
-  if (!name || !address) return null
+  if (!name || !address) {
+    return null
+  }
 
   return (
     <div className="address-block">

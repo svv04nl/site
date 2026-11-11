@@ -55,7 +55,9 @@ export default async function HomePage() {
   ])
 
   const heroPost = heroPosts[0]
-  if (!heroPost) preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
+  if (!heroPost) {
+    preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
+  }
 
   // Preserve the intended display order
   const teams = FEATURED_TEAM_SLUGS.map((slug) =>

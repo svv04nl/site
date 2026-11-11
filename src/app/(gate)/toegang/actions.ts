@@ -19,7 +19,9 @@ export async function submitAccessCode(
 ): Promise<AccessState> {
   const expected = getAccessCode()
   // Poort staat uit: er is hier niets te doen.
-  if (!expected) redirect('/')
+  if (!expected) {
+    redirect('/')
+  }
 
   const entered = String(formData.get('code') ?? '').trim()
   const [enteredToken, expectedToken] = await Promise.all([

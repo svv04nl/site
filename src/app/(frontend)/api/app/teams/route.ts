@@ -8,7 +8,9 @@ export const GET = appRoute(TTL.program, async (request) => {
     .split(',')
     .map((v) => v.trim())
     .filter(Boolean)
-  if (include.some((v) => v !== 'nextMatch')) throw badRequest('Parameter include kent alleen nextMatch.')
+  if (include.some((v) => v !== 'nextMatch')) {
+    throw badRequest('Parameter include kent alleen nextMatch.')
+  }
 
   return { groups: await teamGroups(include.includes('nextMatch')) }
 })

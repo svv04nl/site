@@ -15,7 +15,9 @@ export async function generateMetadata({ params }: Props) {
     where: { section: { equals: 'vereniging' }, slug: { equals: leafSlug } },
     limit: 1,
   })
-  if (!docs[0]) return {}
+  if (!docs[0]) {
+    return {}
+  }
   return { title: `SVV'04 - ${docs[0].title}` }
 }
 
@@ -30,7 +32,9 @@ export default async function VerenigingPage({ params }: Props) {
     limit: 1,
   })
 
-  if (!docs[0]) notFound()
+  if (!docs[0]) {
+    notFound()
+  }
   const page = docs[0]
 
   const canonicalSlugs = await resolvePageSlugPath(payload, page)

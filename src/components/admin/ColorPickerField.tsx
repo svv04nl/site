@@ -14,17 +14,40 @@ export const ColorPickerField: TextFieldClientComponent = ({ path }) => {
           type="color"
           value={hex}
           onChange={(e) => setValue(e.target.value)}
-          style={{ width: '2.5rem', height: '2.5rem', padding: '2px', cursor: 'pointer', border: '1px solid var(--theme-elevation-150)', borderRadius: '4px' }}
+          style={{
+            width: '2.5rem',
+            height: '2.5rem',
+            padding: '2px',
+            cursor: 'pointer',
+            border: '1px solid var(--theme-elevation-150)',
+            borderRadius: '4px',
+          }}
         />
         <input
           type="text"
           value={hex}
           onChange={(e) => setValue(e.target.value)}
           placeholder="#ffffff"
-          style={{ fontFamily: 'monospace', fontSize: '0.875rem', padding: '0.4rem 0.6rem', border: '1px solid var(--theme-elevation-150)', borderRadius: '4px', width: '7rem', background: 'var(--theme-input-bg)', color: 'var(--theme-text)' }}
+          style={{
+            fontFamily: 'monospace',
+            fontSize: '0.875rem',
+            padding: '0.4rem 0.6rem',
+            border: '1px solid var(--theme-elevation-150)',
+            borderRadius: '4px',
+            width: '7rem',
+            background: 'var(--theme-input-bg)',
+            color: 'var(--theme-text)',
+          }}
         />
         <div
-          style={{ width: '2.5rem', height: '2.5rem', borderRadius: '4px', background: hex, border: '1px solid var(--theme-elevation-150)', flexShrink: 0 }}
+          style={{
+            width: '2.5rem',
+            height: '2.5rem',
+            borderRadius: '4px',
+            background: hex,
+            border: '1px solid var(--theme-elevation-150)',
+            flexShrink: 0,
+          }}
         />
       </div>
     </div>

@@ -30,7 +30,9 @@ export function filterTeamsByQuery<T extends { name: string; category?: string |
   q: string,
 ): T[] {
   const alias = TEAM_QUERY_ALIASES[q.toLowerCase()]
-  if (alias) return docs.filter((t) => t.name === alias)
+  if (alias) {
+    return docs.filter((t) => t.name === alias)
+  }
 
   const tokens = q
     .toLowerCase()
@@ -38,7 +40,9 @@ export function filterTeamsByQuery<T extends { name: string; category?: string |
     .filter((t) => t && !TEAM_BROWSE_STOPWORDS.has(t))
     .map((t) => TEAM_TOKEN_SYNONYMS[t] ?? t)
 
-  if (tokens.length === 0) return docs // browse-all
+  if (tokens.length === 0) {
+    return docs
+  } // browse-all
 
   // Every token must match somewhere — name (e.g. "35+1") or category (e.g.
   // "zondag") — so a query like "zondag 1" finds the team that is both.

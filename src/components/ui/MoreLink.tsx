@@ -11,7 +11,11 @@ export function MoreLink({ text, href, className }: Props) {
   const content = <>{text} &rarr;</>
 
   if (href) {
-    return <Link href={href} className={cls}>{content}</Link>
+    return (
+      <Link href={href} className={cls}>
+        {content}
+      </Link>
+    )
   }
 
   return <span className={cls}>{content}</span>

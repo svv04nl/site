@@ -3,7 +3,10 @@ import type { LinkDto, LinkTarget, RoleSlug, ScreenName } from '@/lib/app-api/ty
 
 const SITE_HOSTS = new Set(['svv04.nl', 'www.svv04.nl', 'svv04.vercel.app'])
 
-const screen = (name: ScreenName, extra: { slug?: string; contactTopic?: string } = {}): LinkTarget => ({
+const screen = (
+  name: ScreenName,
+  extra: { slug?: string; contactTopic?: string } = {},
+): LinkTarget => ({
   kind: 'screen',
   screen: name,
   ...extra,
@@ -17,7 +20,9 @@ export const screenTarget = screen
  */
 export function hrefToTarget(href: string): LinkTarget {
   const raw = href.trim()
-  if (/^(mailto|tel):/i.test(raw)) return { kind: 'browser', url: raw, inApp: false }
+  if (/^(mailto|tel):/i.test(raw)) {
+    return { kind: 'browser', url: raw, inApp: false }
+  }
 
   let url: URL
   try {
@@ -25,8 +30,12 @@ export function hrefToTarget(href: string): LinkTarget {
   } catch {
     return { kind: 'browser', url: SITE_URL, inApp: true }
   }
-  if (!/^https?:$/.test(url.protocol)) return { kind: 'browser', url: raw, inApp: false }
-  if (!SITE_HOSTS.has(url.hostname)) return { kind: 'browser', url: url.toString(), inApp: true }
+  if (!/^https?:$/.test(url.protocol)) {
+    return { kind: 'browser', url: raw, inApp: false }
+  }
+  if (!SITE_HOSTS.has(url.hostname)) {
+    return { kind: 'browser', url: url.toString(), inApp: true }
+  }
 
   const segments = url.pathname.split('/').filter(Boolean)
   const [first, second] = segments
@@ -61,7 +70,9 @@ export function hrefToTarget(href: string): LinkTarget {
     case 'commissies':
     case 'meedoen':
       // The sponsor options moved to the "Voor jou" page (see next.config.ts).
-      if (first === 'vereniging' && last === 'sponsoring') return screen('audience', { slug: 'sponsoring' })
+      if (first === 'vereniging' && last === 'sponsoring') {
+        return screen('audience', { slug: 'sponsoring' })
+      }
       return last && segments.length > 1 ? screen('page', { slug: last }) : screen('club')
     default:
       if (segments.length === 1 && (ROLE_SLUGS as readonly string[]).includes(first)) {
@@ -71,7 +82,11 @@ export function hrefToTarget(href: string): LinkTarget {
   }
 }
 
-export function link(title: string, target: LinkTarget, extra: { subtitle?: string; icon?: string } = {}): LinkDto {
+export function link(
+  title: string,
+  target: LinkTarget,
+  extra: { subtitle?: string; icon?: string } = {},
+): LinkDto {
   return {
     title,
     ...(extra.subtitle ? { subtitle: extra.subtitle } : {}),

@@ -10,7 +10,11 @@ type Props = {
 
 export function SectionHeader({ title, subtitle, link, as: Tag = 'h2' }: Props) {
   return (
-    <div className={['section-header', subtitle ? 'section-header--has-subtitle' : ''].filter(Boolean).join(' ')}>
+    <div
+      className={['section-header', subtitle ? 'section-header--has-subtitle' : '']
+        .filter(Boolean)
+        .join(' ')}
+    >
       <Tag className="page-title">{title}</Tag>
       {subtitle && <p className="page-subtitle">{subtitle}</p>}
       {link && (

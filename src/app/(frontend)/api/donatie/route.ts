@@ -75,7 +75,9 @@ export async function POST(request: Request) {
     })
 
     const checkoutUrl = payment._links?.checkout?.href
-    if (!checkoutUrl) throw new Error('Mollie gaf geen checkout-URL')
+    if (!checkoutUrl) {
+      throw new Error('Mollie gaf geen checkout-URL')
+    }
     return Response.json({ checkoutUrl })
   } catch (err) {
     payload.logger.error(`Creating Mollie payment failed (donation ${donation.id}): ${err}`)

@@ -11,7 +11,9 @@ import { isHuman } from '@/lib/turnstile'
 type IncomingMessage = { role?: unknown; parts?: unknown }
 
 function textOf(message: IncomingMessage): string {
-  if (!Array.isArray(message.parts)) return ''
+  if (!Array.isArray(message.parts)) {
+    return ''
+  }
   return message.parts
     .map((p) =>
       p && typeof p === 'object' && (p as { type?: unknown }).type === 'text'
@@ -22,7 +24,9 @@ function textOf(message: IncomingMessage): string {
 }
 
 async function findAudienceName(slug: string): Promise<string | null> {
-  if (!slug || slug.length > 60) return null
+  if (!slug || slug.length > 60) {
+    return null
+  }
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
     collection: 'audiences',
@@ -47,9 +51,13 @@ export async function POST(request: Request) {
     }
   }
 
-  if (!isAssistantEnabled()) return new Response('Not found', { status: 404 })
+  if (!isAssistantEnabled()) {
+    return new Response('Not found', { status: 404 })
+  }
 
-  if (!(await isHuman(request))) return Response.json({ error: 'Access denied' }, { status: 403 })
+  if (!(await isHuman(request))) {
+    return Response.json({ error: 'Access denied' }, { status: 403 })
+  }
 
   const body = rawBody as {
     messages?: IncomingMessage[]
@@ -75,8 +83,12 @@ export async function POST(request: Request) {
     uiMessages: messages,
     abortSignal: request.signal,
     messageMetadata: ({ part }): AssistantMetadata | undefined => {
-      if (!isAssistantDebug()) return undefined
-      if (part.type === 'start') return { startedAt: Date.now() }
+      if (!isAssistantDebug()) {
+        return undefined
+      }
+      if (part.type === 'start') {
+        return { startedAt: Date.now() }
+      }
       if (part.type === 'finish') {
         const { inputTokens, outputTokens, totalTokens } = part.totalUsage
         return { finishedAt: Date.now(), usage: { inputTokens, outputTokens, totalTokens } }

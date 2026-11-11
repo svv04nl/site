@@ -16,7 +16,9 @@ function buildNestedPagePath(doc: any): string {
 }
 
 function resolveInternalUrl(relationTo: string, doc: any): string {
-  if (!doc || typeof doc !== 'object') return '#'
+  if (!doc || typeof doc !== 'object') {
+    return '#'
+  }
 
   switch (relationTo) {
     case 'pages':
@@ -39,9 +41,13 @@ function uploadImage(doc: any, alt: string) {
   const candidates: { url: string; width: number }[] = []
   for (const name of RATIO_PRESERVING_SIZES) {
     const size = doc.sizes?.[name]
-    if (size?.url && size.width) candidates.push({ url: size.url, width: size.width })
+    if (size?.url && size.width) {
+      candidates.push({ url: size.url, width: size.width })
+    }
   }
-  if (doc.url && doc.width) candidates.push({ url: doc.url, width: doc.width })
+  if (doc.url && doc.width) {
+    candidates.push({ url: doc.url, width: doc.width })
+  }
   candidates.sort((a, b) => a.width - b.width)
 
   return (
@@ -67,7 +73,9 @@ export const defaultJSXConverters: JSXConvertersFunction = ({ defaultConverters 
   },
   upload: ({ node }) => {
     const doc = (node as any).value
-    if (!doc || typeof doc !== 'object') return null
+    if (!doc || typeof doc !== 'object') {
+      return null
+    }
     const alt = (node as any).fields?.alt || doc.alt || ''
     if (!doc.mimeType?.startsWith('image')) {
       return (

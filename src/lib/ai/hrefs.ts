@@ -24,7 +24,9 @@ export const audienceHref = (audience: { slug?: string | null }) => `/${audience
 
 /** Href for a populated Payload relationship (used for internal richText links). */
 export function docHref(relationTo: string, doc: unknown): string | undefined {
-  if (!doc || typeof doc !== 'object') return undefined
+  if (!doc || typeof doc !== 'object') {
+    return undefined
+  }
   switch (relationTo) {
     case 'pages':
       return pageHref(doc as PageLike)

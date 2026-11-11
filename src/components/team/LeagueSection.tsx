@@ -26,7 +26,9 @@ export default function LeagueSection() {
   // Sections above it (next match, photo) load later and push it down, so keep correcting for a
   // few seconds, until the visitor scrolls themselves.
   useEffect(() => {
-    if (!hasRequestedTab) return
+    if (!hasRequestedTab) {
+      return
+    }
     const scrollToSection = () => sectionRef.current?.scrollIntoView({ block: 'start' })
     scrollToSection()
 
