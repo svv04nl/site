@@ -21,10 +21,10 @@ export type AllCancelled = { dayKey: string; dayLong: string; scope: 'alle' | 't
 
 export type CancellationData = { matches: CancelledMatch[]; allCancelled: AllCancelled | null }
 
-// Up to this many matches the bar shows them all in one row; above it a count that unfolds.
-const MAX_INLINE = 3
-// Cards shown when the bar is unfolded, before "+ N meer in het programma".
-const MAX_CARDS = 3
+// The bar shows this many matches; the rest sit behind a "+N" label that unfolds them.
+const MAX_INLINE = 2
+// The popup list scrolls above this many matches, so it stays as high as with two.
+const MAX_LISTED = 2
 
 // Below this width the bar is too cramped: a phone gets a popup from the bottom instead.
 const PHONE_QUERY = '(max-width: 640px)'
@@ -45,7 +45,13 @@ function writeStorage(store: 'session' | 'local', key: string) {
   }
 }
 
-const Icon = ({ name, size = 16 }: { name: 'ban' | 'close' | 'up' | 'down'; size?: number }) => (
+const Icon = ({
+  name,
+  size = 16,
+}: {
+  name: 'ban' | 'close' | 'up' | 'down' | 'right'
+  size?: number
+}) => (
   <svg
     width={size}
     height={size}
@@ -66,6 +72,7 @@ const Icon = ({ name, size = 16 }: { name: 'ban' | 'close' | 'up' | 'down'; size
     {name === 'close' && <path d="M6 6l12 12M18 6L6 18" />}
     {name === 'up' && <path d="M6 15l6-6 6 6" />}
     {name === 'down' && <path d="M6 9l6 6 6-6" />}
+    {name === 'right' && <path d="M9 6l6 6-6 6" />}
   </svg>
 )
 
@@ -185,88 +192,62 @@ export function CancellationBannerClient({
   }
 
   const sameDay = matches.every((m) => m.dayKey === matches[0].dayKey)
-  const hasFirstTeam = matches.some((m) => (m.isHome ? m.home : m.away) === "SVV'04 1")
+  const shown = unfolded ? matches : matches.slice(0, MAX_INLINE)
+  const hidden = matches.length - MAX_INLINE
 
   return (
     <>
       <div className="cancellation-banner" role="status">
         <div className="cancellation-banner-inner">
-          <div className="cancellation-banner-row">
-            <span className="cancellation-badge">
-              <Icon name="ban" size={15} />
-              Afgelast
-            </span>
-
-            {matches.length <= MAX_INLINE ? (
-              <>
-                {sameDay && <span className="cancellation-banner-day">{matches[0].day}</span>}
-                <span className="cancellation-banner-pills">
-                  {matches.map((m) => (
-                    <span key={m.matchCode} className="cancellation-pill">
-                      {!sameDay && <span className="cancellation-pill-day">{m.day}</span>}
-                      {m.time && <s>{m.time}</s>}
-                      <span>
-                        <Teams m={m} />
-                      </span>
-                    </span>
-                  ))}
+          <span className="cancellation-banner-icon" aria-hidden="true">
+            <Icon name="ban" size={18} />
+          </span>
+          <span className="cancellation-banner-summary">
+            <b>
+              {matches.length} {matches.length === 1 ? 'wedstrijd' : 'wedstrijden'} afgelast
+            </b>
+            {sameDay && ` · ${matches[0].day}`}
+          </span>
+          <span className="cancellation-banner-pills">
+            {shown.map((m) => (
+              <Link
+                key={m.matchCode}
+                href={`/wedstrijd/${m.matchCode}`}
+                className="cancellation-pill"
+              >
+                {!sameDay && <span className="cancellation-pill-day">{m.day}</span>}
+                {m.time && <s>{m.time}</s>}
+                <span>
+                  <Teams m={m} />
                 </span>
-                <Link href="/programma" className="cancellation-banner-link">
-                  Programma ›
-                </Link>
-              </>
-            ) : (
-              <>
-                <span className="cancellation-banner-summary">
-                  <b>{matches.length} wedstrijden</b> afgelast
-                  {sameDay ? ` op ${matches[0].day}` : ''}
-                  {hasFirstTeam ? ", waaronder SVV'04 1" : ''}
-                </span>
-                <button
-                  type="button"
-                  className="cancellation-banner-toggle"
-                  aria-expanded={unfolded}
-                  onClick={() => setUnfolded((v) => !v)}
-                >
-                  {unfolded ? 'Verberg' : 'Bekijk'}
-                  <Icon name={unfolded ? 'up' : 'down'} size={14} />
-                </button>
-              </>
-            )}
-
-            <button
-              type="button"
-              className="cancellation-banner-close"
-              aria-label="Melding sluiten"
-              onClick={() => {
-                setBarClosed(true)
-                writeStorage('session', barKey)
-              }}
-            >
-              <Icon name="close" />
-            </button>
-          </div>
-
-          {matches.length > MAX_INLINE && unfolded && (
-            <div className="cancellation-banner-cards">
-              {matches.slice(0, MAX_CARDS).map((m) => (
-                <div key={m.matchCode} className="cancellation-card">
-                  <span className="cancellation-card-meta">
-                    {!sameDay && `${m.day} · `}
-                    {m.time && <s>{m.time}</s>} · {m.isHome ? 'Thuis' : 'Uit'}
-                  </span>
-                  <span>
-                    <Teams m={m} />
-                  </span>
-                </div>
-              ))}
-              <Link href="/programma" className="cancellation-card cancellation-card--more">
-                {matches.length > MAX_CARDS
-                  ? `+ ${matches.length - MAX_CARDS} meer in het programma`
-                  : 'Bekijk het programma'}
               </Link>
-            </div>
-          )}
+            ))}
+            {hidden > 0 && (
+              <button
+                type="button"
+                className="cancellation-pill cancellation-pill--more"
+                aria-expanded={unfolded}
+                onClick={() => setUnfolded((v) => !v)}
+              >
+                {unfolded ? 'Minder' : `+${hidden}`}
+                <Icon name={unfolded ? 'up' : 'down'} size={13} />
+              </button>
+            )}
+          </span>
+          <Link href="/programma" className="cancellation-banner-link">
+            Programma ›
+          </Link>
+          <button
+            type="button"
+            className="cancellation-banner-close"
+            aria-label="Melding sluiten"
+            onClick={() => {
+              setBarClosed(true)
+              writeStorage('session', barKey)
+            }}
+          >
+            <Icon name="close" />
+          </button>
         </div>
       </div>
       {popup}
@@ -341,20 +322,33 @@ function CancellationPopup({
           </p>
         )}
 
-        <ul className="cancellation-popup-list">
-          {matches.map((m) => (
-            <li key={m.matchCode}>
-              <span className="cancellation-popup-meta">
-                {(!sameDay || !allCancelled) && `${m.day} · `}
-                {m.time && <s>{m.time}</s>}
-                {!allCancelled && ` · ${m.isHome ? 'Thuis' : 'Uit'}`}
-              </span>
-              <span>
-                <Teams m={m} />
-              </span>
-            </li>
-          ))}
-        </ul>
+        {/* Above MAX_LISTED matches the list scrolls, so the popup keeps its size. */}
+        <div
+          className={`cancellation-popup-scroll${matches.length > MAX_LISTED ? ' is-scrolling' : ''}`}
+        >
+          <ul className="cancellation-popup-list">
+            {matches.map((m) => (
+              <li key={m.matchCode}>
+                <Link href={`/wedstrijd/${m.matchCode}`} onClick={onClose}>
+                  <span className="cancellation-popup-match">
+                    <span className="cancellation-popup-meta">
+                      {(!sameDay || !allCancelled) && `${m.day} · `}
+                      {m.time && <s>{m.time}</s>}
+                      {` · ${m.isHome ? 'Thuis' : 'Uit'}`}
+                    </span>
+                    <span>
+                      <Teams m={m} />
+                    </span>
+                  </span>
+                  <Icon name="right" size={16} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {matches.length > MAX_LISTED && (
+          <p className="cancellation-popup-hint">Scroll voor alle {matches.length} wedstrijden</p>
+        )}
 
         <div className="cancellation-popup-actions">
           <Link href="/programma" className="btn btn--primary" onClick={onClose}>
@@ -367,11 +361,7 @@ function CancellationPopup({
           )}
         </div>
 
-        <p className="cancellation-popup-note">
-          {allCancelled
-            ? 'Je ziet deze melding één keer.'
-            : 'Je ziet deze melding één keer per bezoek.'}
-        </p>
+        <p className="cancellation-popup-note">Tik op een wedstrijd voor meer informatie.</p>
       </div>
     </div>
   )
