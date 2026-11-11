@@ -1,15 +1,16 @@
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import { fetchClubData } from '@/lib/clubdata/fetch'
-import { cached } from '@/lib/ai/cache'
 import { loadTeams, type TeamSummary } from '@/lib/ai/tools/site'
 import { CLUB_ACCOMMODATION } from '@/lib/app-api/config'
 import { dayLabel, type DateRange } from '@/lib/app-api/dates'
 import { slugify, titleCase } from '@/lib/app-api/format'
 import type { MatchDayDto, MatchDto, MatchTeamDto } from '@/lib/app-api/types'
+import { sharedCache } from '@/lib/shared-cache'
 
 // Club.Dataservice (Sportlink) matches in the shape of the app API. The two club-wide lists
-// (everything still to play, and the last weeks of results) are fetched once and cached for a
-// few minutes; program, results, home and the team cards all filter those.
+// (everything still to play, and the last weeks of results) are fetched together and shared by
+// the whole site for CLUB_MATCHES_TTL_S (sharedCache); program, results, home, the team cards,
+// the chat and every agenda feed filter those.
 
 /** Fields of a match in `programma`, `uitslagen`, `pouleuitslagen` and `poule-programma`. */
 export type SportlinkMatch = {
@@ -32,7 +33,11 @@ export type SportlinkMatch = {
   uitslag?: string | null
 }
 
-const TTL_MS = 5 * 60 * 1000
+/**
+ * How long the club's matches are shared before Sportlink is asked again (seconds). Short, so
+ * a cancellation shows soon; it costs one Sportlink call per period for the whole site.
+ */
+export const CLUB_MATCHES_TTL_S = 2 * 60
 const LOGO_URL = 'https://logoapi.voetbal.nl/logo.php?clubcode='
 
 const CLUB_PARAMS = {
@@ -170,30 +175,55 @@ export async function mapMatches(raw: SportlinkMatch[]): Promise<MatchDto[]> {
 const byKickoff = (a: MatchDto, b: MatchDto) =>
   a.date.localeCompare(b.date) || a.kickoff.localeCompare(b.kickoff)
 
+/** Program and results of the whole club, mapped. Shared by the whole site (sharedCache). */
+const loadClubMatches = sharedCache(
+  async () => {
+    const [program, results] = await Promise.all([
+      fetchClubData<SportlinkMatch[]>(
+        'programma',
+        { ...CLUB_PARAMS, aantalregels: '600', aantaldagen: '365', weekoffset: '0' },
+        { fresh: true },
+      ),
+      // The last four weeks (and today). Longer ago is not needed by any endpoint or feed.
+      fetchClubData<SportlinkMatch[]>(
+        'uitslagen',
+        { ...CLUB_PARAMS, aantalregels: '500', aantaldagen: '35', weekoffset: '-4' },
+        { fresh: true },
+      ),
+    ])
+    return {
+      program: (await mapMatches(program)).sort(byKickoff),
+      results: (await mapMatches(results)).sort(byKickoff),
+    }
+  },
+  'club-matches',
+  { revalidate: CLUB_MATCHES_TTL_S },
+)
+
 /** Every SVV'04 match that still has to be played this season, soonest first. */
-export function loadClubProgram(): Promise<MatchDto[]> {
-  return cached('app-club-program', TTL_MS, async () => {
-    const raw = await fetchClubData<SportlinkMatch[]>('programma', {
-      ...CLUB_PARAMS,
-      aantalregels: '600',
-      aantaldagen: '365',
-      weekoffset: '0',
-    })
-    return (await mapMatches(raw)).sort(byKickoff)
-  })
+export async function loadClubProgram(): Promise<MatchDto[]> {
+  return (await loadClubMatches()).program
 }
 
-/** Results of the last four weeks (and today), soonest first. Longer ago is not needed by any endpoint. */
-export function loadClubResults(): Promise<MatchDto[]> {
-  return cached('app-club-results', TTL_MS, async () => {
-    const raw = await fetchClubData<SportlinkMatch[]>('uitslagen', {
-      ...CLUB_PARAMS,
-      aantalregels: '500',
-      aantaldagen: '35',
-      weekoffset: '-4',
-    })
-    return (await mapMatches(raw)).sort(byKickoff)
-  })
+/** Results of the last four weeks (and today), soonest first. */
+export async function loadClubResults(): Promise<MatchDto[]> {
+  return (await loadClubMatches()).results
+}
+
+/**
+ * The matches of one team: everything still to play plus the results of the last four weeks,
+ * soonest first. Filters the shared club lists; a result replaces the same match from the
+ * program.
+ */
+export async function loadTeamMatches(teamSlug: string): Promise<MatchDto[]> {
+  const { program, results } = await loadClubMatches()
+  const byId = new Map<string, MatchDto>()
+  for (const m of [...program, ...results]) {
+    if (m.ownTeamSlug === teamSlug) {
+      byId.set(m.id, m)
+    }
+  }
+  return [...byId.values()].sort(byKickoff)
 }
 
 const inRange = (m: MatchDto, range: DateRange) => m.date >= range.from && m.date <= range.to

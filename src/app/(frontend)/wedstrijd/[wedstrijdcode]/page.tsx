@@ -3,13 +3,28 @@
 import React from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { format, parseISO, isValid } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import MatchCard from '@/components/ui/MatchCard'
-import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
+import CalendarButton from '@/components/ui/CalendarDialog'
+import { addMinutes, matchMinutes } from '@/lib/agenda/links'
+import {
+  clubScheduleQuery,
+  gameInfoQuery,
+  gameHomeTeamQuery,
+  gameAwayTeamQuery,
+} from '@/lib/clubdata/queries'
+import {
+  amsterdamToday,
+  browserTestMode,
+  cancellationLabel,
+  testCancelledCodes,
+  type CancellationTestMode,
+} from '@/lib/clubdata/cancellation'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
+import { SITE_URL } from '@/lib/app-api/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
 
 function parseDateStr(s: string): Date | null {
@@ -71,6 +86,23 @@ export default function WedstrijdDetailPage() {
 
   const hasScore = info?.thuisscore !== null && info?.uitscore !== null
 
+  // The match details carry no status; the club programme does (afgelast, uitgesteld, ...).
+  const { data: schedule } = useQuery(clubScheduleQuery('alles'))
+  // Test mode on previews (?afgelasting=test, =veel or =alles): the same matches as in the bar.
+  const [testMode, setTestMode] = React.useState<CancellationTestMode | null>(null)
+  React.useEffect(() => setTestMode(browserTestMode()), [])
+  // The link in a calendar event points to this site: the live one by default, a preview or
+  // localhost once the page runs in the browser.
+  const [siteUrl, setSiteUrl] = React.useState(SITE_URL)
+  React.useEffect(() => setSiteUrl(window.location.origin), [])
+  const testCancelled =
+    testMode !== null &&
+    testCancelledCodes(schedule ?? [], testMode, amsterdamToday()).has(Number(wedstrijdcode))
+  const status = testCancelled
+    ? 'Afgelast'
+    : schedule?.find((m) => String(m.matchCode) === wedstrijdcode)?.status
+  const cancelled = cancellationLabel(status)
+
   const pageTitle = info ? `${info.thuisteam} – ${info.uitteam}` : 'Wedstrijd'
 
   return (
@@ -115,6 +147,32 @@ export default function WedstrijdDetailPage() {
         {info && (
           <>
             {/* Match header: the shared match card, with what only this page knows around it */}
+            {cancelled && (
+              <div className="wedstrijd-cancelled" role="status">
+                <span className="wedstrijd-cancelled-icon" aria-hidden="true">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M5.6 5.6l12.8 12.8" />
+                  </svg>
+                </span>
+                <div className="wedstrijd-cancelled-text">
+                  <strong>Deze wedstrijd is {cancelled.toLowerCase()}</strong>
+                  <span>Een nieuwe datum zie je in het programma zodra die bekend is.</span>
+                </div>
+                <Link href="/programma" className="wedstrijd-cancelled-link">
+                  Naar het programma ›
+                </Link>
+              </div>
+            )}
+
             <div className="wedstrijd-header">
               {info.klasse && <div className="wedstrijd-header-meta">{info.klasse}</div>}
 
@@ -129,6 +187,7 @@ export default function WedstrijdDetailPage() {
                 time={info.aanvangstijdopgemaakt}
                 score={hasScore ? `${info.thuisscore} – ${info.uitscore}` : undefined}
                 venue={info.veldnaam}
+                status={status}
                 homeNote={kleedkamers?.thuis ? `Kleedkamer ${kleedkamers.thuis}` : undefined}
                 awayNote={kleedkamers?.uit ? `Kleedkamer ${kleedkamers.uit}` : undefined}
               />
@@ -148,6 +207,73 @@ export default function WedstrijdDetailPage() {
                   ))}
               </div>
             </div>
+
+            {/* Before the match: in your calendar and the way there. A dark band with a line of
+                text on a computer, only the two buttons on a phone. */}
+            {!hasScore && !cancelled && (isOwnHome || isOwnAway || accommodatie?.naam) && (
+              <section className="wedstrijd-plan" aria-label="Naar de wedstrijd">
+                <div className="wedstrijd-plan-text">
+                  <h2 className="wedstrijd-plan-title">Ga je kijken?</h2>
+                  <p>Zet de wedstrijd in je agenda of plan je route.</p>
+                </div>
+                <div className="wedstrijd-plan-actions">
+                  {(isOwnHome || isOwnAway) && (
+                    <CalendarButton
+                      label="Zet in mijn agenda"
+                      title="Zet in je agenda"
+                      subtitle={`${info.thuisteam} - ${info.uitteam}${displayDate ? `, ${displayDate}` : ''}`}
+                      target={{
+                        kind: 'event',
+                        event: {
+                          title: `${info.thuisteam} - ${info.uitteam}`,
+                          ...(date
+                            ? {
+                                start: date,
+                                end: addMinutes(
+                                  date,
+                                  matchMinutes(isOwnHome ? info.thuisteam : info.uitteam),
+                                ),
+                              }
+                            : { firstDay: info.wedstrijddatum.slice(0, 10) }),
+                          location: [accommodatie?.naam, accommodatie?.straat, accommodatie?.plaats]
+                            .filter(Boolean)
+                            .join(', '),
+                          details: `Kijk op ${siteUrl}/wedstrijd/${wedstrijdcode} voor afgelastingen en wijzigingen.`,
+                        },
+                        icsPath: `/api/agenda/wedstrijd/${wedstrijdcode}.ics`,
+                        fileName: `svv04-wedstrijd-${wedstrijdcode}.ics`,
+                      }}
+                    />
+                  )}
+                  {accommodatie?.naam && (
+                    <a
+                      className="btn wedstrijd-plan-route"
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                        [accommodatie.naam, accommodatie.straat, accommodatie.plaats]
+                          .filter(Boolean)
+                          .join(', '),
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 11l18-8-8 18-2-8z" />
+                      </svg>
+                      Navigeer
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
 
             {/* Opmerkingen */}
             {info.opmerkingen && (

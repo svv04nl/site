@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { cancellationLabel } from '@/lib/clubdata/cancellation'
 
 type Props = {
   /** Omit when the card sits under a heading that already shows the day. */
@@ -82,8 +83,10 @@ export default function MatchCard({
 }: Props) {
   const centerLabel = score ?? time ?? ''
   const where = location !== undefined ? location : isOwnHome ? 'Thuis' : isOwnAway ? 'Uit' : null
-  const showStatus = status && status !== 'Te spelen' && status !== 'Uitgespeeld'
-  const className = `match-card${href ? ' match-card--clickable' : ''}`
+  // A cancelled match keeps its card, greyed out, with the time struck through and a red label.
+  const cancelled = cancellationLabel(status)
+  const showStatus = !cancelled && status && status !== 'Te spelen' && status !== 'Uitgespeeld'
+  const className = `match-card${href ? ' match-card--clickable' : ''}${cancelled ? ' match-card--cancelled' : ''}`
 
   const body = (
     <>
@@ -95,9 +98,10 @@ export default function MatchCard({
           <div
             className={`match-card-time${/\d/.test(centerLabel) ? '' : ' match-card-time--text'}`}
           >
-            {centerLabel}
+            {cancelled && !score ? <s>{centerLabel}</s> : centerLabel}
           </div>
         )}
+        {cancelled && <span className="match-status-chip">{cancelled}</span>}
         {where && <span className="match-card-location">{where}</span>}
         {(venue || showStatus) && (
           <div className="match-card-meta">

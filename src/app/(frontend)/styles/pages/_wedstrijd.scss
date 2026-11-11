@@ -198,3 +198,130 @@
     grid-template-columns: 1fr;
   }
 }
+
+// ─── Ga je kijken? (agenda en route) ─────────────────────────────────────────
+// Computer: a dark band with a line of text and two buttons. Phone: only the buttons.
+
+.wedstrijd-plan {
+  align-items: center;
+  background: var(--color-dark);
+  border-radius: 12px;
+  color: var(--color-white);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    background: none;
+    border-radius: 0;
+    padding: 0;
+  }
+}
+
+.wedstrijd-plan-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  p {
+    color: rgb(255 255 255 / 72%);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    display: none;
+  }
+}
+
+.wedstrijd-plan-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.wedstrijd-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-left: auto;
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+// On the dark band a white button; on a phone a dark outline next to the red one.
+.wedstrijd-plan-route {
+  background: var(--color-white);
+  color: var(--color-dark) !important;
+
+  &:hover {
+    background: #eee;
+    transform: translateY(-2px);
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    border: 1.5px solid var(--color-dark);
+  }
+}
+
+// ─── Afgelast ────────────────────────────────────────────────────────────────
+
+.wedstrijd-cancelled {
+  align-items: center;
+  background: #fdecec;
+  border-radius: 12px;
+  color: #8a0d0d;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.wedstrijd-cancelled-icon {
+  align-items: center;
+  background: var(--color-primary);
+  border-radius: 50%;
+  color: var(--color-white);
+  display: flex;
+  flex: none;
+  height: 2.5rem;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+.wedstrijd-cancelled-text {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  strong {
+    color: var(--color-dark);
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+
+  span {
+    color: #555;
+    font-size: 0.9rem;
+  }
+}
+
+.wedstrijd-cancelled-link {
+  color: var(--color-primary);
+  flex: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
