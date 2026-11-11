@@ -21,6 +21,7 @@ vi.mock('@/lib/ai/tools/site', () => ({
 const { fetchClubData } = await import('@/lib/clubdata/fetch')
 const { loadTeamMatches } = await import('@/lib/app-api/matches')
 const { withEdgeCache } = await import('@/lib/edge-cache')
+const { withoutIcsExtension } = await import('@/lib/agenda/ics')
 
 const match = (code: number, date: string, extra: Record<string, unknown> = {}) => ({
   wedstrijdcode: code,
@@ -71,7 +72,7 @@ describe('withEdgeCache', () => {
 
   it('bouwt zonder Cache API (next dev, tests) gewoon het antwoord', async () => {
     const build = vi.fn(async () => new Response('feed'))
-    const res = await withEdgeCache(new Request('https://svv04.nl/api/agenda/team/x'), build)
+    const res = await withEdgeCache(new Request('https://svv04.nl/api/agenda/team/x.ics'), build)
     expect(await res.text()).toBe('feed')
     expect(build).toHaveBeenCalledOnce()
   })
@@ -84,7 +85,7 @@ describe('withEdgeCache', () => {
         put: vi.fn(async (req: Request, res: Response) => void store.set(req.url, res)),
       },
     })
-    const url = 'https://svv04.nl/api/agenda/team/svv04-1'
+    const url = 'https://svv04.nl/api/agenda/team/svv04-1.ics'
     const build = vi.fn(async () => new Response('feed'))
 
     expect(await (await withEdgeCache(new Request(url), build)).text()).toBe('feed')
@@ -95,5 +96,14 @@ describe('withEdgeCache', () => {
     await withEdgeCache(new Request(`${url}-onbekend`), missing)
     await withEdgeCache(new Request(`${url}-onbekend`), missing)
     expect(missing).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('withoutIcsExtension', () => {
+  it('haalt .ics van de naam af en weigert een URL zonder extensie', () => {
+    expect(withoutIcsExtension('svv04-1.ics')).toBe('svv04-1')
+    expect(withoutIcsExtension('12345678.ICS')).toBe('12345678')
+    expect(withoutIcsExtension('svv04-1')).toBeNull()
+    expect(withoutIcsExtension('.ics')).toBeNull()
   })
 })

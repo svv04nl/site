@@ -127,3 +127,12 @@ export function icsResponse(body: string, filename: string, download: boolean): 
     },
   })
 }
+
+/**
+ * The name in an agenda URL without its `.ics` extension (`svv04-1.ics` gives `svv04-1`), or
+ * null when the extension is missing. Calendar apps recognise a feed by that extension.
+ */
+export function withoutIcsExtension(segment: string): string | null {
+  const match = /^(.+)\.ics$/i.exec(segment)
+  return match ? match[1] : null
+}

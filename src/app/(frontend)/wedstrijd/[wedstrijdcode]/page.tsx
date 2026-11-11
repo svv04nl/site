@@ -153,7 +153,7 @@ export default function WedstrijdDetailPage() {
               {(isOwnHome || isOwnAway) && !hasScore && (
                 <a
                   className="btn btn--outline-dark wedstrijd-agenda-btn"
-                  href={`/api/agenda/wedstrijd/${wedstrijdcode}`}
+                  href={`/api/agenda/wedstrijd/${wedstrijdcode}.ics`}
                   download
                 >
                   <CalendarIcon />

@@ -1,4 +1,4 @@
-import { icsResponse, matchesToIcs } from '@/lib/agenda/ics'
+import { icsResponse, matchesToIcs, withoutIcsExtension } from '@/lib/agenda/ics'
 import { loadTeams } from '@/lib/ai/tools/site'
 import { loadTeamMatches } from '@/lib/app-api/matches'
 import { withEdgeCache } from '@/lib/edge-cache'
@@ -8,7 +8,11 @@ import { withEdgeCache } from '@/lib/edge-cache'
 // the whole feed sits in the edge cache (s-maxage in icsResponse) and only that team's matches
 // are asked from Sportlink.
 export async function GET(request: Request, context: { params: Promise<{ slug: string }> }) {
-  const { slug } = await context.params
+  // The URL ends in .ics: /api/agenda/team/svv04-1.ics
+  const slug = withoutIcsExtension((await context.params).slug)
+  if (!slug) {
+    return new Response('Niet gevonden', { status: 404 })
+  }
   return withEdgeCache(request, async () => {
     const team = (await loadTeams()).find((t) => t.slug === slug)
     if (!team) {

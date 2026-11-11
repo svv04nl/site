@@ -11,8 +11,8 @@ export default function TeamCalendarSection({ slug }: { slug: string }) {
 
   useEffect(() => setHost(window.location.host), [])
 
-  const httpsUrl = `https://${host}/api/agenda/team/${slug}`
-  const webcalUrl = `webcal://${host}/api/agenda/team/${slug}`
+  const httpsUrl = `https://${host}/api/agenda/team/${slug}.ics`
+  const webcalUrl = `webcal://${host}/api/agenda/team/${slug}.ics`
   const googleUrl = `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcalUrl)}`
 
   const copy = async () => {
