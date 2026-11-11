@@ -2,15 +2,13 @@ import React from 'react'
 import { clubScheduleQuery } from '@/lib/clubdata/queries'
 import type { ScheduleMatch } from '@/lib/clubdata/transform'
 import { isProduction } from '@/lib/site-env'
+import { amsterdamToday, cancellationLabel, testCancelledCodes } from '@/lib/clubdata/cancellation'
 import {
   CancellationBannerClient,
   type AllCancelled,
   type CancellationData,
   type CancelledMatch,
 } from './CancellationBannerClient'
-
-// Sportlink puts these words in a match's status when it does not go ahead.
-const CANCELLED_KEYWORDS = ['afgelast', 'uitgesteld', 'gestaakt', 'afgekeurd']
 
 // Show cancellations for today and the next few days, so a Saturday cancellation
 // is already visible on Thursday or Friday.
@@ -20,8 +18,7 @@ const DAYS_AHEAD = 3
 // cancelled home match on a quiet Tuesday does not count as a club-wide decision.
 const MIN_FOR_ALL = 2
 
-const isCancelled = (m: ScheduleMatch) =>
-  CANCELLED_KEYWORDS.some((kw) => m.status?.toLowerCase().includes(kw))
+const isCancelled = (m: ScheduleMatch) => cancellationLabel(m.status) !== null
 
 /** "YYYY-MM-DD" for today in Dutch time, plus `offset` days. */
 function amsterdamDayKey(offset = 0) {
@@ -72,38 +69,28 @@ function findAllCancelled(own: ScheduleMatch[]): AllCancelled | null {
   return null
 }
 
-// Test modes: on previews and locally (never on the live site, see isProduction in
-// lib/site-env), add ?afgelasting=test, =veel or =alles to any URL.
-function testData(): Record<string, CancellationData> {
-  const day = amsterdamDayKey(2)
-  const m = (
-    matchCode: number,
-    time: string,
-    home: string,
-    away: string,
-    isHome = true,
-  ): CancelledMatch => ({ matchCode, dayKey: day, day: shortDay(day), time, home, away, isHome })
-  const few = [
-    m(1, '14:00', "SVV'04 1", 'Testclub 1'),
-    m(2, '09:00', "SVV'04 JO11-1", 'Testclub JO11-2'),
-  ]
-  const many = [
-    ...few,
-    m(3, '12:30', 'Testclub 2', "SVV'04 2", false),
-    m(4, '10:30', "SVV'04 JO13-1", 'Testclub JO13-3'),
-    m(5, '11:00', 'Testclub MO15-1', "SVV'04 MO15-1", false),
-    m(6, '12:00', "SVV'04 VR1", 'Testclub VR1'),
-    m(7, '08:30', "SVV'04 JO9-2", 'Testclub JO9-1'),
-  ]
-  const homeOnly = many.filter((x) => x.isHome)
-  return {
-    test: { matches: few, allCancelled: null },
-    veel: { matches: many, allCancelled: null },
-    alles: {
-      matches: homeOnly,
-      allCancelled: { dayKey: day, dayLong: longDay(day), scope: 'thuis' },
-    },
+/**
+ * Test modes on previews and locally (never on the live site, see isProduction in
+ * lib/site-env): ?afgelasting=test, =veel or =alles pretends that real upcoming matches are
+ * cancelled. The same matches as on the programme and the match page in test mode
+ * (testCancelledCodes), so the links in the bar lead to real match pages.
+ */
+function testData(all: ScheduleMatch[]): Record<string, CancellationData> {
+  const today = amsterdamToday()
+  const result: Record<string, CancellationData> = {}
+  for (const mode of ['test', 'veel', 'alles'] as const) {
+    const codes = testCancelledCodes(all, mode, today)
+    const picked = all
+      .filter((m) => codes.has(m.matchCode))
+      .sort((a, b) => a.dayKey.localeCompare(b.dayKey) || a.time.localeCompare(b.time))
+    const day = picked[0]?.dayKey
+    result[mode] = {
+      matches: picked.map(toCancelled),
+      allCancelled:
+        mode === 'alles' && day ? { dayKey: day, dayLong: longDay(day), scope: 'thuis' } : null,
+    }
   }
+  return result
 }
 
 /**
@@ -113,13 +100,13 @@ function testData(): Record<string, CancellationData> {
  */
 export default async function CancellationBanner() {
   let data: CancellationData = { matches: [], allCancelled: null }
+  let all: ScheduleMatch[] = []
 
   try {
     const from = amsterdamDayKey(0)
     const to = amsterdamDayKey(DAYS_AHEAD)
-    const own = (await clubScheduleQuery('alles').queryFn()).filter(
-      (m) => m.isOwn && m.dayKey >= from && m.dayKey <= to,
-    )
+    all = await clubScheduleQuery('alles').queryFn()
+    const own = all.filter((m) => m.isOwn && m.dayKey >= from && m.dayKey <= to)
     const cancelled = own.filter(isCancelled)
     data = {
       matches: cancelled
@@ -131,7 +118,7 @@ export default async function CancellationBanner() {
     // No Sportlink data: no bar.
   }
 
-  const tests = isProduction() ? undefined : testData()
+  const tests = isProduction() || all.length === 0 ? undefined : testData(all)
   if (data.matches.length === 0 && !tests) {
     return null
   }

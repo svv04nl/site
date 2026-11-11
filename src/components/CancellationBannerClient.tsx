@@ -3,6 +3,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { testModeParam } from '@/lib/clubdata/cancellation'
 
 export type CancelledMatch = {
   matchCode: number
@@ -111,7 +112,7 @@ export function CancellationBannerClient({
   const closeRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    const key = new URLSearchParams(window.location.search).get('afgelasting')
+    const key = testModeParam()
     if (tests && key && tests[key]) {
       setTestKey(key)
     }
@@ -134,26 +135,33 @@ export function CancellationBannerClient({
   const popupKey = isPhone
     ? `svv-afgelast-popup-${codes}`
     : `svv-afgelast-alles-${allCancelled?.dayKey ?? ''}`
-  // Computer: the popup is only for "everything cancelled", on the homepage.
-  const popupWanted = isPhone ? matches.length > 0 : Boolean(allCancelled) && pathname === '/'
+  // In the test mode nothing is remembered, so a reload shows everything again.
+  const testing = testKey !== null
+  // Computer: the popup is only for "everything cancelled", on the homepage (any page in the
+  // test mode).
+  const popupWanted = isPhone
+    ? matches.length > 0
+    : Boolean(allCancelled) && (pathname === '/' || testing)
 
   useEffect(() => {
-    setBarClosed(readStorage('session', barKey))
-  }, [barKey])
+    setBarClosed(!testing && readStorage('session', barKey))
+  }, [barKey, testing])
 
   useEffect(() => {
     if (isPhone === null) {
       return
     }
     // Phone: once per visit. Computer: once per day (the key holds the day).
-    setPopupSeen(readStorage(isPhone ? 'session' : 'local', popupKey))
-  }, [isPhone, popupKey])
+    setPopupSeen(!testing && readStorage(isPhone ? 'session' : 'local', popupKey))
+  }, [isPhone, popupKey, testing])
 
   const showPopup = popupWanted && !popupSeen
 
   function closePopup() {
     setPopupSeen(true)
-    writeStorage(isPhone ? 'session' : 'local', popupKey)
+    if (!testing) {
+      writeStorage(isPhone ? 'session' : 'local', popupKey)
+    }
   }
 
   // Popup open: focus on its close button, Escape closes it.
@@ -168,7 +176,16 @@ export function CancellationBannerClient({
       }
     }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    // The page behind stays still. Scrolling it made the phone's address bar move, and the
+    // popup jumped with it.
+    const html = document.documentElement
+    const previous = [html.style.overflow, document.body.style.overflow]
+    html.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      ;[html.style.overflow, document.body.style.overflow] = previous
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPopup])
 
@@ -243,7 +260,9 @@ export function CancellationBannerClient({
             aria-label="Melding sluiten"
             onClick={() => {
               setBarClosed(true)
-              writeStorage('session', barKey)
+              if (!testing) {
+                writeStorage('session', barKey)
+              }
             }}
           >
             <Icon name="close" />

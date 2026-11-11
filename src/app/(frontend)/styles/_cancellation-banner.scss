@@ -147,6 +147,7 @@ $cancel-muted: #a35a5a;
 
 .cancellation-popup-shade {
   animation: cancellation-fade 0.2s ease;
+  touch-action: none;
   background: rgb(0 0 0 / 45%);
   inset: 0;
   position: absolute;
@@ -163,6 +164,7 @@ $cancel-muted: #a35a5a;
   max-height: calc(100vh - 2rem);
   max-width: 28rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1.5rem;
   position: relative;
   width: 100%;
@@ -268,6 +270,7 @@ $cancel-muted: #a35a5a;
 }
 
 .cancellation-popup-list {
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
