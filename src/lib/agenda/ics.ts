@@ -1,5 +1,6 @@
 import { SITE_URL } from '@/lib/app-api/config'
-import type { MatchDto } from '@/lib/app-api/types'
+import type { ActivityDto, MatchDto } from '@/lib/app-api/types'
+import { amsterdamTime } from '@/lib/agenda/links'
 
 // Matches as an iCalendar file (RFC 5545), for "Zet in agenda" on a match and the agenda feed
 // per team. Times go out in UTC, so no time zone block is needed. No gathering time: Sportlink
@@ -95,13 +96,12 @@ function matchEvent(m: MatchDto, now: Date): string[] {
   ]
 }
 
-/** A calendar with the given matches. `name` makes it a feed you can subscribe to. */
-export function matchesToIcs(matches: MatchDto[], name?: string): string {
-  const now = new Date()
+/** A calendar around the given events. `name` makes it a feed you can subscribe to. */
+function calendar(events: string[], name?: string): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    "PRODID:-//SVV'04//Wedstrijden//NL",
+    "PRODID:-//SVV'04//Agenda//NL",
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     ...(name
@@ -112,10 +112,53 @@ export function matchesToIcs(matches: MatchDto[], name?: string): string {
           'X-PUBLISHED-TTL:PT6H',
         ]
       : []),
-    ...matches.flatMap((m) => matchEvent(m, now)),
+    ...events,
     'END:VCALENDAR',
   ]
   return lines.map(fold).join('\r\n') + '\r\n'
+}
+
+/** A calendar with the given matches. `name` makes it a feed you can subscribe to. */
+export function matchesToIcs(matches: MatchDto[], name?: string): string {
+  const now = new Date()
+  return calendar(
+    matches.flatMap((m) => matchEvent(m, now)),
+    name,
+  )
+}
+
+// Sportlink has no end time for activities: a timed activity gets two hours.
+const ACTIVITY_MINUTES = 120
+
+function activityEvent(a: ActivityDto, now: Date): string[] {
+  const start = a.time ? amsterdamTime(a.date, a.time) : undefined
+  const when = start
+    ? [
+        `DTSTART:${utcStamp(start)}`,
+        `DTEND:${utcStamp(new Date(start.getTime() + ACTIVITY_MINUTES * 60_000))}`,
+      ]
+    : [`DTSTART;VALUE=DATE:${dateOnly(a.date)}`, `DTEND;VALUE=DATE:${dateOnly(nextDay(a.date))}`]
+
+  return [
+    'BEGIN:VEVENT',
+    `UID:activiteit-${a.id}@svv04.nl`,
+    `DTSTAMP:${utcStamp(now)}`,
+    ...when,
+    `SUMMARY:${escapeText(a.title)}`,
+    ...(a.location ? [`LOCATION:${escapeText(a.location)}`] : []),
+    ...(a.note ? [`DESCRIPTION:${escapeText(a.note)}`] : []),
+    `URL:${SITE_URL}/agenda`,
+    'END:VEVENT',
+  ]
+}
+
+/** The club calendar (activities, no matches) as a feed. */
+export function activitiesToIcs(activities: ActivityDto[], name: string): string {
+  const now = new Date()
+  return calendar(
+    activities.flatMap((a) => activityEvent(a, now)),
+    name,
+  )
 }
 
 export function icsResponse(body: string, filename: string, download: boolean): Response {

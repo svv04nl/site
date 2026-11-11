@@ -9,6 +9,7 @@ import {
 } from '@/lib/clubdata/transform'
 import { clubScheduleQuery } from '@/lib/clubdata/queries'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
+import ProgramCalendarButton from '@/components/ProgramCalendarButton'
 
 type Filter = 'thuis' | 'uit' | 'alles'
 
@@ -51,6 +52,7 @@ export default function ClubSchedule({ range, emptyMessage }: Props) {
             Alle wedstrijden
           </button>
         </div>
+        <ProgramCalendarButton />
       </div>
 
       {isError && (

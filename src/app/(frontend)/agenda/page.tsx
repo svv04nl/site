@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { activiteitenQuery } from '@/lib/clubdata/queries'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import CalendarButton from '@/components/ui/CalendarDialog'
 
 export default function AgendaPage() {
   const { data: activiteiten = [] } = useQuery(activiteitenQuery(365))
@@ -28,6 +29,20 @@ export default function AgendaPage() {
 
       <div className="page-inner agenda-inner">
         <SectionHeader as="h1" title="Agenda" />
+
+        {/* Subscribe to the club calendar: new activities come in by themselves */}
+        <div className="agenda-subscribe">
+          <div>
+            <strong>Volg de clubagenda</strong>
+            <span>Activiteiten van de club in je eigen agenda, altijd actueel.</span>
+          </div>
+          <CalendarButton
+            title="Volg de clubagenda"
+            subtitle="Alle activiteiten van SVV'04, altijd actueel."
+            label="Volgen"
+            target={{ kind: 'feed', path: '/api/agenda/clubagenda.ics', name: "SVV'04 clubagenda" }}
+          />
+        </div>
 
         {activiteiten.length === 0 ? (
           <p className="agenda-empty">Geen activiteiten gepland.</p>

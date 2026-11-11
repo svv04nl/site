@@ -94,7 +94,7 @@ export default async function TeamPage({ params }: Props) {
           <div className="sidebar-col">
             <div className="sidebar-col__inner">
               <TeamNextMatchSection teamcode={teamcode!} teamName={team.name} />
-              {teamcode && <TeamCalendarSection slug={slug} />}
+              {teamcode && <TeamCalendarSection slug={slug} teamName={team.name} />}
               <TeamSponsorSection sponsors={team.sponsors} />
 
               {teamPosts.length > 0 && (

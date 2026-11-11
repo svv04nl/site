@@ -8,7 +8,8 @@ import { format, parseISO, isValid } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import MatchCard from '@/components/ui/MatchCard'
-import CalendarIcon from '@/components/ui/CalendarIcon'
+import CalendarButton from '@/components/ui/CalendarDialog'
+import { addMinutes, matchMinutes } from '@/lib/agenda/links'
 import { gameInfoQuery, gameHomeTeamQuery, gameAwayTeamQuery } from '@/lib/clubdata/queries'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
@@ -148,19 +149,68 @@ export default function WedstrijdDetailPage() {
                     </span>
                   ))}
               </div>
-
-              {/* Only own matches still to play are in the agenda file */}
-              {(isOwnHome || isOwnAway) && !hasScore && (
-                <a
-                  className="btn btn--outline-dark wedstrijd-agenda-btn"
-                  href={`/api/agenda/wedstrijd/${wedstrijdcode}.ics`}
-                  download
-                >
-                  <CalendarIcon />
-                  Zet in agenda
-                </a>
-              )}
             </div>
+
+            {/* Before the match: in your calendar, and the way there */}
+            {!hasScore && (
+              <section className="wedstrijd-section wedstrijd-plan">
+                {(isOwnHome || isOwnAway) && (
+                  <div className="card wedstrijd-plan-card">
+                    <h2 className="wedstrijd-section-title">In je agenda</h2>
+                    <p>Zet deze wedstrijd in je eigen agenda, met tijd en adres.</p>
+                    <CalendarButton
+                      className="btn btn--outline-dark calendar-button"
+                      label="Zet in mijn agenda"
+                      title="Zet in je agenda"
+                      subtitle={`${info.thuisteam} - ${info.uitteam}${displayDate ? `, ${displayDate}` : ''}`}
+                      target={{
+                        kind: 'event',
+                        event: {
+                          title: `${info.thuisteam} - ${info.uitteam}`,
+                          ...(date
+                            ? {
+                                start: date,
+                                end: addMinutes(
+                                  date,
+                                  matchMinutes(isOwnHome ? info.thuisteam : info.uitteam),
+                                ),
+                              }
+                            : { firstDay: info.wedstrijddatum.slice(0, 10) }),
+                          location: [accommodatie?.naam, accommodatie?.straat, accommodatie?.plaats]
+                            .filter(Boolean)
+                            .join(', '),
+                          details: `Kijk op https://svv04.nl/wedstrijd/${wedstrijdcode} voor afgelastingen en wijzigingen.`,
+                        },
+                        icsPath: `/api/agenda/wedstrijd/${wedstrijdcode}.ics`,
+                        fileName: `svv04-wedstrijd-${wedstrijdcode}.ics`,
+                      }}
+                    />
+                  </div>
+                )}
+                {accommodatie?.naam && (
+                  <div className="card wedstrijd-plan-card">
+                    <h2 className="wedstrijd-section-title">Route</h2>
+                    <p>
+                      <strong>{accommodatie.naam}</strong>
+                      {(accommodatie.straat || accommodatie.plaats) && <br />}
+                      {[accommodatie.straat, accommodatie.plaats].filter(Boolean).join(', ')}
+                    </p>
+                    <a
+                      className="btn btn--outline-dark"
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                        [accommodatie.naam, accommodatie.straat, accommodatie.plaats]
+                          .filter(Boolean)
+                          .join(', '),
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Navigeer
+                    </a>
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* Opmerkingen */}
             {info.opmerkingen && (
