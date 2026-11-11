@@ -27,8 +27,8 @@ export const Media: CollectionConfig = {
       ({ doc, req }) => {
         if (!doc?.id) return doc
         const origin = originOf(req)
-        // File URLs come from the filename, the same with or without the R2 plugin loaded
-        // (it is off in next build and scripts). The stored url columns still hold old Blob URLs.
+        // File URLs come from the filename (also in next build and scripts, where the R2 plugin
+        // has no bucket). The stored url columns still hold old Blob URLs.
         const sizes: Record<string, any> = {}
         for (const [name, size] of Object.entries(doc.sizes ?? {}) as [string, any][]) {
           sizes[name] = size?.filename
