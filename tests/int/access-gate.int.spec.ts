@@ -229,6 +229,9 @@ describe('submitAccessCode', () => {
     await vi.advanceTimersByTimeAsync(ms)
   }
 
+  // Runs the action until it is done. The crypto runs on a real thread and can take a while on
+  // a slow CI runner, so keep yielding until the action settles (a fixed number of rounds left
+  // the fake 600 ms pause unadvanced there, and the test hung until its timeout).
   const submit = async (fields: Record<string, string>) => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     let settled = false
@@ -237,7 +240,10 @@ describe('submitAccessCode', () => {
       .finally(() => {
         settled = true
       })
-    for (let i = 0; i < 100 && !settled; i++) {
+    for (let i = 0; !settled; i++) {
+      if (i > 10_000) {
+        throw new Error('submitAccessCode did not settle')
+      }
       await tick(50)
     }
     return result
@@ -300,14 +306,19 @@ describe('submitAccessCode', () => {
       () => (done = true),
     )
 
-    // Na 300 ms nep-tijd is er nog geen antwoord, na 800 ms wel.
-    for (let i = 0; i < 6; i++) {
-      await tick(50)
+    // Eerst de echte crypto laten afronden, tot de actie op zijn pauze wacht (een nep-timer staat
+    // klaar). Op een trage CI-runner duurt dat langer dan een vast aantal rondes.
+    for (let i = 0; vi.getTimerCount() === 0; i++) {
+      if (i > 10_000) {
+        throw new Error('submitAccessCode never started its pause')
+      }
+      await new Promise((resolve) => setImmediate(resolve))
     }
+
+    // Na 300 ms nep-tijd is er nog geen antwoord, na 700 ms wel.
+    await vi.advanceTimersByTimeAsync(300)
     expect(done).toBe(false)
-    for (let i = 0; i < 10 && !done; i++) {
-      await tick(50)
-    }
+    await vi.advanceTimersByTimeAsync(400)
     await pending
     expect(done).toBe(true)
   })
