@@ -80,14 +80,43 @@ Environments `Production` en `Preview`.
 
 Op `main` zijn geen checks verplicht; een PR is wel verplicht, en alleen squash-merges.
 
+## DNS naar Cloudflare, eerst op preview.svv04.nl
+
+De zone `svv04.nl` gaat van Oxilion naar Cloudflare (account SVV04). Eerst blijft de oude site op
+`svv04.nl` en `www` draaien; de nieuwe site komt op `preview.svv04.nl`.
+
+DNS bij Oxilion (november 2026), over te nemen in Cloudflare, allemaal **DNS only** (grijze wolk):
+
+| Naam           | Type  | Waarde                                                                            |
+| -------------- | ----- | --------------------------------------------------------------------------------- |
+| `svv04.nl`     | A     | `46.19.218.203`                                                                   |
+| `svv04.nl`     | AAAA  | `2a00:d10:1141:5::203`                                                            |
+| `svv04.nl`     | MX 5  | `svv04-nl.mail.protection.outlook.com` (Microsoft 365)                            |
+| `svv04.nl`     | TXT   | `MS=ms26732109`                                                                   |
+| `svv04.nl`     | TXT   | `v=spf1 a mx include:spf.mail-scanner.eu include:spf.protection.outlook.com ~all` |
+| `www`          | A     | `46.19.218.203`                                                                   |
+| `mail`         | A     | `46.19.218.203`                                                                   |
+| `autodiscover` | CNAME | `autodiscover.outlook.com`                                                        |
+| `*`            | CNAME | `svv04.nl`                                                                        |
+
+1. **DNSSEC uit** bij de registrar (Registrar.eu, via Oxilion): het DS-record weghalen en een
+   paar uur wachten. Met het oude DS-record erin werkt het domein niet meer na het omzetten.
+2. **Zone toevoegen** in Cloudflare (_Add a domain_, gratis plan). Controleer dat de geïmporteerde
+   records gelijk zijn aan de tabel en zet ze op DNS only.
+3. **Nameservers omzetten** bij de registrar naar de twee die Cloudflare geeft. Wacht tot de zone
+   _Active_ is.
+4. **API-token** van GitHub Actions uitbreiden met _Zone → Workers Routes → Edit_ voor `svv04.nl`.
+5. **De PR met `preview.svv04.nl` mergen**: de deploy maakt het custom domain, het DNS-record en
+   het certificaat aan.
+6. **DNSSEC weer aan**, nu in Cloudflare (_DNS → Settings_), en het nieuwe DS-record bij de
+   registrar zetten.
+
 ## Live gaan
 
-1. **DNS**: `svv04.nl` staat bij Oxilion. Voeg de zone toe aan Cloudflare (gratis plan),
-   controleer dat **alle** records zijn overgenomen (vooral MX, SPF, DKIM en de
-   Resend-records) en zet de nameservers bij de registrar om.
-2. Koppel `svv04.nl` (en `www`) als _Custom Domain_ aan de Worker `site`.
-3. Haal `SITE_ACCESS_CODE` weg (`pnpm wrangler secret delete SITE_ACCESS_CODE`) als de site open mag.
-4. Zet de app (`../app`, `AppConfig.swift`) op `https://svv04.nl`.
+1. Koppel `svv04.nl` (en `www`) als _Custom Domain_ aan de Worker `site`; de A/AAAA-records van
+   Oxilion vervallen dan.
+2. Haal `SITE_ACCESS_CODE` weg (`pnpm wrangler secret delete SITE_ACCESS_CODE`) als de site open mag.
+3. Zet de app (`../app`, `AppConfig.swift`) op `https://svv04.nl`.
 
 ## Lokaal testen
 
