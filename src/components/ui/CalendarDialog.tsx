@@ -2,6 +2,7 @@
 
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useClientValue } from '@/lib/use-client-value'
 import CalendarIcon from '@/components/ui/CalendarIcon'
 import {
   googleCalendarUrl,
@@ -183,18 +184,12 @@ type DialogProps = {
 }
 
 export function CalendarDialog({ title, subtitle, target, onClose, children }: DialogProps) {
-  const [device, setDevice] = useState<Device>('desktop')
-  const [host, setHost] = useState('svv04.nl')
+  const device = useClientValue<Device>(detectDevice, 'desktop')
+  const host = useClientValue(() => window.location.host, 'svv04.nl')
+  const mounted = useClientValue(() => true, false)
   const [copied, setCopied] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    setDevice(detectDevice())
-    setHost(window.location.host)
-    setMounted(true)
-  }, [])
 
   useEffect(() => {
     closeRef.current?.focus()

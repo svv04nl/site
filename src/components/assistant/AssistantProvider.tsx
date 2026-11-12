@@ -58,9 +58,11 @@ export function AssistantProvider({
   const closeAssistant = useCallback(() => setOpen(false), [])
 
   // A modal must not stay open over a new page (e.g. after following a link in an answer).
-  useEffect(() => {
+  const [openPath, setOpenPath] = useState(pathname)
+  if (pathname !== openPath) {
+    setOpenPath(pathname)
     setOpen(false)
-  }, [pathname])
+  }
 
   // Cmd/Ctrl+K opens the assistant from anywhere.
   useEffect(() => {

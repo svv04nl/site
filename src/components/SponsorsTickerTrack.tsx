@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
+import { seededShuffle, usePageSeed } from '@/lib/use-client-value'
 
 type Logo = { src: string; name: string }
 
@@ -15,24 +16,11 @@ type Logo = { src: string; name: string }
  */
 const COPIES = 4
 
-function shuffle(items: Logo[]): Logo[] {
-  const result = [...items]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[result[i], result[j]] = [result[j], result[i]]
-  }
-  return result
-}
-
 export function SponsorsTickerTrack({ logos }: { logos: Logo[] }) {
-  // Start with the server-rendered order to match SSR, then shuffle once the
-  // component mounts in the browser so the order differs on every page load.
-  const [order, setOrder] = useState(logos)
-
-  useEffect(() => {
-    setOrder(shuffle(logos))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // The server-rendered order during SSR and hydration, then an order that differs per page
+  // load (and stays the same while the page is open).
+  const seed = usePageSeed()
+  const order = useMemo(() => (seed ? seededShuffle(logos, seed) : logos), [logos, seed])
 
   const row = (copy: number) => (
     <div className="sponsors-ticker-inner" aria-hidden={copy > 0 || undefined}>

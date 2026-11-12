@@ -1,27 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
+import { seededShuffle, usePageSeed } from '@/lib/use-client-value'
 
 type GridSponsor = { id: string | number; name: string; url?: string | null; logoUrl: string }
 
-function shuffle(items: GridSponsor[]): GridSponsor[] {
-  const result = [...items]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[result[i], result[j]] = [result[j], result[i]]
-  }
-  return result
-}
-
 export function SponsorsGrid({ sponsors }: { sponsors: GridSponsor[] }) {
-  // Start with the server-rendered order to match SSR, then shuffle once the
-  // component mounts in the browser so the order differs on every page load.
-  const [order, setOrder] = useState(sponsors)
-
-  useEffect(() => {
-    setOrder(shuffle(sponsors))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // The server-rendered order during SSR and hydration, then an order that differs per page
+  // load (and stays the same while the page is open).
+  const seed = usePageSeed()
+  const order = useMemo(() => (seed ? seededShuffle(sponsors, seed) : sponsors), [sponsors, seed])
 
   return (
     <div className="sponsors-grid">

@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import { useClientValue } from '@/lib/use-client-value'
 import { useQuery } from '@tanstack/react-query'
 import {
   groupScheduleByWeek,
@@ -31,8 +32,7 @@ export default function ClubSchedule({ range, emptyMessage }: Props) {
 
   // Test mode on previews (?afgelasting=test, =veel or =alles): the same matches as in the
   // cancellation bar show as cancelled.
-  const [testMode, setTestMode] = useState<CancellationTestMode | null>(null)
-  useEffect(() => setTestMode(browserTestMode()), [])
+  const testMode = useClientValue<CancellationTestMode | null>(browserTestMode, null)
   const matches = useMemo(() => {
     if (!testMode || !data) {
       return data

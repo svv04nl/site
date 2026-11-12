@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useClientValue } from '@/lib/use-client-value'
 
 type Platform = 'ios' | 'android' | 'desktop'
 
@@ -24,11 +25,7 @@ type Props = {
 }
 
 export default function AppStoreButtonsBlockComponent({ appStoreUrl, playStoreUrl }: Props) {
-  const [platform, setPlatform] = useState<Platform>('desktop')
-
-  useEffect(() => {
-    setPlatform(detectPlatform())
-  }, [])
+  const platform = useClientValue<Platform>(detectPlatform, 'desktop')
 
   if (!appStoreUrl && !playStoreUrl) {
     return null

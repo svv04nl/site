@@ -25,6 +25,7 @@ import {
 } from '@/lib/clubdata/cancellation'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import { SITE_URL } from '@/lib/app-api/config'
+import { useClientValue } from '@/lib/use-client-value'
 import type { RawWedstrijdSpeler } from '@/lib/clubdata/types'
 
 function parseDateStr(s: string): Date | null {
@@ -89,12 +90,10 @@ export default function WedstrijdDetailPage() {
   // The match details carry no status; the club programme does (afgelast, uitgesteld, ...).
   const { data: schedule } = useQuery(clubScheduleQuery('alles'))
   // Test mode on previews (?afgelasting=test, =veel or =alles): the same matches as in the bar.
-  const [testMode, setTestMode] = React.useState<CancellationTestMode | null>(null)
-  React.useEffect(() => setTestMode(browserTestMode()), [])
+  const testMode = useClientValue<CancellationTestMode | null>(browserTestMode, null)
   // The link in a calendar event points to this site: the live one by default, a preview or
   // localhost once the page runs in the browser.
-  const [siteUrl, setSiteUrl] = React.useState(SITE_URL)
-  React.useEffect(() => setSiteUrl(window.location.origin), [])
+  const siteUrl = useClientValue(() => window.location.origin, SITE_URL)
   const testCancelled =
     testMode !== null &&
     testCancelledCodes(schedule ?? [], testMode, amsterdamToday()).has(Number(wedstrijdcode))
