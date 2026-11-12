@@ -128,6 +128,7 @@ function mergeGroups(...groupLists: SearchGroup[][]): SearchGroup[] {
 }
 
 const MIN_QUERY_LENGTH = 2
+const NO_GROUPS: SearchGroup[] = []
 const DEBOUNCE_MS = 200
 
 type Props = {
@@ -145,13 +146,21 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
   const rowRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const latestRequestId = useRef(0)
 
+  // Every opening starts empty (adjusted while rendering, not in an effect).
+  const [wasOpen, setWasOpen] = useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) {
+      setQuery('')
+      setContentGroups([])
+      setSelectedIndex(0)
+    }
+  }
+
   useEffect(() => {
     if (!open) {
       return
     }
-    setQuery('')
-    setContentGroups([])
-    setSelectedIndex(0)
     const id = window.setTimeout(() => inputRef.current?.focus(), 40)
     return () => window.clearTimeout(id)
   }, [open])
@@ -159,7 +168,6 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
   useEffect(() => {
     const trimmed = query.trim()
     if (trimmed.length < MIN_QUERY_LENGTH) {
-      setContentGroups([])
       return
     }
 
@@ -195,16 +203,23 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
     () => filterGroups(quickLinkGroups, query),
     [quickLinkGroups, query],
   )
+  // Results of an earlier, longer query do not count once the query is too short again.
+  const shownContentGroups = query.trim().length < MIN_QUERY_LENGTH ? NO_GROUPS : contentGroups
   const groups = useMemo(
-    () => mergeGroups(contentGroups, filteredQuickLinkGroups),
-    [contentGroups, filteredQuickLinkGroups],
+    () => mergeGroups(shownContentGroups, filteredQuickLinkGroups),
+    [shownContentGroups, filteredQuickLinkGroups],
   )
   const flatItems = useMemo(() => groups.flatMap((g) => g.items), [groups])
-
-  // Query changed → results changed, so reset the highlighted row
-  useEffect(() => {
-    setSelectedIndex(0)
-  }, [query])
+  // Index in flatItems of each group's first row, for the keyboard highlight.
+  const groupStarts = useMemo(() => {
+    const starts: number[] = []
+    let next = 0
+    for (const g of groups) {
+      starts.push(next)
+      next += g.items.length
+    }
+    return starts
+  }, [groups])
 
   useEffect(() => {
     rowRefs.current[selectedIndex]?.scrollIntoView({ block: 'nearest' })
@@ -258,7 +273,11 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
             id="svvSearchInput"
             className="search-modal-input"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              // New query, new results: highlight the first row again.
+              setSelectedIndex(0)
+            }}
             onKeyDown={onInputKeyDown}
             placeholder="Zoek teams, nieuws, pagina's…"
           />
@@ -266,40 +285,36 @@ export default function SearchModal({ open, onClose, actiePages }: Props) {
         </div>
 
         <div className="search-modal-results">
-          {(() => {
-            let flatIndex = -1
-            return groups.map((g) => (
-              <div key={g.group}>
-                <div className="search-modal-group-label">{g.group}</div>
-                {g.items.map((it) => {
-                  flatIndex += 1
-                  const index = flatIndex
-                  return (
-                    <Link
-                      key={it.href + it.label}
-                      ref={(el) => {
-                        rowRefs.current[index] = el
-                      }}
-                      href={it.href}
-                      onClick={onClose}
-                      onMouseEnter={() => setSelectedIndex(index)}
-                      className={`search-modal-row${index === selectedIndex ? ' search-modal-row--active' : ''}`}
-                      target={it.external ? '_blank' : undefined}
-                      rel={it.external ? 'noopener noreferrer' : undefined}
-                    >
-                      <span className="search-modal-row-icon">
-                        <ResultArrow />
-                      </span>
-                      <span className="search-modal-row-text">
-                        <span className="search-modal-row-label">{it.label}</span>
-                        {it.sub && <span className="search-modal-row-sub">{it.sub}</span>}
-                      </span>
-                    </Link>
-                  )
-                })}
-              </div>
-            ))
-          })()}
+          {groups.map((g, groupIndex) => (
+            <div key={g.group}>
+              <div className="search-modal-group-label">{g.group}</div>
+              {g.items.map((it, itemIndex) => {
+                const index = groupStarts[groupIndex] + itemIndex
+                return (
+                  <Link
+                    key={it.href + it.label}
+                    ref={(el) => {
+                      rowRefs.current[index] = el
+                    }}
+                    href={it.href}
+                    onClick={onClose}
+                    onMouseEnter={() => setSelectedIndex(index)}
+                    className={`search-modal-row${index === selectedIndex ? ' search-modal-row--active' : ''}`}
+                    target={it.external ? '_blank' : undefined}
+                    rel={it.external ? 'noopener noreferrer' : undefined}
+                  >
+                    <span className="search-modal-row-icon">
+                      <ResultArrow />
+                    </span>
+                    <span className="search-modal-row-text">
+                      <span className="search-modal-row-label">{it.label}</span>
+                      {it.sub && <span className="search-modal-row-sub">{it.sub}</span>}
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
+          ))}
           {groups.length === 0 && query.trim().length >= MIN_QUERY_LENGTH && (
             <div className="search-modal-empty">
               Geen resultaten voor &ldquo;<strong>{query}</strong>&rdquo;

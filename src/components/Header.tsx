@@ -98,11 +98,14 @@ export default function Header({
   const pathname = usePathname()
   const assistant = useAssistant()
 
-  // Close mobile menu on navigation
-  useEffect(() => {
+  // Close the mobile menu on navigation (adjusted while rendering, as React recommends instead
+  // of an effect: https://react.dev/learn/you-might-not-need-an-effect).
+  const [menuPath, setMenuPath] = useState(pathname)
+  if (pathname !== menuPath) {
+    setMenuPath(pathname)
     setMobileOpen(false)
     setOpenSubmenu(null)
-  }, [pathname])
+  }
 
   // Cmd/Ctrl+K opens search from anywhere; Escape closes it. With the assistant on, the
   // assistant takes over both (see AssistantProvider).

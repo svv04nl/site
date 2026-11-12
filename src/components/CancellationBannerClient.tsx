@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useEffect, useId, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { testModeParam } from '@/lib/clubdata/cancellation'
+import { useClientValue } from '@/lib/use-client-value'
 
 export type CancelledMatch = {
   matchCode: number
@@ -29,6 +30,13 @@ const MAX_LISTED = 2
 
 // Below this width the bar is too cramped: a phone gets a popup from the bottom instead.
 const PHONE_QUERY = '(max-width: 640px)'
+
+function subscribePhone(onChange: () => void) {
+  const query = window.matchMedia(PHONE_QUERY)
+  query.addEventListener('change', onChange)
+  return () => query.removeEventListener('change', onChange)
+}
+const phoneMatches = () => window.matchMedia(PHONE_QUERY).matches
 
 function readStorage(store: 'session' | 'local', key: string): boolean {
   try {
@@ -103,28 +111,20 @@ export function CancellationBannerClient({
   tests?: Record<string, CancellationData>
 }) {
   const pathname = usePathname()
-  const [testKey, setTestKey] = useState<string | null>(null)
-  const [isPhone, setIsPhone] = useState<boolean | null>(null)
-  const [barClosed, setBarClosed] = useState(false)
-  const [popupSeen, setPopupSeen] = useState(true)
+  // The test mode only exists in the browser (?afgelasting=...), and only for prepared data.
+  const testKey = useClientValue<string | null>(() => {
+    const key = testModeParam()
+    return tests && key && tests[key] ? key : null
+  }, null)
+  // Phone or computer, following the media query; unknown (null) during SSR and hydration.
+  const isPhone = useSyncExternalStore(subscribePhone, phoneMatches, () => null)
+  // The bar or popup closed just now, by key: a new cancellation has a new key and shows again.
+  // What was closed earlier comes from storage below.
+  const [closedBarKey, setClosedBarKey] = useState<string | null>(null)
+  const [seenPopupKey, setSeenPopupKey] = useState<string | null>(null)
   const [unfolded, setUnfolded] = useState(false)
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    const key = testModeParam()
-    if (tests && key && tests[key]) {
-      setTestKey(key)
-    }
-  }, [tests])
-
-  useEffect(() => {
-    const query = window.matchMedia(PHONE_QUERY)
-    const update = () => setIsPhone(query.matches)
-    update()
-    query.addEventListener('change', update)
-    return () => query.removeEventListener('change', update)
-  }, [])
 
   const data = testKey && tests ? tests[testKey] : realData
   const { matches, allCancelled } = data
@@ -143,22 +143,20 @@ export function CancellationBannerClient({
     ? matches.length > 0
     : Boolean(allCancelled) && (pathname === '/' || testing)
 
-  useEffect(() => {
-    setBarClosed(!testing && readStorage('session', barKey))
-  }, [barKey, testing])
-
-  useEffect(() => {
-    if (isPhone === null) {
-      return
-    }
-    // Phone: once per visit. Computer: once per day (the key holds the day).
-    setPopupSeen(!testing && readStorage(isPhone ? 'session' : 'local', popupKey))
-  }, [isPhone, popupKey, testing])
+  // Closed earlier this visit (bar) or already seen (popup: phone once per visit, computer once
+  // per day; the key holds the day). The popup counts as seen until the device is known.
+  const barClosedBefore = useClientValue(() => !testing && readStorage('session', barKey), false)
+  const popupSeenBefore = useClientValue(
+    () => isPhone === null || (!testing && readStorage(isPhone ? 'session' : 'local', popupKey)),
+    true,
+  )
+  const barClosed = closedBarKey === barKey || barClosedBefore
+  const popupSeen = seenPopupKey === popupKey || popupSeenBefore
 
   const showPopup = popupWanted && !popupSeen
 
   function closePopup() {
-    setPopupSeen(true)
+    setSeenPopupKey(popupKey)
     if (!testing) {
       writeStorage(isPhone ? 'session' : 'local', popupKey)
     }
@@ -259,7 +257,7 @@ export function CancellationBannerClient({
             className="cancellation-banner-close"
             aria-label="Melding sluiten"
             onClick={() => {
-              setBarClosed(true)
+              setClosedBarKey(barKey)
               if (!testing) {
                 writeStorage('session', barKey)
               }

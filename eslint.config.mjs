@@ -12,11 +12,6 @@ const eslintConfig = [
   {
     rules: {
       curly: ['error', 'all'],
-      // New React Compiler rules in eslint-config-next 16. Existing components still break
-      // them (setState in effects, refs read during render); warnings until they are rewritten.
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/refs': 'warn',
-      'react-hooks/immutability': 'warn',
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',

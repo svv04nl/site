@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { useChat } from '@ai-sdk/react'
@@ -38,18 +38,17 @@ const TOOL_LABELS: Record<string, string> = {
 
 // The SDK only passes the response text on, so a 429 (rate limit) is turned into a marker error here.
 const RATE_LIMITED = 'rate-limited'
-const createTransport = (getAudience: () => string | null | undefined) =>
-  new DefaultChatTransport({
-    api: '/api/chat',
-    body: () => ({ audience: getAudience() ?? undefined }),
-    fetch: async (input, init) => {
-      const response = await fetch(input, init)
-      if (response.status === 429) {
-        throw new Error(RATE_LIMITED)
-      }
-      return response
-    },
-  })
+// One transport for every chat; the page's perspective goes with each message (see send).
+const transport = new DefaultChatTransport({
+  api: '/api/chat',
+  fetch: async (input, init) => {
+    const response = await fetch(input, init)
+    if (response.status === 429) {
+      throw new Error(RATE_LIMITED)
+    }
+    return response
+  },
+})
 
 type ChatMessage = UIMessage<AssistantMetadata>
 type ToolPart = { type: string; state: string; input?: unknown; output?: unknown }
@@ -186,9 +185,6 @@ export default function AssistantChat({
 }: ChatProps) {
   const isPanel = variant === 'panel'
   const [input, setInput] = useState('')
-  const audienceRef = useRef(audience)
-  audienceRef.current = audience
-  const transport = useMemo(() => createTransport(() => audienceRef.current?.slug), [])
   const examples = audience?.questions.length ? audience.questions.slice(0, 6) : EXAMPLES
   const { messages, sendMessage, setMessages, status, error, stop, clearError } =
     useChat<ChatMessage>({
@@ -214,6 +210,9 @@ export default function AssistantChat({
         sessionStorage.removeItem(STORAGE_KEY)
       }
     }
+    // Restored after hydration on purpose (the server has no sessionStorage), and in the same
+    // render as the messages: the save effect below must not see `restored` with no messages yet.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRestored(true)
   }, [isPanel, setMessages])
 
@@ -245,12 +244,16 @@ export default function AssistantChat({
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [messages, status])
 
+  // The "Voor jou" page the visitor is on becomes their perspective (see /api/chat).
+  const send = (text: string) =>
+    sendMessage({ text }, { body: { audience: audience?.slug ?? undefined } })
+
   const submit = (text: string) => {
     const trimmed = text.trim()
     if (!trimmed || busy || full) {
       return
     }
-    sendMessage({ text: trimmed })
+    send(trimmed)
     setInput('')
   }
 
@@ -259,7 +262,10 @@ export default function AssistantChat({
     if (!question || !restored) {
       return
     }
-    submit(question)
+    // The input field played no part, so send directly instead of through submit().
+    if (question.trim() && !busy && !full) {
+      send(question.trim())
+    }
     onQuestionSent?.()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question, restored])
