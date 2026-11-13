@@ -127,12 +127,13 @@
   background: var(--color-white);
   border: 1px solid #e6e6e6;
   border-radius: 10px;
-  box-shadow: 0 10px 26px rgb(0 0 0 / 14%);
+  // A red glow, like the red buttons on the site, so it stands out on a white page.
+  box-shadow: 0 10px 28px rgb(204 0 0 / 30%);
   color: var(--color-dark);
   cursor: pointer;
   display: flex;
-  gap: 0.75rem;
-  padding: 7px 1.15rem 7px 7px;
+  gap: 0.9rem;
+  padding: 8px 1.5rem 8px 8px;
   text-align: left;
   transition:
     border-color 0.15s ease,
@@ -140,7 +141,7 @@
     transform 0.12s ease;
 
   .bram-avatar {
-    --bram-size: 52px !important;
+    --bram-size: 66px !important;
 
     &::before {
       background: var(--color-light);
@@ -148,8 +149,8 @@
   }
 
   &:hover {
-    border-color: #cfcfcf;
-    box-shadow: 0 14px 30px rgb(0 0 0 / 18%);
+    border-color: rgb(204 0 0 / 35%);
+    box-shadow: 0 14px 32px rgb(204 0 0 / 38%);
     transform: translateY(-2px);
   }
 
@@ -168,7 +169,7 @@
     }
 
     .bram-avatar {
-      --bram-size: 58px !important;
+      --bram-size: 64px !important;
 
       &::before {
         background: var(--color-white);
@@ -185,7 +186,7 @@
 
 .assistant-fab__title {
   font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.1;
@@ -201,7 +202,7 @@
   color: #2c7a3f;
   display: flex;
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   gap: 0.35rem;
 
   &::before {

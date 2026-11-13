@@ -127,7 +127,7 @@ export function AssistantFab() {
         aria-label="Vraag het Bram"
         tabIndex={away ? -1 : 0}
       >
-        <BramAvatar size={52} />
+        <BramAvatar size={66} />
         <span className="assistant-fab__label">
           <span className="assistant-fab__title">
             Vraag het <span>Bram</span>
