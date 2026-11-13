@@ -31,15 +31,12 @@ function fly(avatar: Element, a: DOMRect, b: DOMRect, toBand: boolean) {
   const ghost = avatar.cloneNode(true) as HTMLElement
   ghost.classList.add('bram-flight')
   ghost.classList.toggle('bram-flight--page', toBand)
-  ghost.classList.toggle('bram-avatar--red', !toBand)
   const offsetX = toBand ? window.scrollX : 0
   const offsetY = toBand ? window.scrollY : 0
   ghost.style.left = `${a.left + offsetX}px`
   ghost.style.top = `${a.top + offsetY}px`
   ghost.style.setProperty('--bram-size', `${a.width}px`)
   document.body.appendChild(ghost)
-  // The circle turns red (or white) on the way.
-  requestAnimationFrame(() => ghost.classList.toggle('bram-avatar--red', toBand))
   const scale = b.width / a.width
   ghost
     .animate(

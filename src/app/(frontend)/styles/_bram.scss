@@ -196,42 +196,55 @@
 }
 
 // ─── Bram in the "Stel je vraag" band ───────────────────────────────────────
-// A big red circle at the top right, half over the top edge of the band. Bram appears in it
-// when the band comes into view and stays while you scroll on past it.
+// Laptop: Bram in a white circle on the left, the heading next to him and the question field on
+// the right; a speech bubble above him shows example questions in turn. Phone: a small Bram next
+// to the heading, the field and the examples below. Bram appears in the circle when the band comes
+// into view (the button at the bottom right flies there) and stays while you scroll on past it.
 
 .assistant-bar__inner {
-  position: relative;
+  align-content: center;
+  align-items: center;
+  display: grid;
+  gap: 0.75rem 2.5rem;
+  grid-template-areas:
+    'bram head ask'
+    'bram intro ask';
+  grid-template-columns: 10rem minmax(0, 22rem) minmax(0, 1fr);
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    gap: 1rem;
+    grid-template-areas:
+      'bram head'
+      'ask ask'
+      'intro intro';
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+  }
+}
+
+// Room above Bram for the speech bubble (the band's own padding comes later in the cascade).
+.assistant-bar .assistant-bar__inner {
+  @media screen and (min-width: #{$breakpoint-medium + 1}) {
+    padding-top: 5.5rem;
+  }
 }
 
 .assistant-bar__bram {
-  height: 200px;
-  position: absolute;
-  right: var(--container-padding);
-  top: -60px;
-  width: 200px;
-  z-index: 2;
+  align-self: center;
+  grid-area: bram;
+  height: 10rem;
+  position: relative;
+  width: 10rem;
 
   .bram-avatar {
-    --bram-size: 200px !important;
+    --bram-size: 10rem !important;
   }
 
-  @media screen and (max-width: 900px) {
-    height: 140px;
-    top: -50px;
-    width: 140px;
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    height: 4.75rem;
+    width: 4.75rem;
 
     .bram-avatar {
-      --bram-size: 140px !important;
-    }
-  }
-
-  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
-    height: 104px;
-    top: -44px;
-    width: 104px;
-
-    .bram-avatar {
-      --bram-size: 104px !important;
+      --bram-size: 4.75rem !important;
     }
   }
 }
@@ -242,6 +255,7 @@
   border-radius: 50%;
   cursor: pointer;
   display: block;
+  filter: drop-shadow(0 6px 14px rgb(0 0 0 / 8%));
   opacity: 0;
   padding: 0;
   pointer-events: none;
@@ -267,56 +281,104 @@
   }
 }
 
-.assistant-bar__bubble {
+// Laptop only: a speech bubble above Bram with an example question; a click asks it.
+.assistant-bar__question {
   background: var(--color-dark);
-  border-radius: 14px 14px 4px 14px;
+  border: 0;
+  border-radius: 14px 14px 14px 4px;
+  // Above the top of Bram's head, which pops out above the circle.
+  bottom: calc(100% + 1.75rem);
   color: var(--color-white);
-  font-size: 0.95rem;
-  max-width: 13rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  left: 0;
   opacity: 0;
-  padding: 0.6rem 1rem;
+  padding: 0.55rem 0.9rem;
+  pointer-events: none;
   position: absolute;
-  right: calc(100% + 0.75rem);
-  top: 2.5rem;
+  text-align: left;
   transform: translateY(6px);
   transition:
     opacity 0.2s ease,
     transform 0.2s ease;
+  max-width: 12.5rem;
   width: max-content;
+
+  &:hover {
+    background: var(--color-primary);
+  }
 
   .assistant-bar.has-bram & {
     opacity: 1;
+    pointer-events: auto;
     transform: none;
     transition:
       opacity 0.3s ease 0.8s,
-      transform 0.3s ease 0.8s;
+      transform 0.3s ease 0.8s,
+      background-color 0.15s ease;
   }
 
-  @media screen and (max-width: 900px) {
+  @media screen and (max-width: #{$breakpoint-medium}) {
     display: none;
   }
 }
 
-// Room for the circle next to the text, so nothing runs under Bram.
-.assistant-bar__intro,
-.assistant-bar__form,
-.assistant-bar__chips {
-  @media screen and (min-width: 901px) {
-    max-width: calc(100% - 260px);
+// The question fades in and out when it changes.
+.assistant-bar__question-text {
+  animation: bram-question-in 0.3s ease;
+  display: inline-block;
+}
+
+@keyframes bram-question-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
 }
 
-.assistant-bar .home-h2 {
-  @media screen and (max-width: 900px) {
-    padding-right: 120px;
+.assistant-bar__head {
+  align-self: end;
+  grid-area: head;
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    align-self: center;
+
+    .home-h2 {
+      font-size: clamp(1.6rem, 7vw, 2rem);
+      margin-top: 0.35rem;
+    }
+  }
+}
+
+.assistant-bar__ask {
+  grid-area: ask;
+  min-width: 0;
+
+  .assistant-bar__chips {
+    margin-top: 0.75rem;
+  }
+}
+
+.assistant-bar .assistant-bar__intro {
+  align-self: start;
+  grid-area: intro;
+  margin: 0;
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    font-size: 0.9rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .assistant-bar__bram-button,
-  .assistant-bar__bubble,
+  .assistant-bar__question,
   .assistant-bar.has-bram .assistant-bar__bram-button,
-  .assistant-bar.has-bram .assistant-bar__bubble {
+  .assistant-bar.has-bram .assistant-bar__question {
     transition: none;
+  }
+
+  .assistant-bar__question-text {
+    animation: none;
   }
 }
