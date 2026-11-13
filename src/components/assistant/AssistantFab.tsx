@@ -19,22 +19,27 @@ const HIDDEN_KEY = 'svv-bram-verborgen'
 const FLIGHT_MS = 450
 
 /**
- * A copy of Bram flying from one circle to the other: a fixed element moved and scaled with the
- * Web Animations API, removed when it lands. Skipped when the visitor prefers less motion.
+ * A copy of Bram flying from one circle to the other, moved and scaled with the Web Animations
+ * API and removed when it lands. Into the band it flies in page coordinates, so it lands in the
+ * circle even while the page scrolls on; back to the button it flies in screen coordinates,
+ * because the button stays put. Skipped when the visitor prefers less motion.
  */
-function fly(avatar: Element, a: DOMRect, b: DOMRect, toRed: boolean) {
+function fly(avatar: Element, a: DOMRect, b: DOMRect, toBand: boolean) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !a.width || !b.width) {
     return
   }
   const ghost = avatar.cloneNode(true) as HTMLElement
   ghost.classList.add('bram-flight')
-  ghost.classList.toggle('bram-avatar--red', !toRed)
-  ghost.style.left = `${a.left}px`
-  ghost.style.top = `${a.top}px`
+  ghost.classList.toggle('bram-flight--page', toBand)
+  ghost.classList.toggle('bram-avatar--red', !toBand)
+  const offsetX = toBand ? window.scrollX : 0
+  const offsetY = toBand ? window.scrollY : 0
+  ghost.style.left = `${a.left + offsetX}px`
+  ghost.style.top = `${a.top + offsetY}px`
   ghost.style.setProperty('--bram-size', `${a.width}px`)
   document.body.appendChild(ghost)
   // The circle turns red (or white) on the way.
-  requestAnimationFrame(() => ghost.classList.toggle('bram-avatar--red', toRed))
+  requestAnimationFrame(() => ghost.classList.toggle('bram-avatar--red', toBand))
   const scale = b.width / a.width
   ghost
     .animate(

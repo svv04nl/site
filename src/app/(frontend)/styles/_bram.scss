@@ -6,6 +6,9 @@
 .bram-avatar {
   --bram-size: 62px;
 
+  // A span: without display block its width and height do nothing outside a flex row, and the
+  // circle in the "Stel je vraag" band had no size at all.
+  display: block;
   flex: none;
   height: var(--bram-size);
   position: relative;
@@ -62,8 +65,8 @@
     opacity 0.3s ease;
   z-index: 900;
 
-  // Coming back (popup closed, or Bram flew back from the band): after the flight lands.
-  transition-delay: 0.4s;
+  // Coming back (popup closed, or Bram flew back from the band): once the flight has landed.
+  transition-delay: 0.45s;
 
   // Steps aside while the popup is open, and while Bram sits in the "Stel je vraag" band.
   &.is-away {
@@ -184,6 +187,12 @@
   position: fixed;
   transform-origin: 0 0;
   z-index: 950;
+
+  // Into the band: moves along with the page, so Bram still lands in the circle when you keep
+  // scrolling during the flight.
+  &--page {
+    position: absolute;
+  }
 }
 
 // ─── Bram in the "Stel je vraag" band ───────────────────────────────────────
