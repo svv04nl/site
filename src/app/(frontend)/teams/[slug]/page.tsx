@@ -5,15 +5,15 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { TeamProvider } from '@/components/team/TeamContext'
-import TeamRosterSection from '@/components/team/TeamRosterSection'
 import TeamSponsorSection from '@/components/team/TeamSponsorSection'
 import TeamPhotoWithLightbox from '@/components/team/TeamPhotoWithLightbox'
 import type { Media } from '@/payload-types'
 import ScrollToTop from '@/components/team/ScrollToTop'
 import TeamNextMatchSection from '@/components/team/TeamNextMatchSection'
-import TeamCalendarSection from '@/components/team/TeamCalendarSection'
 import LeagueSection from '@/components/team/LeagueSection'
-import { SectionHeader } from '@/components/ui/SectionHeader'
+import TeamHeader from '@/components/team/TeamHeader'
+import TeamStaffSection from '@/components/team/TeamStaffSection'
+import { hasStandings } from '@/components/team/team-category'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +43,8 @@ export default async function TeamPage({ params }: Props) {
   const teamcode = team.teamcode ?? null
 
   const categoryLabel = team.category ?? null
+  // The youngest teams: no standing, results or form (see hasStandings).
+  const showStandings = hasStandings(categoryLabel)
 
   const { docs: teamPosts } = await payload.find({
     collection: 'posts',
@@ -67,11 +69,14 @@ export default async function TeamPage({ params }: Props) {
         />
 
         <div className="page-inner">
-          <SectionHeader as="h1" title={team.name} subtitle={categoryLabel ?? undefined} />
+          <TeamHeader name={team.name} category={categoryLabel} showForm={showStandings} />
         </div>
-        <div className="section-with-sidebar">
-          <div className="sidebar-content-col">
-            <div className="team-photo">
+
+        {/* Laptop: photo and tabs left, the sidebar right. Phone: the next match first, then the
+            photo, the tabs, and the staff and the rest below (see _team.scss). */}
+        <div className="team-layout">
+          <div className="team-layout__main">
+            <div className="team-photo team-layout__photo">
               {photoUrl ? (
                 <TeamPhotoWithLightbox
                   src={photoUrl}
@@ -88,43 +93,52 @@ export default async function TeamPage({ params }: Props) {
                 />
               )}
             </div>
-            <TeamRosterSection />
-            <LeagueSection />
+            <div className="team-layout__tabs">
+              <LeagueSection teamName={team.name} showStandings={showStandings} />
+            </div>
           </div>
-          <div className="sidebar-col">
-            <div className="sidebar-col__inner">
-              <TeamNextMatchSection teamcode={teamcode!} teamName={team.name} />
-              {teamcode && <TeamCalendarSection slug={slug} teamName={team.name} />}
-              <TeamSponsorSection sponsors={team.sponsors} />
+          <div className="team-layout__side sidebar-col">
+            <div className="team-layout__side-inner sidebar-col__inner">
+              <div className="team-layout__next">
+                <TeamNextMatchSection
+                  teamcode={teamcode}
+                  teamName={team.name}
+                  slug={teamcode ? slug : undefined}
+                />
+              </div>
+              <div className="team-layout__info">
+                <TeamStaffSection />
+                <TeamSponsorSection sponsors={team.sponsors} />
 
-              {teamPosts.length > 0 && (
-                <div className="sidebar-section">
-                  <h2 className="sidebar-section-title">Team nieuws</h2>
-                  <ul className="news-sidebar-list">
-                    {teamPosts.map((post) => (
-                      <li key={post.id}>
-                        <Link href={`/nieuws/${post.slug}`} className="news-sidebar-item">
-                          <div className="news-sidebar-item-meta">
-                            {post.publishedAt && (
-                              <time className="news-secondary-date">
-                                {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
-                                  day: 'numeric',
-                                  month: 'long',
-                                  year: 'numeric',
-                                })}
-                              </time>
+                {teamPosts.length > 0 && (
+                  <div className="sidebar-section">
+                    <h2 className="sidebar-section-title">Team nieuws</h2>
+                    <ul className="news-sidebar-list">
+                      {teamPosts.map((post) => (
+                        <li key={post.id}>
+                          <Link href={`/nieuws/${post.slug}`} className="news-sidebar-item">
+                            <div className="news-sidebar-item-meta">
+                              {post.publishedAt && (
+                                <time className="news-secondary-date">
+                                  {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                  })}
+                                </time>
+                              )}
+                            </div>
+                            <h3 className="news-sidebar-item-title">{post.title}</h3>
+                            {post.excerpt && (
+                              <p className="news-sidebar-item-excerpt">{post.excerpt}</p>
                             )}
-                          </div>
-                          <h3 className="news-sidebar-item-title">{post.title}</h3>
-                          {post.excerpt && (
-                            <p className="news-sidebar-item-excerpt">{post.excerpt}</p>
-                          )}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
