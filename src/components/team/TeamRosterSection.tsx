@@ -5,7 +5,7 @@ import TeamRoster from '@/components/ui/TeamRoster'
 import { teamRosterQuery } from '@/lib/clubdata/queries'
 import { useTeam } from '@/components/team/TeamContext'
 
-export default function TeamRosterSection() {
+export default function TeamRosterSection({ playersOnly = false }: { playersOnly?: boolean }) {
   const { teamcode } = useTeam()
   const { data } = useQuery(teamRosterQuery(teamcode))
 
@@ -13,5 +13,5 @@ export default function TeamRosterSection() {
     return null
   }
 
-  return <TeamRoster data={data} />
+  return <TeamRoster data={data} playersOnly={playersOnly} />
 }

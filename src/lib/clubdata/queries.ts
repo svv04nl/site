@@ -10,6 +10,7 @@ import {
 } from '@/lib/clubdata/transform'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type {
+  RawWedstrijdEvenement,
   RawProgrammaResponse,
   RawPoulestandResponse,
   RawPeriodestandResponse,
@@ -278,6 +279,26 @@ export const clubScheduleQuery = (filter: 'thuis' | 'uit' | 'alles') => ({
       uit: filter !== 'thuis' ? 'ja' : 'nee',
     })
     return transformSchedule(raw, CLUB_RELATIECODE)
+  },
+  staleTime: STALE_TIME,
+})
+
+/**
+ * Goals and cards of one played match (wedstrijd-statistieken). Not every competition fills
+ * them in, and the endpoint can fail for an old match: then the list is empty and the result
+ * card shows only the score.
+ */
+export const matchEventsQuery = (wedstrijdcode: number) => ({
+  queryKey: ['match-events', wedstrijdcode] as const,
+  queryFn: async (): Promise<RawWedstrijdEvenement[]> => {
+    try {
+      const raw = await fetchClubData<unknown>('wedstrijd-statistieken', {
+        wedstrijdcode: String(wedstrijdcode),
+      })
+      return Array.isArray(raw) ? (raw as RawWedstrijdEvenement[]) : []
+    } catch {
+      return []
+    }
   },
   staleTime: STALE_TIME,
 })
