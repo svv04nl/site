@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useAssistant } from '@/components/assistant/AssistantProvider'
 import { BramAvatar } from '@/components/assistant/BramAvatar'
 import { useBramDocked } from '@/components/assistant/useBramDocked'
+import { useClientValue } from '@/lib/use-client-value'
 
 /**
  * Round "Vraag het Bram" button at the bottom right that opens the assistant popup.
@@ -46,23 +47,25 @@ function fly(avatar: Element, a: DOMRect, b: DOMRect, toRed: boolean) {
     .finished.finally(() => ghost.remove())
 }
 
+function readHidden() {
+  try {
+    return Boolean(sessionStorage.getItem(HIDDEN_KEY))
+  } catch {
+    // No storage (private mode): Bram just stays.
+    return false
+  }
+}
+
 export function AssistantFab() {
   const { enabled, open, openAssistant } = useAssistant()
   const pathname = usePathname()
-  const docked = useBramDocked(pathname)
-  const [hidden, setHidden] = useState(false)
+  const docked = useBramDocked()
+  // Closed earlier in this visit (kept in sessionStorage), or just now.
+  const hiddenBefore = useClientValue(readHidden, false)
+  const [closed, setClosed] = useState(false)
+  const hidden = hiddenBefore || closed
   const dockRef = useRef<HTMLDivElement>(null)
   const wasDocked = useRef<boolean | null>(null)
-
-  useEffect(() => {
-    try {
-      if (sessionStorage.getItem(HIDDEN_KEY)) {
-        setHidden(true)
-      }
-    } catch {
-      // No storage (private mode): Bram just stays.
-    }
-  }, [])
 
   // Fly between the button and the band when the docked state changes (not on the first
   // render: a page opened below the band just shows Bram in it).
@@ -89,7 +92,7 @@ export function AssistantFab() {
   }, [docked, hidden, open])
 
   const hide = () => {
-    setHidden(true)
+    setClosed(true)
     try {
       sessionStorage.setItem(HIDDEN_KEY, '1')
     } catch {

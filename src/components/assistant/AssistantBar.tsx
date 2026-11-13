@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import { EXAMPLES } from '@/components/assistant/AssistantChat'
 import { useAssistant, type AssistantAudience } from '@/components/assistant/AssistantProvider'
 import { SparkleIcon } from '@/components/assistant/icons'
@@ -43,7 +42,7 @@ export function AssistantBar({
   const [input, setInput] = useState('')
   // Bram lands in the big circle when the band comes into view (the button at the bottom right
   // flies here) and stays while you scroll on past it.
-  const docked = useBramDocked(usePathname())
+  const docked = useBramDocked()
 
   const chips = audience?.questions.length ? audience.questions.slice(0, 4) : CHIPS
 
