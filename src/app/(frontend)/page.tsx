@@ -7,7 +7,6 @@ import FixturesStrip from '@/components/FixturesStrip'
 import type { Post } from '@/payload-types'
 import { NewsRowCard } from '@/components/ui/NewsRowCard'
 import { ActiviteitenSidebar } from '@/components/ActiviteitenSidebar'
-import { SponsorSidebar } from '@/components/SponsorSidebar'
 import { SponsorsTicker } from '@/components/SponsorsTicker'
 import { FindYourWaySection } from '@/components/FindYourWaySection'
 import { WebshopBanner } from '@/components/WebshopBanner'
@@ -131,21 +130,17 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Sidebar: agenda, webshop, main sponsors */}
+          {/* Sidebar: agenda and webshop (the main sponsors are in the sponsor block below) */}
           <div className="home-main-side">
             <ActiviteitenSidebar />
             <WebshopBanner />
-            <SponsorSidebar />
           </div>
         </div>
 
         {/* Ask the assistant as a safety net for whoever did not find it above; only shown while the assistant is switched on */}
         <AssistantBar />
 
-        {/* Main sponsors: above the ticker on narrow screens (hidden next to the news on desktop) */}
-        <SponsorSidebar variant="stacked" />
-
-        {/* Sponsor strip — color, data-driven */}
+        {/* Sponsor block: main sponsors as fixed cards, the others in the ticker */}
         <SponsorsTicker />
       </main>
     </>

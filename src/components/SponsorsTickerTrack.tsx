@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { seededShuffle, usePageSeed } from '@/lib/use-client-value'
 
 type Logo = { src: string; name: string }
@@ -15,6 +15,9 @@ type Logo = { src: string; name: string }
  * keeping the two in sync.
  */
 const COPIES = 4
+
+/** Scroll speed in px per second, the same on every screen and for any number of logos. */
+const SPEED = 60
 
 export function SponsorsTickerTrack({ logos }: { logos: Logo[] }) {
   // The server-rendered order during SSR and hydration, then an order that differs per page
@@ -32,15 +35,35 @@ export function SponsorsTickerTrack({ logos }: { logos: Logo[] }) {
     </div>
   )
 
-  // Duration scales with the number of logos so the scroll speed (px/sec)
-  // stays roughly constant regardless of how many sponsors are in the CMS —
-  // otherwise a fixed duration makes the ticker race by as sponsors are added.
-  // ~5.3s per logo gives roughly 70px/sec with the current logo size (88px high).
+  // A first guess for the server render: ~5.3s per logo. Once the logos are on screen the
+  // duration is set from the real width of one copy, so the speed no longer depends on how
+  // many logos there are or how wide they are. A fixed guess made the bar crawl with only a
+  // few logos, and on a phone, where the logos are smaller.
   const duration = Math.min(320, Math.max(30, order.length * 5.3))
+  const trackRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) {
+      return
+    }
+    const update = () => {
+      const copyWidth = track.scrollWidth / COPIES
+      if (copyWidth > 0) {
+        track.style.setProperty('--sponsors-duration', `${(copyWidth / SPEED).toFixed(1)}s`)
+      }
+    }
+    update()
+    // Logos that load later, and a turned phone, change the width.
+    const observer = new ResizeObserver(update)
+    observer.observe(track)
+    return () => observer.disconnect()
+  }, [order])
 
   return (
     <div className="sponsors-ticker">
       <div
+        ref={trackRef}
         className="sponsors-ticker-track"
         style={
           {
