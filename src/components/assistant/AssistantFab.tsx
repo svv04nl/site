@@ -9,14 +9,18 @@ import { useClientValue } from '@/lib/use-client-value'
 
 /**
  * Round "Vraag het Bram" button at the bottom right that opens the assistant popup.
- * When the "Stel je vraag" band comes into view, Bram flies from the button into the big circle
- * in that band and stays there while you scroll on; above the band he flies back. The button
+ * When the "Stel je vraag" band comes into view, Bram moves from the button into the circle in
+ * that band and stays there while you scroll on; above the band he goes back. On a laptop the
+ * button pops away and Bram pops up in the band at the same moment (CSS only); on a phone he
+ * flies there. The button
  * also steps aside while the popup is open and on the full assistant page. The small cross
  * hides Bram for the rest of the visit (sessionStorage); on a next visit he is back.
  */
 
 const HIDDEN_KEY = 'svv-bram-verborgen'
 const FLIGHT_MS = 450
+// Where Bram flies instead of popping: the phone layout of the band (see _bram.scss).
+const FLIGHT_QUERY = '(max-width: 900px)'
 
 /**
  * A copy of Bram flying from one circle to the other, moved and scaled with the Web Animations
@@ -69,12 +73,15 @@ export function AssistantFab() {
   const dockRef = useRef<HTMLDivElement>(null)
   const wasDocked = useRef<boolean | null>(null)
 
-  // Fly between the button and the band when the docked state changes (not on the first
-  // render: a page opened below the band just shows Bram in it).
+  // On a phone: fly between the button and the band when the docked state changes (not on the
+  // first render: a page opened below the band just shows Bram in it).
   useEffect(() => {
     const before = wasDocked.current
     wasDocked.current = docked
     if (before === null || before === docked || hidden || open) {
+      return
+    }
+    if (!window.matchMedia(FLIGHT_QUERY).matches) {
       return
     }
     // Measured on elements without a running transform: the button's avatar (the button only

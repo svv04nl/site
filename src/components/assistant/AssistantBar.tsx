@@ -8,7 +8,7 @@ import { BramAvatar } from '@/components/assistant/BramAvatar'
 import { useBramDocked } from '@/components/assistant/useBramDocked'
 import { MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 
-const CHIPS = EXAMPLES.slice(0, 4)
+const CHIPS = EXAMPLES.slice(0, 2)
 
 // How long each example question stays in Bram's speech bubble.
 const QUESTION_MS = 4500
@@ -47,7 +47,7 @@ export function AssistantBar({
   // bottom right flies here) and stays while you scroll on past it.
   const docked = useBramDocked()
 
-  const chips = audience?.questions.length ? audience.questions.slice(0, 4) : CHIPS
+  const chips = audience?.questions.length ? audience.questions.slice(0, 2) : CHIPS
   // The speech bubble above Bram (laptop) shows the example questions in turn while he sits
   // in the band.
   const [turn, setTurn] = useState(0)
@@ -104,12 +104,13 @@ export function AssistantBar({
         <div className="assistant-bar__head">
           <p className="home-eyebrow">Direct antwoord</p>
           <h2 className="home-h2" id="assistant-bar-title">
-            Stel je <span>vraag</span> aan Bram
+            Stel je <span>vraag</span>
+            <span className="assistant-bar__to-bram"> aan Bram</span>
           </h2>
         </div>
         <p className="assistant-bar__intro">
           {intro ||
-            'Over het programma, de uitslagen, het lidmaatschap of vrijwilligerswerk: je krijgt meteen antwoord.'}
+            "Bram, de zebra van SVV'04, weet alles over het programma, de uitslagen, het lidmaatschap en vrijwilligerswerk. Vraag het hem en je hebt meteen antwoord."}
         </p>
         <div className="assistant-bar__ask">
           <form
