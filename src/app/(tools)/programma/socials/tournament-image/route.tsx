@@ -18,12 +18,15 @@ export async function GET(request: Request) {
   const requestedDay = searchParams.get('day')
   const { width, height } = POSTER_DIMENSIONS[posterFormat]
 
-  const [matches, rajdhaniBold, outfitRegular, outfitMedium] = await Promise.all([
-    getWeekMatches(),
-    loadGoogleFont('Rajdhani', 700),
-    loadGoogleFont('Outfit', 400),
-    loadGoogleFont('Outfit', 600),
-  ])
+  const [matches, rajdhaniBold, outfitRegular, outfitMedium, logoDataUri, sevenBySevenLogoDataUri] =
+    await Promise.all([
+      getWeekMatches(),
+      loadGoogleFont('Rajdhani', 700),
+      loadGoogleFont('Outfit', 400),
+      loadGoogleFont('Outfit', 600),
+      getClubLogoDataUri(),
+      get7x7LogoDataUri(),
+    ])
 
   const dayOptions = getDayOptions(matches)
   if (dayOptions.length === 0) {
@@ -46,8 +49,8 @@ export async function GET(request: Request) {
     <Tournament7x7Poster
       teams={teams}
       format={posterFormat}
-      logoDataUri={getClubLogoDataUri()}
-      sevenBySevenLogoDataUri={get7x7LogoDataUri()}
+      logoDataUri={logoDataUri}
+      sevenBySevenLogoDataUri={sevenBySevenLogoDataUri}
       periodLabel={daySchedule.periodLabel}
     />,
     {
