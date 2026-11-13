@@ -1,0 +1,481 @@
+// ─── Bram (mascot) and the "Vraag het Bram" button ───────────────────────────
+
+// Bram's head in a white circle; the top of the head pops out above the circle.
+// The mask shows everything above the circle's centre line, and below it only
+// what falls inside the circle.
+.bram-avatar {
+  --bram-size: 62px;
+
+  // A span: without display block its width and height do nothing outside a flex row, and the
+  // circle in the "Stel je vraag" band had no size at all.
+  display: block;
+  flex: none;
+  height: var(--bram-size);
+  position: relative;
+  width: var(--bram-size);
+
+  &::before {
+    background: var(--color-white);
+    border-radius: 50%;
+    content: '';
+    inset: 0;
+    position: absolute;
+    transition: background-color 0.45s ease;
+  }
+
+  &--red::before {
+    background: var(--color-primary);
+  }
+
+  img {
+    --bram-height: calc(var(--bram-size) * 1.14);
+    --bram-mid: calc(var(--bram-height) - var(--bram-size) / 2);
+
+    bottom: 0;
+    height: var(--bram-height);
+    left: 0;
+    -webkit-mask:
+      linear-gradient(#000, #000) 0 0 / 100% var(--bram-mid) no-repeat,
+      radial-gradient(
+        circle calc(var(--bram-size) / 2) at 50% var(--bram-mid),
+        #000 98%,
+        transparent 100%
+      );
+    mask:
+      linear-gradient(#000, #000) 0 0 / 100% var(--bram-mid) no-repeat,
+      radial-gradient(
+        circle calc(var(--bram-size) / 2) at 50% var(--bram-mid),
+        #000 98%,
+        transparent 100%
+      );
+    object-fit: contain;
+    object-position: bottom;
+    position: absolute;
+    width: var(--bram-size);
+  }
+}
+
+.assistant-fab-dock {
+  bottom: 1.25rem;
+  position: fixed;
+  right: 1.25rem;
+  transform-origin: 100% 100%;
+  // Coming back on a laptop: a pop with a little overshoot, the same as Bram in the band.
+  transition:
+    transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1),
+    opacity 0.15s ease;
+  z-index: 900;
+
+  // Coming back on a phone: once Bram has flown back from the band.
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s ease;
+    transition-delay: 0.45s;
+  }
+
+  // Steps aside while the popup is open.
+  &.is-away {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.3) translate(24px, 24px);
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s ease;
+    transition-delay: 0s;
+  }
+
+  // Bram sits in the "Stel je vraag" band. Laptop: the button pops away (a small swell, then
+  // gone) at the same moment he pops up there.
+  &.is-docked {
+    transform: scale(0);
+    transform-origin: 60% 60%;
+    transition:
+      transform 0.3s cubic-bezier(0.6, -0.6, 0.7, 0.2),
+      opacity 0.1s ease 0.2s;
+
+    // Phone: Bram flies there himself (see .bram-flight), the button just fades.
+    @media screen and (max-width: #{$breakpoint-medium}) {
+      transform: none;
+      transition: opacity 0.15s ease;
+    }
+  }
+
+  // Never two things at the bottom of the screen: while the cancellation popup is open,
+  // the button steps aside.
+  body:has(.cancellation-popup) & {
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0s;
+  }
+
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Laptop: a white button in the style of the other buttons (small rounded corners), Bram in a
+// light grey circle on the left, "Vraag het Bram" and "Altijd online" next to him.
+// Phone: only Bram, in a white circle.
+.assistant-fab {
+  align-items: center;
+  background: var(--color-white);
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  // A red glow, like the red buttons on the site, so it stands out on a white page.
+  box-shadow: 0 10px 28px rgb(204 0 0 / 30%);
+  color: var(--color-dark);
+  cursor: pointer;
+  display: flex;
+  gap: 0.9rem;
+  padding: 8px 1.5rem 8px 8px;
+  text-align: left;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+
+  .bram-avatar {
+    --bram-size: 66px !important;
+
+    &::before {
+      background: var(--color-light);
+    }
+  }
+
+  &:hover {
+    border-color: rgb(204 0 0 / 35%);
+    box-shadow: 0 14px 32px rgb(204 0 0 / 38%);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-dark);
+    outline-offset: 3px;
+  }
+
+  // Phone: just Bram in a round white button, so it covers little of the page.
+  @media screen and (max-width: #{$breakpoint-mobile-lg}) {
+    border-radius: 50%;
+    padding: 0;
+
+    .assistant-fab__label {
+      display: none;
+    }
+
+    .bram-avatar {
+      --bram-size: 64px !important;
+
+      &::before {
+        background: var(--color-white);
+      }
+    }
+  }
+}
+
+.assistant-fab__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.assistant-fab__title {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-transform: uppercase;
+
+  span {
+    color: var(--color-primary);
+  }
+}
+
+.assistant-fab__status {
+  align-items: center;
+  color: #2c7a3f;
+  display: flex;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  gap: 0.35rem;
+
+  &::before {
+    background: currentColor;
+    border-radius: 50%;
+    content: '';
+    height: 7px;
+    width: 7px;
+  }
+}
+
+// Small cross at the top right: hides Bram for the rest of the visit.
+.assistant-fab__close {
+  align-items: center;
+  background: var(--color-dark);
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 25%);
+  color: var(--color-white);
+  cursor: pointer;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 24px;
+
+  &:hover {
+    background: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-dark);
+    outline-offset: 2px;
+  }
+}
+
+.assistant-greeting {
+  background: var(--color-light);
+  border-radius: 12px 12px 12px 4px;
+  font-size: 1rem;
+  margin: 0 0 1.1rem;
+  padding: 0.85rem 1rem;
+}
+
+// ─── Bram flying between the button and the band ────────────────────────────
+// A copy of the avatar, moved by AssistantFab with the Web Animations API.
+
+.bram-flight {
+  margin: 0;
+  pointer-events: none;
+  position: fixed;
+  transform-origin: 0 0;
+  z-index: 950;
+
+  // Into the band: moves along with the page, so Bram still lands in the circle when you keep
+  // scrolling during the flight.
+  &--page {
+    position: absolute;
+  }
+}
+
+// ─── Bram in the "Stel je vraag" band ───────────────────────────────────────
+// Laptop: Bram in a white circle on the left, the heading next to him and the question field on
+// the right; a speech bubble above him shows example questions in turn. Phone: a small Bram next
+// to the heading, the field and the examples below. Bram appears in the circle when the band comes
+// into view (the button at the bottom right flies there) and stays while you scroll on past it.
+
+.assistant-bar__inner {
+  align-content: center;
+  align-items: center;
+  display: grid;
+  gap: 0.75rem 2.5rem;
+  grid-template-areas:
+    'bram head ask'
+    'bram intro ask';
+  grid-template-columns: 10rem minmax(0, 22rem) minmax(0, 1fr);
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    gap: 1rem;
+    grid-template-areas:
+      'bram head'
+      'ask ask';
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+  }
+}
+
+// Room above Bram for the speech bubble (the band's own padding comes later in the cascade).
+.assistant-bar .assistant-bar__inner {
+  @media screen and (min-width: #{$breakpoint-medium + 1}) {
+    padding-top: 5.5rem;
+  }
+}
+
+.assistant-bar__bram {
+  align-self: center;
+  grid-area: bram;
+  height: 10rem;
+  position: relative;
+  width: 10rem;
+
+  .bram-avatar {
+    --bram-size: 10rem !important;
+  }
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    height: 4.75rem;
+    width: 4.75rem;
+
+    .bram-avatar {
+      --bram-size: 4.75rem !important;
+    }
+  }
+}
+
+.assistant-bar__bram-button {
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgb(0 0 0 / 8%));
+  opacity: 0;
+  padding: 0;
+  pointer-events: none;
+  transform: scale(0);
+  transform-origin: 50% 60%;
+  // Going (laptop): a small swell, then gone, the same as the button at the bottom right.
+  transition:
+    transform 0.3s cubic-bezier(0.6, -0.6, 0.7, 0.2),
+    opacity 0.1s ease 0.2s;
+
+  // Phone: Bram flies here, so the circle only fills in once he has landed.
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    transform: scale(0.4);
+    transform-origin: 50% 100%;
+    transition:
+      transform 0.25s ease,
+      opacity 0.2s ease;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-dark);
+    outline-offset: 4px;
+  }
+
+  // Coming (laptop): pops up with a little overshoot.
+  .assistant-bar.has-bram & {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    transition:
+      transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1),
+      opacity 0.1s linear;
+
+    @media screen and (max-width: #{$breakpoint-medium}) {
+      transition:
+        transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) 0.4s,
+        opacity 0.1s linear 0.4s;
+    }
+  }
+}
+
+// Laptop only: a speech bubble above Bram with an example question; a click asks it.
+.assistant-bar__question {
+  background: var(--color-dark);
+  border: 0;
+  border-radius: 14px 14px 14px 4px;
+  // Above the top of Bram's head, which pops out above the circle.
+  bottom: calc(100% + 1.75rem);
+  color: var(--color-white);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  left: 0;
+  opacity: 0;
+  padding: 0.55rem 0.9rem;
+  pointer-events: none;
+  position: absolute;
+  text-align: left;
+  transform: translateY(6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  max-width: 12.5rem;
+  width: max-content;
+
+  &:hover {
+    background: var(--color-primary);
+  }
+
+  .assistant-bar.has-bram & {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition:
+      opacity 0.3s ease 0.4s,
+      transform 0.3s ease 0.4s,
+      background-color 0.15s ease;
+  }
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    display: none;
+  }
+}
+
+// The question fades in and out when it changes.
+.assistant-bar__question-text {
+  animation: bram-question-in 0.3s ease;
+  display: inline-block;
+}
+
+@keyframes bram-question-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.assistant-bar__head {
+  align-self: end;
+  grid-area: head;
+
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    align-self: center;
+
+    .home-h2 {
+      font-size: clamp(1.6rem, 7vw, 2rem);
+      margin-top: 0.35rem;
+    }
+  }
+}
+
+.assistant-bar__ask {
+  grid-area: ask;
+  min-width: 0;
+
+  .assistant-bar__chips {
+    margin-top: 0.75rem;
+  }
+}
+
+.assistant-bar .assistant-bar__intro {
+  align-self: start;
+  grid-area: intro;
+  margin: 0;
+
+  // On a phone the heading says it all.
+  @media screen and (max-width: #{$breakpoint-medium}) {
+    display: none;
+  }
+}
+
+// "aan Bram" after "Stel je vraag": only on a phone, where the intro with his name is hidden.
+.assistant-bar .home-h2 .assistant-bar__to-bram {
+  color: inherit;
+
+  @media screen and (min-width: #{$breakpoint-medium + 1}) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-bar__bram-button,
+  .assistant-bar__question,
+  .assistant-bar.has-bram .assistant-bar__bram-button,
+  .assistant-bar.has-bram .assistant-bar__question {
+    transition: none;
+  }
+
+  .assistant-bar__question-text {
+    animation: none;
+  }
+}
