@@ -19,11 +19,12 @@ export async function GET(request: Request) {
   const requestedPage = Number.parseInt(searchParams.get('page') ?? '1', 10) || 1
   const { width, height } = POSTER_DIMENSIONS[posterFormat]
 
-  const [matches, rajdhaniBold, outfitRegular, outfitMedium] = await Promise.all([
+  const [matches, rajdhaniBold, outfitRegular, outfitMedium, logoDataUri] = await Promise.all([
     getWeekMatches(),
     loadGoogleFont('Rajdhani', 700),
     loadGoogleFont('Outfit', 400),
     loadGoogleFont('Outfit', 600),
+    getClubLogoDataUri(),
   ])
 
   const dayOptions = getDayOptions(matches)
@@ -46,7 +47,7 @@ export async function GET(request: Request) {
     <Poster
       schedule={pageSchedule}
       format={posterFormat}
-      logoDataUri={getClubLogoDataUri()}
+      logoDataUri={logoDataUri}
       bigStyle={bigStyle}
     />,
     {
