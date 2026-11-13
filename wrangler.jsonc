@@ -7,6 +7,11 @@
   "main": "worker.ts",
   "compatibility_date": "2026-11-09",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // preview.svv04.nl until svv04.nl itself moves to this Worker. A route turns workers.dev and
+  // the PR previews off unless they are asked for, so both stay on explicitly.
+  "routes": [{ "pattern": "preview.svv04.nl", "custom_domain": true }],
+  "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",

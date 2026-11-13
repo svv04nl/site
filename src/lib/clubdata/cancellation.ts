@@ -25,7 +25,7 @@ export type CancellationTestMode = 'test' | 'veel' | 'alles'
 const TEST_MODES: readonly string[] = ['test', 'veel', 'alles']
 
 // The live site. Every other host (previews, localhost) may use the test mode.
-const PRODUCTION_HOSTS = ['svv04.nl', 'www.svv04.nl', 'site.svv04.workers.dev']
+const PRODUCTION_HOSTS = ['svv04.nl', 'www.svv04.nl', 'preview.svv04.nl', 'site.svv04.workers.dev']
 
 /** The test mode in the URL (?afgelasting=..., any capitals), or null. Browser only. */
 export function testModeParam(): CancellationTestMode | null {
