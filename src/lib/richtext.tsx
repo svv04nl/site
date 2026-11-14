@@ -1,19 +1,7 @@
 import React from 'react'
 import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import GalleryBlockComponent from '@/blocks/GalleryBlock/Component'
-
-// Walks a (possibly populated) `parent` chain to build a nested page path,
-// e.g. /vereniging/vrijwilligerswerk/taken. Only as deep as the relationship
-// depth used by the surrounding query actually resolved.
-function buildNestedPagePath(doc: any): string {
-  const slugs = [doc.slug]
-  let current = doc.parent
-  while (current && typeof current === 'object' && current.slug) {
-    slugs.unshift(current.slug)
-    current = current.parent
-  }
-  return `/${doc.section}/${slugs.join('/')}`
-}
+import { pageHref } from '@/lib/pages'
 
 function resolveInternalUrl(relationTo: string, doc: any): string {
   if (!doc || typeof doc !== 'object') {
@@ -22,7 +10,7 @@ function resolveInternalUrl(relationTo: string, doc: any): string {
 
   switch (relationTo) {
     case 'pages':
-      return buildNestedPagePath(doc)
+      return pageHref(doc)
     case 'posts':
       return `/nieuws/${doc.slug}`
     case 'teams':

@@ -37,7 +37,8 @@ export default async function MeedoenPage({ params }: Props) {
   return (
     <CmsPage
       title={page.title}
-      section="meedoen"
+      scope={{ section: { equals: 'meedoen' } }}
+      basePath="/meedoen"
       sectionLabel="Meedoen"
       content={page.content}
       slug={slug}

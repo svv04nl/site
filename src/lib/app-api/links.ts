@@ -69,14 +69,18 @@ export function hrefToTarget(href: string): LinkTarget {
     case 'vereniging':
     case 'commissies':
     case 'meedoen':
+    case 'info':
       // The sponsor options moved to the "Voor jou" page (see next.config.ts).
       if (first === 'vereniging' && last === 'sponsoring') {
         return screen('audience', { slug: 'sponsoring' })
       }
       return last && segments.length > 1 ? screen('page', { slug: last }) : screen('club')
     default:
-      if (segments.length === 1 && (ROLE_SLUGS as readonly string[]).includes(first)) {
-        return screen('audience', { slug: first as RoleSlug })
+      if ((ROLE_SLUGS as readonly string[]).includes(first)) {
+        // /ouders is the audience page, /ouders/jongste-jeugd a page of that audience.
+        return segments.length === 1
+          ? screen('audience', { slug: first as RoleSlug })
+          : screen('page', { slug: last! })
       }
       return { kind: 'browser', url: url.toString(), inApp: true }
   }
