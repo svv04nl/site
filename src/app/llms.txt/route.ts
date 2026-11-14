@@ -1,5 +1,6 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { pageHrefs } from '@/lib/pages'
 
 // Capitalise only the first letter, leaving the rest as-is (Dutch casing).
 const capitalise = (value: string) => value.charAt(0).toUpperCase() + value.slice(1)
@@ -32,7 +33,7 @@ export async function GET() {
         collection: 'pages',
         limit: 0,
         depth: 0,
-        select: { title: true, slug: true, section: true },
+        select: { title: true, slug: true, section: true, parent: true, audience: true },
       }),
       payload.find({
         collection: 'audiences',
@@ -48,6 +49,8 @@ export async function GET() {
   const verenigingPages = pages.filter((p) => p.section === 'vereniging')
   const commissiesPages = pages.filter((p) => p.section === 'commissies')
   const meedoenPages = pages.filter((p) => p.section === 'meedoen')
+  const audiencePages = pages.filter((p) => p.section === 'doelgroep' || p.section === 'info')
+  const hrefs = pageHrefs(pages, audiences)
 
   const lines: string[] = [
     "# SVV'04 Schoonebeek",
@@ -99,7 +102,7 @@ export async function GET() {
   if (verenigingPages.length > 0) {
     lines.push("## Verenigingspagina's", '')
     for (const page of verenigingPages) {
-      lines.push(`- [${page.title}](https://svv04.nl/vereniging/${page.slug})`)
+      lines.push(`- [${page.title}](https://svv04.nl${hrefs.get(page.id)})`)
     }
     lines.push('')
   }
@@ -107,7 +110,7 @@ export async function GET() {
   if (commissiesPages.length > 0) {
     lines.push('## Commissies', '')
     for (const page of commissiesPages) {
-      lines.push(`- [${page.title}](https://svv04.nl/commissies/${page.slug})`)
+      lines.push(`- [${page.title}](https://svv04.nl${hrefs.get(page.id)})`)
     }
     lines.push('')
   }
@@ -115,7 +118,15 @@ export async function GET() {
   if (meedoenPages.length > 0) {
     lines.push('## Meedoen', '')
     for (const page of meedoenPages) {
-      lines.push(`- [${page.title}](https://svv04.nl/meedoen/${page.slug})`)
+      lines.push(`- [${page.title}](https://svv04.nl${hrefs.get(page.id)})`)
+    }
+    lines.push('')
+  }
+
+  if (audiencePages.length > 0) {
+    lines.push("## Pagina's voor spelers, ouders, trainers en vrijwilligers", '')
+    for (const page of audiencePages) {
+      lines.push(`- [${page.title}](https://svv04.nl${hrefs.get(page.id)})`)
     }
     lines.push('')
   }

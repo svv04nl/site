@@ -986,7 +986,10 @@ components:
       properties:
         slug: { type: string, examples: [lidmaatschap] }
         title: { type: string, description: 'Met *accentwoord*.' }
-        section: { type: string, enum: [vereniging, commissies, meedoen, juridisch] }
+        section:
+          type: string
+          enum: [vereniging, commissies, meedoen, doelgroep, info, juridisch]
+          description: 'doelgroep: een pagina van één doelgroep (/ouders/...). info: gedeeld door doelgroepen (/info/...).'
         anchors:
           type: array
           description: Ankerchips "Op deze pagina" - de koppen van niveau 2.
