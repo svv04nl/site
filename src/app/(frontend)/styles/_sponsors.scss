@@ -29,6 +29,80 @@
   padding: 0 var(--container-padding);
 }
 
+// Main sponsors as fixed cards between the title row and the scrolling logo bar.
+.sponsors-tiers {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  margin: 1.75rem auto 0;
+  max-width: var(--grid-base);
+  padding: 0 var(--container-padding);
+}
+
+.sponsors-tier-card {
+  align-items: center;
+  background: var(--color-white);
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  color: var(--color-dark);
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  @at-root a#{&}:hover {
+    border-color: var(--color-dark);
+    box-shadow: 0 6px 18px rgba(0 0 0 / 0.08);
+  }
+}
+
+.sponsors-tier-logo {
+  align-items: center;
+  display: flex;
+  flex: none;
+  height: 4rem;
+  justify-content: center;
+  width: 10rem;
+
+  img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  span {
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    width: 7.5rem;
+  }
+}
+
+.sponsors-tier-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.sponsors-tier-label {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sponsors-tier-name {
+  font-weight: 600;
+}
+
 .sponsors-ticker {
   background-color: var(--color-white);
   overflow: hidden;
@@ -46,8 +120,12 @@
   display: flex;
   width: max-content;
 
-  &:hover {
-    animation-play-state: paused;
+  // Pause under the mouse only. On a touch screen a tap leaves :hover stuck, and the bar
+  // stood still until you tapped somewhere else.
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      animation-play-state: paused;
+    }
   }
 }
 
@@ -109,12 +187,9 @@
 .home-sponsor-tiers {
   background: var(--color-white);
   border-top: 1px solid #ececec;
+  // Not shown any more: the sponsor block below holds the main sponsors on every screen.
   display: none;
   padding: 2.5rem 0 0;
-
-  @media screen and (max-width: $breakpoint-home-side) {
-    display: block;
-  }
 
   // Cards side by side when there is room, one per row on a phone.
   .sponsor-sidebar {
@@ -124,11 +199,6 @@
     margin: 0 auto;
     max-width: var(--grid-base);
     padding: 0 var(--container-padding);
-  }
-
-  + .sponsors-section {
-    border-top: 0;
-    padding-top: 2rem;
   }
 }
 
