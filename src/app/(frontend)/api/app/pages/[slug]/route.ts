@@ -5,7 +5,7 @@ import config from '@payload-config'
 import { SITE_URL } from '@/lib/app-api/config'
 import { appRouteWithParams, notFound, slugParam, TTL } from '@/lib/app-api/http'
 import { anchorsOf, lexicalToBlocks, markdownToBlocks } from '@/lib/app-api/richtext'
-import { buildPagePath, resolvePageSlugPath } from '@/lib/pages'
+import { resolvePagePath } from '@/lib/pages'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,7 +47,7 @@ export const GET = appRouteWithParams<{ slug: string }>(TTL.content, async (_req
     throw notFound('Deze pagina')
   }
 
-  const webUrl = `${SITE_URL}${buildPagePath(page.section, await resolvePageSlugPath(payload, page))}`
+  const webUrl = `${SITE_URL}${await resolvePagePath(payload, page)}`
   const content = lexicalToBlocks(page.content, { webUrl })
   return {
     slug: page.slug,

@@ -384,9 +384,13 @@ export interface Sponsor {
 export interface Page {
   id: number;
   title: string;
-  section: 'vereniging' | 'commissies' | 'meedoen';
   /**
-   * URL slug, e.g. "technische-commissie" → /commissies/technische-commissie
+   * Bepaalt het adres en het menu. Doelgroep: /ouders/<slug>, met de andere pagina's van die doelgroep in de zijbalk. Info: /info/<slug>, in geen enkel menu; link ernaar vanaf de doelgroeppagina's.
+   */
+  section: 'vereniging' | 'commissies' | 'meedoen' | 'doelgroep' | 'info';
+  audience?: (number | null) | Audience;
+  /**
+   * URL slug, e.g. "technische-commissie" → /commissies/technische-commissie. Verplaats je een pagina naar een andere sectie of doelgroep, dan stuurt het oude adres vanzelf door.
    */
   slug: string;
   /**
@@ -416,55 +420,6 @@ export interface Page {
     };
     [k: string]: unknown;
   } | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contacts".
- */
-export interface Contact {
-  id: number;
-  name: string;
-  /**
-   * Een persoon kan meerdere functies hebben. Linken (bijv. vanuit een ContactBlock of het contactformulier) gebeurt via de slug van de functie, niet via de persoon.
-   */
-  roles?:
-    | {
-        title: string;
-        /**
-         * Waar een bezoeker op zoekt, bijv. "Algemeen". Verschijnt in het contactformulier als "Onderwerp (Functie)", bijv. "Algemeen (Secretaris)". Leeg = toont alleen de functienaam.
-         */
-        topic?: string | null;
-        /**
-         * URL-vriendelijke code voor deep links naar het contactformulier, bijv. "ledenadministratie". Leeg = automatisch afgeleid van de functie.
-         */
-        slug?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  email?: string | null;
-  phone?: string | null;
-  /**
-   * Optioneel. Wordt getoond als aanspreekpunt op de doelgroeppagina's.
-   */
-  photo?: (number | null) | Media;
-  /**
-   * Kopje waaronder dit contact op de contactpagina valt, bijv. "Secretariaat".
-   */
-  group?: string | null;
-  /**
-   * Lager = hoger in de lijst.
-   */
-  order?: number | null;
-  /**
-   * Alleen aangevinkte contacten verschijnen als optie in het contactformulier.
-   */
-  showInContactForm?: boolean | null;
-  /**
-   * Zet uit om dit contact te verbergen in de rechterkolom van de contactpagina (bijv. contacten die alleen via een ContactBlock op een specifieke pagina getoond worden).
-   */
-  showOnContactPage?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -678,6 +633,55 @@ export interface Audience {
     buttonLabel?: string | null;
     buttonUrl?: string | null;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts".
+ */
+export interface Contact {
+  id: number;
+  name: string;
+  /**
+   * Een persoon kan meerdere functies hebben. Linken (bijv. vanuit een ContactBlock of het contactformulier) gebeurt via de slug van de functie, niet via de persoon.
+   */
+  roles?:
+    | {
+        title: string;
+        /**
+         * Waar een bezoeker op zoekt, bijv. "Algemeen". Verschijnt in het contactformulier als "Onderwerp (Functie)", bijv. "Algemeen (Secretaris)". Leeg = toont alleen de functienaam.
+         */
+        topic?: string | null;
+        /**
+         * URL-vriendelijke code voor deep links naar het contactformulier, bijv. "ledenadministratie". Leeg = automatisch afgeleid van de functie.
+         */
+        slug?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  email?: string | null;
+  phone?: string | null;
+  /**
+   * Optioneel. Wordt getoond als aanspreekpunt op de doelgroeppagina's.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * Kopje waaronder dit contact op de contactpagina valt, bijv. "Secretariaat".
+   */
+  group?: string | null;
+  /**
+   * Lager = hoger in de lijst.
+   */
+  order?: number | null;
+  /**
+   * Alleen aangevinkte contacten verschijnen als optie in het contactformulier.
+   */
+  showInContactForm?: boolean | null;
+  /**
+   * Zet uit om dit contact te verbergen in de rechterkolom van de contactpagina (bijv. contacten die alleen via een ContactBlock op een specifieke pagina getoond worden).
+   */
+  showOnContactPage?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1069,6 +1073,7 @@ export interface SponsorsSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   section?: T;
+  audience?: T;
   slug?: T;
   actionLabel?: T;
   parent?: T;

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { SetBreadcrumb } from '@/components/BreadcrumbContext'
@@ -73,8 +73,14 @@ function NavList({
 
 type Props = {
   title: string
-  section: 'vereniging' | 'commissies' | 'meedoen'
-  sectionLabel: string
+  /** Where the page lives: the sidebar lists the other pages there, e.g. { section: { equals: 'vereniging' } }. */
+  scope: Where
+  /** The path the sidebar links start with: /vereniging, /ouders. */
+  basePath: string
+  /** Breadcrumb and sidebar title; none for a page that belongs to no section (/info). */
+  sectionLabel?: string
+  /** Link of the breadcrumb, when the section has a page of its own (an audience). */
+  sectionHref?: string
   content: Page['content']
   showSubpageMenu?: boolean
   slug?: string
@@ -82,8 +88,10 @@ type Props = {
 
 export default async function CmsPage({
   title,
-  section,
+  scope,
+  basePath,
   sectionLabel,
+  sectionHref,
   content,
   showSubpageMenu = true,
   slug,
@@ -94,10 +102,7 @@ export default async function CmsPage({
     const payload = await getPayload({ config })
     const { docs } = await payload.find({
       collection: 'pages',
-      where: {
-        section: { equals: section },
-        hideFromNav: { not_equals: true },
-      },
+      where: { and: [scope, { hideFromNav: { not_equals: true } }] },
       sort: 'title',
       limit: 200,
       depth: 0,
@@ -105,7 +110,11 @@ export default async function CmsPage({
     sectionPages = buildNavTree(docs)
   }
 
-  const crumbs = [{ label: 'Home', href: '/' }, { label: sectionLabel }, { label: title }]
+  const crumbs = [
+    { label: 'Home', href: '/' },
+    ...(sectionLabel ? [{ label: sectionLabel, href: sectionHref }] : []),
+    { label: title },
+  ]
 
   return (
     <main className="page">
@@ -127,7 +136,7 @@ export default async function CmsPage({
               <nav aria-label={sectionLabel}>
                 <div className="sidebar-section">
                   <h2 className="sidebar-section-title">{sectionLabel} pagina&apos;s</h2>
-                  <NavList pages={sectionPages} basePath={`/${section}`} activeSlug={slug} />
+                  <NavList pages={sectionPages} basePath={basePath} activeSlug={slug} />
                 </div>
               </nav>
             </div>

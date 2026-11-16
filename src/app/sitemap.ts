@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { pageHrefs } from '@/lib/pages'
 
 const BASE = 'https://svv04.nl'
 
@@ -52,19 +53,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly',
   }))
 
-  // ── CMS pages (vereniging / commissies / meedoen) ─────────────────────────
-  const { docs: pages } = await payload.find({
-    collection: 'pages',
-    limit: 0,
-    depth: 0,
-    select: { slug: true, section: true },
-  })
-
-  const pageRoutes: MetadataRoute.Sitemap = pages.map((page) => ({
-    url: `${BASE}/${page.section}/${page.slug}`,
-    changeFrequency: 'monthly',
-  }))
-
   // ── Audience landing pages ─────────────────────────────────────────────────
   const { docs: audiences } = await payload.find({
     collection: 'audiences',
@@ -72,6 +60,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     depth: 0,
     select: { slug: true },
   })
+
+  // ── CMS pages (sections, audiences, /info), with nested paths ─────────────
+  const { docs: pages } = await payload.find({
+    collection: 'pages',
+    limit: 0,
+    depth: 0,
+    select: { slug: true, section: true, parent: true, audience: true },
+  })
+  const hrefs = pageHrefs(pages, audiences)
+
+  const pageRoutes: MetadataRoute.Sitemap = pages.map((page) => ({
+    url: `${BASE}${hrefs.get(page.id)}`,
+    changeFrequency: 'monthly',
+  }))
 
   const audienceRoutes: MetadataRoute.Sitemap = audiences.map((audience) => ({
     url: `${BASE}/${audience.slug}`,

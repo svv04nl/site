@@ -1,22 +1,6 @@
-type PageLike = {
-  slug?: string | null
-  section?: string | null
-  parent?: unknown
-}
+import { pageHref, type PageLike } from '@/lib/pages'
 
-/**
- * Site path of a page, e.g. /vereniging/lidmaatschap/taken. Only as deep as the
- * `parent` chain was populated by the query (use depth >= 2 for nested pages).
- */
-export function pageHref(page: PageLike): string {
-  const slugs = [page.slug ?? '']
-  let parent = page.parent as PageLike | null | undefined
-  while (parent && typeof parent === 'object' && parent.slug) {
-    slugs.unshift(parent.slug)
-    parent = parent.parent as PageLike | null | undefined
-  }
-  return `/${page.section}/${slugs.join('/')}`
-}
+export { pageHref }
 
 export const postHref = (post: { slug?: string | null }) => `/nieuws/${post.slug}`
 export const teamHref = (team: { slug?: string | null }) => `/teams/${team.slug}`
