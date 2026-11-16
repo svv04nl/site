@@ -79,6 +79,7 @@ export interface Config {
     fundraisers: Fundraiser;
     donations: Donation;
     'team-staff': TeamStaff;
+    pupils: Pupil;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     fundraisers: FundraisersSelect<false> | FundraisersSelect<true>;
     donations: DonationsSelect<false> | DonationsSelect<true>;
     'team-staff': TeamStaffSelect<false> | TeamStaffSelect<true>;
+    pupils: PupilsSelect<false> | PupilsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -799,6 +801,40 @@ export interface TeamStaff {
   createdAt: string;
 }
 /**
+ * De pupil die meeloopt bij een thuiswedstrijd van het eerste. Staat vanaf 4 dagen voor die wedstrijd op de homepage, alleen met toestemming van de ouders.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pupils".
+ */
+export interface Pupil {
+  id: number;
+  /**
+   * Alleen de voornaam, voor de privacy.
+   */
+  name: string;
+  team?: (number | null) | Team;
+  /**
+   * Staande foto werkt het best (4:5).
+   */
+  photo?: (number | null) | Media;
+  /**
+   * De dag van de thuiswedstrijd waarbij deze pupil meeloopt.
+   */
+  matchDate: string;
+  /**
+   * Voor de voornaam, de foto en de antwoorden op de website. Zonder vinkje staat de pupil niet op de site.
+   */
+  consent?: boolean | null;
+  position?: string | null;
+  favoriteClub?: string | null;
+  favoritePlayer?: string | null;
+  favoriteSvvPlayer?: string | null;
+  happyWhen?: string | null;
+  laterBecome?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -869,6 +905,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'team-staff';
         value: number | TeamStaff;
+      } | null)
+    | ({
+        relationTo: 'pupils';
+        value: number | Pupil;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1280,6 +1320,25 @@ export interface TeamStaffSelect<T extends boolean = true> {
   name?: T;
   role?: T;
   team?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pupils_select".
+ */
+export interface PupilsSelect<T extends boolean = true> {
+  name?: T;
+  team?: T;
+  photo?: T;
+  matchDate?: T;
+  consent?: T;
+  position?: T;
+  favoriteClub?: T;
+  favoritePlayer?: T;
+  favoriteSvvPlayer?: T;
+  happyWhen?: T;
+  laterBecome?: T;
   updatedAt?: T;
   createdAt?: T;
 }
