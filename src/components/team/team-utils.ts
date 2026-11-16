@@ -1,7 +1,12 @@
 'use client'
 
 import { useQueries, useQuery } from '@tanstack/react-query'
-import { lineupQuery, resultsQuery, teamPoulesQuery } from '@/lib/clubdata/queries'
+import {
+  lineupQuery,
+  resultsQuery,
+  teamPoulesQuery,
+  teamResultsQuery,
+} from '@/lib/clubdata/queries'
 import { cancellationLabel } from '@/lib/clubdata/cancellation'
 import type { ResultMatch } from '@/lib/clubdata/transform'
 import type { PouleInfo } from '@/lib/clubdata/types'
@@ -57,15 +62,16 @@ export function outcomeOf(m: ResultMatch): Outcome | null {
 export function useOwnResults(teamcode: number | null) {
   const { regularPoules, isLoading: poulesLoading } = useTeamPoules(teamcode)
   const queries = useQueries({ queries: regularPoules.map((p) => resultsQuery(p.poulecode)) })
+  // The poule results only cover the current poule; the team's own list covers the season.
+  const teamQuery = useQuery(teamResultsQuery(teamcode))
   const seen = new Set<number>()
-  const results = queries
-    .flatMap((q) => q.data ?? [])
+  const results = [...queries.flatMap((q) => q.data ?? []), ...(teamQuery.data ?? [])]
     .filter((m) => m.isOwn && parseScore(m.score) && !cancellationLabel(m.status))
     .filter((m) => !seen.has(m.matchCode) && Boolean(seen.add(m.matchCode)))
     .sort((a, b) => b.dayKey.localeCompare(a.dayKey))
   return {
     results,
-    isLoading: poulesLoading || queries.some((q) => q.isLoading),
+    isLoading: poulesLoading || teamQuery.isLoading || queries.some((q) => q.isLoading),
     isError: queries.length > 0 && queries.every((q) => q.isError),
   }
 }

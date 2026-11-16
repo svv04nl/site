@@ -165,6 +165,36 @@ export const resultsQuery = (poulecode: number | undefined) => ({
   staleTime: STALE_TIME,
 })
 
+/** Monday-based weeks since 1 July of the current season, for a results window over the whole season. */
+function weeksSinceSeasonStart(now = new Date()): number {
+  const year = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1
+  const start = new Date(year, 6, 1)
+  return Math.ceil((now.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000))
+}
+
+/**
+ * All results of one team this season (uitslagen by teamcode). The poule results only cover the
+ * current poule, so after a new phase starts they hold just a few matches.
+ */
+export const teamResultsQuery = (teamcode: number | null) => ({
+  queryKey: ['team-results', teamcode] as const,
+  queryFn: async () => {
+    const weeks = weeksSinceSeasonStart()
+    const raw = await fetchClubData<RawPouleUitslagenResponse>('uitslagen', {
+      ...CLUB_PROGRAMMA_PARAMS,
+      teamcode: String(teamcode),
+      aantalregels: '100',
+      weekoffset: String(-weeks),
+      aantaldagen: String(weeks * 7 + 1),
+      thuis: 'ja',
+      uit: 'ja',
+    }).catch(() => [] as RawPouleUitslagenResponse)
+    return transformResults(raw, CLUB_RELATIECODE)
+  },
+  enabled: !!teamcode,
+  staleTime: STALE_TIME,
+})
+
 export const cupResultsQuery = (poulecode: number | undefined) => ({
   queryKey: ['cup-results', poulecode] as const,
   queryFn: async () => {

@@ -39,8 +39,8 @@ function TeamForm() {
 }
 
 /**
- * Top of a team page: class and match day, the name, "Mijn team" and, for teams with a
- * standing, the form. The youngest teams get no form (the bond keeps no results for them).
+ * Top of a team page: class and match day, the name (the part after "SVV'04" in red) and, for
+ * teams with a standing, the form. The youngest teams get no form (the bond keeps no results for them).
  */
 export default function TeamHeader({
   name,
@@ -54,12 +54,17 @@ export default function TeamHeader({
   const { teamcode } = useTeam()
   const { klasse, speeldag } = useTeamClass(teamcode)
   const eyebrow = [klasse, speeldag || category].filter(Boolean).join(' · ')
+  // "SVV'04 1": the club in black, the team in red.
+  const [, club = name, rest = ''] = name.match(/^(SVV['’]04)(\s.+)$/i) ?? []
 
   return (
     <div className="team-header">
       <div className="team-header__main">
-        {eyebrow && <p className="team-header__eyebrow">{eyebrow}</p>}
-        <h1 className="team-header__name">{name}</h1>
+        {eyebrow && <p className="home-eyebrow">{eyebrow}</p>}
+        <h1 className="page-title team-header__name">
+          {club}
+          {rest && <span>{rest}</span>}
+        </h1>
       </div>
       {showForm && <TeamForm />}
     </div>
