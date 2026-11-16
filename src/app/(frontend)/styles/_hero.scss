@@ -387,6 +387,26 @@
   text-shadow: none;
   width: 100%;
 
+  // Laptop: one fixed size for both cards, so the hero is just as tall for a home or away match.
+  @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
+    height: 30rem;
+
+    .hero-side-card {
+      height: 100%;
+    }
+
+    .hero-side-card__photo {
+      aspect-ratio: auto;
+      flex: 1;
+      min-height: 0;
+      object-position: center 25%;
+    }
+
+    .hero-away {
+      justify-content: center;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-tablet-landscape) {
     margin: 0 auto;
     max-width: 420px;
@@ -457,6 +477,7 @@
 
 .hero-side-card__body {
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
   gap: 0.3rem;
   padding: 1rem 1.15rem 1.15rem;
@@ -483,12 +504,31 @@
   margin-top: 0.35rem;
 }
 
+.pupil-dialog__top {
+  // Full width at the top of the popup, over the popup's padding.
+  margin: -1.5rem -1.5rem 0;
+  position: relative;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    margin: -1.25rem -1.25rem 0;
+  }
+}
+
 .pupil-dialog__photo {
   aspect-ratio: 4 / 3;
-  border-radius: 8px;
+  background: #d6d6d6;
   display: block;
   object-fit: cover;
+  object-position: center 25%;
   width: 100%;
+}
+
+.pupil-dialog__close {
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
 }
 
 .pupil-dialog__answers {

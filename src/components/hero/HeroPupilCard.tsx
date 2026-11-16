@@ -50,18 +50,18 @@ function PupilDialog({
         aria-modal="true"
         aria-labelledby={titleId}
       >
-        <div className="calendar-dialog__head">
-          <div>
-            <p className="hero-side-card__label">Pupil van de week</p>
-            <h2 id={titleId} className="calendar-dialog__title">
-              {pupil.name}
-            </h2>
-            <p className="calendar-dialog__subtitle">{subtitle}</p>
-          </div>
+        {/* The photo on top, with the close button over it. */}
+        <div className="pupil-dialog__top">
+          {pupil.photo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="pupil-dialog__photo" src={pupil.photo.url} alt={pupil.photo.alt} />
+          ) : (
+            <span className="pupil-dialog__photo pupil-dialog__photo--empty" aria-hidden="true" />
+          )}
           <button
             ref={closeRef}
             type="button"
-            className="calendar-dialog__close"
+            className="calendar-dialog__close pupil-dialog__close"
             aria-label="Sluiten"
             onClick={onClose}
           >
@@ -79,10 +79,13 @@ function PupilDialog({
             </svg>
           </button>
         </div>
-        {pupil.photo && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className="pupil-dialog__photo" src={pupil.photo.url} alt={pupil.photo.alt} />
-        )}
+        <div>
+          <p className="hero-side-card__label">Pupil van de week</p>
+          <h2 id={titleId} className="calendar-dialog__title">
+            {pupil.name}
+          </h2>
+          <p className="calendar-dialog__subtitle">{subtitle}</p>
+        </div>
         {pupil.answers.length > 0 && (
           <dl className="pupil-dialog__answers">
             {pupil.answers.map((a) => (
