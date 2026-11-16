@@ -94,7 +94,7 @@ export default async function TeamPage({ params }: Props) {
               )}
             </div>
             <div className="team-layout__tabs">
-              <LeagueSection teamName={team.name} showStandings={showStandings} />
+              <LeagueSection showStandings={showStandings} />
             </div>
           </div>
           <div className="team-layout__side sidebar-col">

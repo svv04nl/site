@@ -13,28 +13,23 @@ import LineupTab from '@/components/team/LineupTab'
 import CupTab from '@/components/team/CupTab'
 
 // The youngest teams have no standing and no results (see hasStandings): their page starts with
-// the schedule and the poule.
-const TABS = ['programma', 'uitslagen', 'stand', 'beker', 'indeling', 'spelers']
-const TABS_NO_STANDINGS = ['programma', 'indeling', 'beker', 'spelers']
+// the schedule.
+const TABS = ['stand', 'programma', 'uitslagen', 'beker', 'indeling', 'spelers']
+const TABS_NO_STANDINGS = ['programma', 'beker', 'indeling', 'spelers']
 
-export default function LeagueSection({
-  teamName,
-  showStandings,
-}: {
-  teamName: string
-  showStandings: boolean
-}) {
+export default function LeagueSection({ showStandings }: { showStandings: boolean }) {
   const { teamcode } = useTeam()
   const { regularPoules, cupPoules, latestFaseIndex } = useTeamPoules(teamcode)
   const tabIds = (showStandings ? TABS : TABS_NO_STANDINGS).filter(
     (t) => t !== 'beker' || cupPoules.length > 0,
   )
-  // ?tab=uitslagen etc. opens that tab directly (used by links from the assistant).
+  // ?tab=uitslagen etc. opens that tab directly (used by links from the assistant). Worked out on
+  // every render, not only the first: "beker" only joins the tabs once the poules have loaded.
   const requestedTab = useSearchParams().get('tab')
-  const hasRequestedTab = tabIds.includes(requestedTab ?? '')
-  const [activeTab, setActiveTab] = useState(
-    hasRequestedTab ? (requestedTab as string) : 'programma',
-  )
+  const hasRequestedTab = TABS.includes(requestedTab ?? '')
+  const [pickedTab, setActiveTab] = useState<string | null>(null)
+  const activeTab =
+    pickedTab ?? (requestedTab && tabIds.includes(requestedTab) ? requestedTab : tabIds[0])
   const sectionRef = useRef<HTMLDivElement>(null)
 
   // Opened for a specific tab: bring that section into view instead of the team photo at the top.
@@ -72,7 +67,7 @@ export default function LeagueSection({
         {activeTab === 'programma' && (
           <ScheduleTab teamcode={teamcode ?? 0} poules={[...regularPoules, ...cupPoules]} />
         )}
-        {activeTab === 'uitslagen' && showStandings && <TeamResultCards teamName={teamName} />}
+        {activeTab === 'uitslagen' && showStandings && <TeamResultCards />}
         {activeTab === 'indeling' && (
           <LineupTab poules={regularPoules} initialIndex={latestFaseIndex} />
         )}

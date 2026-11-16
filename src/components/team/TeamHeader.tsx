@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useTeam } from '@/components/team/TeamContext'
-import MyTeamButton from '@/components/team/MyTeamButton'
 import { outcomeOf, useOwnResults, useTeamClass, type Outcome } from '@/components/team/team-utils'
 
 const OUTCOME_LABEL: Record<Outcome, string> = { W: 'Gewonnen', G: 'Gelijk', V: 'Verloren' }
@@ -52,7 +51,7 @@ export default function TeamHeader({
   category?: string | null
   showForm: boolean
 }) {
-  const { teamcode, slug } = useTeam()
+  const { teamcode } = useTeam()
   const { klasse, speeldag } = useTeamClass(teamcode)
   const eyebrow = [klasse, speeldag || category].filter(Boolean).join(' · ')
 
@@ -60,10 +59,7 @@ export default function TeamHeader({
     <div className="team-header">
       <div className="team-header__main">
         {eyebrow && <p className="team-header__eyebrow">{eyebrow}</p>}
-        <div className="team-header__title-row">
-          <h1 className="team-header__name">{name}</h1>
-          <MyTeamButton slug={slug} teamName={name} />
-        </div>
+        <h1 className="team-header__name">{name}</h1>
       </div>
       {showForm && <TeamForm />}
     </div>

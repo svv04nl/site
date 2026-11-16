@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { lineupQuery, resultsQuery, teamPoulesQuery } from '@/lib/clubdata/queries'
 import { cancellationLabel } from '@/lib/clubdata/cancellation'
 import type { ResultMatch } from '@/lib/clubdata/transform'
@@ -13,7 +13,7 @@ const faseNumber = (klasse: string) => {
 
 /** The team's poules (the API can list one without name or code: skipped) and the current one. */
 export function useTeamPoules(teamcode: number | null) {
-  const { data } = useQuery(teamPoulesQuery(teamcode))
+  const { data, isLoading } = useQuery(teamPoulesQuery(teamcode))
   const regularPoules: PouleInfo[] = [...(data?.poules ?? []), ...(data?.fasePoules ?? [])].filter(
     (p) => p.klasse && p.poulecode,
   )
@@ -25,6 +25,8 @@ export function useTeamPoules(teamcode: number | null) {
     cupPoules: data?.cupPoules ?? [],
     latestFaseIndex,
     currentPoule: regularPoules[latestFaseIndex] as PouleInfo | undefined,
+    /** Still loading the poules (a team without a teamcode never loads: not loading). */
+    isLoading: Boolean(teamcode) && isLoading,
   }
 }
 
@@ -48,14 +50,24 @@ export function outcomeOf(m: ResultMatch): Outcome | null {
   return ours > theirs ? 'W' : ours < theirs ? 'V' : 'G'
 }
 
-/** Our played matches in the current poule, newest first. */
+/**
+ * Our played matches in all regular poules of this season (every phase), newest first. Looking
+ * at the current phase only gave just the last two or three matches right after a new phase began.
+ */
 export function useOwnResults(teamcode: number | null) {
-  const { currentPoule } = useTeamPoules(teamcode)
-  const { data, isLoading, isError } = useQuery(resultsQuery(currentPoule?.poulecode))
-  const results = (data ?? [])
+  const { regularPoules, isLoading: poulesLoading } = useTeamPoules(teamcode)
+  const queries = useQueries({ queries: regularPoules.map((p) => resultsQuery(p.poulecode)) })
+  const seen = new Set<number>()
+  const results = queries
+    .flatMap((q) => q.data ?? [])
     .filter((m) => m.isOwn && parseScore(m.score) && !cancellationLabel(m.status))
+    .filter((m) => !seen.has(m.matchCode) && Boolean(seen.add(m.matchCode)))
     .sort((a, b) => b.dayKey.localeCompare(a.dayKey))
-  return { results, isLoading: isLoading || !currentPoule, isError }
+  return {
+    results,
+    isLoading: poulesLoading || queries.some((q) => q.isLoading),
+    isError: queries.length > 0 && queries.every((q) => q.isError),
+  }
 }
 
 /** The class and the match day of the team, as the poule lists them ("4e klasse", "Zaterdag"). */

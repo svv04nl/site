@@ -1,32 +1,41 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import { matchEventsQuery } from '@/lib/clubdata/queries'
 import type { ResultMatch } from '@/lib/clubdata/transform'
 import { useTeam } from '@/components/team/TeamContext'
-import { parseScore, useOwnResults } from '@/components/team/team-utils'
+import MatchCard from '@/components/ui/MatchCard'
+import { useOwnResults } from '@/components/team/team-utils'
 
 // Goals and cards come per match from the bond, so a few cards at a time keeps it light.
 const PAGE = 5
 
 type EventLine = { key: string; name: string; minute: string; red?: boolean }
 
-/** Our goals and cards in one match. Empty when the bond has none for it. */
+/**
+ * Our goals and cards in one match. Empty when the bond has none for it. An own goal by the
+ * other side counts for us, so it is listed with our goals (and theirs is left out), so the list
+ * adds up to the score.
+ */
 function useOwnEvents(m: ResultMatch) {
   const { data } = useQuery(matchEventsQuery(m.matchCode))
   const ourSide = m.isOwnHome ? 'thuisteam' : 'uitteam'
-  const ours = (data ?? []).filter((e) => (e.teamtype ?? '').toLowerCase() === ourSide)
-  const line = (e: (typeof ours)[number], i: number): EventLine => ({
+  const events = data ?? []
+  const isOurs = (e: (typeof events)[number]) => (e.teamtype ?? '').toLowerCase() === ourSide
+  const isOwnGoal = (e: (typeof events)[number]) => /eigen/i.test(e.toevoeging ?? '')
+  const line = (e: (typeof events)[number], i: number): EventLine => ({
     key: `${e.soort}-${e.minuut}-${i}`,
-    // A player who keeps his name private shows up without one.
-    name: e.spelernaam?.trim() || 'Afgeschermd',
+    // A player who keeps his name private shows up without one; an own goal by the other side
+    // gets no name of theirs.
+    name: isOwnGoal(e) ? 'Eigen doelpunt tegenstander' : e.spelernaam?.trim() || 'Afgeschermd',
     minute: String(e.minuut ?? ''),
     red: /rood/i.test(e.soort),
   })
-  const goals = ours.filter((e) => /doelpunt/i.test(e.soort) && !/eigen/i.test(e.toevoeging ?? ''))
-  const cards = ours.filter((e) => /kaart/i.test(e.soort))
+  const goals = events.filter(
+    (e) => /doelpunt/i.test(e.soort) && (isOurs(e) ? !isOwnGoal(e) : isOwnGoal(e)),
+  )
+  const cards = events.filter((e) => isOurs(e) && /kaart/i.test(e.soort))
   return { goals: goals.map(line), cards: cards.map(line) }
 }
 
@@ -45,25 +54,23 @@ function BallIcon() {
   )
 }
 
-function ResultCard({ m, teamName }: { m: ResultMatch; teamName: string }) {
-  const score = parseScore(m.score)
+function ResultCard({ m }: { m: ResultMatch }) {
   const { goals, cards } = useOwnEvents(m)
 
   return (
     <article className="result-card">
-      <div className="result-card__top">
-        <span className="result-card__team">{teamName}</span>
-        <span className="result-card__date">{m.date}</span>
-      </div>
-      <Link href={`/wedstrijd/${m.matchCode}`} className="result-card__score-row">
-        <span
-          className={`result-card__side result-card__side--home${m.isOwnHome ? ' is-own' : ''}`}
-        >
-          {m.homeTeam}
-        </span>
-        <span className="result-card__score">{score ? `${score[0]} – ${score[1]}` : m.score}</span>
-        <span className={`result-card__side${m.isOwnAway ? ' is-own' : ''}`}>{m.awayTeam}</span>
-      </Link>
+      <MatchCard
+        date={m.date}
+        score={m.score}
+        status={m.status}
+        homeTeam={m.homeTeam}
+        awayTeam={m.awayTeam}
+        homeTeamRelatiecode={m.homeTeamRelatiecode}
+        awayTeamRelatiecode={m.awayTeamRelatiecode}
+        isOwnHome={m.isOwnHome}
+        isOwnAway={m.isOwnAway}
+        href={`/wedstrijd/${m.matchCode}`}
+      />
       {(goals.length > 0 || cards.length > 0) && (
         <div className="result-card__events">
           {goals.length > 0 && (
@@ -104,7 +111,7 @@ function ResultCard({ m, teamName }: { m: ResultMatch; teamName: string }) {
 }
 
 /** "Uitslagen" on a team page: our own played matches as cards, newest first. */
-export default function TeamResultCards({ teamName }: { teamName: string }) {
+export default function TeamResultCards() {
   const { teamcode } = useTeam()
   const { results, isLoading, isError } = useOwnResults(teamcode)
   const [shown, setShown] = useState(PAGE)
@@ -126,7 +133,7 @@ export default function TeamResultCards({ teamName }: { teamName: string }) {
   return (
     <div className="result-cards">
       {results.slice(0, shown).map((m) => (
-        <ResultCard key={m.matchCode} m={m} teamName={teamName} />
+        <ResultCard key={m.matchCode} m={m} />
       ))}
       {results.length > shown && (
         <button
