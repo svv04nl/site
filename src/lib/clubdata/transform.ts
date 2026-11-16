@@ -214,7 +214,6 @@ export function transformSchedule(
 
     return {
       matchCode: w.wedstrijdcode,
-      kind: kindOf(w, fallbackKind),
       date: displayDate,
       time: w.aanvangstijd,
       homeTeam: w.thuisteam,
@@ -424,6 +423,7 @@ export function transformResults(
 
     return {
       matchCode: w.wedstrijdcode,
+      kind: kindOf(w, fallbackKind),
       date: displayDate,
       homeTeam: w.thuisteam,
       homeTeamRelatiecode: homeRelatiecode,
