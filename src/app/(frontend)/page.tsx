@@ -60,12 +60,13 @@ export default async function HomePage({
     }),
   ])
 
-  const heroPost = heroPosts[0]
+  // Test mode on previews (?hero=pupil or ?hero=uit, see lib/hero-side): the welcome hero with
+  // the card, also while a post is featured.
+  const heroTest = heroTestMode((await searchParams).hero)
+  const heroPost = heroTest ? undefined : heroPosts[0]
   // Around a match of the first team: the pupil van de week or the away match, on the right of
   // the welcome hero. A featured post keeps the hero to itself.
-  const heroSide = heroPost
-    ? null
-    : await loadHeroSide(new Date(), heroTestMode((await searchParams).hero))
+  const heroSide = heroPost ? null : await loadHeroSide(new Date(), heroTest)
   if (!heroPost) {
     preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
   }
