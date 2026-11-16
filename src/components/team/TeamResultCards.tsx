@@ -19,7 +19,7 @@ type EventLine = { key: string; name: string; minute: string; red?: boolean }
  * adds up to the score.
  */
 function useOwnEvents(m: ResultMatch) {
-  const { data } = useQuery(matchEventsQuery(m.matchCode))
+  const { data } = useQuery({ ...matchEventsQuery(m.matchCode), enabled: m.isOwn })
   const ourSide = m.isOwnHome ? 'thuisteam' : 'uitteam'
   const events = data ?? []
   const isOurs = (e: (typeof events)[number]) => (e.teamtype ?? '').toLowerCase() === ourSide
@@ -54,11 +54,20 @@ function BallIcon() {
   )
 }
 
-function ResultCard({ m }: { m: ResultMatch }) {
+// A competition match needs no label; cup matches and friendlies get one.
+const KIND_LABEL: Partial<Record<ResultMatch['kind'], string>> = {
+  beker: 'Beker',
+  oefen: 'Oefenwedstrijd',
+}
+
+/** One played match as a card, with our goals and cards under it. Also used in the Beker tab. */
+export function ResultCard({ m, showKind = true }: { m: ResultMatch; showKind?: boolean }) {
   const { goals, cards } = useOwnEvents(m)
+  const kind = showKind ? KIND_LABEL[m.kind] : undefined
 
   return (
     <article className="result-card">
+      {kind && <p className={`result-card__kind result-card__kind--${m.kind}`}>{kind}</p>}
       <MatchCard
         date={m.date}
         score={m.score}

@@ -205,7 +205,7 @@ export const cupResultsQuery = (poulecode: number | undefined) => ({
       eigenwedstrijden: 'NEE',
       gebruiklokaleteamgegevens: 'NEE',
     })
-    return transformResults(raw, CLUB_RELATIECODE)
+    return transformResults(raw, CLUB_RELATIECODE, 'beker')
   },
   enabled: !!poulecode,
   staleTime: STALE_TIME,

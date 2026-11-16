@@ -214,6 +214,7 @@ export function transformSchedule(
 
     return {
       matchCode: w.wedstrijdcode,
+      kind: kindOf(w, fallbackKind),
       date: displayDate,
       time: w.aanvangstijd,
       homeTeam: w.thuisteam,
@@ -372,8 +373,12 @@ export function transformLineup(raw: RawPouleIndelingResponse): LineupEntry[] {
 
 // ─── Results (pouleuitslagen) ─────────────────────────────────────────────────
 
+/** Competition, cup or friendly. Unknown from pouleuitslagen, so the poule decides there. */
+export type MatchKind = 'competitie' | 'beker' | 'oefen'
+
 export type ResultMatch = {
   matchCode: number
+  kind: MatchKind
   date: string
   homeTeam: string
   homeTeamRelatiecode?: string
@@ -388,9 +393,21 @@ export type ResultMatch = {
   dayKey: string // "YYYY-MM-DD"
 }
 
+function kindOf(w: RawPouleUitslagenResponse[number], fallback: MatchKind): MatchKind {
+  const text = [w.competitiesoort, w.competitienaam, w.klasse].filter(Boolean).join(' ')
+  if (/beker/i.test(text)) {
+    return 'beker'
+  }
+  if (/oefen|vriendschap/i.test(text)) {
+    return 'oefen'
+  }
+  return /regulier/i.test(w.competitiesoort ?? '') ? 'competitie' : fallback
+}
+
 export function transformResults(
   raw: RawPouleUitslagenResponse,
   clubRelatiecode: string,
+  fallbackKind: MatchKind = 'competitie',
 ): ResultMatch[] {
   return raw.map((w) => {
     const isOwnHome = w.thuisteamclubrelatiecode === clubRelatiecode

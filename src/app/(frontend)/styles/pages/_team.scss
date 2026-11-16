@@ -135,11 +135,32 @@
   align-items: flex-end;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   gap: 0.35rem;
+}
 
-  @media screen and (max-width: $breakpoint-mobile-lg) {
-    align-items: center;
-    flex-direction: row;
+.team-form__count-mobile {
+  display: none;
+}
+
+// On a phone: the last two only, next to the name instead of under it.
+@media screen and (max-width: $breakpoint-mobile-lg) {
+  .team-header {
+    align-items: flex-end;
+    flex-wrap: nowrap;
+    gap: 1rem;
+  }
+
+  .team-form__count {
+    display: none;
+  }
+
+  .team-form__count-mobile {
+    display: inline;
+  }
+
+  .team-form__dot:nth-last-child(n + 3) {
+    display: none;
   }
 }
 
@@ -315,6 +336,34 @@
 }
 
 // The shared match card (MatchCard) with our goals and cards under it, in one frame.
+// "Beker" or "Oefenwedstrijd" above a result card (a competition match gets no label).
+.result-card__kind {
+  align-self: flex-start;
+  background: var(--color-dark);
+  border-radius: 0 0 6px 0;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  padding: 0.3rem 0.7rem;
+  text-transform: uppercase;
+
+  &--beker {
+    background: var(--color-primary);
+  }
+}
+
+.cup-status {
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+
+  &--out {
+    color: var(--color-primary);
+  }
+}
+
 .result-card {
   background: var(--color-white);
   border: 1px solid #e8e8e8;

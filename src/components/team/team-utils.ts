@@ -2,7 +2,9 @@
 
 import { useQueries, useQuery } from '@tanstack/react-query'
 import {
+  cupResultsQuery,
   lineupQuery,
+  pouleScheduleQuery,
   resultsQuery,
   teamPoulesQuery,
   teamResultsQuery,
@@ -59,14 +61,31 @@ export function outcomeOf(m: ResultMatch): Outcome | null {
  * Our played matches in all regular poules of this season (every phase), newest first. Looking
  * at the current phase only gave just the last two or three matches right after a new phase began.
  */
+/** "2026-07-01": the first day of the current season (a season runs from 1 July). */
+export function seasonStartKey(now = new Date()): string {
+  const year = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1
+  return `${year}-07-01`
+}
+
+/**
+ * Our played matches this season, newest first: competition, cup and (when the bond lists them)
+ * friendlies. The poule lists go first, so a match keeps the kind its poule gives it.
+ */
 export function useOwnResults(teamcode: number | null) {
-  const { regularPoules, isLoading: poulesLoading } = useTeamPoules(teamcode)
-  const queries = useQueries({ queries: regularPoules.map((p) => resultsQuery(p.poulecode)) })
+  const { regularPoules, cupPoules, isLoading: poulesLoading } = useTeamPoules(teamcode)
+  const queries = useQueries({
+    queries: [
+      ...regularPoules.map((p) => resultsQuery(p.poulecode)),
+      ...cupPoules.map((p) => cupResultsQuery(p.poulecode)),
+    ],
+  })
   // The poule results only cover the current poule; the team's own list covers the season.
   const teamQuery = useQuery(teamResultsQuery(teamcode))
+  const start = seasonStartKey()
   const seen = new Set<number>()
   const results = [...queries.flatMap((q) => q.data ?? []), ...(teamQuery.data ?? [])]
-    .filter((m) => m.isOwn && parseScore(m.score) && !cancellationLabel(m.status))
+    .filter((m) => m.isOwn && m.dayKey >= start && parseScore(m.score))
+    .filter((m) => !cancellationLabel(m.status))
     .filter((m) => !seen.has(m.matchCode) && Boolean(seen.add(m.matchCode)))
     .sort((a, b) => b.dayKey.localeCompare(a.dayKey))
   return {
@@ -74,6 +93,49 @@ export function useOwnResults(teamcode: number | null) {
     isLoading: poulesLoading || teamQuery.isLoading || queries.some((q) => q.isLoading),
     isError: queries.length > 0 && queries.every((q) => q.isError),
   }
+}
+
+/** Lost, counting a shoot-out: "2 - 2 (3-4)" is a loss for the home side. */
+function lostCupMatch(m: ResultMatch): boolean {
+  const outcome = outcomeOf(m)
+  if (outcome !== 'G') {
+    return outcome === 'V'
+  }
+  const shootout = m.score.match(/\((\d+)\s*[-–]\s*(\d+)\)/)
+  if (!shootout) {
+    return false
+  }
+  const [home, away] = [Number(shootout[1]), Number(shootout[2])]
+  return m.isOwnHome ? home < away : away < home
+}
+
+/**
+ * The cup round the team went out in, or null. Only for a knockout round (its name has "ronde"
+ * or "finale"), lost as our last cup match, with no cup match of ours still to play. A lost
+ * match in a group phase is not the end, so that never counts.
+ */
+export function useCupElimination(teamcode: number | null): string | null {
+  const { cupPoules } = useTeamPoules(teamcode)
+  const results = useQueries({ queries: cupPoules.map((p) => cupResultsQuery(p.poulecode)) })
+  const schedules = useQueries({
+    queries: cupPoules.map((p) => pouleScheduleQuery(p.poulecode, teamcode ?? 0)),
+  })
+  if (results.some((q) => q.isLoading) || schedules.some((q) => q.isLoading)) {
+    return null
+  }
+  if (schedules.some((q) => (q.data ?? []).some((m) => m.isOwn))) {
+    return null
+  }
+  const start = seasonStartKey()
+  const played = cupPoules
+    .flatMap((p, i) => (results[i]?.data ?? []).map((m) => ({ m, klasse: p.klasse })))
+    .filter(({ m }) => m.isOwn && m.dayKey >= start && parseScore(m.score))
+    .sort((a, b) => b.m.dayKey.localeCompare(a.m.dayKey))
+  const last = played[0]
+  if (!last || !/ronde|finale/i.test(last.klasse) || !lostCupMatch(last.m)) {
+    return null
+  }
+  return last.klasse
 }
 
 /** The class and the match day of the team, as the poule lists them ("4e klasse", "Zaterdag"). */

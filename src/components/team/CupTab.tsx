@@ -4,8 +4,9 @@ import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import cx from 'classnames'
 import { standingsQuery, cupResultsQuery, pouleScheduleQuery } from '@/lib/clubdata/queries'
-import { groupScheduleByWeek, groupResultsByDay } from '@/lib/clubdata/transform'
-import ResultsList from '@/components/ui/ResultsList'
+import { groupScheduleByWeek } from '@/lib/clubdata/transform'
+import { ResultCard } from '@/components/team/TeamResultCards'
+import { seasonStartKey, useCupElimination } from '@/components/team/team-utils'
 import ClubLogo from '@/components/ClubLogo'
 import ScheduleWeekGroups from '@/components/ui/ScheduleWeekGroups'
 import type { PouleInfo } from '@/lib/clubdata/types'
@@ -31,7 +32,10 @@ export default function CupTab({ poules, teamcode }: Props) {
 
   const filteredUpcoming = filterOwn ? (schedule ?? []).filter((m) => m.isOwn) : (schedule ?? [])
   const weekGroups = groupScheduleByWeek(filteredUpcoming)
-  const filtered = filterOwn ? (results ?? []).filter((m) => m.isOwn) : (results ?? [])
+  const start = seasonStartKey()
+  const thisSeason = (results ?? []).filter((m) => m.dayKey >= start)
+  const filtered = filterOwn ? thisSeason.filter((m) => m.isOwn) : thisSeason
+  const eliminatedIn = useCupElimination(teamcode)
 
   if (!poulecode) {
     return <p className="league-empty">Geen bekergegevens beschikbaar.</p>
@@ -58,6 +62,8 @@ export default function CupTab({ poules, teamcode }: Props) {
           </div>
         )}
       </div>
+
+      {eliminatedIn && <p className="cup-status cup-status--out">Uitgeschakeld · {eliminatedIn}</p>}
 
       <div className="league-controls">
         <h3 className="league-title">Programma</h3>
@@ -95,13 +101,15 @@ export default function CupTab({ poules, teamcode }: Props) {
       <h3 className="league-title">Uitslagen</h3>
 
       {filtered.length > 0 ? (
-        <div style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}>
-          {groupResultsByDay(filtered).map((group) => (
-            <div key={group.dayKey} className="league-results-day">
-              {group.label && <h4 className="league-day-title">{group.label}</h4>}
-              <ResultsList matches={group.matches} />
-            </div>
-          ))}
+        <div
+          className="result-cards"
+          style={{ opacity: resultsLoading ? 0.5 : 1, transition: 'opacity 0.15s' }}
+        >
+          {[...filtered]
+            .sort((a, b) => b.dayKey.localeCompare(a.dayKey))
+            .map((m) => (
+              <ResultCard key={m.matchCode} m={m} showKind={false} />
+            ))}
         </div>
       ) : (
         !resultsLoading && <p className="league-empty">Geen uitslagen gevonden.</p>

@@ -6,7 +6,7 @@ import { outcomeOf, useOwnResults, useTeamClass, type Outcome } from '@/componen
 
 const OUTCOME_LABEL: Record<Outcome, string> = { W: 'Gewonnen', G: 'Gelijk', V: 'Verloren' }
 
-/** The last five results as W, G and V circles, oldest left. */
+/** The last five results (two on a phone) as W, G and V circles, oldest left. */
 function TeamForm() {
   const { teamcode } = useTeam()
   const { results } = useOwnResults(teamcode)
@@ -22,7 +22,11 @@ function TeamForm() {
 
   return (
     <div className="team-form" aria-label="Vorm, laatste vijf wedstrijden">
-      <span className="team-form__label">Laatste {last.length}</span>
+      {/* A phone shows only the last two, so the form fits next to the name. */}
+      <span className="team-form__label">
+        Laatste <span className="team-form__count">{last.length}</span>
+        <span className="team-form__count-mobile">{Math.min(last.length, 2)}</span>
+      </span>
       <ol className="team-form__list">
         {last.map(({ m, outcome }) => (
           <li
