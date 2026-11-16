@@ -2,24 +2,34 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
-import { teamPoulesQuery } from '@/lib/clubdata/queries'
 import { useTeam } from '@/components/team/TeamContext'
+import { useTeamPoules } from '@/components/team/team-utils'
 import TeamTabNav from '@/components/team/TeamTabNav'
 import StandingsTab from '@/components/team/StandingsTab'
-import ResultsTab from '@/components/team/ResultsTab'
+import TeamResultCards from '@/components/team/TeamResultCards'
+import TeamRosterSection from '@/components/team/TeamRosterSection'
 import ScheduleTab from '@/components/team/ScheduleTab'
 import LineupTab from '@/components/team/LineupTab'
 import CupTab from '@/components/team/CupTab'
 
-const TABS = ['stand', 'programma', 'uitslagen', 'indeling', 'beker']
+// The youngest teams have no standing and no results (see hasStandings): their page starts with
+// the schedule.
+const TABS = ['stand', 'programma', 'uitslagen', 'beker', 'indeling', 'spelers']
+const TABS_NO_STANDINGS = ['programma', 'beker', 'indeling', 'spelers']
 
-export default function LeagueSection() {
+export default function LeagueSection({ showStandings }: { showStandings: boolean }) {
   const { teamcode } = useTeam()
-  // ?tab=uitslagen etc. opens that tab directly (used by links from the assistant).
+  const { regularPoules, cupPoules, latestFaseIndex } = useTeamPoules(teamcode)
+  const tabIds = (showStandings ? TABS : TABS_NO_STANDINGS).filter(
+    (t) => t !== 'beker' || cupPoules.length > 0,
+  )
+  // ?tab=uitslagen etc. opens that tab directly (used by links from the assistant). Worked out on
+  // every render, not only the first: "beker" only joins the tabs once the poules have loaded.
   const requestedTab = useSearchParams().get('tab')
   const hasRequestedTab = TABS.includes(requestedTab ?? '')
-  const [activeTab, setActiveTab] = useState(hasRequestedTab ? (requestedTab as string) : 'stand')
+  const [pickedTab, setActiveTab] = useState<string | null>(null)
+  const activeTab =
+    pickedTab ?? (requestedTab && tabIds.includes(requestedTab) ? requestedTab : tabIds[0])
   const sectionRef = useRef<HTMLDivElement>(null)
 
   // Opened for a specific tab: bring that section into view instead of the team photo at the top.
@@ -47,48 +57,22 @@ export default function LeagueSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data: poules } = useQuery(teamPoulesQuery(teamcode))
-
-  // The API can list a poule without name or code (e.g. between competition phases); skip it.
-  const regularPoules = [...(poules?.poules ?? []), ...(poules?.fasePoules ?? [])].filter(
-    (p) => p.klasse && p.poulecode,
-  )
-
-  const getFaseNumber = (klasse: string) => {
-    const match = klasse.match(/\((\d+)[a-z]*\s+fase\)/i)
-    return match ? parseInt(match[1]) : -1
-  }
-  const latestFaseIndex = regularPoules.reduce((best, p, i) => {
-    const n = getFaseNumber(p.klasse)
-    return n > getFaseNumber(regularPoules[best]?.klasse ?? '') ? i : best
-  }, 0)
-
   return (
     <div className="league-section" ref={sectionRef}>
-      <TeamTabNav
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        hasCup={(poules?.cupPoules.length ?? 0) > 0}
-      />
+      <TeamTabNav tabIds={tabIds} activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="league-content">
-        {activeTab === 'stand' && (
+        {activeTab === 'stand' && showStandings && (
           <StandingsTab poules={regularPoules} initialIndex={latestFaseIndex} />
         )}
         {activeTab === 'programma' && (
-          <ScheduleTab
-            teamcode={teamcode ?? 0}
-            poules={[...regularPoules, ...(poules?.cupPoules ?? [])]}
-          />
+          <ScheduleTab teamcode={teamcode ?? 0} poules={[...regularPoules, ...cupPoules]} />
         )}
-        {activeTab === 'uitslagen' && (
-          <ResultsTab poules={regularPoules} initialIndex={latestFaseIndex} />
-        )}
+        {activeTab === 'uitslagen' && showStandings && <TeamResultCards />}
         {activeTab === 'indeling' && (
           <LineupTab poules={regularPoules} initialIndex={latestFaseIndex} />
         )}
-        {activeTab === 'beker' && (
-          <CupTab poules={poules?.cupPoules ?? []} teamcode={teamcode ?? 0} />
-        )}
+        {activeTab === 'beker' && <CupTab poules={cupPoules} teamcode={teamcode ?? 0} />}
+        {activeTab === 'spelers' && <TeamRosterSection playersOnly />}
       </div>
     </div>
   )
