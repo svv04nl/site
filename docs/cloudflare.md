@@ -80,36 +80,36 @@ Environments `Production` en `Preview`.
 
 Op `main` zijn geen checks verplicht; een PR is wel verplicht, en alleen squash-merges.
 
-## DNS naar Cloudflare, eerst op preview.svv04.nl
+## DNS bij Cloudflare, de nieuwe site op preview.svv04.nl
 
-De zone `svv04.nl` gaat van Oxilion naar Cloudflare (account SVV04). Eerst blijft de oude site op
-`svv04.nl` en `www` draaien; de nieuwe site komt op `preview.svv04.nl`.
+Sinds 16 november 2026 staat de zone `svv04.nl` bij Cloudflare (account SVV04, nameservers
+`mimi` en `renan.ns.cloudflare.com`); daarvoor bij Oxilion. De registratie blijft bij
+Registrar.eu (via Oxilion). De oude site draait nog op `svv04.nl` en `www`, nu achter de proxy; de
+nieuwe site staat op `preview.svv04.nl` (custom domain in `wrangler.jsonc`). SSL/TLS staat op
+_Full (strict)_: de oude server heeft een eigen Let's Encrypt-certificaat, met _Flexible_ ontstaat
+een redirect-lus.
 
-DNS bij Oxilion (november 2026), over te nemen in Cloudflare, allemaal **DNS only** (grijze wolk):
+| Naam           | Type  | Waarde                                                                            | Proxy    |
+| -------------- | ----- | --------------------------------------------------------------------------------- | -------- |
+| `svv04.nl`     | A     | `46.19.218.203` (oude site bij Oxilion)                                           | aan      |
+| `svv04.nl`     | AAAA  | `2a00:d10:1141:5::203`                                                            | aan      |
+| `www`          | A     | `46.19.218.203`                                                                   | aan      |
+| `www`          | AAAA  | `2a00:d10:1141:5::203`                                                            | aan      |
+| `*`            | CNAME | `svv04.nl`                                                                        | aan      |
+| `svv04.nl`     | MX 5  | `svv04-nl.mail.protection.outlook.com` (Microsoft 365)                            | DNS only |
+| `svv04.nl`     | TXT   | `MS=ms26732109`                                                                   | DNS only |
+| `svv04.nl`     | TXT   | `v=spf1 a mx include:spf.mail-scanner.eu include:spf.protection.outlook.com ~all` | DNS only |
+| `autodiscover` | CNAME | `autodiscover.outlook.com` (Outlook)                                              | DNS only |
+| `mail`         | A     | `46.19.218.203` (mailserver van Plesk, IMAP/SMTP)                                 | DNS only |
 
-| Naam           | Type  | Waarde                                                                            |
-| -------------- | ----- | --------------------------------------------------------------------------------- |
-| `svv04.nl`     | A     | `46.19.218.203`                                                                   |
-| `svv04.nl`     | AAAA  | `2a00:d10:1141:5::203`                                                            |
-| `svv04.nl`     | MX 5  | `svv04-nl.mail.protection.outlook.com` (Microsoft 365)                            |
-| `svv04.nl`     | TXT   | `MS=ms26732109`                                                                   |
-| `svv04.nl`     | TXT   | `v=spf1 a mx include:spf.mail-scanner.eu include:spf.protection.outlook.com ~all` |
-| `www`          | A     | `46.19.218.203`                                                                   |
-| `mail`         | A     | `46.19.218.203`                                                                   |
-| `autodiscover` | CNAME | `autodiscover.outlook.com`                                                        |
-| `*`            | CNAME | `svv04.nl`                                                                        |
-
-1. **DNSSEC uit** bij de registrar (Registrar.eu, via Oxilion): het DS-record weghalen en een
-   paar uur wachten. Met het oude DS-record erin werkt het domein niet meer na het omzetten.
-2. **Zone toevoegen** in Cloudflare (_Add a domain_, gratis plan). Controleer dat de geïmporteerde
-   records gelijk zijn aan de tabel en zet ze op DNS only.
-3. **Nameservers omzetten** bij de registrar naar de twee die Cloudflare geeft. Wacht tot de zone
-   _Active_ is.
-4. **API-token** van GitHub Actions uitbreiden met _Zone → Workers Routes → Edit_ voor `svv04.nl`.
-5. **De PR met `preview.svv04.nl` mergen**: de deploy maakt het custom domain, het DNS-record en
-   het certificaat aan.
-6. **DNSSEC weer aan**, nu in Cloudflare (_DNS → Settings_), en het nieuwe DS-record bij de
-   registrar zetten.
+- **DNSSEC** staat uit. Oxilion kon het DS-record niet los weghalen; het verviel bij SIDN in
+  dezelfde publicatie als de nieuwe nameservers. Aanzetten kan in Cloudflare (_DNS → Settings_),
+  met het nieuwe DS-record via Oxilion.
+- Er zijn **geen DKIM-, DMARC- of Resend-records**; `selector1._domainkey`, `_dmarc` en
+  `resend._domainkey` vallen op de wildcard. Mail van `noreply@svv04.nl` via Resend heeft het
+  domein geverifieerd nodig (records uit het Resend-dashboard).
+- Het API-token van GitHub Actions (`CLOUDFLARE_API_TOKEN`) heeft _Zone → Workers Routes → Edit_
+  voor `svv04.nl` nodig, anders faalt de deploy op het custom domain.
 
 ## Live gaan
 
