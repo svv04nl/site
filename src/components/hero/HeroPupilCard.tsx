@@ -129,7 +129,7 @@ export default function HeroPupilCard({ pupil, matchLabel, dayLabel }: Props) {
           <span className="hero-side-card__label">Pupil van de week</span>
           <span className="hero-side-card__name">{pupil.name}</span>
           <span className="hero-side-card__meta">{subtitle}</span>
-          <span className="hero-side-card__more">Leer {pupil.name} kennen &rarr;</span>
+          <span className="hero-side-card__more">Leer {pupil.name} kennen&nbsp;&rarr;</span>
         </span>
       </button>
       {open && <PupilDialog pupil={pupil} subtitle={subtitle} onClose={close} />}
