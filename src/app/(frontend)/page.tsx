@@ -15,11 +15,15 @@ import { HeroVideo } from '@/components/HeroVideo'
 import { FeaturedPostHero } from '@/components/FeaturedPostHero'
 import { AssistantBar } from '@/components/assistant/AssistantBar'
 import HeroSideBlock from '@/components/hero/HeroSideBlock'
-import { loadHeroSide } from '@/lib/hero-side'
+import { heroTestMode, loadHeroSide } from '@/lib/hero-side'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-o19-1']
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const payload = await getPayload({ config })
   const now = new Date().toISOString()
 
@@ -59,7 +63,9 @@ export default async function HomePage() {
   const heroPost = heroPosts[0]
   // Around a match of the first team: the pupil van de week or the away match, on the right of
   // the welcome hero. A featured post keeps the hero to itself.
-  const heroSide = heroPost ? null : await loadHeroSide()
+  const heroSide = heroPost
+    ? null
+    : await loadHeroSide(new Date(), heroTestMode((await searchParams).hero))
   if (!heroPost) {
     preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
   }

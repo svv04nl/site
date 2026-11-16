@@ -3,6 +3,7 @@ import config from '@payload-config'
 import { loadClubProgram } from '@/lib/app-api/matches'
 import type { MatchDto } from '@/lib/app-api/types'
 import { amsterdamDay, amsterdamTime } from '@/lib/agenda/links'
+import { isProduction } from '@/lib/site-env'
 import type { Media, Pupil, Team } from '@/payload-types'
 
 // The block on the right of the homepage hero, around a match of the first team:
@@ -92,9 +93,48 @@ async function pupilFor(day: string): Promise<HeroPupil | null> {
   }
 }
 
+// Test mode on previews and locally (never on the live site): ?hero=pupil shows the next home
+// match of the first team with its pupil (or an example pupil), ?hero=uit the next away match,
+// whatever the date.
+export type HeroTest = 'pupil' | 'uit'
+
+export function heroTestMode(value: string | string[] | undefined): HeroTest | null {
+  const mode = (Array.isArray(value) ? value[0] : value)?.toLowerCase()
+  return !isProduction() && (mode === 'pupil' || mode === 'uit') ? mode : null
+}
+
+const EXAMPLE_PUPIL: HeroPupil = {
+  name: '[NAAM PUPIL]',
+  team: '[TEAM]',
+  answers: QUESTIONS.map(([, question]) => ({ question, answer: '[ANTWOORD]' })),
+}
+
+async function testSide(test: HeroTest): Promise<HeroSide | null> {
+  const program = await loadClubProgram()
+  const match = program.find(
+    (m) =>
+      m.ownTeamSlug === FIRST_TEAM_SLUG &&
+      m.status !== 'played' &&
+      m.isHomeGame === (test === 'pupil'),
+  )
+  if (!match) {
+    return null
+  }
+  if (test === 'uit') {
+    return { kind: 'away', match }
+  }
+  return { kind: 'pupil', match, pupil: (await pupilFor(match.date)) ?? EXAMPLE_PUPIL }
+}
+
 /** What the hero shows on the right, or null. Never throws: the hero then stays as it is. */
-export async function loadHeroSide(now = new Date()): Promise<HeroSide | null> {
+export async function loadHeroSide(
+  now = new Date(),
+  test: HeroTest | null = null,
+): Promise<HeroSide | null> {
   try {
+    if (test) {
+      return await testSide(test)
+    }
     const match = await firstTeamMatch(now)
     if (!match) {
       return null
