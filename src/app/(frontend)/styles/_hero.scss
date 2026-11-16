@@ -478,12 +478,18 @@
 
 .hero-side-card__body {
   display: flex;
-  flex-shrink: 0;
-  min-width: 0;
-  white-space: normal;
+  // Phone (row): take the space next to the photo and wrap, instead of growing past the card.
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 0.3rem;
+  min-width: 0;
   padding: 1rem 1.15rem 1.15rem;
+  white-space: normal;
+
+  // Laptop (column): keep the text whole under the photo.
+  @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
+    flex: 0 0 auto;
+  }
 }
 
 .hero-side-card__name {
