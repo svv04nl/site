@@ -1,0 +1,152 @@
+'use client'
+
+import React, { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useAssistant } from '@/components/assistant/AssistantProvider'
+import { BramAvatar } from '@/components/assistant/BramAvatar'
+import { useBramDocked } from '@/components/assistant/useBramDocked'
+import { useClientValue } from '@/lib/use-client-value'
+
+/**
+ * Round "Vraag het Bram" button at the bottom right that opens the assistant popup.
+ * When the "Stel je vraag" band comes into view, Bram moves from the button into the circle in
+ * that band and stays there while you scroll on; above the band he goes back. On a laptop the
+ * button pops away and Bram pops up in the band at the same moment (CSS only); on a phone he
+ * flies there. The button
+ * also steps aside while the popup is open and on the full assistant page. The small cross
+ * hides Bram for the rest of the visit (sessionStorage); on a next visit he is back.
+ */
+
+const HIDDEN_KEY = 'svv-bram-verborgen'
+const FLIGHT_MS = 450
+// Where Bram flies instead of popping: the phone layout of the band (see _bram.scss).
+const FLIGHT_QUERY = '(max-width: 900px)'
+
+/**
+ * A copy of Bram flying from one circle to the other, moved and scaled with the Web Animations
+ * API and removed when it lands. Into the band it flies in page coordinates, so it lands in the
+ * circle even while the page scrolls on; back to the button it flies in screen coordinates,
+ * because the button stays put. Skipped when the visitor prefers less motion.
+ */
+function fly(avatar: Element, a: DOMRect, b: DOMRect, toBand: boolean) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !a.width || !b.width) {
+    return
+  }
+  const ghost = avatar.cloneNode(true) as HTMLElement
+  ghost.classList.add('bram-flight')
+  ghost.classList.toggle('bram-flight--page', toBand)
+  const offsetX = toBand ? window.scrollX : 0
+  const offsetY = toBand ? window.scrollY : 0
+  ghost.style.left = `${a.left + offsetX}px`
+  ghost.style.top = `${a.top + offsetY}px`
+  ghost.style.setProperty('--bram-size', `${a.width}px`)
+  document.body.appendChild(ghost)
+  const scale = b.width / a.width
+  ghost
+    .animate(
+      [
+        { transform: 'translate(0, 0) scale(1)' },
+        { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${scale})` },
+      ],
+      { duration: FLIGHT_MS, easing: 'cubic-bezier(0.3, 0.7, 0.2, 1.05)', fill: 'forwards' },
+    )
+    .finished.finally(() => ghost.remove())
+}
+
+function readHidden() {
+  try {
+    return Boolean(sessionStorage.getItem(HIDDEN_KEY))
+  } catch {
+    // No storage (private mode): Bram just stays.
+    return false
+  }
+}
+
+export function AssistantFab() {
+  const { enabled, open, openAssistant } = useAssistant()
+  const pathname = usePathname()
+  const docked = useBramDocked()
+  // Closed earlier in this visit (kept in sessionStorage), or just now.
+  const hiddenBefore = useClientValue(readHidden, false)
+  const [closed, setClosed] = useState(false)
+  const hidden = hiddenBefore || closed
+  const dockRef = useRef<HTMLDivElement>(null)
+  const wasDocked = useRef<boolean | null>(null)
+
+  // On a phone: fly between the button and the band when the docked state changes (not on the
+  // first render: a page opened below the band just shows Bram in it).
+  useEffect(() => {
+    const before = wasDocked.current
+    wasDocked.current = docked
+    if (before === null || before === docked || hidden || open) {
+      return
+    }
+    if (!window.matchMedia(FLIGHT_QUERY).matches) {
+      return
+    }
+    // Measured on elements without a running transform: the button's avatar (the button only
+    // fades while Bram is in the band) and the box around the circle in the band.
+    const fab = dockRef.current?.querySelector('.bram-avatar')
+    const spot = document.querySelector('[data-bram-spot]')
+    const spotAvatar = spot?.querySelector('.bram-avatar')
+    if (fab && spot && spotAvatar) {
+      const fabRect = fab.getBoundingClientRect()
+      const spotRect = spot.getBoundingClientRect()
+      if (docked) {
+        fly(fab, fabRect, spotRect, true)
+      } else {
+        fly(spotAvatar, spotRect, fabRect, false)
+      }
+    }
+  }, [docked, hidden, open])
+
+  const hide = () => {
+    setClosed(true)
+    try {
+      sessionStorage.setItem(HIDDEN_KEY, '1')
+    } catch {
+      // Hidden for this page only.
+    }
+  }
+
+  if (!enabled || hidden || pathname?.startsWith('/assistent')) {
+    return null
+  }
+
+  const away = open || docked
+
+  return (
+    <div
+      ref={dockRef}
+      className={`assistant-fab-dock${away ? ' is-away' : ''}${docked ? ' is-docked' : ''}`}
+    >
+      <button
+        type="button"
+        className="assistant-fab"
+        onClick={() => openAssistant()}
+        aria-label="Vraag het Bram"
+        tabIndex={away ? -1 : 0}
+      >
+        <BramAvatar size={66} />
+        <span className="assistant-fab__label">
+          <span className="assistant-fab__title">
+            Vraag het <span>Bram</span>
+          </span>
+          <span className="assistant-fab__status">Altijd online</span>
+        </span>
+      </button>
+      <button
+        type="button"
+        className="assistant-fab__close"
+        onClick={hide}
+        aria-label="Verberg Bram"
+        title="Verberg Bram"
+        tabIndex={away ? -1 : 0}
+      >
+        <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true">
+          <path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </button>
+    </div>
+  )
+}
