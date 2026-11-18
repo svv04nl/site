@@ -14,10 +14,16 @@ import { WebshopBanner } from '@/components/WebshopBanner'
 import { HeroVideo } from '@/components/HeroVideo'
 import { FeaturedPostHero } from '@/components/FeaturedPostHero'
 import { AssistantBar } from '@/components/assistant/AssistantBar'
+import HeroSideBlock from '@/components/hero/HeroSideBlock'
+import { heroTestMode, loadHeroSide } from '@/lib/hero-side'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-o19-1']
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const payload = await getPayload({ config })
   const now = new Date().toISOString()
 
@@ -54,7 +60,13 @@ export default async function HomePage() {
     }),
   ])
 
-  const heroPost = heroPosts[0]
+  // Test mode on previews (?hero=pupil or ?hero=uit, see lib/hero-side): the welcome hero with
+  // the card, also while a post is featured.
+  const heroTest = heroTestMode((await searchParams).hero)
+  const heroPost = heroTest ? undefined : heroPosts[0]
+  // Around a match of the first team: the pupil van de week or the away match, on the right of
+  // the welcome hero. A featured post keeps the hero to itself.
+  const heroSide = heroPost ? null : await loadHeroSide(new Date(), heroTest)
   if (!heroPost) {
     preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
   }
@@ -71,7 +83,9 @@ export default async function HomePage() {
         {heroPost ? (
           <FeaturedPostHero post={heroPost} />
         ) : (
-          <section className="site-hero site-hero--centered">
+          <section
+            className={`site-hero site-hero--centered${heroSide ? ' site-hero--with-side' : ''}`}
+          >
             <div
               className="site-hero-image"
               aria-hidden="true"
@@ -96,6 +110,7 @@ export default async function HomePage() {
                   </Link>
                 </div>
               </div>
+              {heroSide && <HeroSideBlock side={heroSide} />}
             </div>
           </section>
         )}
