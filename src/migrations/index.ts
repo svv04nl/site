@@ -15,6 +15,8 @@ import * as migration_20261023_064539 from './20261023_064539';
 import * as migration_20261023_071131 from './20261023_071131';
 import * as migration_20261023_074509 from './20261023_074509';
 import * as migration_20261127_181914 from './20261127_181914';
+import * as migration_20261127_190042_pages_audience from './20261127_190042_pages_audience';
+import * as migration_20261127_190100_pages_to_audiences from './20261127_190100_pages_to_audiences';
 
 export const migrations = [
   {
@@ -100,6 +102,16 @@ export const migrations = [
   {
     up: migration_20261127_181914.up,
     down: migration_20261127_181914.down,
-    name: '20261127_181914'
+    name: '20261127_181914',
+  },
+  {
+    up: migration_20261127_190042_pages_audience.up,
+    down: migration_20261127_190042_pages_audience.down,
+    name: '20261127_190042_pages_audience',
+  },
+  {
+    up: migration_20261127_190100_pages_to_audiences.up,
+    down: migration_20261127_190100_pages_to_audiences.down,
+    name: '20261127_190100_pages_to_audiences',
   },
 ];

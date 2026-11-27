@@ -33,10 +33,26 @@ export const Pages: CollectionConfig = {
         { label: 'Vereniging', value: 'vereniging' },
         { label: 'Commissies', value: 'commissies' },
         { label: 'Meedoen', value: 'meedoen' },
+        { label: 'Doelgroep', value: 'doelgroep' },
+        { label: 'Info (gedeeld door doelgroepen)', value: 'info' },
       ],
       admin: {
         position: 'sidebar',
+        description:
+          "Bepaalt het adres en het menu. Doelgroep: /ouders/<slug>, met de andere pagina's van die doelgroep in de zijbalk. Info: /info/<slug>, in geen enkel menu; link ernaar vanaf de doelgroeppagina's.",
       },
+    },
+    {
+      name: 'audience',
+      type: 'relationship',
+      relationTo: 'audiences',
+      label: 'Doelgroep',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => data.section === 'doelgroep',
+      },
+      validate: (value: unknown, { siblingData }: { siblingData: { section?: string } }) =>
+        siblingData.section !== 'doelgroep' || value ? true : 'Kies de doelgroep van deze pagina.',
     },
     {
       name: 'slug',
@@ -44,7 +60,8 @@ export const Pages: CollectionConfig = {
       required: true,
       admin: {
         position: 'sidebar',
-        description: 'URL slug, e.g. "technische-commissie" → /commissies/technische-commissie',
+        description:
+          'URL slug, e.g. "technische-commissie" → /commissies/technische-commissie. Verplaats je een pagina naar een andere sectie of doelgroep, dan stuurt het oude adres vanzelf door.',
       },
     },
     {
