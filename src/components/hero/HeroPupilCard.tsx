@@ -112,9 +112,6 @@ export default function HeroPupilCard({ pupil, matchLabel, dayLabel, children }:
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [])
   const subtitle = [pupil.team, `loopt mee bij ${matchLabel}`, dayLabel].filter(Boolean).join(' · ')
-  // The match card under it already shows the match, so the card itself keeps it short.
-  const meta = [pupil.team, 'loopt mee bij de thuiswedstrijd'].filter(Boolean).join(' · ')
-
   return (
     <>
       <div className="hero-side-card hero-side-card--pupil">
@@ -133,11 +130,17 @@ export default function HeroPupilCard({ pupil, matchLabel, dayLabel, children }:
               aria-hidden="true"
             />
           )}
+          {/* Laptop: over the bottom of the photo. Phone: next to it. The match card under it
+              already shows the opponent and the day, so this stays short. */}
           <span className="hero-side-card__body">
             <span className="hero-side-card__label">Pupil van de week</span>
             <span className="hero-side-card__name">{pupil.name}</span>
-            <span className="hero-side-card__meta">{meta}</span>
-            <span className="hero-side-card__more">Leer {pupil.name} kennen&nbsp;&rarr;</span>
+            <span className="hero-side-card__foot">
+              <span className="hero-side-card__meta">Loopt mee bij SVV&apos;04 1</span>
+              <span className="hero-side-card__more">
+                Lees meer <span aria-hidden="true">+</span>
+              </span>
+            </span>
           </span>
         </button>
         {children}
