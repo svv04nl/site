@@ -455,3 +455,13 @@
     margin-top: 0;
   }
 }
+
+// On the team page the tabs are one framed block, so what's inside gets no second frame (the selection is a
+// .card of its own elsewhere).
+.team-layout .league-section .card {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
