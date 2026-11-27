@@ -17,12 +17,10 @@ function TierCard({ sponsor, label }: { sponsor: Sponsor; label: string }) {
   const logo = sponsor.logo as Media | undefined
   const inner = (
     <>
+      {/* Only the logo: the company name is in it already (and in the alt text). */}
+      <span className="sponsors-tier-label">{label}</span>
       <span className="sponsors-tier-logo">
         {logo?.url ? <img src={logo.url} alt={sponsor.name} /> : <span>{sponsor.name}</span>}
-      </span>
-      <span className="sponsors-tier-text">
-        <span className="sponsors-tier-label">{label}</span>
-        <span className="sponsors-tier-name">{sponsor.name}</span>
       </span>
     </>
   )

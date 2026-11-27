@@ -277,11 +277,12 @@
   align-content: center;
   align-items: center;
   display: grid;
-  gap: 0.75rem 2.5rem;
+  gap: 1.25rem 2.5rem;
+  // Laptop: Bram on the left, the heading with the wide field and the questions under it.
   grid-template-areas:
-    'bram head ask'
-    'bram intro ask';
-  grid-template-columns: 10rem minmax(0, 22rem) minmax(0, 1fr);
+    'bram head'
+    'bram ask';
+  grid-template-columns: 10rem minmax(0, 1fr);
 
   @media screen and (max-width: #{$breakpoint-medium}) {
     gap: 1rem;
@@ -439,32 +440,30 @@
 }
 
 .assistant-bar__ask {
+  align-self: start;
   grid-area: ask;
   min-width: 0;
+
+  // The field runs the full width of the column.
+  .assistant-bar__form {
+    max-width: none;
+  }
 
   .assistant-bar__chips {
     margin-top: 0.75rem;
   }
-}
 
-.assistant-bar .assistant-bar__intro {
-  align-self: start;
-  grid-area: intro;
-  margin: 0;
-
-  // On a phone the heading says it all.
+  // A phone keeps its two example questions.
   @media screen and (max-width: #{$breakpoint-medium}) {
-    display: none;
+    .assistant-bar__chips li:nth-child(n + 3) {
+      display: none;
+    }
   }
 }
 
-// "aan Bram" after "Stel je vraag": only on a phone, where the intro with his name is hidden.
+// "aan Bram" after "Stel je vraag", on every screen: there is no line under the heading anymore.
 .assistant-bar .home-h2 .assistant-bar__to-bram {
   color: inherit;
-
-  @media screen and (min-width: #{$breakpoint-medium + 1}) {
-    display: none;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

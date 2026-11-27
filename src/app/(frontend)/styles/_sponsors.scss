@@ -46,8 +46,9 @@
   border-radius: 12px;
   color: var(--color-dark);
   display: flex;
-  gap: 1.25rem;
-  padding: 1.25rem 1.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem 1.5rem;
   text-decoration: none;
   transition:
     border-color 0.15s ease,
@@ -63,9 +64,13 @@
   align-items: center;
   display: flex;
   flex: none;
-  height: 4rem;
+  height: 7rem;
   justify-content: center;
-  width: 10rem;
+  width: 100%;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    height: 5rem;
+  }
 
   img {
     max-height: 100%;
@@ -83,24 +88,14 @@
   }
 }
 
-.sponsors-tier-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
 .sponsors-tier-label {
+  align-self: flex-start;
   color: var(--color-primary);
   font-family: var(--font-heading);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.sponsors-tier-name {
-  font-weight: 600;
 }
 
 .sponsors-ticker {

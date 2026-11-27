@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useSyncExternalStore } from 'react'
 import { EXAMPLES } from '@/components/assistant/AssistantChat'
 import { useAssistant, type AssistantAudience } from '@/components/assistant/AssistantProvider'
 import { SparkleIcon } from '@/components/assistant/icons'
@@ -8,7 +8,17 @@ import { BramAvatar } from '@/components/assistant/BramAvatar'
 import { useBramDocked } from '@/components/assistant/useBramDocked'
 import { MAX_USER_MESSAGE_CHARS } from '@/lib/ai/limits'
 
-const CHIPS = EXAMPLES.slice(0, 2)
+// Four example questions under the field on a laptop (a phone shows the first two).
+const CHIPS = [EXAMPLES[0], EXAMPLES[1], EXAMPLES[4], EXAMPLES[5]]
+
+// On a phone (the band's own breakpoint) the field gets a shorter placeholder.
+const PHONE_QUERY = '(max-width: 900px)'
+function subscribePhone(onChange: () => void) {
+  const query = window.matchMedia(PHONE_QUERY)
+  query.addEventListener('change', onChange)
+  return () => query.removeEventListener('change', onChange)
+}
+const phoneMatches = () => window.matchMedia(PHONE_QUERY).matches
 
 // How long each example question stays in Bram's speech bubble.
 const QUESTION_MS = 4500
@@ -35,10 +45,9 @@ export function AssistantAudienceContext({ audience }: { audience: AssistantAudi
  */
 export function AssistantBar({
   audience,
-  intro,
 }: {
   audience?: AssistantAudience
-  /** Replaces the default line under the heading, e.g. a line that fits the audience. */
+  /** No longer shown: the band has no line under the heading anymore. Kept so callers still fit. */
   intro?: string | null
 }) {
   const { enabled, openAssistant } = useAssistant()
@@ -46,8 +55,9 @@ export function AssistantBar({
   // Bram lands in the circle on the left when the band comes into view (the button at the
   // bottom right flies here) and stays while you scroll on past it.
   const docked = useBramDocked()
+  const isPhone = useSyncExternalStore(subscribePhone, phoneMatches, () => false)
 
-  const chips = audience?.questions.length ? audience.questions.slice(0, 2) : CHIPS
+  const chips = audience?.questions.length ? audience.questions.slice(0, 4) : CHIPS
   // The speech bubble above Bram (laptop) shows the example questions in turn while he sits
   // in the band.
   const [turn, setTurn] = useState(0)
@@ -108,10 +118,6 @@ export function AssistantBar({
             <span className="assistant-bar__to-bram"> aan Bram</span>
           </h2>
         </div>
-        <p className="assistant-bar__intro">
-          {intro ||
-            "Bram, de zebra van SVV'04, weet alles over het programma, de uitslagen, het lidmaatschap en vrijwilligerswerk. Vraag het hem en je hebt meteen antwoord."}
-        </p>
         <div className="assistant-bar__ask">
           <form
             className="assistant-bar__form"
@@ -124,7 +130,7 @@ export function AssistantBar({
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Wat wil je weten over SVV'04?"
+              placeholder={isPhone ? 'Wat wil je weten?' : "Wat wil je weten over SVV'04?"}
               maxLength={MAX_USER_MESSAGE_CHARS}
               aria-label="Je vraag"
               autoComplete="off"
