@@ -76,6 +76,17 @@ export const Media: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'text',
+      type: 'textarea',
+      label: 'Tekst uit de PDF',
+      admin: {
+        readOnly: true,
+        condition: (data) => data?.mimeType === 'application/pdf',
+        description:
+          'Voor de zoekfunctie van de assistent. Wordt gevuld met `pnpm media:pdf-text`; draai dat opnieuw na een nieuwe of gewijzigde PDF.',
+      },
+    },
   ],
   upload: {
     // Blijven staan voor de bestaande formaten in de database. Nieuwe uploads krijgen ze niet

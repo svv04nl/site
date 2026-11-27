@@ -170,6 +170,10 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
+  /**
+   * Voor de zoekfunctie van de assistent. Wordt gevuld met `pnpm media:pdf-text`; draai dat opnieuw na een nieuwe of gewijzigde PDF.
+   */
+  text?: string | null;
   prefix?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -941,6 +945,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  text?: T;
   prefix?: T;
   updatedAt?: T;
   createdAt?: T;
