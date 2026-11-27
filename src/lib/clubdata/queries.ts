@@ -10,6 +10,7 @@ import {
 } from '@/lib/clubdata/transform'
 import { CLUB_RELATIECODE } from '@/lib/clubdata/config'
 import type {
+  RawWedstrijdEvenement,
   RawProgrammaResponse,
   RawPoulestandResponse,
   RawPeriodestandResponse,
@@ -164,6 +165,36 @@ export const resultsQuery = (poulecode: number | undefined) => ({
   staleTime: STALE_TIME,
 })
 
+/** Monday-based weeks since 1 July of the current season, for a results window over the whole season. */
+function weeksSinceSeasonStart(now = new Date()): number {
+  const year = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1
+  const start = new Date(year, 6, 1)
+  return Math.ceil((now.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000))
+}
+
+/**
+ * All results of one team this season (uitslagen by teamcode). The poule results only cover the
+ * current poule, so after a new phase starts they hold just a few matches.
+ */
+export const teamResultsQuery = (teamcode: number | null) => ({
+  queryKey: ['team-results', teamcode] as const,
+  queryFn: async () => {
+    const weeks = weeksSinceSeasonStart()
+    const raw = await fetchClubData<RawPouleUitslagenResponse>('uitslagen', {
+      ...CLUB_PROGRAMMA_PARAMS,
+      teamcode: String(teamcode),
+      aantalregels: '100',
+      weekoffset: String(-weeks),
+      aantaldagen: String(weeks * 7 + 1),
+      thuis: 'ja',
+      uit: 'ja',
+    }).catch(() => [] as RawPouleUitslagenResponse)
+    return transformResults(raw, CLUB_RELATIECODE)
+  },
+  enabled: !!teamcode,
+  staleTime: STALE_TIME,
+})
+
 export const cupResultsQuery = (poulecode: number | undefined) => ({
   queryKey: ['cup-results', poulecode] as const,
   queryFn: async () => {
@@ -174,7 +205,7 @@ export const cupResultsQuery = (poulecode: number | undefined) => ({
       eigenwedstrijden: 'NEE',
       gebruiklokaleteamgegevens: 'NEE',
     })
-    return transformResults(raw, CLUB_RELATIECODE)
+    return transformResults(raw, CLUB_RELATIECODE, 'beker')
   },
   enabled: !!poulecode,
   staleTime: STALE_TIME,
@@ -278,6 +309,26 @@ export const clubScheduleQuery = (filter: 'thuis' | 'uit' | 'alles') => ({
       uit: filter !== 'thuis' ? 'ja' : 'nee',
     })
     return transformSchedule(raw, CLUB_RELATIECODE)
+  },
+  staleTime: STALE_TIME,
+})
+
+/**
+ * Goals and cards of one played match (wedstrijd-statistieken). Not every competition fills
+ * them in, and the endpoint can fail for an old match: then the list is empty and the result
+ * card shows only the score.
+ */
+export const matchEventsQuery = (wedstrijdcode: number) => ({
+  queryKey: ['match-events', wedstrijdcode] as const,
+  queryFn: async (): Promise<RawWedstrijdEvenement[]> => {
+    try {
+      const raw = await fetchClubData<unknown>('wedstrijd-statistieken', {
+        wedstrijdcode: String(wedstrijdcode),
+      })
+      return Array.isArray(raw) ? (raw as RawWedstrijdEvenement[]) : []
+    } catch {
+      return []
+    }
   },
   staleTime: STALE_TIME,
 })
