@@ -79,6 +79,7 @@
     "prettier": "^3.4.2",
     "tsx": "4.21.0",
     "typescript": "5.7.3",
+    "unpdf": "^2.2.3",
     "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18",
     "wrangler": "4.160.0"

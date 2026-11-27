@@ -789,7 +789,7 @@ Project-specific patterns for this club website, on top of the generic Payload r
 - Never invent content. Page copy must come from real sources: the old site (`svv04.nl/web2022/...`), club documents (PDFs), or facts the user gives directly. When summarizing/rewriting a source, say so; don't present a paraphrase as a literal quote.
 - Written copy follows the `humanizer` skill's rules: no em-dashes, no "niet alleen X maar ook Y", no invented statistics, direct sentences, informal-zakelijk Dutch tone matching existing pages.
 
-- **PDFs for the assistant**: the assistant searches club documents (statuten, reglementen, gedragscode) through `media.text`, filled by `pnpm media:pdf-text` (needs `pdftotext` from poppler; reads the files from the Worker, writes to the database in `DATABASE_URL`, so prefix it with the production URL to update the live site). A new or changed PDF is not searchable until it is run again. `getPage` reads a long document in parts (`offset` / `nextOffset`).
+- **PDFs for the assistant**: the assistant searches club documents (statuten, reglementen, gedragscode) through `media.text`, filled by `fillPdfText` (`src/lib/pdf-text.ts`, with `unpdf`): once by the migration that added the field, afterwards by `pnpm media:pdf-text` (reads the files from the Worker, writes to the database in `DATABASE_URL`, so prefix it with the production URL to update the live site). A new or changed PDF is not searchable until the script runs again. `getPage` reads a long document in parts (`offset` / `nextOffset`).
 
 ### Internal linking
 
