@@ -6,9 +6,10 @@ import { SetBreadcrumb } from '@/components/BreadcrumbContext'
 import { activiteitenQuery } from '@/lib/clubdata/queries'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import CalendarButton from '@/components/ui/CalendarDialog'
+import { AgendaItem } from '@/components/agenda/AgendaItem'
 
 export default function AgendaPage() {
-  const { data: activiteiten = [] } = useQuery(activiteitenQuery(365))
+  const { data: activiteiten = [], isLoading } = useQuery(activiteitenQuery(365))
 
   // Group by month
   const grouped: { label: string; items: typeof activiteiten }[] = []
@@ -27,7 +28,7 @@ export default function AgendaPage() {
     <main className="page">
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Agenda' }]} />
 
-      <div className="page-inner agenda-inner">
+      <div className="page-inner">
         <SectionHeader as="h1" title="Agenda" />
 
         {/* Subscribe to the club calendar: new activities come in by themselves */}
@@ -44,62 +45,18 @@ export default function AgendaPage() {
           />
         </div>
 
-        {activiteiten.length === 0 ? (
+        {isLoading ? null : activiteiten.length === 0 ? (
           <p className="agenda-empty">Geen activiteiten gepland.</p>
         ) : (
           grouped.map((group) => (
-            <div key={group.label} className="agenda-group">
+            <section key={group.label} className="agenda-group">
               <h2 className="agenda-month">{group.label}</h2>
-              <ol className="calendar-list">
-                {group.items.map((item, i) => {
-                  const date = new Date(item.datumvan)
-                  const dateToRaw = item.datumtm ? new Date(item.datumtm) : null
-                  const dateTo =
-                    dateToRaw &&
-                    dateToRaw.toDateString() !== date.toDateString() &&
-                    dateToRaw > date
-                      ? dateToRaw
-                      : null
-
-                  const formattedFrom = date.toLocaleDateString('nl-NL', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                  })
-                  const formattedTo = dateTo
-                    ? dateTo.toLocaleDateString('nl-NL', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                      })
-                    : null
-
-                  return (
-                    <li key={i} className="calendar-item agenda-item">
-                      <div className="agenda-item-date">
-                        <time className="calendar-date agenda-date-from">{formattedFrom}</time>
-                        {formattedTo && <time className="agenda-date-to">t/m {formattedTo}</time>}
-                      </div>
-                      <div className="agenda-item-content">
-                        <span className="calendar-event">
-                          {item.url ? (
-                            <a href={item.url} target="_blank" rel="noopener noreferrer">
-                              {item.activiteit}
-                            </a>
-                          ) : (
-                            item.activiteit
-                          )}
-                        </span>
-                        {item.plaats && <span className="agenda-item-place">{item.plaats}</span>}
-                        {item.opmerkingen && (
-                          <span className="agenda-item-notes">{item.opmerkingen}</span>
-                        )}
-                      </div>
-                    </li>
-                  )
-                })}
-              </ol>
-            </div>
+              <ul className="agenda-list">
+                {group.items.map((item, i) => (
+                  <AgendaItem key={i} item={item} full />
+                ))}
+              </ul>
+            </section>
           ))
         )}
       </div>
