@@ -2,7 +2,7 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 /**
  * Data only: moves the pages that are not about the club itself out of the Vereniging menu, to their audience or to /info.
- * A separate migration from 20261114_081755, because Postgres cannot use a new enum value in the transaction that adds it.
+ * A separate migration from 20261127_190042_pages_audience, because Postgres cannot use a new enum value in the transaction that adds it.
  * Only pages still under Vereniging are touched, so a page moved by hand in the CMS keeps its place; the old addresses
  * redirect (308) to the new ones. AED, Organisatie and Disclaimer are deleted: nothing links to them.
  */

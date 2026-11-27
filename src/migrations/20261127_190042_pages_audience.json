@@ -236,6 +236,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "text": {
+          "name": "text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "prefix": {
           "name": "prefix",
           "type": "varchar",
@@ -4826,6 +4832,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "3f1ebf1d-b9de-4b9f-adf9-5091cd126ef5",
+  "id": "e45e2fea-ac6a-416e-af0d-5c5449268c5a",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
