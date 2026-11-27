@@ -500,51 +500,39 @@
     outline: 3px solid var(--color-primary);
     outline-offset: -3px;
   }
-
-  // Phone and tablet: photo left, text right, so the hero stays short.
-  @media screen and (max-width: $breakpoint-tablet-landscape) {
-    flex-direction: row;
-  }
 }
 
 .hero-side-card__photo {
-  aspect-ratio: 4 / 5;
+  // Phone and tablet: a wide photo, so the hero stays short. Laptop: fills the card (above).
+  aspect-ratio: 16 / 10;
   background: #d6d6d6;
   display: block;
   object-fit: cover;
+  object-position: center 25%;
   transition: transform 0.3s ease;
   width: 100%;
-
-  @media screen and (max-width: $breakpoint-tablet-landscape) {
-    flex: none;
-    width: 38%;
-  }
 }
 
+// Over the bottom of the photo, so the photo gets the whole card.
 .hero-side-card__body {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 78%) 55%);
+  bottom: 0;
+  color: var(--color-white);
   display: flex;
-  // Phone (row): take the space next to the photo and wrap, instead of growing past the card.
-  flex: 1 1 auto;
   flex-direction: column;
   gap: 0.35rem;
-  justify-content: center;
-  min-width: 0;
-  padding: 1rem 1.15rem;
+  left: 0;
+  padding: 3rem 1rem 0.9rem;
+  position: absolute;
+  right: 0;
   white-space: normal;
 
-  // Laptop: over the bottom of the photo, so the photo gets the whole card.
   @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
-    background: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 78%) 55%);
-    bottom: 0;
-    color: var(--color-white);
-    left: 0;
     padding: 3.5rem 1.15rem 1rem;
-    position: absolute;
-    right: 0;
   }
 }
 
-// A small red tag, readable on the white card and on the photo.
+// A small red tag on the photo.
 .hero-side-card--pupil .hero-side-card__label {
   align-self: flex-start;
   background: var(--color-primary);
@@ -572,34 +560,25 @@
 }
 
 .hero-side-card__meta {
-  color: #555;
+  color: rgb(255 255 255 / 85%);
   font-size: 0.875rem;
   line-height: 1.4;
-
-  @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
-    color: rgb(255 255 255 / 85%);
-  }
 }
 
-// The small "Lees meer →" button.
+// The small "Lees meer →" button: white on the photo, red on hover.
 .hero-side-card__more {
   background: var(--color-white);
-  border: 1px solid var(--color-primary);
+  border: 0;
   border-radius: 999px;
-  color: var(--color-primary);
+  color: var(--color-dark);
   flex: none;
   font-size: 0.8rem;
   font-weight: 600;
   line-height: 1;
-  padding: 0.4rem 0.75rem;
+  padding: 0.45rem 0.8rem;
   transition:
     background 0.2s ease,
     color 0.2s ease;
-
-  @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
-    border-color: var(--color-white);
-    color: var(--color-dark);
-  }
 }
 
 .pupil-dialog__top {
