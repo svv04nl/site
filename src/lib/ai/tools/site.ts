@@ -20,19 +20,29 @@ const MAX_RESULTS = 8
 // (e.g. only published posts) instead of relying on collection access rules.
 
 type IndexedDoc = {
-  type: 'pagina' | 'doelgroep'
+  type: 'pagina' | 'doelgroep' | 'document'
   title: string
   url: string
   text: string
 }
 
-/** All pages and audience pages as plain text. Small collections (~30 docs), so searched in JS. */
+/**
+ * All pages, audience pages and club documents (PDFs) as plain text. Small collections
+ * (~40 docs), so searched in JS. A PDF without extracted text (scripts/pdf-text.ts) is left out.
+ */
 export function loadContentIndex(): Promise<IndexedDoc[]> {
   return cached('content-index', INDEX_TTL, async () => {
     const payload = await getPayload({ config })
-    const [pages, audiences] = await Promise.all([
+    const [pages, audiences, pdfs] = await Promise.all([
       payload.find({ collection: 'pages', limit: 200, depth: 2, pagination: false }),
       payload.find({ collection: 'audiences', limit: 50, depth: 1, pagination: false }),
+      payload.find({
+        collection: 'media',
+        where: { and: [{ mimeType: { equals: 'application/pdf' } }, { text: { exists: true } }] },
+        limit: 100,
+        depth: 0,
+        pagination: false,
+      }),
     ])
     return [
       ...pages.docs.map((page) => ({
@@ -55,6 +65,14 @@ export function loadContentIndex(): Promise<IndexedDoc[]> {
           'cta',
         ]),
       })),
+      ...pdfs.docs
+        .filter((pdf) => pdf.url && pdf.text)
+        .map((pdf) => ({
+          type: 'document' as const,
+          title: pdf.alt,
+          url: pdf.url!,
+          text: pdf.text!,
+        })),
     ]
   })
 }
@@ -71,7 +89,8 @@ const matches = (field: string, variants: string[]): Where => ({
 
 export const searchSite = tool({
   description:
-    'Search the SVV\'04 website (pages, news articles, "voor jou" audience pages) by keyword. ' +
+    'Search the SVV\'04 website (pages, news articles, "voor jou" audience pages, and club documents ' +
+    'such as the statuten, huishoudelijk reglement and gedragscode) by keyword. ' +
     'Returns titles, URLs and a snippet. Use getPage afterwards to read the full text of a hit.',
   inputSchema: z.object({
     query: z
@@ -135,11 +154,21 @@ export const searchSite = tool({
 export const getPage = tool({
   description:
     'Read the full text of one page of the website by its URL path (from searchSite or the site map), ' +
-    'e.g. "/vereniging/lidmaatschap", "/nieuws/some-article", "/teams/svv04-1" or "/jeugd".',
+    'e.g. "/vereniging/lidmaatschap", "/nieuws/some-article", "/teams/svv04-1", "/jeugd" or a club ' +
+    'document like "/media/statuten.pdf". A long document comes in parts: when the result has ' +
+    'nextOffset, call again with that offset to read on.',
   inputSchema: z.object({
     path: z.string().min(1).max(200).describe('URL path starting with "/"'),
+    offset: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .describe(
+        'Character offset to continue a long page or document (nextOffset of the previous call)',
+      ),
   }),
-  execute: async ({ path }) => {
+  execute: async ({ path, offset = 0 }) => {
     const clean =
       '/' +
       path
@@ -206,10 +235,12 @@ export const getPage = tool({
     if (!doc) {
       return { error: 'Pagina niet gevonden. Gebruik searchSite om de juiste URL te vinden.' }
     }
+    const part = truncate(doc.text.slice(offset))
     return {
       title: doc.title,
       url: doc.url,
-      ...truncate(doc.text),
+      ...part,
+      ...(part.truncated ? { nextOffset: offset + part.text.length } : {}),
       ui: { links: [{ title: doc.title, url: doc.url, kind: 'page' as const }] },
     }
   },
