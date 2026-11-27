@@ -167,6 +167,8 @@ export type ScheduleMatch = {
   venue: string
   venuePlaats: string
   competitie: string
+  /** Competition, cup or friendly (see kindOf). */
+  kind?: MatchKind
   status: string
   isOwnHome: boolean
   isOwnAway: boolean
@@ -223,6 +225,7 @@ export function transformSchedule(
       venue: w.accommodatie,
       venuePlaats: w.plaats,
       competitie: w.competitie,
+      kind: kindOf(w, 'competitie'),
       status: w.status,
       isOwnHome,
       isOwnAway,
@@ -384,6 +387,8 @@ export type ResultMatch = {
   awayTeam: string
   awayTeamRelatiecode?: string
   score: string
+  /** The sports park, as on the programma cards. */
+  venue?: string
   status: string
   isOwnHome: boolean
   isOwnAway: boolean
@@ -392,8 +397,15 @@ export type ResultMatch = {
   dayKey: string // "YYYY-MM-DD"
 }
 
-function kindOf(w: RawPouleUitslagenResponse[number], fallback: MatchKind): MatchKind {
-  const text = [w.competitiesoort, w.competitienaam, w.klasse].filter(Boolean).join(' ')
+function kindOf(
+  w: Pick<RawPouleUitslagenResponse[number], 'competitiesoort' | 'competitienaam' | 'klasse'> & {
+    competitie?: string
+  },
+  fallback: MatchKind,
+): MatchKind {
+  const text = [w.competitiesoort, w.competitienaam, w.competitie, w.klasse]
+    .filter(Boolean)
+    .join(' ')
   if (/beker/i.test(text)) {
     return 'beker'
   }
@@ -430,6 +442,7 @@ export function transformResults(
       awayTeam: w.uitteam,
       awayTeamRelatiecode: awayRelatiecode,
       score: w.uitslag,
+      venue: w.accommodatie || undefined,
       status: w.status,
       isOwnHome,
       isOwnAway,
