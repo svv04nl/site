@@ -19,6 +19,8 @@ const ACTION_LINKS: ActionPage[] = [
     actionLabel: 'Vrijwilliger worden',
     slug: 'vrijwilligerswerk',
     section: 'vereniging',
+    // Lives with the Vrijwilligers audience (migration 20261127_190000_pages_to_audiences).
+    href: '/vrijwilligers/vrijwilligerswerk',
   },
   {
     id: 'sponsoring',
