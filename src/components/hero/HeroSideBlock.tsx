@@ -30,7 +30,7 @@ export default function HeroSideBlock({ side }: { side: HeroSide }) {
           <HeroMatchCard match={side.match} dayLabel={day} />
         </HeroPupilCard>
       ) : (
-        <HeroAwayCard match={side.match} dayLabel={day} />
+        <HeroAwayCard match={side.match} dayLabel={day} home={side.kind === 'home'} />
       )}
     </div>
   )

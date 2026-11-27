@@ -3,16 +3,30 @@ import Link from 'next/link'
 import type { MatchDto } from '@/lib/app-api/types'
 import HeroMatchCard from '@/components/hero/HeroMatchCard'
 
-/** The first team's away match in the hero: the match card, the place and a route button. */
-export default function HeroAwayCard({ match, dayLabel }: { match: MatchDto; dayLabel: string }) {
+/**
+ * The first team's match in the hero: the match card, the place and, for an away match, a route
+ * button. A home match without a pupil van de week uses it too.
+ */
+export default function HeroAwayCard({
+  match,
+  dayLabel,
+  home = false,
+}: {
+  match: MatchDto
+  dayLabel: string
+  home?: boolean
+}) {
   const cancelled = match.status === 'cancelled' || match.status === 'postponed'
-  const route = match.venue.mapsQuery
-    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(match.venue.mapsQuery)}`
-    : null
+  const route =
+    !home && match.venue.mapsQuery
+      ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(match.venue.mapsQuery)}`
+      : null
 
   return (
     <div className="hero-side-card hero-away">
-      <span className="hero-side-card__label">Eerste elftal speelt uit</span>
+      <span className="hero-side-card__label">
+        {home ? 'Eerste elftal speelt thuis' : 'Eerste elftal speelt uit'}
+      </span>
       <HeroMatchCard match={match} dayLabel={dayLabel} />
       {match.venue.name && <p className="hero-away__venue">{match.venue.name}</p>}
       {!cancelled && (

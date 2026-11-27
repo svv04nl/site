@@ -8,6 +8,7 @@ import type { Media, Pupil, Team } from '@/payload-types'
 
 // The block on the right of the homepage hero, around a match of the first team:
 // - a home match: the pupil van de week (when there is one, with consent of the parents);
+// - a home match without a pupil: the match, like the away card but without the route;
 // - an away match: the match with a route button.
 // Shown from the night of Thursday to Friday (00:00) before a weekend match, or from 00:00 on the
 // day itself for a match from Monday to Thursday, until two hours after the kickoff.
@@ -25,6 +26,7 @@ export type HeroPupil = {
 export type HeroSide =
   | { kind: 'pupil'; match: MatchDto; pupil: HeroPupil }
   | { kind: 'away'; match: MatchDto }
+  | { kind: 'home'; match: MatchDto }
 
 const QUESTIONS: [keyof Pupil, string][] = [
   ['position', 'Positie'],
@@ -101,13 +103,13 @@ async function pupilFor(day: string): Promise<HeroPupil | null> {
 }
 
 // Test mode on previews and locally (never on the live site): ?hero=pupil shows the next home
-// match of the first team with its pupil (or an example pupil), ?hero=uit the next away match,
-// whatever the date.
-export type HeroTest = 'pupil' | 'uit'
+// match of the first team with its pupil (or an example pupil), ?hero=thuis that home match
+// without a pupil, ?hero=uit the next away match, whatever the date.
+export type HeroTest = 'pupil' | 'thuis' | 'uit'
 
 export function heroTestMode(value: string | string[] | undefined): HeroTest | null {
   const mode = (Array.isArray(value) ? value[0] : value)?.toLowerCase()
-  return !isProduction() && (mode === 'pupil' || mode === 'uit') ? mode : null
+  return !isProduction() && (mode === 'pupil' || mode === 'thuis' || mode === 'uit') ? mode : null
 }
 
 const EXAMPLE_PUPIL: HeroPupil = {
@@ -122,13 +124,16 @@ async function testSide(test: HeroTest): Promise<HeroSide | null> {
     (m) =>
       m.ownTeamSlug === FIRST_TEAM_SLUG &&
       m.status !== 'played' &&
-      m.isHomeGame === (test === 'pupil'),
+      m.isHomeGame === (test !== 'uit'),
   )
   if (!match) {
     return null
   }
   if (test === 'uit') {
     return { kind: 'away', match }
+  }
+  if (test === 'thuis') {
+    return { kind: 'home', match }
   }
   return { kind: 'pupil', match, pupil: (await pupilFor(match.date)) ?? EXAMPLE_PUPIL }
 }
@@ -149,11 +154,13 @@ export async function loadHeroSide(
     if (!match.isHomeGame) {
       return { kind: 'away', match }
     }
-    if (match.status === 'cancelled' || match.status === 'postponed') {
-      return null
-    }
-    const pupil = await pupilFor(match.date)
-    return pupil ? { kind: 'pupil', match, pupil } : null
+    // A cancelled home match shows on the home card ("Afgelast"), never with a pupil.
+    const pupil =
+      match.status === 'cancelled' || match.status === 'postponed'
+        ? null
+        : await pupilFor(match.date)
+    // Not every home match has a pupil: then the match itself, like the away card.
+    return pupil ? { kind: 'pupil', match, pupil } : { kind: 'home', match }
   } catch (error) {
     console.error('hero side:', error)
     return null
