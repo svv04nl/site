@@ -138,7 +138,7 @@ export default function HeroPupilCard({ pupil, matchLabel, dayLabel, children }:
             <span className="hero-side-card__foot">
               <span className="hero-side-card__meta">Loopt mee bij SVV&apos;04 1</span>
               <span className="hero-side-card__more">
-                Lees meer <span aria-hidden="true">+</span>
+                Lees meer <span aria-hidden="true">&rarr;</span>
               </span>
             </span>
           </span>
