@@ -455,3 +455,105 @@
     margin-top: 0;
   }
 }
+
+// ─── Training times (TeamTrainingsSection, /teams/trainingstijden) ───
+
+.team-trainings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.team-trainings__row {
+  border-bottom: 1px solid #e6e6e6;
+  display: grid;
+  gap: 0.1rem 1rem;
+  grid-template-columns: 1fr auto;
+  padding: 0.6rem 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.team-trainings__day {
+  font-weight: 600;
+}
+
+.team-trainings__time {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.team-trainings__field {
+  color: #666;
+  font-size: 0.875rem;
+  grid-column: 1 / -1;
+}
+
+.team-trainings__all {
+  display: inline-block;
+  font-weight: 600;
+  margin-top: 0.9rem;
+}
+
+.training-times__intro,
+.training-times__empty {
+  color: #555;
+  margin: 0 0 2rem;
+  max-width: 40rem;
+}
+
+.training-times {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+}
+
+.training-times__day {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 1.5rem;
+
+  .sidebar-section-title {
+    margin-top: 0;
+  }
+}
+
+.training-times__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.training-times__row {
+  border-bottom: 1px solid #e6e6e6;
+  display: grid;
+  gap: 0.1rem 1rem;
+  grid-template-columns: 7.5rem 1fr;
+  padding: 0.6rem 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.training-times__time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.training-times__team {
+  font-weight: 600;
+}
+
+.training-times__field {
+  color: #666;
+  font-size: 0.875rem;
+  grid-column: 2;
+}

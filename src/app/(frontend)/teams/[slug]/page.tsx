@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { TeamProvider } from '@/components/team/TeamContext'
 import TeamSponsorSection from '@/components/team/TeamSponsorSection'
+import TeamTrainingsSection from '@/components/team/TeamTrainingsSection'
 import TeamPhotoWithLightbox from '@/components/team/TeamPhotoWithLightbox'
 import type { Media } from '@/payload-types'
 import ScrollToTop from '@/components/team/ScrollToTop'
@@ -108,6 +109,7 @@ export default async function TeamPage({ params }: Props) {
               </div>
               <div className="team-layout__info">
                 <TeamStaffSection />
+                <TeamTrainingsSection trainings={team.trainings} />
                 <TeamSponsorSection sponsors={team.sponsors} />
 
                 {teamPosts.length > 0 && (

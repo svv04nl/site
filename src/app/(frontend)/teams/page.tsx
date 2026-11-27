@@ -27,7 +27,11 @@ export default async function TeamsPage() {
       <SetBreadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Teams' }]} />
 
       <div className="page-inner">
-        <SectionHeader as="h1" title="Teams" />
+        <SectionHeader
+          as="h1"
+          title="Teams"
+          link={{ href: '/teams/trainingstijden', label: 'Trainingstijden' }}
+        />
 
         <TeamsGrid teams={sortedTeams} />
       </div>

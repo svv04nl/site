@@ -98,5 +98,63 @@ export const Teams: CollectionConfig = {
       name: 'description',
       type: 'richText',
     },
+    {
+      // Sportlink has no training times, so they live here. Shown on the team page and on
+      // /teams/trainingstijden.
+      name: 'trainings',
+      type: 'array',
+      label: 'Trainingen',
+      labels: { singular: 'Training', plural: 'Trainingen' },
+      admin: {
+        description: 'Vaste trainingsmomenten van dit seizoen. Eén regel per dag.',
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'day',
+              type: 'select',
+              label: 'Dag',
+              required: true,
+              options: [
+                { label: 'Maandag', value: 'ma' },
+                { label: 'Dinsdag', value: 'di' },
+                { label: 'Woensdag', value: 'wo' },
+                { label: 'Donderdag', value: 'do' },
+                { label: 'Vrijdag', value: 'vr' },
+                { label: 'Zaterdag', value: 'za' },
+                { label: 'Zondag', value: 'zo' },
+              ],
+            },
+            {
+              name: 'startTime',
+              type: 'text',
+              label: 'Van',
+              required: true,
+              admin: { placeholder: '18:15' },
+              validate: (value: string | null | undefined) =>
+                /^\d{1,2}:\d{2}$/.test(value ?? '') || 'Gebruik uu:mm, bijv. 18:15',
+            },
+            {
+              name: 'endTime',
+              type: 'text',
+              label: 'Tot',
+              required: true,
+              admin: { placeholder: '19:30' },
+              validate: (value: string | null | undefined) =>
+                /^\d{1,2}:\d{2}$/.test(value ?? '') || 'Gebruik uu:mm, bijv. 19:30',
+            },
+            {
+              name: 'field',
+              type: 'text',
+              label: 'Veld',
+              admin: { placeholder: 'Trainingsveld 2' },
+            },
+          ],
+        },
+      ],
+    },
   ],
 }

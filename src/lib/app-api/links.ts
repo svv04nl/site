@@ -47,6 +47,10 @@ export function hrefToTarget(href: string): LinkTarget {
     case 'nieuws':
       return second ? screen('post', { slug: second }) : screen('posts')
     case 'teams':
+      // The app has no training times screen: open that page in the in-app browser.
+      if (second === 'trainingstijden') {
+        return { kind: 'browser', url: url.toString(), inApp: true }
+      }
       return second ? screen('team', { slug: second }) : screen('teams')
     case 'senioren':
     case 'jeugd':
