@@ -119,7 +119,8 @@ export default function ScheduleTab({ teamcode, poules, cupPoulecodes = [] }: Pr
         <p className="league-subtitle">{selectedPoule.klassepoule}</p>
       )}
 
-      {eliminatedIn && (
+      {/* Only with the cup selected: the full programma is about all matches. */}
+      {eliminatedIn && selectedPoule && cupPoulecodes.includes(selectedPoule.poulecode) && (
         <p className="cup-status cup-status--out">Uitgeschakeld in de beker · {eliminatedIn}</p>
       )}
 
