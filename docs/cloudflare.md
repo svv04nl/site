@@ -80,14 +80,43 @@ Environments `Production` en `Preview`.
 
 Op `main` zijn geen checks verplicht; een PR is wel verplicht, en alleen squash-merges.
 
+## DNS bij Cloudflare, de nieuwe site op preview.svv04.nl
+
+Sinds 16 november 2026 staat de zone `svv04.nl` bij Cloudflare (account SVV04, nameservers
+`mimi` en `renan.ns.cloudflare.com`); daarvoor bij Oxilion. De registratie blijft bij
+Registrar.eu (via Oxilion). De oude site draait nog op `svv04.nl` en `www`, nu achter de proxy; de
+nieuwe site staat op `preview.svv04.nl` (custom domain in `wrangler.jsonc`). SSL/TLS staat op
+_Full (strict)_: de oude server heeft een eigen Let's Encrypt-certificaat, met _Flexible_ ontstaat
+een redirect-lus.
+
+| Naam           | Type  | Waarde                                                                            | Proxy    |
+| -------------- | ----- | --------------------------------------------------------------------------------- | -------- |
+| `svv04.nl`     | A     | `46.19.218.203` (oude site bij Oxilion)                                           | aan      |
+| `svv04.nl`     | AAAA  | `2a00:d10:1141:5::203`                                                            | aan      |
+| `www`          | A     | `46.19.218.203`                                                                   | aan      |
+| `www`          | AAAA  | `2a00:d10:1141:5::203`                                                            | aan      |
+| `*`            | CNAME | `svv04.nl`                                                                        | aan      |
+| `svv04.nl`     | MX 5  | `svv04-nl.mail.protection.outlook.com` (Microsoft 365)                            | DNS only |
+| `svv04.nl`     | TXT   | `MS=ms26732109`                                                                   | DNS only |
+| `svv04.nl`     | TXT   | `v=spf1 a mx include:spf.mail-scanner.eu include:spf.protection.outlook.com ~all` | DNS only |
+| `autodiscover` | CNAME | `autodiscover.outlook.com` (Outlook)                                              | DNS only |
+| `mail`         | A     | `46.19.218.203` (mailserver van Plesk, IMAP/SMTP)                                 | DNS only |
+
+- **DNSSEC** staat uit. Oxilion kon het DS-record niet los weghalen; het verviel bij SIDN in
+  dezelfde publicatie als de nieuwe nameservers. Aanzetten kan in Cloudflare (_DNS → Settings_),
+  met het nieuwe DS-record via Oxilion.
+- Er zijn **geen DKIM-, DMARC- of Resend-records**; `selector1._domainkey`, `_dmarc` en
+  `resend._domainkey` vallen op de wildcard. Mail van `noreply@svv04.nl` via Resend heeft het
+  domein geverifieerd nodig (records uit het Resend-dashboard).
+- Het API-token van GitHub Actions (`CLOUDFLARE_API_TOKEN`) heeft _Zone → Workers Routes → Edit_
+  voor `svv04.nl` nodig, anders faalt de deploy op het custom domain.
+
 ## Live gaan
 
-1. **DNS**: `svv04.nl` staat bij Oxilion. Voeg de zone toe aan Cloudflare (gratis plan),
-   controleer dat **alle** records zijn overgenomen (vooral MX, SPF, DKIM en de
-   Resend-records) en zet de nameservers bij de registrar om.
-2. Koppel `svv04.nl` (en `www`) als _Custom Domain_ aan de Worker `site`.
-3. Haal `SITE_ACCESS_CODE` weg (`pnpm wrangler secret delete SITE_ACCESS_CODE`) als de site open mag.
-4. Zet de app (`../app`, `AppConfig.swift`) op `https://svv04.nl`.
+1. Koppel `svv04.nl` (en `www`) als _Custom Domain_ aan de Worker `site`; de A/AAAA-records van
+   Oxilion vervallen dan.
+2. Haal `SITE_ACCESS_CODE` weg (`pnpm wrangler secret delete SITE_ACCESS_CODE`) als de site open mag.
+3. Zet de app (`../app`, `AppConfig.swift`) op `https://svv04.nl`.
 
 ## Lokaal testen
 

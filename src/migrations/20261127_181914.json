@@ -236,6 +236,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "text": {
+          "name": "text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "prefix": {
           "name": "prefix",
           "type": "varchar",
@@ -3736,194 +3742,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.pupils": {
-      "name": "pupils",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "team_id": {
-          "name": "team_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "photo_id": {
-          "name": "photo_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "match_date": {
-          "name": "match_date",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "consent": {
-          "name": "consent",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "position": {
-          "name": "position",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "favorite_club": {
-          "name": "favorite_club",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "favorite_player": {
-          "name": "favorite_player",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "favorite_svv_player": {
-          "name": "favorite_svv_player",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "happy_when": {
-          "name": "happy_when",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "later_become": {
-          "name": "later_become",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "pupils_team_idx": {
-          "name": "pupils_team_idx",
-          "columns": [
-            {
-              "expression": "team_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pupils_photo_idx": {
-          "name": "pupils_photo_idx",
-          "columns": [
-            {
-              "expression": "photo_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pupils_updated_at_idx": {
-          "name": "pupils_updated_at_idx",
-          "columns": [
-            {
-              "expression": "updated_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pupils_created_at_idx": {
-          "name": "pupils_created_at_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "pupils_team_id_teams_id_fk": {
-          "name": "pupils_team_id_teams_id_fk",
-          "tableFrom": "pupils",
-          "tableTo": "teams",
-          "columnsFrom": [
-            "team_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "pupils_photo_id_media_id_fk": {
-          "name": "pupils_photo_id_media_id_fk",
-          "tableFrom": "pupils",
-          "tableTo": "media",
-          "columnsFrom": [
-            "photo_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.payload_kv": {
       "name": "payload_kv",
       "schema": "",
@@ -4155,12 +3973,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
-        },
-        "pupils_id": {
-          "name": "pupils_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {
@@ -4388,21 +4200,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "payload_locked_documents_rels_pupils_id_idx": {
-          "name": "payload_locked_documents_rels_pupils_id_idx",
-          "columns": [
-            {
-              "expression": "pupils_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -4568,19 +4365,6 @@
           "tableTo": "team_staff",
           "columnsFrom": [
             "team_staff_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "payload_locked_documents_rels_pupils_fk": {
-          "name": "payload_locked_documents_rels_pupils_fk",
-          "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "pupils",
-          "columnsFrom": [
-            "pupils_id"
           ],
           "columnsTo": [
             "id"
@@ -5012,6 +4796,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "4fcb12ba-0874-41f4-a5e8-d47b9bc38620",
+  "id": "dee17065-21bf-4914-a210-eca2e67f0dd2",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

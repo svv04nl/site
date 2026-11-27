@@ -5,6 +5,8 @@ const isAdmin = ({ req: { user } }: { req: { user: any } }) => user?.role === 'a
 
 const NOTIFY_EMAIL = 'algemenezaken@svv04.nl'
 const NOTIFICATION_TEMPLATE_ALIAS = 'svv04-nieuw-bericht'
+// Set here, not only in the Resend template: without it Resend sends from the template's own address.
+const FROM = "SVV'04 <noreply@svv04.nl>"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -116,6 +118,7 @@ export const Messages: CollectionConfig = {
           }
 
           const { error } = await resend.emails.send({
+            from: FROM,
             to,
             template: {
               id: NOTIFICATION_TEMPLATE_ALIAS,

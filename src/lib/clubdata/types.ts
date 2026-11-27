@@ -169,6 +169,10 @@ export type RawPouleUitslag = {
   eigenteam: 'true' | 'false'
   status: string
   accommodatie: string
+  // Only in the club and team lists (uitslagen), not in pouleuitslagen.
+  competitiesoort?: string
+  competitienaam?: string
+  klasse?: string
 }
 
 export type RawPouleUitslagenResponse = RawPouleUitslag[]

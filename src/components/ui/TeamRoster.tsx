@@ -3,9 +3,11 @@ import type { TeamRosterData } from '@/lib/clubdata/transform'
 
 type Props = {
   data: TeamRosterData
+  /** Only the players: the team page shows the staff in its own block. */
+  playersOnly?: boolean
 }
 
-export default function TeamRoster({ data }: Props) {
+export default function TeamRoster({ data, playersOnly = false }: Props) {
   const { players, staff, hiddenCount } = data
 
   return (
@@ -24,16 +26,17 @@ export default function TeamRoster({ data }: Props) {
         </section>
       )}
 
-      {staff.map((group) => (
-        <section key={group.role} className="team-selection-group">
-          <h3 className="team-selection-role">{group.role || 'Staf'}</h3>
-          <ul className="team-selection-list">
-            {group.members.map((member) => (
-              <li key={member.name}>{member.name}</li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      {!playersOnly &&
+        staff.map((group) => (
+          <section key={group.role} className="team-selection-group">
+            <h3 className="team-selection-role">{group.role || 'Staf'}</h3>
+            <ul className="team-selection-list">
+              {group.members.map((member) => (
+                <li key={member.name}>{member.name}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
     </div>
   )
 }
