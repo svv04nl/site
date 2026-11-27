@@ -7,8 +7,8 @@ const readPupils: Access = ({ req: { user } }) => (user ? true : { consent: { eq
 
 /**
  * Pupil van de week: the youth player who walks out with the first team at a home match. The
- * homepage hero shows the pupil from four days before that match until two hours after the
- * kickoff (see components/hero/HeroSide). Only with consent of the parents.
+ * homepage hero shows the pupil from the Friday before that match (00:00) until two hours after the
+ * kickoff (see lib/hero-side). Only with consent of the parents.
  */
 export const Pupils: CollectionConfig = {
   slug: 'pupils',
@@ -20,7 +20,7 @@ export const Pupils: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'team', 'matchDate', 'consent'],
     description:
-      'De pupil die meeloopt bij een thuiswedstrijd van het eerste. Staat vanaf 4 dagen voor die wedstrijd op de homepage, alleen met toestemming van de ouders.',
+      'De pupil die meeloopt bij een thuiswedstrijd van het eerste. Staat vanaf de vrijdag voor die wedstrijd (00:00) op de homepage, alleen met toestemming van de ouders.',
   },
   access: {
     read: readPupils,

@@ -809,7 +809,7 @@ export interface TeamStaff {
   createdAt: string;
 }
 /**
- * De pupil die meeloopt bij een thuiswedstrijd van het eerste. Staat vanaf 4 dagen voor die wedstrijd op de homepage, alleen met toestemming van de ouders.
+ * De pupil die meeloopt bij een thuiswedstrijd van het eerste. Staat vanaf de vrijdag voor die wedstrijd (00:00) op de homepage, alleen met toestemming van de ouders.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pupils".

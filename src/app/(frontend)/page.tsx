@@ -61,11 +61,12 @@ export default async function HomePage({
 
   // Test mode on previews (?hero=pupil or ?hero=uit, see lib/hero-side): the welcome hero with
   // the card, also while a post is featured.
-  const heroTest = heroTestMode((await searchParams).hero)
-  const heroPost = heroTest ? undefined : heroPosts[0]
+  const heroPost = heroPosts[0]
   // Around a match of the first team: the pupil van de week or the away match, on the right of
-  // the welcome hero. A featured post keeps the hero to itself.
-  const heroSide = heroPost ? null : await loadHeroSide(new Date(), heroTest)
+  // the hero, also of a featured post (which keeps its own photo). Test mode on previews:
+  // ?hero=pupil or ?hero=uit (see lib/hero-side).
+  const heroSide = await loadHeroSide(new Date(), heroTestMode((await searchParams).hero))
+  const side = heroSide ? <HeroSideBlock side={heroSide} /> : null
   if (!heroPost) {
     preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
   }
@@ -80,7 +81,7 @@ export default async function HomePage({
       <main>
         {/* Hero — a featured news post while its date range is active, otherwise the welcome hero */}
         {heroPost ? (
-          <FeaturedPostHero post={heroPost} />
+          <FeaturedPostHero post={heroPost} side={side} />
         ) : (
           <section
             className={`site-hero site-hero--centered${heroSide ? ' site-hero--with-side' : ''}`}
@@ -109,7 +110,7 @@ export default async function HomePage({
                   </Link>
                 </div>
               </div>
-              {heroSide && <HeroSideBlock side={heroSide} />}
+              {side}
             </div>
           </section>
         )}

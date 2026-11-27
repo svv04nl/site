@@ -10,6 +10,8 @@ type Props = {
   matchLabel: string
   /** "za 21 nov" */
   dayLabel: string
+  /** The match, as the same match card as in the programma (HeroMatchCard). */
+  children?: React.ReactNode
 }
 
 /** The pupil's answers in the same popup style as "Zet in je agenda". */
@@ -106,32 +108,40 @@ function PupilDialog({
 }
 
 /** Pupil van de week in the homepage hero: a card that opens the pupil's answers. */
-export default function HeroPupilCard({ pupil, matchLabel, dayLabel }: Props) {
+export default function HeroPupilCard({ pupil, matchLabel, dayLabel, children }: Props) {
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [])
   const subtitle = [pupil.team, `loopt mee bij ${matchLabel}`, dayLabel].filter(Boolean).join(' · ')
+  // The match card under it already shows the match, so the card itself keeps it short.
+  const meta = [pupil.team, 'loopt mee bij de thuiswedstrijd'].filter(Boolean).join(' · ')
 
   return (
     <>
-      <button
-        type="button"
-        className="hero-side-card hero-side-card--pupil"
-        onClick={() => setOpen(true)}
-        aria-label={`Lees meer over pupil van de week ${pupil.name}`}
-      >
-        {pupil.photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className="hero-side-card__photo" src={pupil.photo.url} alt="" />
-        ) : (
-          <span className="hero-side-card__photo hero-side-card__photo--empty" aria-hidden="true" />
-        )}
-        <span className="hero-side-card__body">
-          <span className="hero-side-card__label">Pupil van de week</span>
-          <span className="hero-side-card__name">{pupil.name}</span>
-          <span className="hero-side-card__meta">{subtitle}</span>
-          <span className="hero-side-card__more">Leer {pupil.name} kennen&nbsp;&rarr;</span>
-        </span>
-      </button>
+      <div className="hero-side-card hero-side-card--pupil">
+        <button
+          type="button"
+          className="hero-side-card__open"
+          onClick={() => setOpen(true)}
+          aria-label={`Lees meer over pupil van de week ${pupil.name}`}
+        >
+          {pupil.photo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="hero-side-card__photo" src={pupil.photo.url} alt="" />
+          ) : (
+            <span
+              className="hero-side-card__photo hero-side-card__photo--empty"
+              aria-hidden="true"
+            />
+          )}
+          <span className="hero-side-card__body">
+            <span className="hero-side-card__label">Pupil van de week</span>
+            <span className="hero-side-card__name">{pupil.name}</span>
+            <span className="hero-side-card__meta">{meta}</span>
+            <span className="hero-side-card__more">Leer {pupil.name} kennen&nbsp;&rarr;</span>
+          </span>
+        </button>
+        {children}
+      </div>
       {open && <PupilDialog pupil={pupil} subtitle={subtitle} onClose={close} />}
     </>
   )

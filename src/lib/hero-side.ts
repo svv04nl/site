@@ -9,10 +9,10 @@ import type { Media, Pupil, Team } from '@/payload-types'
 // The block on the right of the homepage hero, around a match of the first team:
 // - a home match: the pupil van de week (when there is one, with consent of the parents);
 // - an away match: the match with a route button.
-// Shown from four days before the match until two hours after the kickoff, otherwise nothing.
+// Shown from the night of Thursday to Friday (00:00) before a weekend match, or from 00:00 on the
+// day itself for a match from Monday to Thursday, until two hours after the kickoff.
 
 const FIRST_TEAM_SLUG = 'svv04-1'
-const DAYS_BEFORE = 4
 const HOURS_AFTER = 2
 
 export type HeroPupil = {
@@ -35,6 +35,13 @@ const QUESTIONS: [keyof Pupil, string][] = [
   ['laterBecome', 'Later word ik'],
 ]
 
+/** Friday 00:00 for a match on Friday, Saturday or Sunday; otherwise the match day itself. */
+function showFrom(day: string): string {
+  const weekday = new Date(`${day}T12:00:00Z`).getUTCDay() // 0 = Sunday … 6 = Saturday
+  const back = weekday === 0 ? 2 : weekday === 6 ? 1 : 0
+  return shiftDay(day, -back)
+}
+
 function shiftDay(day: string, days: number): string {
   const d = new Date(`${day}T12:00:00Z`)
   d.setUTCDate(d.getUTCDate() + days)
@@ -48,7 +55,7 @@ async function firstTeamMatch(now: Date): Promise<MatchDto | null> {
   if (!match) {
     return null
   }
-  const from = amsterdamTime(shiftDay(match.date, -DAYS_BEFORE), '00:00')
+  const from = amsterdamTime(showFrom(match.date), '00:00')
   const kickoff = match.startsAt
     ? new Date(match.startsAt)
     : amsterdamTime(match.date, match.kickoff)

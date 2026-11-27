@@ -2,6 +2,7 @@ import React from 'react'
 import type { HeroSide } from '@/lib/hero-side'
 import HeroPupilCard from '@/components/hero/HeroPupilCard'
 import HeroAwayCard from '@/components/hero/HeroAwayCard'
+import HeroMatchCard from '@/components/hero/HeroMatchCard'
 
 /** "za 21 nov", in Dutch time. */
 function dayLabel(date: string): string {
@@ -25,7 +26,9 @@ export default function HeroSideBlock({ side }: { side: HeroSide }) {
           pupil={side.pupil}
           matchLabel={`${side.match.home.name} – ${side.match.away.name}`}
           dayLabel={day}
-        />
+        >
+          <HeroMatchCard match={side.match} dayLabel={day} />
+        </HeroPupilCard>
       ) : (
         <HeroAwayCard match={side.match} dayLabel={day} />
       )}
