@@ -1,12 +1,14 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+  // IF NOT EXISTS: this migration ran as 20261114_081755 on the preview and dev branches of this PR before it was renamed.
   await db.execute(sql`
-   ALTER TYPE "public"."enum_pages_section" ADD VALUE 'doelgroep';
-  ALTER TYPE "public"."enum_pages_section" ADD VALUE 'info';
-  ALTER TABLE "pages" ADD COLUMN "audience_id" integer;
+   ALTER TYPE "public"."enum_pages_section" ADD VALUE IF NOT EXISTS 'doelgroep';
+  ALTER TYPE "public"."enum_pages_section" ADD VALUE IF NOT EXISTS 'info';
+  ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "audience_id" integer;
+  ALTER TABLE "pages" DROP CONSTRAINT IF EXISTS "pages_audience_id_audiences_id_fk";
   ALTER TABLE "pages" ADD CONSTRAINT "pages_audience_id_audiences_id_fk" FOREIGN KEY ("audience_id") REFERENCES "public"."audiences"("id") ON DELETE set null ON UPDATE no action;
-  CREATE INDEX "pages_audience_idx" ON "pages" USING btree ("audience_id");`)
+  CREATE INDEX IF NOT EXISTS "pages_audience_idx" ON "pages" USING btree ("audience_id");`)
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
