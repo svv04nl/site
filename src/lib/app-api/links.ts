@@ -78,6 +78,11 @@ export function hrefToTarget(href: string): LinkTarget {
       if (first === 'vereniging' && last === 'sponsoring') {
         return screen('audience', { slug: 'sponsoring' })
       }
+      // A clubartikel has no screen in the app: its page (with the order form) opens in the
+      // in-app browser. The Clubartikelen page itself is an ordinary CMS page.
+      if (first === 'vereniging' && second === 'clubartikelen' && segments.length > 2) {
+        return { kind: 'browser', url: url.toString(), inApp: true }
+      }
       return last && segments.length > 1 ? screen('page', { slug: last }) : screen('club')
     default:
       if ((ROLE_SLUGS as readonly string[]).includes(first)) {

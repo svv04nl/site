@@ -40,7 +40,7 @@ export function WebshopBanner() {
           />
         ))}
       </div>
-      <Link className="webshop-banner-button" href="/vereniging/clubkleding">
+      <Link className="webshop-banner-button" href="/vereniging/clubartikelen">
         Kleding kopen &rarr;
       </Link>
     </div>

@@ -80,6 +80,7 @@ export interface Config {
     donations: Donation;
     'team-staff': TeamStaff;
     pupils: Pupil;
+    products: Product;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -100,6 +101,7 @@ export interface Config {
     donations: DonationsSelect<false> | DonationsSelect<true>;
     'team-staff': TeamStaffSelect<false> | TeamStaffSelect<true>;
     pupils: PupilsSelect<false> | PupilsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -109,8 +111,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'shop-settings': ShopSetting;
+  };
+  globalsSelect: {
+    'shop-settings': ShopSettingsSelect<false> | ShopSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -856,6 +862,46 @@ export interface Pupil {
   createdAt: string;
 }
 /**
+ * Artikelen die de club zelf verkoopt. Ze staan op de pagina Clubartikelen (blok "Clubartikelen") en krijgen elk een eigen pagina met een bestelformulier.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  /**
+   * Leeg = gemaakt uit de naam. Wordt /vereniging/clubartikelen/<adres>.
+   */
+  slug?: string | null;
+  /**
+   * Leeg = geen prijs tonen.
+   */
+  price?: number | null;
+  /**
+   * Eén regel op de kaart, bijvoorbeeld de kleur of de maten.
+   */
+  summary?: string | null;
+  description?: string | null;
+  /**
+   * De eerste foto staat op de kaart. Met meer foto’s komen er miniaturen onder.
+   */
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Gescheiden door komma’s, bijvoorbeeld "S, M, L". Leeg = geen maatkeuze.
+   */
+  sizes?: string | null;
+  inKantine?: boolean | null;
+  viaForm?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -930,6 +976,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pupils';
         value: number | Pupil;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1377,6 +1427,28 @@ export interface PupilsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  price?: T;
+  summary?: T;
+  description?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  sizes?: T;
+  inKantine?: T;
+  viaForm?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1414,6 +1486,41 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Staat op de pagina Clubartikelen (blok "Zo bestel je") en op elke productpagina.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shop-settings".
+ */
+export interface ShopSetting {
+  id: number;
+  /**
+   * Eén dag per regel, bijvoorbeeld "Zaterdag 08:00 – 17:00".
+   */
+  kantineTimes?: string | null;
+  /**
+   * Hoe iemand na een bestelling via het formulier betaalt en het ophaalt.
+   */
+  payAndPickup?: string | null;
+  /**
+   * De slug van een functie bij een contactpersoon (zoals bij /contact?afdeling=...). Die krijgt de bestellingen per mail. Leeg = algemene zaken.
+   */
+  orderRole?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shop-settings_select".
+ */
+export interface ShopSettingsSelect<T extends boolean = true> {
+  kantineTimes?: T;
+  payAndPickup?: T;
+  orderRole?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
