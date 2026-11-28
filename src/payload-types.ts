@@ -354,6 +354,19 @@ export interface Team {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Vaste trainingsmomenten van dit seizoen. Eén regel per dag.
+   */
+  trainings?:
+    | {
+        day: 'ma' | 'di' | 'wo' | 'do' | 'vr' | 'za' | 'zo';
+        startTime: string;
+        endTime: string;
+        field?: string | null;
+        group?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1095,6 +1108,16 @@ export interface TeamsSelect<T extends boolean = true> {
   photo?: T;
   sponsors?: T;
   description?: T;
+  trainings?:
+    | T
+    | {
+        day?: T;
+        startTime?: T;
+        endTime?: T;
+        field?: T;
+        group?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

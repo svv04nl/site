@@ -18,6 +18,10 @@ import * as migration_20261127_181914 from './20261127_181914';
 import * as migration_20261127_190042_pages_audience from './20261127_190042_pages_audience';
 import * as migration_20261127_190100_pages_to_audiences from './20261127_190100_pages_to_audiences';
 import * as migration_20261127_220000 from './20261127_220000';
+import * as migration_20261127_230000 from './20261127_230000';
+import * as migration_20261127_230100_training_times from './20261127_230100_training_times';
+import * as migration_20261127_230200_training_times_links from './20261127_230200_training_times_links';
+import * as migration_20261127_230300_first_team_training_times from './20261127_230300_first_team_training_times';
 
 export const migrations = [
   {
@@ -119,5 +123,25 @@ export const migrations = [
     up: migration_20261127_220000.up,
     down: migration_20261127_220000.down,
     name: '20261127_220000',
+  },
+  {
+    up: migration_20261127_230000.up,
+    down: migration_20261127_230000.down,
+    name: '20261127_230000',
+  },
+  {
+    up: migration_20261127_230100_training_times.up,
+    down: migration_20261127_230100_training_times.down,
+    name: '20261127_230100_training_times',
+  },
+  {
+    up: migration_20261127_230200_training_times_links.up,
+    down: migration_20261127_230200_training_times_links.down,
+    name: '20261127_230200_training_times_links',
+  },
+  {
+    up: migration_20261127_230300_first_team_training_times.up,
+    down: migration_20261127_230300_first_team_training_times.down,
+    name: '20261127_230300_first_team_training_times',
   },
 ];
