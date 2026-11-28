@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { MoreLink } from '@/components/ui/MoreLink'
 import type { Team } from '@/payload-types'
 import { DAY_LABELS, sortTrainings, timeRange } from '@/lib/trainings'
 
@@ -26,9 +26,11 @@ export default function TeamTrainingsSection({ trainings }: { trainings: Team['t
           </li>
         ))}
       </ul>
-      <Link href="/teams/trainingstijden" className="team-trainings__all">
-        Alle trainingstijden &rarr;
-      </Link>
+      <MoreLink
+        href="/teams/trainingstijden"
+        text="Alle trainingstijden"
+        className="team-trainings__all"
+      />
     </div>
   )
 }

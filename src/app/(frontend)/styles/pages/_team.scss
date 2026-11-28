@@ -493,8 +493,6 @@
 
 .team-trainings__all {
   display: inline-block;
-  font-weight: 600;
-  margin-top: 0.9rem;
 }
 
 .training-times__intro,
@@ -550,6 +548,16 @@
 
 .training-times__team {
   font-weight: 600;
+}
+
+a.training-times__team,
+.training-times__members a {
+  color: var(--color-dark);
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--color-primary);
+  }
 }
 
 .training-times__members {
