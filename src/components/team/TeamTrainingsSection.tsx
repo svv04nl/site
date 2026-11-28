@@ -18,7 +18,11 @@ export default function TeamTrainingsSection({ trainings }: { trainings: Team['t
           <li key={t.id ?? `${t.day}-${t.startTime}`} className="team-trainings__row">
             <span className="team-trainings__day">{DAY_LABELS[t.day]}</span>
             <span className="team-trainings__time">{timeRange(t)}</span>
-            {t.field && <span className="team-trainings__field">{t.field}</span>}
+            {(t.group || t.field) && (
+              <span className="team-trainings__field">
+                {[t.group, t.field].filter(Boolean).join(' · ')}
+              </span>
+            )}
           </li>
         ))}
       </ul>

@@ -363,6 +363,7 @@ export interface Team {
         startTime: string;
         endTime: string;
         field?: string | null;
+        group?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1114,6 +1115,7 @@ export interface TeamsSelect<T extends boolean = true> {
         startTime?: T;
         endTime?: T;
         field?: T;
+        group?: T;
         id?: T;
       };
   updatedAt?: T;

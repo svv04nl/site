@@ -152,6 +152,16 @@ export const Teams: CollectionConfig = {
               label: 'Veld',
               admin: { placeholder: 'Trainingsveld 2' },
             },
+            {
+              name: 'group',
+              type: 'text',
+              label: 'Groep',
+              admin: {
+                placeholder: 'Overige senioren',
+                description:
+                  'Trainen meerdere teams samen? Zelfde naam bij elk team, dan staan ze in het overzicht op één regel.',
+              },
+            },
           ],
         },
       ],

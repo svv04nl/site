@@ -10,7 +10,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"day" "enum_teams_trainings_day" NOT NULL,
   	"start_time" varchar NOT NULL,
   	"end_time" varchar NOT NULL,
-  	"field" varchar
+  	"field" varchar,
+  	"group" varchar
   );
   
   ALTER TABLE "teams_trainings" ADD CONSTRAINT "teams_trainings_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."teams"("id") ON DELETE cascade ON UPDATE no action;

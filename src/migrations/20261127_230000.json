@@ -1140,6 +1140,12 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "group": {
+          "name": "group",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
