@@ -495,3 +495,40 @@
   box-shadow: none;
   padding: 0;
 }
+
+// ─── Grass band (design C) ───────────────────────────────────────────────────
+// A band of grass right under the breadcrumb. Class, name and form stand white on it; the photo
+// and the next match card slide half over its lower edge.
+
+$team-band-height: 300px;
+// How far the content moves up into the band: the header starts 64px below its top edge.
+$team-band-overlap: 236px;
+
+.team-page {
+  padding-top: 0;
+}
+
+.team-band {
+  background:
+    linear-gradient(90deg, rgba(10 25 10 / 0.82), rgba(10 25 10 / 0.35) 60%, rgba(10 25 10 / 0.6)),
+    url('/images/hero-gras.webp') center / cover;
+  height: $team-band-height;
+  margin-bottom: -$team-band-overlap;
+}
+
+.team-page .team-header {
+  .home-eyebrow,
+  .team-header__name,
+  .team-form__label {
+    color: var(--color-white);
+  }
+
+  .team-header__name span {
+    color: #ff4d4d;
+  }
+}
+
+.team-page .team-photo,
+.team-page .team-next {
+  box-shadow: 0 18px 40px rgba(0 0 0 / 0.25);
+}
