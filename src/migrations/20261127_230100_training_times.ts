@@ -3,7 +3,7 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 /**
  * Data only: the youth training times from the club's overview ("Trainingsdagen overzicht.xlsx", November 2026).
  * The field is the cell colour in that sheet (yellow 1, blue 2, orange 3, green 4). "O14/15" is O14-1.
- * The seniors (VR18+1, and 3, 4, 35+ and 45+ together as "Overige senioren") come from the club directly; no field known yet.
+ * The seniors (VR18+1, and 3, 4, 35+ and 45+ together as "Overige senioren") come from the club directly.
  * A team that already has trainings in the CMS is skipped, so times entered by hand stay.
  */
 type Row = [
@@ -37,11 +37,11 @@ const TRAININGS: [slug: string, rows: Row[]][] = [
   ['svv04-o14-1', tuesdayThursday('18:15', '19:30', 'Trainingsveld 1')],
   ['svv04-o17-1', tuesdayThursday('18:15', '19:30', 'Trainingsveld 3')],
   ['svv04-o19-1', tuesdayThursday('20:00', '21:30', 'Trainingsveld 3')],
-  ['svv04-vr18-1', [['vr', '19:30', '20:45', null]]],
-  ['svv04-3', [['vr', '19:30', '20:45', null, 'Overige senioren']]],
-  ['svv04-4', [['vr', '19:30', '20:45', null, 'Overige senioren']]],
-  ['svv04-35-1', [['vr', '19:30', '20:45', null, 'Overige senioren']]],
-  ['svv04-45-1', [['vr', '19:30', '20:45', null, 'Overige senioren']]],
+  ['svv04-vr18-1', [['vr', '19:30', '20:45', 'Trainingsveld 4']]],
+  ['svv04-3', [['vr', '19:30', '20:45', 'Trainingsveld 4', 'Overige senioren']]],
+  ['svv04-4', [['vr', '19:30', '20:45', 'Trainingsveld 4', 'Overige senioren']]],
+  ['svv04-35-1', [['vr', '19:30', '20:45', 'Trainingsveld 4', 'Overige senioren']]],
+  ['svv04-45-1', [['vr', '19:30', '20:45', 'Trainingsveld 4', 'Overige senioren']]],
 ]
 
 export async function up({ db }: MigrateUpArgs): Promise<void> {
