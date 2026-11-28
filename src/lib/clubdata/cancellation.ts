@@ -76,3 +76,21 @@ export function testCancelledCodes(
 /** "YYYY-MM-DD" for today in Dutch time. */
 export const amsterdamToday = () =>
   new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Amsterdam' }).format(new Date())
+
+/** Cancelled matches a visitor closed the message for: match code → day of the match. */
+export type DismissedCancellations = Record<string, string>
+
+/**
+ * Only the matches from `today` on. The message never shows an earlier day, so a closed match
+ * is remembered until its day has passed, and the stored list cannot grow.
+ */
+export function pruneDismissed(
+  dismissed: DismissedCancellations,
+  today: string,
+): DismissedCancellations {
+  return Object.fromEntries(Object.entries(dismissed).filter(([, day]) => day >= today))
+}
+
+/** True when every match was closed before: the message stays away until a new one is cancelled. */
+export const allDismissed = (codes: number[], dismissed: DismissedCancellations) =>
+  codes.every((code) => code in dismissed)
