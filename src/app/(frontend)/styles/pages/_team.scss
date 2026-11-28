@@ -468,6 +468,22 @@
   .sidebar-section-title {
     margin-top: 0;
   }
+
+  // The section is the card, so what's inside gets no second frame (the sponsor logos are a
+  // .card of their own elsewhere) and the last row no line against the card's edge.
+  .card {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .team-staff__row:last-child,
+  .news-sidebar-list li:last-child .news-sidebar-item {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
 }
 
 // On the team page the tabs are one framed block, so what's inside gets no second frame (the selection is a
