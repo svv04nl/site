@@ -307,29 +307,6 @@
 }
 
 // "Volg de clubagenda" on /agenda.
-.agenda-subscribe {
-  align-items: center;
-  background: #f6f6f6;
-  border-radius: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  padding: 1rem 1.25rem;
-
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  span {
-    color: #555;
-    font-size: 0.9rem;
-  }
-}
-
 @keyframes calendar-fade {
   from {
     opacity: 0;

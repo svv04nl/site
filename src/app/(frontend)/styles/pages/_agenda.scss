@@ -1,71 +1,148 @@
-// ─── Agenda page ──────────────────────────────────────────────────────────────
+// ─── Agenda ───────────────────────────────────────────────────────────────────
+// One look for the agenda block on the homepage and the /agenda page (AgendaItem).
 
-.agenda-inner {
-  max-width: 720px;
+.agenda-list {
+  border-top: 2px solid var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.agenda-item {
+  align-items: center;
+  border-bottom: 1px solid #e6e6e6;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 56px 1fr auto;
+  padding: 0.875rem 0;
+}
+
+.agenda-item__date {
+  align-items: center;
+  aspect-ratio: 1;
+  background: var(--color-dark);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.agenda-item__day {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+// The light red of the fixtures strip and the hero: --color-primary is too dark on black.
+.agenda-item__month {
+  color: #ff4a40;
+  font-family: var(--font-heading);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-top: 0.15rem;
+  text-transform: uppercase;
+}
+
+.agenda-item__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.agenda-item__name {
+  color: var(--color-dark);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+
+  @at-root a#{&}:hover {
+    color: var(--color-primary);
+  }
+}
+
+.agenda-item__meta {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.agenda-item__notes {
+  color: #666;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.agenda-item__arrow {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+// ─── /agenda ───
+
+// Follow the club calendar: a light band like the other info blocks.
+.agenda-subscribe {
+  align-items: center;
+  background: var(--color-light);
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  padding: 1.25rem 1.5rem;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  strong {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  span {
+    color: #666;
+    font-size: 0.9rem;
+  }
 }
 
 .agenda-group {
   margin-bottom: 2.5rem;
 }
 
+// The month, in the same type as the "Agenda" title of the homepage block.
 .agenda-month {
-  border-bottom: 2px solid var(--color-primary);
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  margin: 0 0 0.75rem;
-  padding-bottom: 0.4rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0 0 0.875rem;
   text-transform: uppercase;
 }
 
-.agenda-item {
-  align-items: flex-start;
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: 1fr auto;
-  padding: 0.75rem 0;
-}
-
-.agenda-item-date {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.agenda-date-from {
-  color: var(--color-primary);
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.agenda-date-to {
-  color: #999;
-  font-size: 0.8rem;
-}
-
-.agenda-item-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  text-align: right;
-}
-
-.agenda-item-place {
-  color: #999;
-  font-size: 0.825rem;
-}
-
-.agenda-item-notes {
-  color: #999;
-  font-size: 0.8rem;
-  font-style: italic;
+// Laptop: two columns of activities per month, as wide as the programma.
+.agenda-group .agenda-list {
+  @media screen and (min-width: #{$breakpoint-medium + 1}) {
+    column-gap: 3rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .agenda-empty {
-  color: #999;
+  color: #666;
   margin-top: 1.5rem;
 }
