@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { pageHrefs } from '@/lib/pages'
+import { productHref } from '@/lib/products'
 
 const BASE = 'https://svv04.nl'
 
@@ -81,5 +82,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticRoutes, ...postRoutes, ...teamRoutes, ...pageRoutes, ...audienceRoutes]
+  // ── Clubartikelen ─────────────────────────────────────────────────────────
+  const { docs: products } = await payload.find({
+    collection: 'products',
+    limit: 0,
+    depth: 0,
+    select: { slug: true },
+  })
+  const productRoutes: MetadataRoute.Sitemap = products
+    .filter((product) => product.slug)
+    .map((product) => ({ url: `${BASE}${productHref(product.slug)}`, changeFrequency: 'monthly' }))
+
+  return [
+    ...staticRoutes,
+    ...postRoutes,
+    ...teamRoutes,
+    ...pageRoutes,
+    ...audienceRoutes,
+    ...productRoutes,
+  ]
 }

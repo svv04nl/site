@@ -25,6 +25,8 @@ import { AdFormatsBlock } from './blocks/AdFormatsBlock/config'
 import { BoardMembersBlock } from './blocks/BoardMembersBlock/config'
 import { TeamDirectoryBlock } from './blocks/TeamDirectoryBlock/config'
 import { SectionHeaderBlock } from './blocks/SectionHeaderBlock/config'
+import { ProductGridBlock } from './blocks/ProductGridBlock/config'
+import { FeatureCardBlock } from './blocks/FeatureCardBlock/config'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
@@ -38,6 +40,8 @@ import { Donations } from './collections/Donations'
 import { Fundraisers } from './collections/Fundraisers'
 import { TeamStaff } from './collections/TeamStaff'
 import { Pupils } from './collections/Pupils'
+import { Products } from './collections/Products'
+import { ShopSettings } from './globals/ShopSettings'
 import { searchEndpoint } from './endpoints/search'
 import { messageSubmitEndpoint } from './endpoints/message-submit'
 import { mediaFileUrl } from './lib/media-sizes'
@@ -109,7 +113,9 @@ export default buildConfig({
     Donations,
     TeamStaff,
     Pupils,
+    Products,
   ],
+  globals: [ShopSettings],
   endpoints: [searchEndpoint, messageSubmitEndpoint],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
@@ -157,6 +163,8 @@ export default buildConfig({
           BoardMembersBlock,
           TeamDirectoryBlock,
           SectionHeaderBlock,
+          ProductGridBlock,
+          FeatureCardBlock,
         ],
       }),
     ],

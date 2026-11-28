@@ -16,6 +16,8 @@ import AdFormatsBlockComponent from '@/blocks/AdFormatsBlock/Component'
 import BoardMembersBlockComponent from '@/blocks/BoardMembersBlock/Component'
 import TeamDirectoryBlockComponent from '@/blocks/TeamDirectoryBlock/Component'
 import SectionHeaderBlockComponent from '@/blocks/SectionHeaderBlock/Component'
+import ProductGridBlockComponent from '@/blocks/ProductGridBlock/Component'
+import FeatureCardBlockComponent from '@/blocks/FeatureCardBlock/Component'
 import { defaultJSXConverters } from '@/lib/richtext'
 import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 
@@ -74,6 +76,22 @@ export const cmsJsxConverters: JSXConvertersFunction = (args) => ({
         heading={node.fields.heading}
         description={node.fields.description}
         formats={node.fields.formats}
+      />
+    ),
+    productGridBlock: ({ node }: { node: any }) => (
+      <ProductGridBlockComponent
+        title={node.fields.title}
+        showHowToOrder={node.fields.showHowToOrder}
+      />
+    ),
+    featureCardBlock: ({ node }: { node: any }) => (
+      <FeatureCardBlockComponent
+        eyebrow={node.fields.eyebrow}
+        title={node.fields.title}
+        text={node.fields.text}
+        image={node.fields.image}
+        buttonLabel={node.fields.buttonLabel}
+        url={node.fields.url}
       />
     ),
     boardMembersBlock: ({ node }: { node: any }) => (
