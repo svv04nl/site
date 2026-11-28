@@ -29,6 +29,49 @@ export type AllCancelled = { dayKey: string; dayLong: string; scope: 'alle' | 't
 
 export type CancellationData = { matches: CancelledMatch[]; allCancelled: AllCancelled | null }
 
+/** The cancelled matches of one of our teams on one day: one line in the bar and the popup. */
+export type CancelledGroup = { key: string; team: string; matches: CancelledMatch[] }
+
+const ownTeam = (m: CancelledMatch) => (m.isHome ? m.home : m.away)
+
+/**
+ * Teams like the 35+ or the (vr)18+ play several short matches on one evening. Those become one
+ * line ("SVV'04 35+1 · 3 wedstrijden") instead of one per match, in the order of their first match.
+ */
+export function groupByTeam(matches: CancelledMatch[]): CancelledGroup[] {
+  const groups = new Map<string, CancelledGroup>()
+  for (const m of matches) {
+    const key = `${m.dayKey}|${ownTeam(m)}`
+    const group = groups.get(key)
+    if (group) {
+      group.matches.push(m)
+    } else {
+      groups.set(key, { key, team: ownTeam(m), matches: [m] })
+    }
+  }
+  return [...groups.values()]
+}
+
+/** "19:00" for one time, "19:00–20:30" for several. */
+function timeRange(matches: CancelledMatch[]) {
+  const times = [...new Set(matches.map((m) => m.time).filter(Boolean))].sort()
+  if (times.length <= 1) {
+    return times[0] ?? ''
+  }
+  return `${times[0]}–${times[times.length - 1]}`
+}
+
+/** Home, away, or both for a team with several matches. */
+function homeAway(matches: CancelledMatch[]) {
+  const home = matches.some((m) => m.isHome)
+  const away = matches.some((m) => !m.isHome)
+  return home && away ? 'Thuis en uit' : home ? 'Thuis' : 'Uit'
+}
+
+// One match: its own page. Several matches of one team: the programme.
+const groupHref = (g: CancelledGroup) =>
+  g.matches.length === 1 ? `/wedstrijd/${g.matches[0].matchCode}` : '/programma'
+
 // The bar shows this many matches; the rest sit behind a "+N" label that unfolds them.
 const MAX_INLINE = 2
 // The popup list scrolls above this many matches, so it stays as high as with two.
@@ -124,6 +167,16 @@ const Teams = ({ m }: { m: CancelledMatch }) =>
   ) : (
     <>
       {m.home} – <b>{m.away}</b>
+    </>
+  )
+
+/** One match as above, or "SVV'04 35+1 · 3 wedstrijden" for several matches of one team. */
+const GroupTeams = ({ g }: { g: CancelledGroup }) =>
+  g.matches.length === 1 ? (
+    <Teams m={g.matches[0]} />
+  ) : (
+    <>
+      <b>{g.team}</b> · {g.matches.length} wedstrijden
     </>
   )
 
@@ -249,8 +302,9 @@ export function CancellationBannerClient({
   }
 
   const sameDay = matches.every((m) => m.dayKey === matches[0].dayKey)
-  const shown = unfolded ? matches : matches.slice(0, MAX_INLINE)
-  const hidden = matches.length - MAX_INLINE
+  const groups = groupByTeam(matches)
+  const shown = unfolded ? groups : groups.slice(0, MAX_INLINE)
+  const hidden = groups.length - MAX_INLINE
 
   return (
     <>
@@ -266,19 +320,18 @@ export function CancellationBannerClient({
             {sameDay && ` · ${matches[0].day}`}
           </span>
           <span className="cancellation-banner-pills">
-            {shown.map((m) => (
-              <Link
-                key={m.matchCode}
-                href={`/wedstrijd/${m.matchCode}`}
-                className="cancellation-pill"
-              >
-                {!sameDay && <span className="cancellation-pill-day">{m.day}</span>}
-                {m.time && <s>{m.time}</s>}
-                <span>
-                  <Teams m={m} />
-                </span>
-              </Link>
-            ))}
+            {shown.map((g) => {
+              const time = timeRange(g.matches)
+              return (
+                <Link key={g.key} href={groupHref(g)} className="cancellation-pill">
+                  {!sameDay && <span className="cancellation-pill-day">{g.matches[0].day}</span>}
+                  {time && <s>{time}</s>}
+                  <span>
+                    <GroupTeams g={g} />
+                  </span>
+                </Link>
+              )
+            })}
             {hidden > 0 && (
               <button
                 type="button"
@@ -333,6 +386,7 @@ function CancellationPopup({
       : 'Alle thuiswedstrijden afgelast'
     : 'Afgelast'
   const sameDay = matches.every((m) => m.dayKey === matches[0]?.dayKey)
+  const groups = groupByTeam(matches)
 
   return (
     <div className={`cancellation-popup${allCancelled ? ' cancellation-popup--all' : ''}`}>
@@ -383,29 +437,32 @@ function CancellationPopup({
 
         {/* Above MAX_LISTED matches the list scrolls, so the popup keeps its size. */}
         <div
-          className={`cancellation-popup-scroll${matches.length > MAX_LISTED ? ' is-scrolling' : ''}`}
+          className={`cancellation-popup-scroll${groups.length > MAX_LISTED ? ' is-scrolling' : ''}`}
         >
           <ul className="cancellation-popup-list">
-            {matches.map((m) => (
-              <li key={m.matchCode}>
-                <Link href={`/wedstrijd/${m.matchCode}`} onClick={onClose}>
-                  <span className="cancellation-popup-match">
-                    <span className="cancellation-popup-meta">
-                      {(!sameDay || !allCancelled) && `${m.day} · `}
-                      {m.time && <s>{m.time}</s>}
-                      {` · ${m.isHome ? 'Thuis' : 'Uit'}`}
+            {groups.map((g) => {
+              const time = timeRange(g.matches)
+              return (
+                <li key={g.key}>
+                  <Link href={groupHref(g)} onClick={onClose}>
+                    <span className="cancellation-popup-match">
+                      <span className="cancellation-popup-meta">
+                        {(!sameDay || !allCancelled) && `${g.matches[0].day} · `}
+                        {time && <s>{time}</s>}
+                        {` · ${homeAway(g.matches)}`}
+                      </span>
+                      <span>
+                        <GroupTeams g={g} />
+                      </span>
                     </span>
-                    <span>
-                      <Teams m={m} />
-                    </span>
-                  </span>
-                  <Icon name="right" size={16} />
-                </Link>
-              </li>
-            ))}
+                    <Icon name="right" size={16} />
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         </div>
-        {matches.length > MAX_LISTED && (
+        {groups.length > MAX_LISTED && (
           <p className="cancellation-popup-hint">Scroll voor alle {matches.length} wedstrijden</p>
         )}
 

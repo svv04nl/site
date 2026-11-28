@@ -132,3 +132,37 @@ describe('afgelastingsbalk wegklikken', () => {
     expect(screen.getByRole('dialog')).toBeTruthy()
   })
 })
+
+describe('meerdere wedstrijden van één team', () => {
+  const evening = (matchCode: number, time: string, away: string) => ({
+    ...match(matchCode, '2026-11-27'),
+    time,
+    home: "SVV'04 35+1",
+    away,
+  })
+
+  it('voegt ze samen tot één regel, met de tijden van eerste tot laatste', () => {
+    show([evening(11, '19:30', 'A 35+1'), evening(12, '20:15', 'B 35+1'), match(1, '2026-11-27')])
+    const pills = [...document.querySelectorAll('.cancellation-pill')].map((p) => p.textContent)
+    expect(bar()?.textContent).toContain('3 wedstrijden afgelast')
+    expect(pills).toEqual(["19:30–20:15SVV'04 35+1 · 2 wedstrijden", "14:00SVV'04 1 – Testclub 1"])
+    expect(document.querySelector('.cancellation-pill')?.getAttribute('href')).toBe('/programma')
+  })
+
+  it('houdt hetzelfde team op een andere dag apart', () => {
+    show([
+      evening(11, '19:30', 'A 35+1'),
+      { ...evening(12, '19:30', 'B 35+1'), dayKey: '2026-11-28' },
+    ])
+    expect(document.querySelectorAll('.cancellation-pill')).toHaveLength(2)
+  })
+
+  it('onthoudt het wegklikken nog steeds per wedstrijd', () => {
+    show([evening(11, '19:30', 'A 35+1'), evening(12, '20:15', 'B 35+1')])
+    fireEvent.click(screen.getByLabelText('Melding sluiten'))
+    expect(JSON.parse(localStorage.getItem('svv-afgelast-gesloten') ?? '{}')).toEqual({
+      11: '2026-11-27',
+      12: '2026-11-27',
+    })
+  })
+})
