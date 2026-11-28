@@ -18,6 +18,9 @@ type Props = {
 export default async function ProductGridBlockComponent({ title, showHowToOrder }: Props) {
   const [products, settings] = await Promise.all([findProducts(), findShopSettings()])
   const kantine = lines(settings?.kantineTimes)
+  // Only the ways people can actually buy something: no kantine box when nothing is sold there.
+  const inKantine = products.some((p) => p.inKantine)
+  const viaForm = products.length === 0 || products.some((p) => p.viaForm)
 
   return (
     <div className="product-grid-block">
@@ -53,6 +56,34 @@ export default async function ProductGridBlockComponent({ title, showHowToOrder 
                 </Link>
               )
             })}
+          </div>
+        </section>
+      )}
+
+      {showHowToOrder !== false && (
+        <section className="how-to-order">
+          <h2 className="how-to-order__title">Zo bestel je</h2>
+          <div className="how-to-order__grid">
+            {inKantine && (
+              <div className="how-to-order__item">
+                <h3>In de kantine</h3>
+                <p>Kom langs en neem het direct mee.</p>
+                {kantine.length > 0 && (
+                  <ul className="how-to-order__times">
+                    {kantine.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+            {viaForm && (
+              <div className="how-to-order__item">
+                <h3>Via het formulier</h3>
+                <p>Kies een artikel en vul op de pagina van dat artikel het formulier in.</p>
+                {settings?.payAndPickup && <p>{settings.payAndPickup}</p>}
+              </div>
+            )}
           </div>
         </section>
       )}
