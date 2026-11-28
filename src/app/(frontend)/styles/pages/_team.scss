@@ -481,14 +481,17 @@
 }
 
 .team-trainings__time {
+  align-self: center;
   font-variant-numeric: tabular-nums;
+  grid-column: 2;
+  grid-row: 1 / span 2;
   text-align: right;
 }
 
 .team-trainings__field {
   color: #666;
   font-size: 0.875rem;
-  grid-column: 1 / -1;
+  grid-column: 1;
 }
 
 .team-trainings__all {
