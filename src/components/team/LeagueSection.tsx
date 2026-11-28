@@ -65,7 +65,11 @@ export default function LeagueSection({ showStandings }: { showStandings: boolea
           <StandingsTab poules={regularPoules} initialIndex={latestFaseIndex} />
         )}
         {activeTab === 'programma' && (
-          <ScheduleTab teamcode={teamcode ?? 0} poules={[...regularPoules, ...cupPoules]} />
+          <ScheduleTab
+            teamcode={teamcode ?? 0}
+            poules={[...regularPoules, ...cupPoules]}
+            cupPoulecodes={cupPoules.map((p) => p.poulecode)}
+          />
         )}
         {activeTab === 'uitslagen' && showStandings && <TeamResultCards />}
         {activeTab === 'indeling' && (

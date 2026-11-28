@@ -195,6 +195,25 @@ export const teamResultsQuery = (teamcode: number | null) => ({
   staleTime: STALE_TIME,
 })
 
+/**
+ * The team's own matches still to play (programma by teamcode): unlike the poule lists this
+ * also holds friendlies.
+ */
+export const teamScheduleQuery = (teamcode: number | null) => ({
+  queryKey: ['team-programma', teamcode] as const,
+  queryFn: async () => {
+    const raw = await fetchClubData<RawProgrammaResponse>('programma', {
+      ...CLUB_PROGRAMMA_PARAMS,
+      teamcode: String(teamcode),
+      thuis: 'ja',
+      uit: 'ja',
+    }).catch(() => [] as RawProgrammaResponse)
+    return transformSchedule(raw, CLUB_RELATIECODE, teamcode ?? undefined)
+  },
+  enabled: !!teamcode,
+  staleTime: STALE_TIME,
+})
+
 export const cupResultsQuery = (poulecode: number | undefined) => ({
   queryKey: ['cup-results', poulecode] as const,
   queryFn: async () => {

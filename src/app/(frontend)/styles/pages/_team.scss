@@ -371,10 +371,24 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
 
   .match-card {
     border: 0;
     border-radius: 0;
+  }
+
+  // The whole card moves and greys on hover, label and goals included, not only the match.
+  .match-card--clickable:hover {
+    background-color: transparent;
+    transform: none;
+  }
+
+  &:has(.match-card--clickable:hover) {
+    background-color: #fafafa;
+    transform: translateY(-2px);
   }
 }
 
@@ -454,4 +468,14 @@
   .sidebar-section-title {
     margin-top: 0;
   }
+}
+
+// On the team page the tabs are one framed block, so what's inside gets no second frame (the selection is a
+// .card of its own elsewhere).
+.team-layout .league-section .card {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 }

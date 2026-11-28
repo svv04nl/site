@@ -263,6 +263,18 @@
   width: 100%;
 }
 
+// A sponsor without an uploaded logo shows its name instead of an empty space.
+.team-sponsor-name {
+  color: var(--color-dark);
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 1rem 0;
+  text-align: center;
+  width: 100%;
+}
+
 .team-sponsor-link {
   display: block;
   width: 100%;

@@ -71,6 +71,7 @@ export function ResultCard({ m, showKind = true }: { m: ResultMatch; showKind?: 
       <MatchCard
         date={m.date}
         score={m.score}
+        venue={m.venue}
         status={m.status}
         homeTeam={m.homeTeam}
         awayTeam={m.awayTeam}

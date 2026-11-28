@@ -15,7 +15,11 @@ export default function TeamSponsorSection({ sponsors }: Props) {
           const logoUrl = logo?.url ?? null
           const img = logoUrl ? (
             <img key={s.id} src={logoUrl} alt={s.name} className="team-sponsor-logo-img" />
-          ) : null
+          ) : (
+            <span key={s.id} className="team-sponsor-name">
+              {s.name}
+            </span>
+          )
 
           return s.url ? (
             <a
@@ -40,7 +44,7 @@ export default function TeamSponsorSection({ sponsors }: Props) {
   return (
     <div className="sidebar-section">
       <h2 className="sidebar-section-title">Tenue sponsor</h2>
-      <div className="card-sponsor card">{content}</div>
+      {content}
     </div>
   )
 }
