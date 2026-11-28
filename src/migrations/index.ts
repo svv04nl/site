@@ -17,6 +17,7 @@ import * as migration_20261023_074509 from './20261023_074509';
 import * as migration_20261127_181914 from './20261127_181914';
 import * as migration_20261127_190042_pages_audience from './20261127_190042_pages_audience';
 import * as migration_20261127_190100_pages_to_audiences from './20261127_190100_pages_to_audiences';
+import * as migration_20261127_220000 from './20261127_220000';
 
 export const migrations = [
   {
@@ -113,5 +114,10 @@ export const migrations = [
     up: migration_20261127_190100_pages_to_audiences.up,
     down: migration_20261127_190100_pages_to_audiences.down,
     name: '20261127_190100_pages_to_audiences',
+  },
+  {
+    up: migration_20261127_220000.up,
+    down: migration_20261127_220000.down,
+    name: '20261127_220000',
   },
 ];

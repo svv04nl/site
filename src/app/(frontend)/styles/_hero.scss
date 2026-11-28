@@ -352,3 +352,318 @@
     color: var(--color-white);
   }
 }
+
+// ─── Hero with a block on the right (pupil van de week, away match) ───
+// The welcome hero or a featured post's hero. See lib/hero-side. The text moves to the left, the card sits on the right; on a phone and
+// tablet the card comes under the text.
+
+.site-hero--with-side {
+  .site-hero-inner {
+    @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      justify-content: stretch;
+      text-align: left;
+
+      .site-hero-content {
+        margin: 0;
+      }
+
+      .site-hero-tagline {
+        margin-left: 0;
+      }
+
+      .site-hero-actions {
+        justify-content: flex-start;
+      }
+
+      .site-hero-eyebrow {
+        justify-content: flex-start;
+
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.site-hero-side {
+  text-shadow: none;
+  width: 100%;
+
+  // Laptop: a fixed height, so the hero is just as tall for a home or away match. The pupil card
+  // fills it, the smaller away card sits in the middle.
+  @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
+    align-items: center;
+    display: flex;
+    height: 30rem;
+
+    .hero-side-card--pupil {
+      height: 100%;
+    }
+
+    .hero-side-card__open {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hero-side-card__photo {
+      aspect-ratio: auto;
+      flex: 1;
+      min-height: 0;
+      object-position: center 25%;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-tablet-landscape) {
+    margin: 0 auto;
+    max-width: 420px;
+  }
+}
+
+.hero-side-card {
+  background: var(--color-white);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 14px 40px rgb(0 0 0 / 35%);
+  color: var(--color-dark);
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  overflow: hidden;
+  padding: 0;
+  text-align: left;
+  // A <button> may keep its text on one line in some phone browsers.
+  white-space: normal;
+  width: 100%;
+}
+
+.hero-side-card__label {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+// ─── Pupil van de week ───
+
+// Hover like the team cards (lift + shadow) and the news cards (photo zoom).
+.hero-side-card--pupil {
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 18px 46px rgb(0 0 0 / 42%);
+    transform: translateY(-2px);
+  }
+
+  // The match under the pupil: the programma's match card, flat inside this card.
+  .match-card {
+    border: 0;
+    border-radius: 0;
+    border-top: 1px solid #e8e8e8;
+    flex-shrink: 0;
+    padding: 0.85rem 1rem;
+  }
+}
+
+// Photo, name and "Lees meer": opens the pupil's answers.
+.hero-side-card__open {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  text-align: left;
+  white-space: normal;
+  width: 100%;
+
+  &:hover .hero-side-card__photo {
+    transform: scale(1.04);
+  }
+
+  &:hover .hero-side-card__more {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: -3px;
+  }
+}
+
+.hero-side-card__photo {
+  // Phone and tablet: a wide photo, so the hero stays short. Laptop: fills the card (above).
+  aspect-ratio: 16 / 10;
+  background: #d6d6d6;
+  display: block;
+  object-fit: cover;
+  object-position: center 25%;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+// Over the bottom of the photo, so the photo gets the whole card.
+.hero-side-card__body {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 78%) 55%);
+  bottom: 0;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  left: 0;
+  padding: 3rem 1rem 0.9rem;
+  position: absolute;
+  right: 0;
+  white-space: normal;
+
+  @media screen and (min-width: #{$breakpoint-tablet-landscape + 1}) {
+    padding: 3.5rem 1.15rem 1rem;
+  }
+}
+
+// A small red tag on the photo.
+.hero-side-card--pupil .hero-side-card__label {
+  align-self: flex-start;
+  background: var(--color-primary);
+  border-radius: 4px;
+  color: var(--color-white);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+}
+
+.hero-side-card__name {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.hero-side-card__foot {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  justify-content: space-between;
+}
+
+.hero-side-card__meta {
+  color: rgb(255 255 255 / 85%);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+// The small "Lees meer →" button: white on the photo, red on hover.
+.hero-side-card__more {
+  background: var(--color-white);
+  border: 0;
+  border-radius: 999px;
+  color: var(--color-dark);
+  flex: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.45rem 0.8rem;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.pupil-dialog__top {
+  // Full width at the top of the popup, over the popup's padding.
+  margin: -1.5rem -1.5rem 0;
+  position: relative;
+
+  @media screen and (max-width: $breakpoint-mobile-lg) {
+    margin: -1.25rem -1.25rem 0;
+  }
+}
+
+.pupil-dialog__photo {
+  aspect-ratio: 4 / 3;
+  background: #d6d6d6;
+  display: block;
+  object-fit: cover;
+  object-position: center 25%;
+  width: 100%;
+}
+
+.pupil-dialog__close {
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+}
+
+.pupil-dialog__answers {
+  border-top: 1px solid #e8e8e8;
+  display: grid;
+  gap: 0.6rem 1rem;
+  grid-template-columns: auto 1fr;
+  margin: 0;
+  padding-top: 1rem;
+
+  > div {
+    display: contents;
+  }
+
+  dt {
+    color: #555;
+  }
+
+  dd {
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+// ─── Away match of the first team ───
+
+.hero-away {
+  gap: 0.9rem;
+  padding: 1.25rem;
+}
+
+// The match card of the programma, without its own frame inside this card.
+.hero-away .match-card {
+  border: 0;
+  padding: 0;
+}
+
+.hero-away__venue {
+  color: #555;
+  font-size: 0.9rem;
+  margin: 0;
+  text-align: center;
+}
+
+.hero-away__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+
+  .btn {
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+.hero-away__cheer {
+  color: #555;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}

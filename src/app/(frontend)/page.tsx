@@ -13,10 +13,16 @@ import { WebshopBanner } from '@/components/WebshopBanner'
 import { HeroVideo } from '@/components/HeroVideo'
 import { FeaturedPostHero } from '@/components/FeaturedPostHero'
 import { AssistantBar } from '@/components/assistant/AssistantBar'
+import HeroSideBlock from '@/components/hero/HeroSideBlock'
+import { heroTestMode, loadHeroSide } from '@/lib/hero-side'
 
 const FEATURED_TEAM_SLUGS = ['svv04-1', 'svv04-2', 'svv04-o21-1', 'svv04-o19-1']
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const payload = await getPayload({ config })
   const now = new Date().toISOString()
 
@@ -53,7 +59,14 @@ export default async function HomePage() {
     }),
   ])
 
+  // Test mode on previews (?hero=pupil or ?hero=uit, see lib/hero-side): the welcome hero with
+  // the card, also while a post is featured.
   const heroPost = heroPosts[0]
+  // Around a match of the first team: the pupil van de week or the away match, on the right of
+  // the hero, also of a featured post (which keeps its own photo). Test mode on previews:
+  // ?hero=pupil or ?hero=uit (see lib/hero-side).
+  const heroSide = await loadHeroSide(new Date(), heroTestMode((await searchParams).hero))
+  const side = heroSide ? <HeroSideBlock side={heroSide} /> : null
   if (!heroPost) {
     preload('/images/hero-sportpark.webp', { as: 'image', fetchPriority: 'high' })
   }
@@ -68,9 +81,11 @@ export default async function HomePage() {
       <main>
         {/* Hero — a featured news post while its date range is active, otherwise the welcome hero */}
         {heroPost ? (
-          <FeaturedPostHero post={heroPost} />
+          <FeaturedPostHero post={heroPost} side={side} />
         ) : (
-          <section className="site-hero site-hero--centered">
+          <section
+            className={`site-hero site-hero--centered${heroSide ? ' site-hero--with-side' : ''}`}
+          >
             <div
               className="site-hero-image"
               aria-hidden="true"
@@ -95,6 +110,7 @@ export default async function HomePage() {
                   </Link>
                 </div>
               </div>
+              {side}
             </div>
           </section>
         )}

@@ -1,3 +1,4 @@
+import React from 'react'
 import Link from 'next/link'
 import type { Media, Post } from '@/payload-types'
 
@@ -6,9 +7,10 @@ const DEFAULT_BACKDROP = '/images/hero-gras.webp'
 
 // Homepage hero for a featured news post (Posts.heroFeatured). Left-aligned
 // text over the post's hero image; replaces the default welcome hero while the
-// post's date range is active. The article's own image (featuredImage) is not
+// post's date range is active. Around a first team match the card of lib/hero-side
+// (pupil or away match) sits on the right. The article's own image (featuredImage) is not
 // used here, and the fallback backdrop only ever appears in this hero.
-export function FeaturedPostHero({ post }: { post: Post }) {
+export function FeaturedPostHero({ post, side }: { post: Post; side?: React.ReactNode }) {
   const image = post.heroImage as Media | null | undefined
   const imageUrl = image ? (image.sizes?.hero?.url ?? image.url ?? null) : null
   const focalX = image?.focalX ?? 50
@@ -23,7 +25,7 @@ export function FeaturedPostHero({ post }: { post: Post }) {
 
   return (
     <section
-      className={`site-hero site-hero--post${backdropOnly ? ' site-hero--post-backdrop' : ''}`}
+      className={`site-hero site-hero--post${backdropOnly ? ' site-hero--post-backdrop' : ''}${side ? ' site-hero--with-side' : ''}`}
     >
       <div className="site-hero-image" aria-hidden="true">
         <picture>
@@ -61,6 +63,8 @@ export function FeaturedPostHero({ post }: { post: Post }) {
             </Link>
           </div>
         </div>
+        {/* The pupil van de week or the first team's away match (see lib/hero-side). */}
+        {side}
       </div>
     </section>
   )

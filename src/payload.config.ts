@@ -37,6 +37,7 @@ import { Messages } from './collections/Messages'
 import { Donations } from './collections/Donations'
 import { Fundraisers } from './collections/Fundraisers'
 import { TeamStaff } from './collections/TeamStaff'
+import { Pupils } from './collections/Pupils'
 import { searchEndpoint } from './endpoints/search'
 import { messageSubmitEndpoint } from './endpoints/message-submit'
 import { mediaFileUrl } from './lib/media-sizes'
@@ -107,6 +108,7 @@ export default buildConfig({
     Fundraisers,
     Donations,
     TeamStaff,
+    Pupils,
   ],
   endpoints: [searchEndpoint, messageSubmitEndpoint],
   editor: lexicalEditor({
