@@ -3,7 +3,13 @@
 import React, { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { testModeParam } from '@/lib/clubdata/cancellation'
+import {
+  allDismissed,
+  amsterdamToday,
+  pruneDismissed,
+  testModeParam,
+  type DismissedCancellations,
+} from '@/lib/clubdata/cancellation'
 import { useClientValue } from '@/lib/use-client-value'
 
 export type CancelledMatch = {
@@ -38,17 +44,41 @@ function subscribePhone(onChange: () => void) {
 }
 const phoneMatches = () => window.matchMedia(PHONE_QUERY).matches
 
-function readStorage(store: 'session' | 'local', key: string): boolean {
+function readStorage(key: string): boolean {
   try {
-    return Boolean((store === 'session' ? sessionStorage : localStorage).getItem(key))
+    return Boolean(localStorage.getItem(key))
   } catch {
     return false
   }
 }
 
-function writeStorage(store: 'session' | 'local', key: string) {
+function writeStorage(key: string) {
   try {
-    ;(store === 'session' ? sessionStorage : localStorage).setItem(key, '1')
+    localStorage.setItem(key, '1')
+  } catch {
+    // Storage blocked: the message just comes back on the next page.
+  }
+}
+
+// The cancelled matches this browser closed the bar or the phone popup for, until their day has
+// passed (pruneDismissed).
+const DISMISSED_KEY = 'svv-afgelast-gesloten'
+
+function readDismissed(): DismissedCancellations {
+  try {
+    return pruneDismissed(JSON.parse(localStorage.getItem(DISMISSED_KEY) ?? '{}'), amsterdamToday())
+  } catch {
+    return {}
+  }
+}
+
+function dismiss(matches: CancelledMatch[]) {
+  const dismissed = readDismissed()
+  for (const m of matches) {
+    dismissed[m.matchCode] = m.dayKey
+  }
+  try {
+    localStorage.setItem(DISMISSED_KEY, JSON.stringify(dismissed))
   } catch {
     // Storage blocked: the message just comes back on the next page.
   }
@@ -98,9 +128,10 @@ const Teams = ({ m }: { m: CancelledMatch }) =>
   )
 
 /**
- * Cancelled matches. Computer: a yellow bar above the header (closing it hides it for the visit).
- * Phone: a popup from the bottom, once per visit. When all matches (or all home matches) of a
- * day are cancelled, a computer also gets a popup on the homepage, once per day.
+ * Cancelled matches. Computer: a yellow bar above the header. Phone: a popup from the bottom.
+ * Closing either is remembered per match in this browser until the match day has passed: the
+ * message comes back only when another match is cancelled. When all matches (or all home
+ * matches) of a day are cancelled, a computer also gets a popup on the homepage, once per day.
  */
 export function CancellationBannerClient({
   data: realData,
@@ -143,11 +174,17 @@ export function CancellationBannerClient({
     ? matches.length > 0
     : Boolean(allCancelled) && (pathname === '/' || testing)
 
-  // Closed earlier this visit (bar) or already seen (popup: phone once per visit, computer once
-  // per day; the key holds the day). The popup counts as seen until the device is known.
-  const barClosedBefore = useClientValue(() => !testing && readStorage('session', barKey), false)
+  // Closed before: every match in it (bar, phone popup), or the day of "everything cancelled"
+  // (computer popup, the key holds the day). The popup counts as seen until the device is known.
+  const codeList = matches.map((m) => m.matchCode)
+  const barClosedBefore = useClientValue(
+    () => !testing && allDismissed(codeList, readDismissed()),
+    false,
+  )
   const popupSeenBefore = useClientValue(
-    () => isPhone === null || (!testing && readStorage(isPhone ? 'session' : 'local', popupKey)),
+    () =>
+      isPhone === null ||
+      (!testing && (isPhone ? allDismissed(codeList, readDismissed()) : readStorage(popupKey))),
     true,
   )
   const barClosed = closedBarKey === barKey || barClosedBefore
@@ -157,8 +194,13 @@ export function CancellationBannerClient({
 
   function closePopup() {
     setSeenPopupKey(popupKey)
-    if (!testing) {
-      writeStorage(isPhone ? 'session' : 'local', popupKey)
+    if (testing) {
+      return
+    }
+    if (isPhone) {
+      dismiss(matches)
+    } else {
+      writeStorage(popupKey)
     }
   }
 
@@ -259,7 +301,7 @@ export function CancellationBannerClient({
             onClick={() => {
               setClosedBarKey(barKey)
               if (!testing) {
-                writeStorage('session', barKey)
+                dismiss(matches)
               }
             }}
           >
