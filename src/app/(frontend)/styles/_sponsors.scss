@@ -72,9 +72,10 @@
     height: 5rem;
   }
 
+  // Logos are trimmed to their edges, so the white space around them comes from here.
   img {
-    max-height: 100%;
-    max-width: 100%;
+    max-height: 75%;
+    max-width: min(80%, 22rem);
     object-fit: contain;
   }
 
