@@ -59,7 +59,7 @@ export default async function TeamPage({ params }: Props) {
   return (
     <TeamProvider teamcode={teamcode} slug={slug}>
       <ScrollToTop />
-      <main className="page">
+      <main className="page team-page">
         <SetBreadcrumb
           crumbs={[
             { label: 'Home', href: '/' },
@@ -67,6 +67,9 @@ export default async function TeamPage({ params }: Props) {
             { label: team.name },
           ]}
         />
+
+        {/* Grass band under the breadcrumb: the header sits on it, photo and next match overlap it. */}
+        <div className="team-band" aria-hidden="true" />
 
         <div className="page-inner">
           <TeamHeader name={team.name} category={categoryLabel} showForm={showStandings} />
